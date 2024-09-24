@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    container_name: medusa-starter-postgres
+    volumes:
+      - database:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+  redis:
+    image: redis
+    container_name: medusa-starter-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis:/data
+
+volumes:
+  database:
+  redis:
