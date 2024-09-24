@@ -1,0 +1,28 @@
+{
+  "name": "components",
+  "version": "0.0.1",
+  "packageManager": "yarn@3.2.1",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@headlessui/react": "2.1.2",
+    "@remix-run/node": "2.12.0",
+    "@remix-run/react": "2.12.0",
+    "@remix-validated-form/with-yup": "^3.0.1",
+    "@tanstack/react-table": "^8.20.1",
+    "@types/react": "^18.2.31",
+    "@types/react-dom": "^18.2.14",
+    "react": "18.3.0-canary-c5b937576-20231219",
+    "react-dom": "18.3.0-canary-c5b937576-20231219",
+    "react-drag-drop-files": "2.3.10",
+    "remix-validated-form": "^5.1.5",
+    "yet-another-react-lightbox": "^3.14.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  },
+  "peerDependencies": {
+    "clsx": "^2.1.1"
+  }
+}

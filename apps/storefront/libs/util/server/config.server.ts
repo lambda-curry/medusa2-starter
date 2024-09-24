@@ -1,0 +1,13 @@
+export const config = {
+  NODE_ENV: process.env.NODE_ENV,
+  GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID,
+  ENVIRONMENT: process.env.ENVIRONMENT,
+  STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+  PUBLIC_MEDUSA_API_URL: process.env.PUBLIC_MEDUSA_API_URL,
+  STOREFRONT_URL: process.env.STOREFRONT_URL,
+  DISABLE_SHIPPING: process.env.DISABLE_SHIPPING === 'true',
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  SENTRY_ENVIRONMENT: process.env.SENTRY_ENVIRONMENT,
+  EVENT_LOGGING: process.env.EVENT_LOGGING,
+  AUTH_COOKIE_NAME: process.env.AUTH_COOKIE_NAME ?? 'mkt-auth'
+};

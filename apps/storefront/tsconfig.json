@@ -1,0 +1,44 @@
+{
+  "include": [
+    "env.d.ts",
+    "app",
+    "libs",
+    "types",
+    "**/*.ts",
+    "**/*.tsx",
+    "vite.config.ts"
+  ],
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2021"],
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "target": "ESNext",
+    "strict": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "~/*": ["./app/*"],
+      "@ui-components/*": ["./libs/ui-components/*"],
+      "@marketplace/util/*": ["./libs/util/*"],
+      "@utils/*": ["../packages/utils/*"],
+      "@components/*": ["../packages/components/src/*"]
+    },
+    "noEmit": true
+  }
+}
