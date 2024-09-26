@@ -1,4 +1,4 @@
-import { QuoteContentBlock } from '@marketplace/util/medusa/types';
+import { QuoteContentBlock } from '@libs/util/medusa/types';
 import { ContentBlockComponentProps } from './types';
 
 export const ContentBlockQuote: ContentBlockComponentProps<QuoteContentBlock> = ({ block }) => (

@@ -1,4 +1,4 @@
-import { PostSection, PostSectionStatus, PostSectionType } from '@marketplace/util/medusa/types';
+import { PostSection, PostSectionStatus, PostSectionType } from '@libs/util/medusa/types';
 import { type PostSectionComponent } from './types';
 import PostSectionPreviewWrapper from './shared/PostSectionPreviewWrapper';
 import PostSectionButtonList from './PostSectionButtonList';

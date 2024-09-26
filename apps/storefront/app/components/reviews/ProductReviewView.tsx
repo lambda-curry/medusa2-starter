@@ -9,7 +9,7 @@ import {
 } from './ReviewImageThumbnailRow';
 import { StarRating } from './StarRating';
 import { LightboxGallery } from '@components/images/LightboxGallery';
-import { LineItem } from '@marketplace/util/medusa';
+import { LineItem } from '@libs/util/medusa';
 
 export interface ProductReviewViewProps {
   lineItem: LineItem;

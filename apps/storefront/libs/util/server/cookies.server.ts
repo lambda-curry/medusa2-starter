@@ -1,4 +1,5 @@
 import { Cookie } from '@remix-run/node';
+import { authCookie } from './auth.server';
 
 export async function setCookie(headers: Headers, cookie: Cookie | string, value: string) {
   return headers.append(
@@ -35,3 +36,27 @@ export function parseCookie(str: string | null) {
       {} as Record<string, string>
     );
 }
+
+
+// Medusa cookie helpers
+
+export const setAuthToken = async(headers: Headers, token: string) => {
+  setCookie(headers, authCookie, token)
+}
+
+export const removeAuthToken = (headers: Headers) => {
+  destroyCookie(headers, authCookie)
+}
+
+export const getCartId = (headers: Headers, ) => {
+  return getCookie(headers, '_medusa_cart_id')
+}
+
+export const setCartId = (headers: Headers, cartId: string) => {
+  setCookie(headers, '_medusa_cart_id', cartId)
+}
+
+export const removeCartId = (headers: Headers) => {
+  destroyCookie(headers, '_medusa_cart_id')
+}
+

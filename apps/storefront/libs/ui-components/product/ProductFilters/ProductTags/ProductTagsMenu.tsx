@@ -1,6 +1,6 @@
 import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
 import type { FC } from 'react';
-import { FilterOptions } from '@marketplace/util/product-filters';
+import { FilterOptions } from '@libs/util/product-filters';
 import { FilterState } from '../../../hooks/useProductPageFilters';
 import { Button } from '@components/buttons/Button';
 import { Menu } from '@components/menu/Menu';

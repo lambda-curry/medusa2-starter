@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import clsx from 'clsx';
-import { ListContentBlock } from '@marketplace/util/medusa/types';
+import { ListContentBlock } from '@libs/util/medusa/types';
 import { ContentBlockComponentProps } from './types';
 import { getStyleFromBlockTunes } from '../helpers/get-style-from-block-tunes';
 

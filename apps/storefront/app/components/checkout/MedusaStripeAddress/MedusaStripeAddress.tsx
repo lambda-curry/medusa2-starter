@@ -8,7 +8,7 @@ import { useRegion } from '@ui-components/hooks/useRegion';
 import { useCart } from '@ui-components/hooks/useCart';
 import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
 import { useRootLoaderData } from '@ui-components/hooks/useRootLoaderData';
-import { FontWeight } from '@marketplace/util/medusa';
+import { FontWeight } from '@utils/medusa';
 export interface StripeAddress {
   address: Address;
   completed: boolean;

@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import { Image } from '@components/images/Image';
 import { ProductReviewView } from './ProductReviewView';
 import { ProductReviewForm } from './ProductReviewForm';
-import { ProductReview, LineItem } from '@marketplace/util/index';
+import { ProductReview, LineItem } from '@libs/util/index';
 
 export interface ProductReviewProps {
   lineItem?: LineItem;

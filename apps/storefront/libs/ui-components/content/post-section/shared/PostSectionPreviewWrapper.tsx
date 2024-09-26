@@ -1,9 +1,9 @@
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
-import { PostSectionStatus, type PostSection } from '@marketplace/util/medusa/types';
+import { PostSectionStatus, type PostSection } from '@libs/util/medusa/types';
 import { getSectionTypeLabel } from '../helpers/get-section-type-label';
-import { isWithinIframe } from '@marketplace/util/iframe/isWithinIframe';
+import { isWithinIframe } from '@libs/util/iframe/isWithinIframe';
 
 export const PostSectionPreviewWrapper: FC<PropsWithChildren<{ section: PostSection }>> = ({ section, children }) => {
   const [showOutlines, setShowOutlines] = useState(false);

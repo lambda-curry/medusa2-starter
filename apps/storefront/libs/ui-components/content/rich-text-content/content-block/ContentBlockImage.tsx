@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ImageContentBlock } from '@marketplace/util/medusa/types';
+import { ImageContentBlock } from '@libs/util/medusa/types';
 import { ContentBlockComponentProps } from './types';
 import { getStyleFromBlockTunes } from '../helpers/get-style-from-block-tunes';
 import { Image } from '@components/images/Image';

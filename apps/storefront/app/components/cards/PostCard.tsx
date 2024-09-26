@@ -5,8 +5,8 @@ import {
   ContentBlockTypes,
   type ParagraphContentBlock,
   type Post,
-} from '@marketplace/util/medusa/types';
-import { formatDate } from '@marketplace/util/formatters';
+} from '@libs/util/medusa/types';
+import { formatDate } from '@libs/util/formatters';
 import { Card } from '@components/card/Card';
 import { CardThumbnail } from '@components/card/CardThumbnail';
 import { CardContent } from '@components/card/CardContent';

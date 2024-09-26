@@ -1,6 +1,6 @@
 import { FC, HTMLAttributes } from 'react';
 import clsx from 'clsx';
-import { PostSectionType, type PostSection } from '@marketplace/util/medusa/types';
+import { PostSectionType, type PostSection } from '@libs/util/medusa/types';
 import { PostSectionStyles } from './PostSectionStyles';
 import { PostSectionBackgroundVideo } from './PostSectionBackgroundVideo';
 import { PostSectionBackgroundOverlay } from './PostSectionBackgroundOverlay';

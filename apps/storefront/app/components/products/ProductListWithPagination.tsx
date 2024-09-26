@@ -1,10 +1,10 @@
 import type { FC } from 'react';
-import { PaginationWithContext } from '@components/src/Pagination/pagination-with-context';
+import { PaginationWithContext } from '@components/Pagination/pagination-with-context';
 import {
   type ProductListProps,
   ProductGrid,
 } from '@ui-components/product/ProductGrid';
-import type { PaginationConfig } from '@components/src/Pagination';
+import type { PaginationConfig } from '@components/Pagination';
 import { ProductWithReviews } from '../../../libs/util/medusa';
 
 export interface ProductListWithPaginationProps extends ProductListProps {

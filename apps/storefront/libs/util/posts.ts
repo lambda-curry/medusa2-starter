@@ -1,7 +1,7 @@
 import type { MetaFunction } from '@remix-run/node';
-import type { Post } from '@marketplace/util/medusa/types';
+import type { Post } from '@utils/medusa/types';
 import { getCommonMeta, getParentMeta, mergeMeta } from './meta';
-import { getProxySrc } from '../../../markethaus/utils/img-proxy';
+import { getProxySrc } from '@utils/img-proxy';
 
 export const getPostMeta: MetaFunction = ({ data }: { data: unknown }) => {
   const post = (data as any).post as Post;

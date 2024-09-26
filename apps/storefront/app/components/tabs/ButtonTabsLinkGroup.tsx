@@ -1,5 +1,5 @@
 import { Tab } from '@headlessui/react';
-import { URLAwareNavLink } from '@components/src/link';
+import { URLAwareNavLink } from '@components/link';
 import { TabButton } from './TabButton';
 import { TabList } from './TabList';
 

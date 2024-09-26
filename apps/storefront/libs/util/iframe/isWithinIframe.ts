@@ -1,4 +1,4 @@
-import { isBrowser } from '../../../../markethaus/utils/browser';
+import { isBrowser } from '@utils/browser';
 
 export const isWithinIframe = () => {
   if (!isBrowser()) return false;

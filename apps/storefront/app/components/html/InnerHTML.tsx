@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { isBrowser } from '../../../../markethaus/utils/browser';
+import { isBrowser } from '@utils/browser';
 import NoHydrationPortal from './NoHydrationPortal';
 import { useHydrated } from 'remix-utils/use-hydrated';
 

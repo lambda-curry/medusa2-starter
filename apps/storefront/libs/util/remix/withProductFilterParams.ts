@@ -1,4 +1,4 @@
-import { FilterOptions } from '@marketplace/util/product-filters';
+import { FilterOptions } from '@libs/util/product-filters';
 import { parseProductPageFilterSearchParams } from '../../ui-components/hooks/useProductPageFilters';
 
 export const withProductFilterParams = ({

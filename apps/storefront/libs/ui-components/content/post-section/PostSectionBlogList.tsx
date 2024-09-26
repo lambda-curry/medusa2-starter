@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useFetcher } from '@remix-run/react';
-import { type BlogListPostSection } from '@marketplace/util/medusa/types';
+import { type BlogListPostSection } from '@libs/util/medusa/types';
 import { PostSectionBase } from './shared/PostSectionBase';
 import { type PostSectionComponent } from './types';
 import { PageHeading } from '../PageHeading';
@@ -11,7 +11,7 @@ import { CardGrid } from '@components/card/CardGrid';
 import { PostCard } from '../../../../app/components/cards/PostCard';
 import { Suspense } from 'react';
 import { Await } from '@remix-run/react';
-import type { Post } from '@marketplace/util/medusa';
+import type { Post } from '@libs/util/medusa';
 import { buildSearchParamsFromObject } from '../../../util';
 import { LoaderFunctionArgs } from '@remix-run/node';
 

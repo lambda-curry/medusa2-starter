@@ -1,4 +1,4 @@
-import { RichTextContent as MedusaRichTextContent, type ContentBlock } from '@marketplace/util/medusa/types';
+import { RichTextContent as MedusaRichTextContent, type ContentBlock } from '@libs/util/medusa/types';
 import clsx from 'clsx';
 import { FC, HTMLAttributes } from 'react';
 import { ContentBlockComponent } from './content-block';

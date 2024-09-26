@@ -5,7 +5,7 @@ import { ShippingOptionsRadioGroupOption } from './ShippingOptionsRadioGroupOpti
 import { FieldError } from '@components/forms/fields/FieldError';
 import { Fetcher, useFetchers } from '@remix-run/react';
 import clsx from 'clsx';
-import { Region } from '@marketplace/util/medusa';
+import { Region } from '@libs/util/medusa';
 import { ShippingOption } from '@markethaus/storefront-client';
 
 export interface ShippingOptionsRadioGroupProps {

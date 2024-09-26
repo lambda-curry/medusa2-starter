@@ -12,10 +12,10 @@ import { useRef } from 'react';
 import { Page } from './components/layout/Page';
 import { RootProviders } from './providers/root-providers';
 import { getProxySrc, imageProxyURL } from '@utils/img-proxy';
-import { SiteDetailsRootData } from '@marketplace/util/medusa';
+import { SiteDetailsRootData } from '@libs/util/medusa';
 import { MetaFunction } from '@remix-run/node';
-import { getCommonMeta, mergeMeta } from '@marketplace/util/meta';
-import { getRootLoader } from '@marketplace/util/server/root.server';
+import { getCommonMeta, mergeMeta } from '@libs/util/meta';
+import { getRootLoader } from '@libs/util/server/root.server';
 
 import inlineGlobalCss from '~/styles/global.css?inline';
 

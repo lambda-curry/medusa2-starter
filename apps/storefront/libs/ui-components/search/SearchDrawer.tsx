@@ -12,7 +12,7 @@ import {
   type PropsWithChildren,
 } from 'react';
 import * as Yup from 'yup';
-import type { getRootLoader } from '@marketplace/util/server/root.server';
+import type { getRootLoader } from '@libs/util/server/root.server';
 import { useKeyPress } from '../hooks/useKeypress';
 import { useRegion } from '../hooks/useRegion';
 import { useSearch } from '../hooks/useSearch';
@@ -27,7 +27,7 @@ import {
   ProductCategory,
   ProductCollection,
   ProductTag,
-} from '@marketplace/util/medusa/types';
+} from '@libs/util/medusa/types';
 
 export const searchFormValidator = withYup(
   Yup.object().shape({ search: Yup.string() })

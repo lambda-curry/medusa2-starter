@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import { ListboxOption } from '@headlessui/react';
-import type { ProductCollection } from '@marketplace/util/medusa';
+import type { ProductCollection } from '@libs/util/medusa';
 import clsx from 'clsx';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon as SolidCheckCircleIcon } from '@heroicons/react/24/solid';

@@ -4,8 +4,8 @@ import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
 import TruckIcon from '@heroicons/react/24/solid/TruckIcon';
 import clsx from 'clsx';
 import { TransitTimeTypeEnum } from '@utils/types';
-import { formatPrice } from '@marketplace/util/prices';
-import { Region } from '@marketplace/util/medusa';
+import { formatPrice } from '@libs/util/prices';
+import { Region } from '@libs/util/medusa';
 import { ShippingOption } from '@markethaus/storefront-client';
 
 export interface ShippingOptionsRadioGroupOptionProps {

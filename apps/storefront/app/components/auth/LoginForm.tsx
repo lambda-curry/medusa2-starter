@@ -15,7 +15,7 @@ import { FieldCheckbox } from '@components/forms/fields/FieldCheckbox';
 import { FieldGroup } from '@components/forms/fields/FieldGroup';
 import { FieldPassword } from '@components/forms/fields/FieldPassword';
 import { FieldText } from '@components/forms/fields/FieldText';
-import { useSendEvent } from '@marketplace/util/analytics/useAnalytics';
+import { useSendEvent } from '@libs/util/analytics/useAnalytics';
 
 export interface LoginFormValues {
   email: string;

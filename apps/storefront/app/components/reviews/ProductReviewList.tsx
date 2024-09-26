@@ -1,7 +1,7 @@
 import { type FC, useState } from 'react';
-import type { ProductReview } from '@marketplace/util/medusa/types';
+import type { ProductReview } from '@libs/util/medusa/types';
 import { ReviewImageThumbnailRow } from './ReviewImageThumbnailRow';
-import { formatDate } from '@marketplace/util/formatters';
+import { formatDate } from '@libs/util/formatters';
 import { StarRating } from './StarRating';
 import { LightboxGallery } from '@components/images/LightboxGallery';
 

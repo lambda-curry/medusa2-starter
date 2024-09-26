@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { type CTAPostSection } from '@marketplace/util/medusa/types';
+import { type CTAPostSection } from '@libs/util/medusa/types';
 import { PostSectionBase } from './shared/PostSectionBase';
 import { type PostSectionComponent } from './types';
 import { ActionList } from '../ActionList';

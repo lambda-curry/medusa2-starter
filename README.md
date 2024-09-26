@@ -1,81 +1,71 @@
-# Turborepo starter
+# Medusa Starter with Remix Storefront
 
-This is an official starter Turborepo.
+This is a starter project for an e-commerce application using Medusa as the backend and Remix as the storefront, all set up in a Turborepo monorepo structure.
 
-## Using this example
+## Project Overview
 
-Run the following command:
+This monorepo includes:
 
-```sh
-npx create-turbo@latest
-```
+- `medusa`: A Medusa backend application
+- `storefront`: A Remix-based storefront application
+- Shared packages and configurations
 
-## What's inside?
+## Prerequisites
 
-This Turborepo includes the following packages/apps:
+Before you begin, ensure you have the following installed:
 
-### Apps and Packages
+- Node.js 20+
+- Yarn  4.5.0
+- Remix
+- Docker and Docker Compose
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Getting Started
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+1. Clone this repository
+2. Install dependencies:
+   ```
+   yarn
+   ```
+3. Test the setup:
+   ```
+   yarn build
+   ```
 
-### Utilities
+## Local Development Setup
 
-This Turborepo has some additional tools already setup for you:
+1. Navigate to the `apps/medusa` folder:
+   ```
+   cd apps/medusa
+   ```
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+2. Start the Docker containers:
+   ```
+   docker compose up -d
+   ```
 
-### Build
+3. Create a `.env` file:
+   - Copy the `.env.template` file to `.env`
+   - Replace the `DATABASE_URL` and `POSTGRES_URL` environment variables in the `.env` file
 
-To build all apps and packages, run the following command:
+4. Set up Medusa:
+   ```
+   yarn run medusa:setup
+   ```
 
-```
-cd my-turborepo
-pnpm build
-```
+5. Return to the root of the monorepo:
+   ```
+   cd ../..
+   ```
 
-### Develop
+6. Start the development servers:
+   ```
+   yarn dev
+   ```
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
+This will start both the Medusa backend and the Remix storefront in development mode.
 
 ## Useful Links
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+- [Medusa Documentation](https://docs.medusajs.com/)
+- [Remix Documentation](https://remix.run/docs/en/main)
+- [Turborepo Documentation](https://turbo.build/repo/docs)

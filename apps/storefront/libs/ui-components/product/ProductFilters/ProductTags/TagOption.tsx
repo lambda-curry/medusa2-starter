@@ -1,5 +1,5 @@
 import { ListboxOption } from '@headlessui/react';
-import { ProductTag } from '@marketplace/util/medusa';
+import { ProductTag } from '@libs/util/medusa';
 
 import clsx from 'clsx';
 import type { FC } from 'react';

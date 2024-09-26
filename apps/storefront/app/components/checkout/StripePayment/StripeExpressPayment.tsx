@@ -2,8 +2,8 @@ import { type FC } from 'react';
 import { StripeExpressCheckoutForm } from './StripeExpressPaymentForm';
 import { StripeElementsOptionsMode } from '@stripe/stripe-js';
 import { StripeElementsProvider } from './StripeElementsProvider';
-import { getCartShippingProfileIds } from '@marketplace/util/vendors';
-import { Cart } from '@marketplace/util/medusa';
+import { getCartShippingProfileIds } from '@libs/util/vendors';
+import { Cart } from '@libs/util/medusa';
 
 interface StripeExpressCheckoutProps {
   cart: Cart;

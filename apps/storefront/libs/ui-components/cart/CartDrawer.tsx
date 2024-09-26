@@ -2,7 +2,7 @@ import { FC, Fragment, PropsWithChildren, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { CartDrawerItem } from './CartDrawerItem';
-import { formatCartSubtotal, formatPrice } from '@marketplace/util/prices';
+import { formatCartSubtotal, formatPrice } from '@libs/util/prices';
 import { useCart } from '../hooks/useCart';
 import { IconButton } from '@components/buttons/IconButton';
 import { ButtonLink } from '@components/buttons/ButtonLink';

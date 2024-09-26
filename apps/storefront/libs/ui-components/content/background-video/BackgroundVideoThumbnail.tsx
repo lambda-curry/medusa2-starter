@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, useEffect } from 'react';
 import { Image } from '@components/images/Image';
 import clsx from 'clsx';
 import { useFetcher } from '@remix-run/react';
-import type { Video } from '@marketplace/util/index';
+import type { Video } from '@libs/util/index';
 
 export interface BackgroundVideoThumbnailProps
   extends HTMLAttributes<HTMLDivElement> {

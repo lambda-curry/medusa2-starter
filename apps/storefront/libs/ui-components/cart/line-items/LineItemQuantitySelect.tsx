@@ -1,6 +1,6 @@
 import { QuantitySelector } from '@components/field-groups/QuantitySelector';
 import { Form } from '@components/forms/Form';
-import { LineItem } from '@marketplace/util/medusa';
+import { LineItem } from '@libs/util/medusa';
 import { FetcherWithComponents, useFetcher } from '@remix-run/react';
 import clsx from 'clsx';
 import { ChangeEvent, FC, HTMLAttributes } from 'react';

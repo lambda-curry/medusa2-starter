@@ -1,59 +1,62 @@
-import { FC, useEffect, useRef } from 'react';
-import { useFetcher } from '@remix-run/react';
-import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
-import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
-import { CheckoutAction, UpdateContactInfoInput } from '~/routes/api.checkout';
-import { checkoutUpdateContactInfoValidator } from './checkout-form-helpers';
-import { checkContactInfoComplete } from '@marketplace/util/checkout';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useCustomer } from '@ui-components/hooks/useCustomer';
-import { useLogin } from '@ui-components/hooks/useLogin';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
-import { CheckoutStep } from '@ui-components/providers/checkout-provider';
-import { IconButton } from '@components/buttons/IconButton';
-import { ButtonLink } from '@components/buttons/ButtonLink';
-import { Form } from '@components/forms/Form';
-import { FieldGroup } from '@components/forms/fields/FieldGroup';
-import { FieldText } from '@components/forms/fields/FieldText';
-import { FormError } from '@components/forms/FormError';
-import { Actions } from '@components/actions/Actions';
-import { SubmitButton } from '@components/buttons/SubmitButton';
-import { Button } from '@components/buttons/Button';
-import { CheckoutSectionHeader } from './CheckoutSectionHeader';
-import { ActionFunctionArgs } from '@remix-run/node';
+import { FC, useEffect, useRef } from "react"
+import { useFetcher } from "@remix-run/react"
+import CheckIcon from "@heroicons/react/24/solid/CheckIcon"
+import PencilIcon from "@heroicons/react/24/outline/PencilIcon"
+import {
+  CheckoutAction,
+  UpdateContactInfoInput,
+} from "~/routes/_todo/api.checkout"
+import { checkoutUpdateContactInfoValidator } from "./checkout-form-helpers"
+import { checkContactInfoComplete } from "@libs/util/checkout"
+import { useCart } from "@ui-components/hooks/useCart"
+import { useCustomer } from "@ui-components/hooks/useCustomer"
+import { useLogin } from "@ui-components/hooks/useLogin"
+import { useCheckout } from "@ui-components/hooks/useCheckout"
+import { CheckoutStep } from "@ui-components/providers/checkout-provider"
+import { IconButton } from "@components/buttons/IconButton"
+import { ButtonLink } from "@components/buttons/ButtonLink"
+import { Form } from "@components/forms/Form"
+import { FieldGroup } from "@components/forms/fields/FieldGroup"
+import { FieldText } from "@components/forms/fields/FieldText"
+import { FormError } from "@components/forms/FormError"
+import { Actions } from "@components/actions/Actions"
+import { SubmitButton } from "@components/buttons/SubmitButton"
+import { Button } from "@components/buttons/Button"
+import { CheckoutSectionHeader } from "./CheckoutSectionHeader"
+import { ActionFunctionArgs } from "@remix-run/node"
 
 export const CheckoutContactInfo: FC = () => {
-  const firstInputRef = useRef<HTMLInputElement>(null);
+  const firstInputRef = useRef<HTMLInputElement>(null)
   const fetcher =
-    useFetcher<(args: ActionFunctionArgs) => { fieldErrors?: any }>();
-  const { cart } = useCart();
-  const { customer } = useCustomer();
-  const { toggleLoginModal } = useLogin();
-  const { step, setStep, goToNextStep } = useCheckout();
-  const isActiveStep = step === CheckoutStep.CONTACT_INFO;
+    useFetcher<(args: ActionFunctionArgs) => { fieldErrors?: any }>()
+  const { cart } = useCart()
+  const { customer } = useCustomer()
+  const { toggleLoginModal } = useLogin()
+  const { step, setStep, goToNextStep } = useCheckout()
+  const isActiveStep = step === CheckoutStep.CONTACT_INFO
 
-  if (!cart) return null;
-  const isComplete = checkContactInfoComplete(cart);
-  const isSubmitting = ['submitting', 'loading'].includes(fetcher.state);
-  const hasErrors = !!fetcher.data?.fieldErrors;
+  if (!cart) return null
+  const isComplete = checkContactInfoComplete(cart)
+  const isSubmitting = ["submitting", "loading"].includes(fetcher.state)
+  const hasErrors = !!fetcher.data?.fieldErrors
 
   const defaultValues: UpdateContactInfoInput = {
     cartId: cart.id,
-    email: cart.email || customer?.email || '',
-  };
+    email: cart.email || customer?.email || "",
+  }
 
   useEffect(() => {
     if (isActiveStep && !isSubmitting && !hasErrors && isComplete)
-      goToNextStep();
-  }, [isSubmitting, isComplete]);
+      goToNextStep()
+  }, [isSubmitting, isComplete])
 
-  const handleCancel = () => goToNextStep();
+  const handleCancel = () => goToNextStep()
 
   useEffect(() => {
-    if (isActiveStep) firstInputRef.current?.focus();
-  }, [isActiveStep]);
+    if (isActiveStep) firstInputRef.current?.focus()
+  }, [isActiveStep])
 
-  const showCompleted = isComplete && !isActiveStep;
+  const showCompleted = isComplete && !isActiveStep
 
   return (
     <div className="checkout-contact-info">
@@ -77,7 +80,7 @@ export const CheckoutContactInfo: FC = () => {
       {isActiveStep && (
         <>
           <p className="mt-2 text-sm">
-            To get started, enter your email address or{' '}
+            To get started, enter your email address or{" "}
             <ButtonLink size="sm" onClick={() => toggleLoginModal()}>
               log in to your account
             </ButtonLink>
@@ -103,9 +106,9 @@ export const CheckoutContactInfo: FC = () => {
                 placeholder="Email address"
                 fieldOptions={{
                   validationBehavior: {
-                    initial: 'onSubmit',
-                    whenTouched: 'onSubmit',
-                    whenSubmitted: 'onChange',
+                    initial: "onSubmit",
+                    whenTouched: "onSubmit",
+                    whenSubmitted: "onChange",
                   },
                 }}
               />
@@ -115,7 +118,7 @@ export const CheckoutContactInfo: FC = () => {
 
             <Actions>
               <SubmitButton disabled={isSubmitting}>
-                {isSubmitting ? 'Saving...' : 'Save and continue'}
+                {isSubmitting ? "Saving..." : "Save and continue"}
               </SubmitButton>
 
               {isComplete && (
@@ -128,5 +131,5 @@ export const CheckoutContactInfo: FC = () => {
         </>
       )}
     </div>
-  );
-};
+  )
+}

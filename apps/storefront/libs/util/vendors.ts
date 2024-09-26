@@ -1,6 +1,6 @@
-import type { Cart, Vendor } from '@marketplace/util/medusa/types';
+import type { Cart, Vendor } from '@utils/medusa/types';
 import type { MetaFunction } from '@remix-run/node';
-import { getProxySrc } from '../../../markethaus/utils/img-proxy';
+import { getProxySrc } from '@utils/img-proxy';
 import { getCommonMeta, getParentMeta, mergeMeta } from './meta';
 import { getPostMeta } from './posts';
 

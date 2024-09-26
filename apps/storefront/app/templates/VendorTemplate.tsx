@@ -1,30 +1,30 @@
-import { type FC, useState } from 'react';
-import EnvelopeIcon from '@heroicons/react/24/outline/EnvelopeIcon';
-import ArrowUturnLeftIcon from '@heroicons/react/24/outline/ArrowUturnLeftIcon';
-import CalendarIcon from '@heroicons/react/24/outline/CalendarIcon';
-import MapPinIcon from '@heroicons/react/24/outline/MapPinIcon';
+import { type FC, useState } from "react"
+import EnvelopeIcon from "@heroicons/react/24/outline/EnvelopeIcon"
+import ArrowUturnLeftIcon from "@heroicons/react/24/outline/ArrowUturnLeftIcon"
+import CalendarIcon from "@heroicons/react/24/outline/CalendarIcon"
+import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon"
 import type {
   Post,
   PostSection,
   PostTemplate,
   ProductWithReviews,
   Vendor,
-} from '@marketplace/util/medusa/types';
-import { Container } from '@components/container/Container';
-import { Image } from '@components/images/Image';
-import { Button } from '@components/buttons/Button';
-import { RenderPostSection } from '@ui-components/content/post-section/PostSection';
-import { ProductListWithPagination } from '~/components/products/ProductListWithPagination';
-import { VendorContactFormModal } from '~/components/vendor/VendorContactFormModal/VendorContactFormModal';
-import type { PostData } from '~/routes/api.post-section-data';
-import { Modal } from '@components/modals';
+} from "@libs/util/medusa/types"
+import { Container } from "@components/container/Container"
+import { Image } from "@components/images/Image"
+import { Button } from "@components/buttons/Button"
+import { RenderPostSection } from "@ui-components/content/post-section/PostSection"
+import { ProductListWithPagination } from "~/components/products/ProductListWithPagination"
+import { VendorContactFormModal } from "~/components/vendor/VendorContactFormModal/VendorContactFormModal"
+import type { PostData } from "~/routes/_todo/api.post-section-data"
+import { Modal } from "@components/modals"
 
 export interface VendorTemplateProps {
-  vendor: Vendor;
-  post?: Post | PostTemplate;
-  products?: ProductWithReviews[];
-  isPreview?: boolean;
-  data?: PostData;
+  vendor: Vendor
+  post?: Post | PostTemplate
+  products?: ProductWithReviews[]
+  isPreview?: boolean
+  data?: PostData
 }
 
 export const VendorTemplate: FC<VendorTemplateProps> = ({
@@ -34,16 +34,16 @@ export const VendorTemplate: FC<VendorTemplateProps> = ({
   isPreview,
   data,
 }) => {
-  const [returnPolicyModalOpen, setReturnPolicyModalOpen] = useState(false);
-  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [returnPolicyModalOpen, setReturnPolicyModalOpen] = useState(false)
+  const [contactModalOpen, setContactModalOpen] = useState(false)
 
   const memberSince = new Date(vendor.created_at as string).toLocaleDateString(
-    'en-US',
+    "en-US",
     {
-      year: 'numeric',
-    }
-  );
-  const hasSections = !!post?.sections.length;
+      year: "numeric",
+    },
+  )
+  const hasSections = !!post?.sections.length
 
   return (
     <>
@@ -172,5 +172,5 @@ export const VendorTemplate: FC<VendorTemplateProps> = ({
         </Modal>
       )}
     </>
-  );
-};
+  )
+}

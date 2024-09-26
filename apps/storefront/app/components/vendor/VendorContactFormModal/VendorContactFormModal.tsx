@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import type { Vendor } from '@marketplace/util/medusa/types';
+import type { Vendor } from '@libs/util/medusa/types';
 import { VendorContactForm } from './VendorContactForm';
 import { Modal, ModalProps } from '@components/modals/Modal';
 

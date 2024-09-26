@@ -2,7 +2,7 @@ import { FC, memo, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import clsx from 'clsx';
 import { Image } from '@components/images/Image';
-import { useScrollArrows } from '../../../../markethaus/utils/hooks/useScrollArrows';
+import { useScrollArrows } from '@utils/hooks/useScrollArrows';
 import { ScrollArrowButtons } from '@components/buttons/ScrollArrowButtons';
 import { LightboxGallery } from '@components/images/LightboxGallery';
 import { MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';

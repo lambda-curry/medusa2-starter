@@ -1,5 +1,5 @@
 import { Tab } from '@headlessui/react';
-import { ProductCategory } from '@marketplace/util/medusa';
+import { ProductCategory } from '@libs/util/medusa';
 import { Fragment, type FC } from 'react';
 import { TabButton } from '~/components/tabs/TabButton';
 import { TabList } from '~/components/tabs/TabList';

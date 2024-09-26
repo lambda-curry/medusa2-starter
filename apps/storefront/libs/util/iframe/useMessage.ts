@@ -2,7 +2,7 @@
  * Adapted from https://github.com/rottitime/react-hook-window-message-event
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { isBrowser } from '../../../../markethaus/utils/browser';
+import { isBrowser } from '@utils/browser';
 
 export type PostMessage = { type: string; payload: Record<string, unknown> };
 export type Payload = PostMessage['payload'];

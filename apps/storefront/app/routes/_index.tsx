@@ -2,11 +2,11 @@ import { Container } from '@components/container';
 import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { PageTemplate } from '~/templates/PageTemplate';
-import { getMergedPostMeta } from '@marketplace/util/posts';
+import { getMergedPostMeta } from '@libs/util/posts';
 import {
   fetchPostData,
   getHomePage,
-} from '@marketplace/util/server/posts.server';
+} from '@libs/util/server/posts.server';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const post = await getHomePage(args);

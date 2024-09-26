@@ -1,7 +1,7 @@
 import { Listbox, ListboxOptions } from '@headlessui/react';
 import { FilterState } from '../../../hooks/useProductPageFilters';
 import { CollectionOption } from './CollectionOption';
-import { ProductCollection } from '@marketplace/util/medusa';
+import { ProductCollection } from '@libs/util/medusa';
 
 export interface ProductCollectionsListProps extends FilterState {
   collections?: (ProductCollection & { product_count: number })[];

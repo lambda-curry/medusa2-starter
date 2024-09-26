@@ -1,5 +1,5 @@
 import { FC, HTMLAttributes } from 'react';
-import { type RichTextContent as MedusaRichTextContent } from '@marketplace/util/medusa/types';
+import { type RichTextContent as MedusaRichTextContent } from '@libs/util/medusa/types';
 import { RichTextContent } from './rich-text-content/RichTextContent';
 
 export interface SectionTextProps extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {

@@ -1,6 +1,6 @@
 // import { type Customer } from '@markethaus/storefront-client';
 // import { useCustomer } from '@storefront/ui-components/hooks/useCustomer';
-// import { isBrowser } from '@storefront/util/browser';
+// import { isBrowser } from '@utils/browser';
 // import { useEffect, useRef } from 'react';
 // import { useAnalytics } from '../useAnalytics';
 // import { identifySegmentUser } from '../helpers';

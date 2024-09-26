@@ -1,5 +1,5 @@
 import { FC, ReactNode, useState } from 'react';
-import { FilterOptions } from '@marketplace/util/product-filters';
+import { FilterOptions } from '@libs/util/product-filters';
 import {
   FilterState,
   ProductPageFiltersHook,

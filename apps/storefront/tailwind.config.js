@@ -10,7 +10,7 @@ module.exports = {
   content: [
     './app/**/*.{ts,tsx,jsx,js}',
     './libs/{ui-components,util}/**/*.{ts,tsx,jsx,js}',
-    '../markethaus/components/**/*.{ts,tsx,jsx,js}'
+    '@components/**/*.{ts,tsx,jsx,js}'
   ],
   theme: {
     extend: {

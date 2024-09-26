@@ -1,43 +1,43 @@
-import { Actions } from '@components/actions';
-import { Button, SubmitButton } from '@components/buttons';
-import { Form } from '@components/forms/Form';
-import { FormError } from '@components/forms/FormError';
-import { FieldTextarea } from '@components/forms/fields/FieldTextarea';
-import { LineItem, ProductReview } from '@marketplace/util/medusa/types';
-import { FetcherWithComponents, Link, useFetcher } from '@remix-run/react';
-import { withYup } from '@remix-validated-form/with-yup';
-import { FC } from 'react';
-import { useControlField } from 'remix-validated-form';
-import * as Yup from 'yup';
-import { ProductReviewAction } from '~/routes/api.product-reviews';
-import { ImageUploadWithPreview } from '@components/ImageUpload/ImageUploadWithPreview';
-import { StarRating } from './StarRating';
-import { FieldLabel } from '@components/forms/fields/FieldLabel';
+import { Actions } from "@components/actions"
+import { Button, SubmitButton } from "@components/buttons"
+import { Form } from "@components/forms/Form"
+import { FormError } from "@components/forms/FormError"
+import { FieldTextarea } from "@components/forms/fields/FieldTextarea"
+import { LineItem, ProductReview } from "@libs/util/medusa/types"
+import { FetcherWithComponents, Link, useFetcher } from "@remix-run/react"
+import { withYup } from "@remix-validated-form/with-yup"
+import { FC } from "react"
+import { useControlField } from "remix-validated-form"
+import * as Yup from "yup"
+import { ProductReviewAction } from "~/routes/_todo/api.product-reviews"
+import { ImageUploadWithPreview } from "@components/ImageUpload/ImageUploadWithPreview"
+import { StarRating } from "./StarRating"
+import { FieldLabel } from "@components/forms/fields/FieldLabel"
 
 export interface ProductReviewFormValues {
-  id?: string;
-  rating?: number;
-  content?: string;
-  images?: MedusaImage[];
-  product_id: string;
+  id?: string
+  rating?: number
+  content?: string
+  images?: MedusaImage[]
+  product_id: string
 }
 
 export interface MedusaImage {
-  created_at: string;
-  deleted_at: string;
-  id: string;
-  metadata: string;
-  updated_at: string;
-  url: string;
+  created_at: string
+  deleted_at: string
+  id: string
+  metadata: string
+  updated_at: string
+  url: string
 }
 
 export interface ProductReviewFormProps {
-  redirect?: string;
-  onSuccess?: () => void;
-  setEditing: (value: boolean) => void;
-  productReview?: ProductReview;
-  requestId?: string;
-  lineItem: LineItem;
+  redirect?: string
+  onSuccess?: () => void
+  setEditing: (value: boolean) => void
+  productReview?: ProductReview
+  requestId?: string
+  lineItem: LineItem
 }
 
 export const ProductReviewFormValidator = withYup(
@@ -46,8 +46,8 @@ export const ProductReviewFormValidator = withYup(
     product_id: Yup.string().required(),
     rating: Yup.number().optional(),
     content: Yup.string().optional(),
-  })
-);
+  }),
+)
 
 export const ProductReviewForm: FC<ProductReviewFormProps> = ({
   setEditing,
@@ -55,10 +55,10 @@ export const ProductReviewForm: FC<ProductReviewFormProps> = ({
   requestId,
   lineItem,
 }) => {
-  const isComplete = productReview?.id;
+  const isComplete = productReview?.id
 
-  const fetcher = useFetcher<{}>() as FetcherWithComponents<{}>;
-  const product_id = lineItem?.variant?.product_id;
+  const fetcher = useFetcher<{}>() as FetcherWithComponents<{}>
+  const product_id = lineItem?.variant?.product_id
 
   const defaultValues = productReview
     ? {
@@ -66,15 +66,15 @@ export const ProductReviewForm: FC<ProductReviewFormProps> = ({
         content: productReview.content,
         images: productReview.images,
       }
-    : { rating: 5, comment: '' };
+    : { rating: 5, comment: "" }
 
-  const formId = `product-review-form-${lineItem.id}`;
+  const formId = `product-review-form-${lineItem.id}`
   const [ratingValue, setRatingValue] = useControlField<number>(
-    'rating',
-    formId
-  );
+    "rating",
+    formId,
+  )
 
-  const existingImages = productReview?.images;
+  const existingImages = productReview?.images
 
   return (
     <Form<
@@ -136,8 +136,8 @@ export const ProductReviewForm: FC<ProductReviewFormProps> = ({
         {isComplete && (
           <Button onClick={() => setEditing(false)}>Cancel</Button>
         )}
-        <SubmitButton>{isComplete ? 'Save' : 'Submit Review'}</SubmitButton>
+        <SubmitButton>{isComplete ? "Save" : "Submit Review"}</SubmitButton>
       </Actions>
     </Form>
-  );
-};
+  )
+}

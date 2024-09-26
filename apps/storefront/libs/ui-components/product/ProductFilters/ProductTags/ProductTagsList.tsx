@@ -1,7 +1,7 @@
 import { Listbox, ListboxOptions } from '@headlessui/react';
 import { TagOption } from './TagOption';
 import { FilterState } from '../../../hooks/useProductPageFilters';
-import { ProductTag } from '@marketplace/util/medusa';
+import { ProductTag } from '@libs/util/medusa';
 
 export interface ProductTagsListProps extends FilterState {
   tags?: (ProductTag & { product_count: number })[];

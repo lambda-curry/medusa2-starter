@@ -1,4 +1,4 @@
-// import { type Vendor } from '@marketplace/util/medusa/types';
+// import { type Vendor } from '@libs/util/medusa/types';
 // import {
 //   ShippingProfile as MedusaShippingProfile,
 //   StoreGetProductsParams as MedusaStoreGetProductsParams,

@@ -1,4 +1,4 @@
-import { getShippingOptionsByProfile } from '@marketplace/util/checkout';
+import { getShippingOptionsByProfile } from '@libs/util/checkout';
 
 import {
   addressValidation,
@@ -6,10 +6,10 @@ import {
   emailAddressValidation,
   nameValidation,
   phoneValidation
-} from '@marketplace/util/validation';
+} from '@libs/util/validation';
 import { withYup } from '@remix-validated-form/with-yup';
 import * as Yup from 'yup';
-import { Cart, Customer } from '@marketplace/util/medusa/types';
+import { Cart, Customer } from '@libs/util/medusa/types';
 import { ShippingOption } from '@markethaus/storefront-client';
 
 const checkoutValidation = {

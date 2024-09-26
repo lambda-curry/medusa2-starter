@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { PostSection } from '@marketplace/util/medusa/types';
+import { PostSection } from '@libs/util/medusa/types';
 import { generateSectionStyles } from '../helpers/styles';
 
 export interface PostSectionStylesProps {

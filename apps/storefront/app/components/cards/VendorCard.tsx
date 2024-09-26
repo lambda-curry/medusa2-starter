@@ -4,7 +4,7 @@ import { CardContent } from '@components/card/CardContent';
 import { CardHeader } from '@components/card/CardHeader';
 import { CardThumbnail } from '@components/card/CardThumbnail';
 import { CardTitle } from '@components/card/CardTitle';
-import { Vendor } from '@marketplace/util/medusa/types';
+import { Vendor } from '@libs/util/medusa/types';
 import { Link } from '@remix-run/react';
 import clsx from 'clsx';
 import { FC } from 'react';

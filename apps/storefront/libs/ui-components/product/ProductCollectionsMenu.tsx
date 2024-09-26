@@ -8,7 +8,7 @@ import { Menu } from '@components/menu/Menu';
 import { MenuButton } from '@components/menu/MenuButton';
 import { MenuItem } from '@components/menu/MenuItem';
 import { MenuItems } from '@components/menu/MenuItems';
-import { ProductCollection } from '@marketplace/util/medusa';
+import { ProductCollection } from '@libs/util/medusa';
 
 export interface ProductCollectionsMenuProps {
   collections?: ProductCollection[];

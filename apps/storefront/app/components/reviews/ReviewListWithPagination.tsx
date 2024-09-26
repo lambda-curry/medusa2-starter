@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import { PaginationWithContext } from '@components/src/Pagination/pagination-with-context';
-import { PaginationConfig } from '@components/src/Pagination';
-import type { ProductReview } from '@marketplace/util/medusa/types';
+import { PaginationWithContext } from '@components/Pagination/pagination-with-context';
+import { PaginationConfig } from '@components/Pagination';
+import type { ProductReview } from '@libs/util/medusa/types';
 import { ProductReviewList, ProductReviewListProps } from './ProductReviewList';
 
 export interface ProductReviewListWithPaginationProps

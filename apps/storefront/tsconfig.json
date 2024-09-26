@@ -35,9 +35,9 @@
     "paths": {
       "~/*": ["./app/*"],
       "@ui-components/*": ["./libs/ui-components/*"],
-      "@marketplace/util/*": ["./libs/util/*"],
-      "@utils/*": ["../packages/utils/*"],
-      "@components/*": ["../packages/components/src/*"]
+      "@libs/*": ["./libs/*"],
+      "@utils/*": ["../../packages/utils/*"],
+      "@components/*": ["../../packages/components/src/*"]
     },
     "noEmit": true
   }

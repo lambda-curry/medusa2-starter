@@ -9,7 +9,7 @@ import {
   YoutubeIcon,
 } from '@components/assets/icons';
 import { IconButton } from '@components/buttons/IconButton';
-import { SiteSettings } from '@marketplace/util/medusa';
+import { SiteSettings } from '@libs/util/medusa';
 import type { FC } from 'react';
 
 export const SocialIcons: FC<{ siteSettings?: SiteSettings }> = ({

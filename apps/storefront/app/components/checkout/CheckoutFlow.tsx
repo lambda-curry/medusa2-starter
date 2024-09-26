@@ -10,7 +10,7 @@ import { CheckoutPayment } from './CheckoutPayment';
 import {
   useCheckoutAnalytics,
   useSendBeginCheckoutEvent,
-} from '@marketplace/util/analytics/hooks/checkout';
+} from '@libs/util/analytics/hooks/checkout';
 import { StripeExpressCheckout } from './StripePayment/StripeExpressPayment';
 
 export const CheckoutFlow: FC = () => {

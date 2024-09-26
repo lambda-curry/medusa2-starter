@@ -2,7 +2,7 @@ import { NavLink } from '@remix-run/react';
 import clsx from 'clsx';
 import { memo, type FC } from 'react';
 import { ProductWithReviews } from '../../util';
-import { useScrollArrows } from '../../../../markethaus/utils/hooks/useScrollArrows';
+import { useScrollArrows } from '@utils/hooks/useScrollArrows';
 import { ScrollArrowButtons } from '@components/buttons/ScrollArrowButtons';
 import { ProductCarouselSkeleton } from './ProductCarouselSkeleton';
 import type { ProductListItemProps } from './ProductListItem';

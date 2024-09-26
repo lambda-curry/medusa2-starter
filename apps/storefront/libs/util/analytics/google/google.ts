@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { isBrowser } from '../../../../../markethaus/utils/browser';
+import { isBrowser } from '@utils/browser';
 
 export const isGoogleAnalyticsLoaded = () => isBrowser() && 'gtag' in window && typeof window.gtag === 'function';
 

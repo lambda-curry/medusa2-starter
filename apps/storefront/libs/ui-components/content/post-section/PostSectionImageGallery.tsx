@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ImageGalleryPostSection } from '@marketplace/util/medusa/types';
+import { ImageGalleryPostSection } from '@libs/util/medusa/types';
 import { PostSectionBase } from './shared/PostSectionBase';
 import { type PostSectionComponent } from './types';
 import { PageHeading } from '../PageHeading';

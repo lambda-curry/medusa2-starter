@@ -1,4 +1,4 @@
-import { Address } from '../../../../../markethaus/utils/types';
+import { Address } from '@utils/types';
 
 export const AddressDisplay: React.FC<{
   title?: string;

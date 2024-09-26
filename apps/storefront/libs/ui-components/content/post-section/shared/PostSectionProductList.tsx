@@ -1,11 +1,11 @@
-import { buildSearchParamsFromObject } from '@marketplace/util/buildSearchParamsFromObject';
+import { buildSearchParamsFromObject } from '@libs/util/buildSearchParamsFromObject';
 import type {
   ProductCarouselPostSection,
   ProductCategory,
   ProductCollection,
   ProductGridPostSection,
   ProductWithReviews,
-} from '@marketplace/util/medusa/types';
+} from '@libs/util/medusa/types';
 import { Await, useFetcher } from '@remix-run/react';
 import clsx from 'clsx';
 import {

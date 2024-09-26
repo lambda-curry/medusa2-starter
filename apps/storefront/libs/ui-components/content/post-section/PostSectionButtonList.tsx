@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { type ButtonListPostSection } from '@marketplace/util/medusa/types';
+import { type ButtonListPostSection } from '@libs/util/medusa/types';
 import { PostSectionBase } from './shared/PostSectionBase';
 import { ActionList } from '../ActionList';
 import { SectionHeading } from '../SectionHeading';

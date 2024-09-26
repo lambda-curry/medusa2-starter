@@ -1,20 +1,20 @@
-import { RenderPostSection } from '@ui-components/content/post-section';
-import { RichTextContent } from '@ui-components/content/rich-text-content/RichTextContent';
-import { Container } from '@components/container';
+import { RenderPostSection } from "@ui-components/content/post-section"
+import { RichTextContent } from "@ui-components/content/rich-text-content/RichTextContent"
+import { Container } from "@components/container"
 import {
   Post,
   PostContentMode,
   PostSection,
   PostTemplate,
-} from '@marketplace/util/medusa/types';
-import clsx from 'clsx';
-import { FC, PropsWithChildren } from 'react';
-import { PostData } from '~/routes/api.post-section-data';
+} from "@libs/util/medusa/types"
+import clsx from "clsx"
+import { FC, PropsWithChildren } from "react"
+import { PostData } from "~/routes/_todo/api.post-section-data"
 
 export interface PageTemplateProps {
-  post: Post | PostTemplate;
-  isPreview?: boolean;
-  data?: PostData;
+  post: Post | PostTemplate
+  isPreview?: boolean
+  data?: PostData
 }
 
 export const PageTemplate: FC<PropsWithChildren<PageTemplateProps>> = ({
@@ -23,7 +23,7 @@ export const PageTemplate: FC<PropsWithChildren<PageTemplateProps>> = ({
   data,
 }) => {
   const isAdvancedMode =
-    !post.content_mode || post.content_mode === PostContentMode.ADVANCED;
+    !post.content_mode || post.content_mode === PostContentMode.ADVANCED
 
   if (isAdvancedMode && post.sections.length > 0)
     return (
@@ -37,7 +37,7 @@ export const PageTemplate: FC<PropsWithChildren<PageTemplateProps>> = ({
           />
         ))}
       </>
-    );
+    )
 
   if (!isAdvancedMode && post.content)
     return (
@@ -50,15 +50,15 @@ export const PageTemplate: FC<PropsWithChildren<PageTemplateProps>> = ({
               style={{
                 backgroundImage: post.featured_image
                   ? `url('${post.featured_image.url}')`
-                  : '',
+                  : "",
               }}
             />
           </div>
         )}
 
         <section
-          className={clsx('relative z-20 pb-20', {
-            'mt-32': !post.featured_image,
+          className={clsx("relative z-20 pb-20", {
+            "mt-32": !post.featured_image,
           })}
         >
           <Container className="prose !max-w-4xl">
@@ -67,7 +67,7 @@ export const PageTemplate: FC<PropsWithChildren<PageTemplateProps>> = ({
           </Container>
         </section>
       </>
-    );
+    )
 
-  return null;
-};
+  return null
+}

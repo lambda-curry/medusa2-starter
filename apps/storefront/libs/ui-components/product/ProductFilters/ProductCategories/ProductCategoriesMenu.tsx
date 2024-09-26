@@ -6,7 +6,7 @@ import { Menu } from '@components/menu/Menu';
 import { MenuItems } from '@components/menu/MenuItems';
 import { ProductCategoriesList } from './ProductCategoriesList';
 import { FilterState } from '../../../hooks/useProductPageFilters';
-import { FilterOptions } from '@marketplace/util/product-filters';
+import { FilterOptions } from '@libs/util/product-filters';
 
 export interface ProductCategoriesMenuProps extends FilterState {
   categories: FilterOptions['categories'];

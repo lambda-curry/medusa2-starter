@@ -3,7 +3,7 @@ import { ListboxOption } from '@headlessui/react';
 import clsx from 'clsx';
 import { CheckCircleIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon as SolidCheckCircleIcon } from '@heroicons/react/24/solid';
-import { ProductCategory } from '@marketplace/util/medusa';
+import { ProductCategory } from '@libs/util/medusa';
 
 export type ProductCategoryWithSubCategories = ProductCategory & { product_count: number } & {
   sub_categories?: ProductCategoryWithSubCategories[];

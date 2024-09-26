@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { HeroPostSection } from '@marketplace/util/medusa/types';
+import { HeroPostSection } from '@libs/util/medusa/types';
 import { PostSectionBase } from './shared/PostSectionBase';
 import { type PostSectionComponent } from './types';
 import { ActionList } from '../ActionList';

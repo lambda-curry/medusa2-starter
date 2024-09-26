@@ -7,7 +7,7 @@ import { Menu } from '@components/menu/Menu';
 import { MenuButton } from '@components/menu/MenuButton';
 import { MenuItem } from '@components/menu/MenuItem';
 import { MenuItems } from '@components/menu/MenuItems';
-import { ProductTag } from '@marketplace/util/medusa';
+import { ProductTag } from '@libs/util/medusa';
 
 export interface ProductTagsMenuProps {
   tags?: ProductTag[];

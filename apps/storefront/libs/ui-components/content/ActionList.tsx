@@ -2,7 +2,7 @@ import { FC, HTMLAttributes } from 'react';
 import clsx from 'clsx';
 import { URLAwareNavLink } from '@components/link/URLAwareNavLink';
 import { Button } from '@components/buttons';
-import { type CustomAction } from '@marketplace/util/medusa/types';
+import { type CustomAction } from '@libs/util/medusa/types';
 
 export interface ActionListProps extends HTMLAttributes<HTMLDivElement> {
   actions: CustomAction[];

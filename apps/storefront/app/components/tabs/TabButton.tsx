@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import clsx from 'clsx';
-import { Button, ButtonProps, ButtonRef } from '@components/src/buttons';
+import { Button, ButtonProps, ButtonRef } from '@components/buttons';
 
 export interface TabButtonProps extends ButtonProps {
   selected?: boolean;

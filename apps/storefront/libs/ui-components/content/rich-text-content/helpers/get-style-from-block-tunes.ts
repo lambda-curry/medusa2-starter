@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { ContentBlockTunes } from '@marketplace/util/medusa/types';
+import { ContentBlockTunes } from '@libs/util/medusa/types';
 
 export const getStyleFromBlockTunes = (tunes: ContentBlockTunes) => {
   const style: Partial<

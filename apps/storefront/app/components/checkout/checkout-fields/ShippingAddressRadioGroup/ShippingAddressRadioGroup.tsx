@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import type { FC } from 'react';
 import { useControlField } from 'remix-validated-form';
 import { ShippingAddressRadioGroupOption } from './ShippingAddressRadioGroupOption';
-import { Address, Customer } from '@marketplace/util/medusa';
+import { Address, Customer } from '@libs/util/medusa';
 
 export interface ShippingAddressRadioGroupProps {
   customer?: Customer | undefined;

@@ -11,7 +11,7 @@ import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
 import { ButtonBase, IconButton } from '@components/buttons';
 import { Container } from '@components/container/Container';
 import { URLAwareNavLink } from '@components/link';
-import { NavigationItem } from '@marketplace/util/medusa/types';
+import { NavigationItem } from '@libs/util/medusa/types';
 import clsx from 'clsx';
 import { FC, useState } from 'react';
 import { HeaderSideNav } from './HeaderSideNav';

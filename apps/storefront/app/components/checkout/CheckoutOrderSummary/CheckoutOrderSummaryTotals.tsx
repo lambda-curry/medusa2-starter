@@ -1,10 +1,10 @@
 import { FC, HTMLAttributes } from 'react';
 import clsx from 'clsx';
 import { CheckoutOrderSummaryDiscountCode } from './CheckoutOrderSummaryDiscountCode';
-import { formatPrice } from '@marketplace/util/prices';
-import { calculateEstimatedShipping } from '@marketplace/util/carts';
+import { formatPrice } from '@libs/util/prices';
+import { calculateEstimatedShipping } from '@libs/util/carts';
 import { useEnv } from '@ui-components/hooks/useEnv';
-import { Cart, Region } from '@marketplace/util/medusa';
+import { Cart, Region } from '@libs/util/medusa';
 import { PricedShippingOption } from '@markethaus/storefront-client';
 
 export interface CheckoutOrderSummaryTotalsProps

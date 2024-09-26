@@ -1,22 +1,29 @@
-import { FC } from 'react';
-import { useFetcher } from '@remix-run/react';
-import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { CartDiscountAction } from '~/routes/api.cart.discounts';
-import { Cart, Discount } from '@marketplace/util/medusa';
+import { FC } from "react"
+import { useFetcher } from "@remix-run/react"
+import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon"
+import { CartDiscountAction } from "~/routes/_todo/api.cart.discounts"
+import { Cart, Discount } from "@libs/util/medusa"
 
 export interface RemoveDiscountCodeButtonProps {
-  cart: Cart;
-  discount: Discount;
+  cart: Cart
+  discount: Discount
 }
 
-export const RemoveDiscountCodeButton: FC<RemoveDiscountCodeButtonProps> = ({ cart, discount }) => {
-  const fetcher = useFetcher<{}>();
+export const RemoveDiscountCodeButton: FC<RemoveDiscountCodeButtonProps> = ({
+  cart,
+  discount,
+}) => {
+  const fetcher = useFetcher<{}>()
 
-  if (['submitting', 'loading'].includes(fetcher.state)) return null;
+  if (["submitting", "loading"].includes(fetcher.state)) return null
 
   return (
     <fetcher.Form method="post" action="/api/cart/discounts">
-      <input type="hidden" name="subaction" value={CartDiscountAction.deleteItem} />
+      <input
+        type="hidden"
+        name="subaction"
+        value={CartDiscountAction.deleteItem}
+      />
       <input type="hidden" name="cartId" value={cart.id} />
       <input type="hidden" name="code" value={discount.code} />
 
@@ -27,5 +34,5 @@ export const RemoveDiscountCodeButton: FC<RemoveDiscountCodeButtonProps> = ({ ca
         </div>
       </button>
     </fetcher.Form>
-  );
-};
+  )
+}

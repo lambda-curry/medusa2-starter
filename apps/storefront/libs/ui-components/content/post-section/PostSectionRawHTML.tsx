@@ -1,4 +1,4 @@
-import { type RawHTMLPostSection } from '@marketplace/util/medusa/types';
+import { type RawHTMLPostSection } from '@libs/util/medusa/types';
 import { InnerHtml } from '../../../../app/components/html/InnerHTML';
 import { type PostSectionComponent } from './types';
 import { PostSectionBase } from './shared/PostSectionBase';

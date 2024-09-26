@@ -1,4 +1,4 @@
-import { ContentBlockTypes } from '@marketplace/util/medusa/types';
+import { ContentBlockTypes } from '@libs/util/medusa/types';
 import { ContentBlockCode } from './ContentBlockCode';
 import { ContentBlockDelimiter } from './ContentBlockDelimiter';
 import { ContentBlockHeader } from './ContentBlockHeader';

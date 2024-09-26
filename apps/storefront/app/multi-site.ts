@@ -1,4 +1,4 @@
-import { marketplacesCache } from '@marketplace/util/cache';
+import { marketplacesCache } from '@libs/util/cache';
 import { OrchestratorClient } from '@markethaus/orchestrator-client';
 
 const ORCHESTRATOR_ENABLED = !!process.env['ORCHESTRATOR_API_BASE_URL'];

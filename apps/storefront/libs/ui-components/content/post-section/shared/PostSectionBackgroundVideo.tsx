@@ -1,6 +1,6 @@
 import { FC, HTMLAttributes, useRef, useState, useEffect } from 'react';
 import clsx from 'clsx';
-import { BackgroundType, PostSection } from '@marketplace/util/medusa/types';
+import { BackgroundType, PostSection } from '@libs/util/medusa/types';
 import { BackgroundVideo } from '../../background-video/BackgroundVideo';
 import mergeWith from 'lodash/mergeWith';
 

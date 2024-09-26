@@ -3,8 +3,8 @@ import { Image } from '@components/images/Image';
 import { LineItemQuantitySelect } from '@ui-components/cart/line-items/LineItemQuantitySelect';
 import { useCart } from '@ui-components/hooks/useCart';
 import { useRemoveCartItem } from '@ui-components/hooks/useRemoveCartItem';
-import type { Cart, LineItem } from '@marketplace/util/medusa';
-import { formatPrice } from '@marketplace/util/prices';
+import type { Cart, LineItem } from '@libs/util/medusa';
+import { formatPrice } from '@libs/util/prices';
 import { Link } from '@remix-run/react';
 import { FC } from 'react';
 

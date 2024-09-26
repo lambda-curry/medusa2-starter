@@ -1,4 +1,4 @@
-import { PostSectionType } from '@marketplace/util/medusa/types';
+import { PostSectionType } from '@libs/util/medusa/types';
 
 export const getSectionTypeLabel = (type: PostSectionType) => {
   const labels: { [key: string]: string } = {

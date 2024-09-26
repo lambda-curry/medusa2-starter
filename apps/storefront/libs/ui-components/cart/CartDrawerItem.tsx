@@ -1,10 +1,10 @@
-import { formatLineItemPrice } from '@marketplace/util/prices';
+import { formatLineItemPrice } from '@libs/util/prices';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import { useRemoveCartItem } from '../hooks/useRemoveCartItem';
 import { Button } from '@components/buttons/Button';
 import { Image } from '@components/images/Image';
-import { LineItem } from '@marketplace/util/medusa';
+import { LineItem } from '@libs/util/medusa';
 
 export interface CartDrawerItemProps {
   item: LineItem;

@@ -1,6 +1,6 @@
 import omit from 'lodash/omit';
 import kebabCase from 'lodash/kebabCase';
-import { PostSection, type BaseStyles } from '@marketplace/util/medusa/types';
+import { PostSection, type BaseStyles } from '@libs/util/medusa/types';
 import { imageProxyURL } from '@utils/img-proxy';
 import Color from 'color';
 

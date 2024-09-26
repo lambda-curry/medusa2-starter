@@ -1,7 +1,7 @@
-import { formatPrice, getCheapestProductVariant, getVariantPrice } from '@marketplace/util/prices';
+import { formatPrice, getCheapestProductVariant, getVariantPrice } from '@libs/util/prices';
 import type { MetaFunction } from '@remix-run/node';
 import { UIMatch } from '@remix-run/react';
-import { getProxySrc } from '../../../markethaus/utils/img-proxy';
+import { getProxySrc } from '@utils/img-proxy';
 import { PricedProduct, PricedVariant, ProductOption, ProductOptionValue } from './medusa';
 import { getCommonMeta, getParentMeta, mergeMeta } from './meta';
 import { getPostMeta } from './posts';

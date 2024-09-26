@@ -1,20 +1,20 @@
-import { Button } from '@components/buttons/Button';
-import { Modal } from '@components/modals/Modal';
+import { Button } from "@components/buttons/Button"
+import { Modal } from "@components/modals/Modal"
 
-import { type Address } from '@utils/types';
-import { FetcherWithComponents } from '@remix-run/react';
-import { FC } from 'react';
+import { type Address } from "@utils/types"
+import { FetcherWithComponents } from "@remix-run/react"
+import { FC } from "react"
 import {
   CheckoutAction,
   UpdateAccountDetailsInput,
-} from '~/routes/api.checkout';
-import { convertToFormData } from '@utils/forms/objectToFormData';
+} from "~/routes/_todo/api.checkout"
+import { convertToFormData } from "@utils/forms/objectToFormData"
 
 export interface AddressSuggestions {
-  original: Address;
-  suggested: Address;
-  suggestedPayload: UpdateAccountDetailsInput;
-  originalPayload: UpdateAccountDetailsInput;
+  original: Address
+  suggested: Address
+  suggestedPayload: UpdateAccountDetailsInput
+  originalPayload: UpdateAccountDetailsInput
 }
 
 const AddressDetails: FC<{ address: Address; title: string }> = ({
@@ -43,19 +43,18 @@ const AddressDetails: FC<{ address: Address; title: string }> = ({
         <br />
       </dd>
     </dl>
-  );
-};
+  )
+}
 
 export const AddressSuggestionModal: FC<{
-  suggestions?: AddressSuggestions;
-  isOpen: boolean;
-  onClose: () => void;
-  fetcher: FetcherWithComponents<any>;
+  suggestions?: AddressSuggestions
+  isOpen: boolean
+  onClose: () => void
+  fetcher: FetcherWithComponents<any>
 }> = ({ suggestions, isOpen, onClose, fetcher }) => {
-  if (!suggestions) return null;
+  if (!suggestions) return null
 
-  const { original, suggested, suggestedPayload, originalPayload } =
-    suggestions;
+  const { original, suggested, suggestedPayload, originalPayload } = suggestions
 
   const takeSuggestions = async () => {
     fetcher.submit(
@@ -64,9 +63,9 @@ export const AddressSuggestionModal: FC<{
         subaction: CheckoutAction.UPDATE_ACCOUNT_DETAILS,
         allowSuggestions: 0,
       }),
-      { method: 'post', action: '/api/checkout' }
-    );
-  };
+      { method: "post", action: "/api/checkout" },
+    )
+  }
 
   const useOriginal = async () => {
     fetcher.submit(
@@ -75,9 +74,9 @@ export const AddressSuggestionModal: FC<{
         subaction: CheckoutAction.UPDATE_ACCOUNT_DETAILS,
         allowSuggestions: 0,
       }),
-      { method: 'post', action: '/api/checkout' }
-    );
-  };
+      { method: "post", action: "/api/checkout" },
+    )
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={() => onClose()}>
@@ -101,5 +100,5 @@ export const AddressSuggestionModal: FC<{
         </Button>
       </div>
     </Modal>
-  );
-};
+  )
+}

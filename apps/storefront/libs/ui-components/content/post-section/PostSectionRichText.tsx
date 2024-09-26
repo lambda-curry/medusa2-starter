@@ -1,4 +1,4 @@
-import { type RichTextPostSection } from '@marketplace/util/medusa/types';
+import { type RichTextPostSection } from '@libs/util/medusa/types';
 import { type PostSectionComponent } from './types';
 import { RichTextContent } from '../rich-text-content/RichTextContent';
 import { Container } from '@components/container/Container';

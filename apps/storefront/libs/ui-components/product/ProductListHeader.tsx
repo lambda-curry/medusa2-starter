@@ -2,7 +2,7 @@ import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import {
   CustomAction,
   TranslatableRichTextField,
-} from '@marketplace/util/medusa/types';
+} from '@libs/util/medusa/types';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { SectionHeading } from '../content/SectionHeading';
 import { SectionText } from '../content/SectionText';

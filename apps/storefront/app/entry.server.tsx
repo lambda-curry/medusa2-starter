@@ -1,25 +1,30 @@
-import * as Sentry from '@sentry/remix';
-import { EntryContext, createReadableStreamFromReadable } from '@remix-run/node';
-import { RemixServer } from '@remix-run/react';
-import { renderToPipeableStream } from 'react-dom/server';
-import { PassThrough } from 'stream';
-import isbot from 'isbot';
+import * as Sentry from "@sentry/remix"
+import { EntryContext, createReadableStreamFromReadable } from "@remix-run/node"
+import { RemixServer } from "@remix-run/react"
+import { renderToPipeableStream } from "react-dom/server"
+import { PassThrough } from "stream"
+import isbot from "isbot"
 
 if (process.env.SENTRY_DSN)
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.SENTRY_ENVIRONMENT,
-    tracesSampleRate: 0
-  });
+    tracesSampleRate: 0,
+  })
 
-export const handleError = Sentry.sentryHandleError;
+export const handleError = Sentry.sentryHandleError
 
-const ABORT_DELAY = 5000;
+const ABORT_DELAY = 5000
 
 export default function handleRequest(
-  ...props: [request: Request, responseStatusCode: number, responseHeaders: Headers, remixContext: EntryContext]
+  ...props: [
+    request: Request,
+    responseStatusCode: number,
+    responseHeaders: Headers,
+    remixContext: EntryContext,
+  ]
 ) {
-  const [request] = props;
+  const [request] = props
   // const marketplace = getMarketplaceContext(request);
 
   // if (
@@ -31,84 +36,92 @@ export default function handleRequest(
   //   //return redirect(`https://${marketplace.primary_host}${path ?? ''}`);
   // }
 
-  return isbot(props[0].headers.get('user-agent')) ? handleBotRequest(...props) : handleBrowserRequest(...props);
+  return isbot(props[0].headers.get("user-agent"))
+    ? handleBotRequest(...props)
+    : handleBrowserRequest(...props)
 }
 
 function handleBotRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   return new Promise((resolve, reject) => {
-    let didError = false;
+    let didError = false
 
-    const { pipe, abort } = renderToPipeableStream(<RemixServer context={remixContext} url={request.url} />, {
-      onAllReady() {
-        const body = new PassThrough();
+    const { pipe, abort } = renderToPipeableStream(
+      <RemixServer context={remixContext} url={request.url} />,
+      {
+        onAllReady() {
+          const body = new PassThrough()
 
-        const stream = createReadableStreamFromReadable(body);
+          const stream = createReadableStreamFromReadable(body)
 
-        responseHeaders.set('Content-Type', 'text/html');
+          responseHeaders.set("Content-Type", "text/html")
 
-        resolve(
-          new Response(stream, {
-            headers: responseHeaders,
-            status: didError ? 500 : responseStatusCode
-          })
-        );
+          resolve(
+            new Response(stream, {
+              headers: responseHeaders,
+              status: didError ? 500 : responseStatusCode,
+            }),
+          )
 
-        pipe(body);
+          pipe(body)
+        },
+        onShellError(error: unknown) {
+          reject(error)
+        },
+        onError(error: unknown) {
+          didError = true
+
+          console.error(error)
+        },
       },
-      onShellError(error: unknown) {
-        reject(error);
-      },
-      onError(error: unknown) {
-        didError = true;
+    )
 
-        console.error(error);
-      }
-    });
-
-    setTimeout(abort, ABORT_DELAY);
-  });
+    setTimeout(abort, ABORT_DELAY)
+  })
 }
 
 function handleBrowserRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   return new Promise((resolve, reject) => {
-    let didError = false;
+    let didError = false
 
-    const { pipe, abort } = renderToPipeableStream(<RemixServer context={remixContext} url={request.url} />, {
-      onShellReady() {
-        const body = new PassThrough();
+    const { pipe, abort } = renderToPipeableStream(
+      <RemixServer context={remixContext} url={request.url} />,
+      {
+        onShellReady() {
+          const body = new PassThrough()
 
-        const stream = createReadableStreamFromReadable(body);
-        responseHeaders.set('Content-Type', 'text/html');
+          const stream = createReadableStreamFromReadable(body)
+          responseHeaders.set("Content-Type", "text/html")
 
-        resolve(
-          new Response(stream, {
-            headers: responseHeaders,
-            status: didError ? 500 : responseStatusCode
-          })
-        );
+          resolve(
+            new Response(stream, {
+              headers: responseHeaders,
+              status: didError ? 500 : responseStatusCode,
+            }),
+          )
 
-        pipe(body);
+          pipe(body)
+        },
+        onShellError(err: unknown) {
+          reject(err)
+        },
+        onError(error: unknown) {
+          didError = true
+
+          console.error(error)
+        },
       },
-      onShellError(err: unknown) {
-        reject(err);
-      },
-      onError(error: unknown) {
-        didError = true;
+    )
 
-        console.error(error);
-      }
-    });
-
-    setTimeout(abort, ABORT_DELAY);
-  });
+    setTimeout(abort, ABORT_DELAY)
+  })
 }

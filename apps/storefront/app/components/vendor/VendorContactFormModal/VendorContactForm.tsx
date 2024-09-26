@@ -1,49 +1,49 @@
-import { FC, useEffect, useRef } from 'react';
-import { FetcherWithComponents, useFetcher } from '@remix-run/react';
-import { Vendor } from '@marketplace/util/medusa/types';
+import { FC, useEffect, useRef } from "react"
+import { FetcherWithComponents, useFetcher } from "@remix-run/react"
+import { Vendor } from "@libs/util/medusa/types"
 import {
   VendorAction,
   VendorContactFormInput,
   vendorContactFormValidator,
-} from '~/routes/api.vendors';
-import { useCustomer } from '@ui-components/hooks/useCustomer';
-import { Alert } from '@components/alert';
-import { SubmitButton } from '@components/buttons';
-import { FieldGroup } from '@components/forms/fields/FieldGroup';
-import { FieldText } from '@components/forms/fields/FieldText';
-import { FieldTextarea } from '@components/forms/fields/FieldTextarea';
-import { Form } from '@components/forms/Form';
+} from "~/routes/_todo/api.vendors"
+import { useCustomer } from "@ui-components/hooks/useCustomer"
+import { Alert } from "@components/alert"
+import { SubmitButton } from "@components/buttons"
+import { FieldGroup } from "@components/forms/fields/FieldGroup"
+import { FieldText } from "@components/forms/fields/FieldText"
+import { FieldTextarea } from "@components/forms/fields/FieldTextarea"
+import { Form } from "@components/forms/Form"
 
 export interface VendorContactFormProps {
-  vendor: Vendor;
+  vendor: Vendor
 }
 
 export const VendorContactForm: FC<VendorContactFormProps> = ({ vendor }) => {
-  const { customer } = useCustomer();
-  const formRef = useRef<HTMLFormElement>(null);
+  const { customer } = useCustomer()
+  const formRef = useRef<HTMLFormElement>(null)
   const fetcher = useFetcher<{
-    success: boolean;
-    fieldErrors?: Record<string, string>;
+    success: boolean
+    fieldErrors?: Record<string, string>
   }>() as FetcherWithComponents<{
-    success: boolean;
-    fieldErrors?: Record<string, string>;
-  }>;
+    success: boolean
+    fieldErrors?: Record<string, string>
+  }>
 
   const defaultValues: VendorContactFormInput = {
     vendor_id: vendor.id,
     customer_name: customer
       ? `${customer?.first_name} ${customer?.last_name}`
-      : '',
-    customer_email: customer?.email || '',
+      : "",
+    customer_email: customer?.email || "",
     subject: `MarketHaus Support Request: ${vendor.name}`,
-    message: '',
-  };
+    message: "",
+  }
 
   useEffect(() => {
     if (fetcher.data?.success) {
-      formRef.current?.reset();
+      formRef.current?.reset()
     }
-  }, [fetcher.data]);
+  }, [fetcher.data])
 
   return (
     <Form<VendorContactFormInput, VendorAction.CONTACT>
@@ -78,5 +78,5 @@ export const VendorContactForm: FC<VendorContactFormProps> = ({ vendor }) => {
 
       <SubmitButton>Send Message</SubmitButton>
     </Form>
-  );
-};
+  )
+}

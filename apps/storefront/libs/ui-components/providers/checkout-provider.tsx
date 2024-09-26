@@ -4,9 +4,9 @@ import { PaymentMethod } from '@utils/types/payment-methods';
 import {
   checkAccountDetailsComplete,
   checkContactInfoComplete,
-} from '@marketplace/util/checkout';
-import { createReducer } from '@marketplace/util/createReducer';
-import { PaymentSession } from '@marketplace/util/medusa';
+} from '@libs/util/checkout';
+import { createReducer } from '@libs/util/createReducer';
+import { PaymentSession } from '@libs/util/medusa';
 import {
   createContext,
   FC,

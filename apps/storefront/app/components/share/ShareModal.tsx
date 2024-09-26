@@ -7,7 +7,7 @@ import CheckIcon from '@heroicons/react/24/outline/CheckIcon';
 import { FacebookIcon, TwitterIcon } from '@components/assets/icons';
 import { isBrowser } from '@utils/browser';
 import { type ShareItemType } from './Share.types';
-import { useSendEvent } from '@marketplace/util/analytics/useAnalytics';
+import { useSendEvent } from '@libs/util/analytics/useAnalytics';
 
 type ShareState = 'pending' | 'success' | 'error';
 

@@ -1,5 +1,5 @@
-import { PricedVariant } from '@marketplace/util/medusa';
-import { formatPrice, getVariantPrices } from '@marketplace/util/prices';
+import { PricedVariant } from '@libs/util/medusa';
+import { formatPrice, getVariantPrices } from '@libs/util/prices';
 import isNumber from 'lodash/isNumber';
 import { useMemo, type FC } from 'react';
 

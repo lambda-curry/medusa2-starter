@@ -1,5 +1,5 @@
 import { UIMatch, useMatches } from '@remix-run/react';
-import { getRootLoader } from '@marketplace/util/server/root.server';
+import { getRootLoader } from '@libs/util/server/root.server';
 
 export const useRootLoaderData = () => {
   const matches = useMatches();

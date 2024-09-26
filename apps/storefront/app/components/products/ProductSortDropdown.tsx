@@ -9,7 +9,7 @@ import {
 } from '@components/menu';
 import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon';
 import { useProductPageFilters } from '../../../libs/ui-components/hooks/useProductPageFilters';
-import { type FilterOptions } from '@marketplace/util/product-filters';
+import { type FilterOptions } from '@libs/util/product-filters';
 import { Button } from '@components/buttons';
 
 export const ProductSortDropdown: FC<{

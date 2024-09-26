@@ -1,4 +1,4 @@
-import { HeaderContentBlock } from '@marketplace/util/medusa/types';
+import { HeaderContentBlock } from '@libs/util/medusa/types';
 import { ContentBlockComponentProps } from './types';
 import { getStyleFromBlockTunes } from '../helpers/get-style-from-block-tunes';
 

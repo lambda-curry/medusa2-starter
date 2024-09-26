@@ -1,6 +1,6 @@
 import { FC, ImgHTMLAttributes } from 'react';
 import clsx from 'clsx';
-import { ResponsiveImageField } from '@marketplace/util/medusa';
+import { ResponsiveImageField } from '@libs/util/medusa';
 import { Image } from '@components/images/Image';
 
 export interface PostSectionImageProps

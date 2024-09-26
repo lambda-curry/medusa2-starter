@@ -1,34 +1,34 @@
-import { FC, useState } from 'react';
-import { useFetcher } from '@remix-run/react';
-import { Radio, Description, Label } from '@headlessui/react';
-import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
-import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
-import clsx from 'clsx';
-import { CustomerAction } from '~/routes/api.customer';
-import { Address } from '@components/Address/Address';
-import { IconButton } from '@components/buttons/IconButton';
-import { ConfirmModal } from '@components/modals/ConfirmModal';
-import { Address as MedusaAddress } from '@marketplace/util/medusa';
+import { FC, useState } from "react"
+import { useFetcher } from "@remix-run/react"
+import { Radio, Description, Label } from "@headlessui/react"
+import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon"
+import TrashIcon from "@heroicons/react/24/outline/TrashIcon"
+import clsx from "clsx"
+import { CustomerAction } from "~/routes/_todo/api.customer"
+import { Address } from "@components/Address/Address"
+import { IconButton } from "@components/buttons/IconButton"
+import { ConfirmModal } from "@components/modals/ConfirmModal"
+import { Address as MedusaAddress } from "@libs/util/medusa"
 
 export interface ShippingAddressRadioGroupOptionProps {
-  shippingAddress: MedusaAddress;
+  shippingAddress: MedusaAddress
 }
 
 export const ShippingAddressRadioGroupOption: FC<
   ShippingAddressRadioGroupOptionProps
 > = ({ shippingAddress }) => {
-  const removeAddressFetcher = useFetcher<{ shippingAddressId: string }>();
-  const [isConfirming, setIsConfirming] = useState<boolean>(false);
+  const removeAddressFetcher = useFetcher<{ shippingAddressId: string }>()
+  const [isConfirming, setIsConfirming] = useState<boolean>(false)
   const isDeleting =
-    removeAddressFetcher?.formData?.get('shippingAddressId') ===
-    shippingAddress.id;
+    removeAddressFetcher?.formData?.get("shippingAddressId") ===
+    shippingAddress.id
 
   const handleDeleteClick = async (
-    event: React.MouseEvent<any, MouseEvent>
+    event: React.MouseEvent<any, MouseEvent>,
   ) => {
-    event.preventDefault();
-    setIsConfirming(true);
-  };
+    event.preventDefault()
+    setIsConfirming(true)
+  }
 
   const handleConfirmDelete = () => {
     removeAddressFetcher.submit(
@@ -37,14 +37,14 @@ export const ShippingAddressRadioGroupOption: FC<
         shippingAddressId: shippingAddress.id,
       },
       {
-        method: 'post',
-        action: '/api/customer',
-      }
-    );
-    setIsConfirming(false);
-  };
+        method: "post",
+        action: "/api/customer",
+      },
+    )
+    setIsConfirming(false)
+  }
 
-  const handleCancelDelete = () => setIsConfirming(false);
+  const handleCancelDelete = () => setIsConfirming(false)
 
   return (
     <>
@@ -53,11 +53,11 @@ export const ShippingAddressRadioGroupOption: FC<
         disabled={isDeleting}
         className={({ checked }) =>
           clsx(
-            'group',
-            checked ? 'border-transparent' : 'border-gray-300',
-            isDeleting ? 'opacity-50' : '',
-            'active:ring-primary-500 active:ring-2',
-            'relative col-span-1 cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none'
+            "group",
+            checked ? "border-transparent" : "border-gray-300",
+            isDeleting ? "opacity-50" : "",
+            "active:ring-primary-500 active:ring-2",
+            "relative col-span-1 cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none",
           )
         }
       >
@@ -88,15 +88,15 @@ export const ShippingAddressRadioGroupOption: FC<
                 icon={TrashIcon}
                 title="Edit shipping address"
                 className="relative top-1 -mr-1.5 !h-8 !w-8"
-                iconProps={{ className: '!w-5 !h-5' }}
+                iconProps={{ className: "!w-5 !h-5" }}
                 onClick={handleDeleteClick}
               />
             </Description>
 
             <div
               className={clsx(
-                checked ? 'border-primary-500' : 'border-transparent',
-                'pointer-events-none absolute -inset-px rounded-lg border-2 active:border'
+                checked ? "border-primary-500" : "border-transparent",
+                "pointer-events-none absolute -inset-px rounded-lg border-2 active:border",
               )}
               aria-hidden="true"
             />
@@ -121,5 +121,5 @@ export const ShippingAddressRadioGroupOption: FC<
         }
       />
     </>
-  );
-};
+  )
+}

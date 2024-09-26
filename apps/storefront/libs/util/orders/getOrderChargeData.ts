@@ -1,4 +1,4 @@
-import { CreditCardBrand, Payment } from '../../../../markethaus/utils/types';
+import { CreditCardBrand, Payment } from '@utils/types';
 import { PaymentMethod } from '@stripe/stripe-js';
 
 export interface PaymentMethodDetails {

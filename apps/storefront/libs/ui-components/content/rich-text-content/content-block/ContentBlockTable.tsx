@@ -1,4 +1,4 @@
-import { TableContentBlock } from '@marketplace/util/medusa/types';
+import { TableContentBlock } from '@libs/util/medusa/types';
 import { ContentBlockComponentProps } from './types';
 
 export const ContentBlockTable: ContentBlockComponentProps<TableContentBlock> = ({ block }) => (

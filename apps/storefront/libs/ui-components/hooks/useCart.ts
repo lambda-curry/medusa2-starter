@@ -1,7 +1,7 @@
 import { useFetchers } from '@remix-run/react';
 import { useRootLoaderData } from './useRootLoaderData';
 import { useStorefront } from './useStorefront';
-import { Cart as MedusaCart } from '@marketplace/util/medusa';
+import { Cart as MedusaCart } from '@libs/util/medusa';
 
 interface Cart extends MedusaCart {
   emailExists?: boolean;
