@@ -1,6 +1,6 @@
-const { loadEnv, defineConfig } = require('@medusajs/utils');
+const { loadEnv, defineConfig } = require("@medusajs/utils")
 
-loadEnv(process.env.NODE_ENV, process.cwd());
+loadEnv(process.env.NODE_ENV, process.cwd())
 
 module.exports = defineConfig({
   projectConfig: {
@@ -14,11 +14,16 @@ module.exports = defineConfig({
       storeCors: process.env.STORE_CORS,
       adminCors: process.env.ADMIN_CORS,
       authCors: process.env.AUTH_CORS,
-      jwtSecret: process.env.JWT_SECRET || 'supersecret',
-      cookieSecret: process.env.COOKIE_SECRET || 'supersecret',
+      jwtSecret: process.env.JWT_SECRET || "supersecret",
+      cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
   admin: {
     backendUrl: process.env.ADMIN_BACKEND_URL,
+    vite: () => ({
+      css: {
+        postcss: [], // TODO: required to avoid issue, check if it can be removed after v2 is released
+      },
+    }),
   },
-});
+})
