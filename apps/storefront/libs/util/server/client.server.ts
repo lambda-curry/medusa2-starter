@@ -1,4 +1,4 @@
-import * as Medusa from "@medusajs/js-sdk"
+import Medusa from "@medusajs/js-sdk"
 import { config } from "./config.server"
 
 // Defaults to standard port for Medusa server
@@ -14,6 +14,6 @@ const baseMedusaConfig = {
   publishableKey: config.MEDUSA_PUBLISHABLE_KEY,
 }
 
-export const sdk = new Medusa.default({
+export const sdk = new Medusa({
   ...baseMedusaConfig,
 })
