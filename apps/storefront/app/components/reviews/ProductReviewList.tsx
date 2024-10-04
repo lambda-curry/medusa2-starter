@@ -1,30 +1,30 @@
-import { type FC, useState } from 'react';
-import type { ProductReview } from '@libs/util/medusa/types';
-import { ReviewImageThumbnailRow } from './ReviewImageThumbnailRow';
-import { formatDate } from '@libs/util/formatters';
-import { StarRating } from './StarRating';
-import { LightboxGallery } from '@components/images/LightboxGallery';
+import { type FC, useState } from "react"
+import type { ProductReview } from "@libs/util/medusa/types"
+import { ReviewImageThumbnailRow } from "./ReviewImageThumbnailRow"
+import { formatDate } from "@libs/util/formatters"
+import { StarRating } from "./StarRating"
+import { LightboxGallery } from "@ui-components/common/images/LightboxGallery"
 
 export interface ProductReviewListProps {
-  productReviews?: ProductReview[];
-  className?: string;
+  productReviews?: ProductReview[]
+  className?: string
 }
 
 export const ProductReviewList: FC<ProductReviewListProps> = ({
   productReviews,
 }) => {
-  const [lightboxIndex, setLightboxIndex] = useState(-1);
+  const [lightboxIndex, setLightboxIndex] = useState(-1)
 
   return (
     <div>
       {productReviews && productReviews.length > 0 && (
         <div className="-my-12 divide-y divide-gray-200">
           {productReviews.map((review, reviewIndex) => {
-            const galleryImages = (review.images || []).map(image => ({
+            const galleryImages = (review.images || []).map((image) => ({
               url: image.url,
               alt: "Customer's review image",
               name: "Customer's review image",
-            }));
+            }))
 
             return (
               <div key={review.id} className="py-8">
@@ -66,10 +66,10 @@ export const ProductReviewList: FC<ProductReviewListProps> = ({
                   </>
                 )}
               </div>
-            );
+            )
           })}
         </div>
       )}
     </div>
-  );
-};
+  )
+}

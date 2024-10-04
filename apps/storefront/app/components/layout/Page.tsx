@@ -1,22 +1,22 @@
-import type { FC, ReactNode } from 'react';
-import clsx from 'clsx';
-import { Header } from './header/Header';
-import { LoginModal } from '../auth/LoginModal';
-import { Footer } from './footer/Footer';
-import { CartDrawer } from '@ui-components/cart/CartDrawer';
-import { SearchDrawer } from '@ui-components/search/SearchDrawer';
+import type { FC, ReactNode } from "react"
+import clsx from "clsx"
+import { Header } from "./header/Header"
+import { LoginModal } from "../auth/LoginModal"
+import { Footer } from "./footer/Footer"
+import { CartDrawer } from "@ui-components/cart/CartDrawer"
+import { SearchDrawer } from "@ui-components/search/SearchDrawer"
 
 export interface PageProps {
-  className?: string;
-  children: ReactNode;
+  className?: string
+  children: ReactNode
 }
 
 export const Page: FC<PageProps> = ({ className, children }) => {
   return (
     <div
       className={clsx(
-        'page-layout flex min-h-screen flex-col bg-gray-50',
-        className
+        "page-layout flex min-h-screen flex-col bg-highlight-50",
+        className,
       )}
     >
       <CartDrawer />
@@ -28,5 +28,5 @@ export const Page: FC<PageProps> = ({ className, children }) => {
       </main>
       <Footer />
     </div>
-  );
-};
+  )
+}

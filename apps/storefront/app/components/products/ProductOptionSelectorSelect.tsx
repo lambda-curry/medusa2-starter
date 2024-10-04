@@ -1,15 +1,15 @@
-import { FieldSelect } from '@components/forms/fields/FieldSelect';
-import type { ChangeEvent, FC } from 'react';
+import { FieldSelect } from "@ui-components/common/forms/fields/FieldSelect"
+import type { ChangeEvent, FC } from "react"
 
 export interface ProductOptionSelectorProps {
   option: {
-    id: string;
-    title: string;
-    product_id: string;
-    values: { value: string; label: string }[];
-  };
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  value?: string;
+    id: string
+    title: string
+    product_id: string
+    values: { value: string; label: string }[]
+  }
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+  value?: string
 }
 
 export const ProductOptionSelectorSelect: FC<ProductOptionSelectorProps> = ({
@@ -18,32 +18,33 @@ export const ProductOptionSelectorSelect: FC<ProductOptionSelectorProps> = ({
   value,
 }) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (onChange) onChange(event);
-  };
+    if (onChange) onChange(event)
+  }
 
   const filteredValues: {
-    value: string;
-    label?: string;
-    disabled?: boolean;
+    value: string
+    label?: string
+    disabled?: boolean
   }[] = option.values.filter(
     (productOptionValue, index, self) =>
-      self.findIndex(item => item.value === productOptionValue.value) === index
-  );
+      self.findIndex((item) => item.value === productOptionValue.value) ===
+      index,
+  )
 
   return (
     <FieldSelect
       name={`options.${option.id}`}
       label={option.title}
       options={[
-        { label: 'Select one', value: '' },
+        { label: "Select one", value: "" },
         ...filteredValues.map(({ value, label, disabled }) =>
           disabled
             ? { label: `${label} (not available)`, value, disabled }
-            : { label, value }
+            : { label, value },
         ),
       ]}
       onChange={handleChange}
       inputProps={{ value }}
     />
-  );
-};
+  )
+}

@@ -1,20 +1,37 @@
-import { RichTextContent as MedusaRichTextContent, type ContentBlock } from '@libs/util/medusa/types';
-import clsx from 'clsx';
-import { FC, HTMLAttributes } from 'react';
-import { ContentBlockComponent } from './content-block';
+import {
+  RichTextContentValue,
+  type ContentBlock,
+} from "@libs/util/medusa/types"
+import clsx from "clsx"
+import { FC, HTMLAttributes } from "react"
+import { ContentBlockComponent } from "./content-block"
 
-export interface RichTextContentProps extends Omit<HTMLAttributes<HTMLDivElement>, 'content'> {
-  content?: MedusaRichTextContent;
+export interface RichTextContentProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "content"> {
+  content?: RichTextContentValue
 }
 
-export const RichTextContent: FC<RichTextContentProps> = ({ content, className, ...props }) => {
-  if (!content?.blocks?.length) return null;
+export const RichTextContent: FC<RichTextContentProps> = ({
+  content,
+  className,
+  ...props
+}) => {
+  if (!content?.blocks?.length) return null
 
   return (
-    <div className={clsx('rich-text-content prose max-w-none text-lg text-inherit', className)} {...props}>
-      {content.blocks.map(block => (
-        <ContentBlockComponent key={(block as ContentBlock).id} block={block as ContentBlock} />
+    <div
+      className={clsx(
+        "rich-text-content prose max-w-none text-lg text-inherit",
+        className,
+      )}
+      {...props}
+    >
+      {content.blocks.map((block) => (
+        <ContentBlockComponent
+          key={(block as ContentBlock).id}
+          block={block as ContentBlock}
+        />
       ))}
     </div>
-  );
-};
+  )
+}

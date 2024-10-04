@@ -1,46 +1,46 @@
-import { Dialog, Transition } from '@headlessui/react';
-import ArrowUpIcon from '@heroicons/react/24/solid/ArrowUpIcon';
-import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
-import { Await, Link, UIMatch, useMatches } from '@remix-run/react';
-import { withYup } from '@remix-validated-form/with-yup';
-import clsx from 'clsx';
+import { Dialog, Transition } from "@headlessui/react"
+import ArrowUpIcon from "@heroicons/react/24/solid/ArrowUpIcon"
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon"
+import { Await, Link, UIMatch, useMatches } from "@remix-run/react"
+import { withYup } from "@remix-validated-form/with-yup"
+import clsx from "clsx"
 import {
   Fragment,
   Suspense,
   useRef,
   type FC,
   type PropsWithChildren,
-} from 'react';
-import * as Yup from 'yup';
-import type { getRootLoader } from '@libs/util/server/root.server';
-import { useKeyPress } from '../hooks/useKeypress';
-import { useRegion } from '../hooks/useRegion';
-import { useSearch } from '../hooks/useSearch';
-import { ProductPriceRange } from '../product/ProductPriceRange';
-import { IconButton } from '@components/buttons/IconButton';
-import { Container } from '@components/container/Container';
-import { Form } from '@components/forms/Form';
-import { FieldText } from '@components/forms/fields/FieldText';
-import { Image } from '@components/images/Image';
+} from "react"
+import * as Yup from "yup"
+import type { getRootLoader } from "@libs/util/server/root.server"
+import { useKeyPress } from "../hooks/useKeypress"
+import { useRegion } from "../hooks/useRegion"
+import { useSearch } from "../hooks/useSearch"
+import { ProductPriceRange } from "../product/ProductPriceRange"
+import { IconButton } from "@ui-components/common/buttons/IconButton"
+import { Container } from "@ui-components/common/container/Container"
+import { Form } from "@ui-components/common/forms/Form"
+import { FieldText } from "@ui-components/common/forms/fields/FieldText"
+import { Image } from "@ui-components/common/images/Image"
 import {
   PricedProduct,
   ProductCategory,
   ProductCollection,
   ProductTag,
-} from '@libs/util/medusa/types';
+} from "@libs/util/medusa/types"
 
 export const searchFormValidator = withYup(
-  Yup.object().shape({ search: Yup.string() })
-);
+  Yup.object().shape({ search: Yup.string() }),
+)
 
 const SearchDrawerInternal: FC<
   PropsWithChildren<{
     initial?: {
-      products?: PricedProduct[];
-      collections?: ProductCollection[];
-      categories?: ProductCategory[];
-      tags?: ProductTag[];
-    };
+      products?: PricedProduct[]
+      collections?: ProductCollection[]
+      categories?: ProductCategory[]
+      tags?: ProductTag[]
+    }
   }>
 > = ({ initial }) => {
   const {
@@ -50,57 +50,55 @@ const SearchDrawerInternal: FC<
     handleSearchChange,
     clearSearch,
     searchTerm,
-  } = useSearch();
+  } = useSearch()
 
-  const { region } = useRegion();
+  const { region } = useRegion()
 
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
-  useKeyPress(['/', '?'], () => toggleSearchDrawer(true));
+  useKeyPress(["/", "?"], () => toggleSearchDrawer(true))
 
   const getSearchTerm = () => {
-    if (typeof window !== 'undefined') {
-      const searchTerm = new URLSearchParams(window.location.search).get(
-        'term'
-      );
-      return searchTerm || undefined;
+    if (typeof window !== "undefined") {
+      const searchTerm = new URLSearchParams(window.location.search).get("term")
+      return searchTerm || undefined
     }
-    return '';
-  };
+    return ""
+  }
 
   const handleClearSearch = () => {
     if (searchInputRef?.current?.value) {
-      searchInputRef.current.value = '';
-      searchInputRef.current.focus();
+      searchInputRef.current.value = ""
+      searchInputRef.current.focus()
     }
-    clearSearch();
-  };
+    clearSearch()
+  }
 
   const handleSearchDrawerClose = () => {
-    toggleSearchDrawer(false);
+    toggleSearchDrawer(false)
     setTimeout(() => {
-      clearSearch();
-    }, 200);
-  };
+      clearSearch()
+    }, 200)
+  }
 
-  const products = searchFetcher.data?.products || initial?.products || [];
+  const products = searchFetcher.data?.products || initial?.products || []
   const collections =
-    searchFetcher.data?.collections || initial?.collections || [];
+    searchFetcher.data?.collections || initial?.collections || []
   // const categories = searchFetcher.data?.categories || initial?.categories || [];
   // const tags = searchFetcher.data?.tags || initial?.tags || [];
   const searchTermWithResults =
     !!searchTerm &&
     searchTerm.length > 1 &&
     searchFetcher.data?.products &&
-    searchFetcher.data?.products.length > 0;
+    searchFetcher.data?.products.length > 0
   const searchTermWithNoResults =
     !!searchTerm &&
     searchTerm.length > 1 &&
     searchFetcher.data?.products &&
-    searchFetcher.data?.products.length === 0;
+    searchFetcher.data?.products.length === 0
 
-  const primaryProductResults = products?.slice(0, 3);
-  const secondaryProductResults = products?.slice(3, 6);
+  const primaryProductResults = products?.slice(0, 3)
+  const secondaryProductResults = products?.slice(3, 6)
 
   return (
     <Transition.Root show={!!search.open} as={Fragment}>
@@ -142,7 +140,7 @@ const SearchDrawerInternal: FC<
                           id="search"
                           name="search"
                           onSubmit={(data, event) => {
-                            event.preventDefault();
+                            event.preventDefault()
                           }}
                           defaultValues={{ search: getSearchTerm() }}
                           autoComplete="off"
@@ -176,7 +174,7 @@ const SearchDrawerInternal: FC<
                         <div className="md:col-span-3 xl:col-span-2">
                           <p className="relative -top-2 text-ellipsis whitespace-nowrap text-xs text-gray-400">
                             {(!searchTerm || searchTerm.length <= 1) &&
-                              'Popular items'}
+                              "Popular items"}
                             {searchTermWithResults &&
                               `Results for "${searchTerm}"`}
                             {searchTermWithNoResults &&
@@ -190,15 +188,15 @@ const SearchDrawerInternal: FC<
                                     key={product.id}
                                     className={clsx(
                                       productIndex === 0
-                                        ? 'aspect-w-2 col-span-2'
-                                        : '',
-                                      'aspect-w-1 aspect-h-1 group relative overflow-hidden rounded-md bg-gray-100'
+                                        ? "aspect-w-2 col-span-2"
+                                        : "",
+                                      "aspect-w-1 aspect-h-1 group relative overflow-hidden rounded-md bg-gray-100",
                                     )}
                                   >
                                     <Image
                                       loading="lazy"
-                                      src={product.thumbnail || ''}
-                                      alt={''}
+                                      src={product.thumbnail || ""}
+                                      alt={""}
                                       className="object-cover object-center group-hover:opacity-75"
                                     />
                                     <div className="flex flex-col justify-end">
@@ -227,7 +225,7 @@ const SearchDrawerInternal: FC<
                                       </div>
                                     </div>
                                   </div>
-                                )
+                                ),
                               )}
                           </div>
                         </div>
@@ -236,17 +234,17 @@ const SearchDrawerInternal: FC<
                           {secondaryProductResults &&
                             secondaryProductResults.length > 0 && (
                               <div className="hidden py-4 lg:block">
-                                {secondaryProductResults.map(product => (
+                                {secondaryProductResults.map((product) => (
                                   <div
                                     key={product.id}
                                     className={clsx(
-                                      'aspect-w-3 aspect-h-2 group relative mb-6 overflow-hidden rounded-md bg-gray-100 last:mb-0'
+                                      "aspect-w-3 aspect-h-2 group relative mb-6 overflow-hidden rounded-md bg-gray-100 last:mb-0",
                                     )}
                                   >
                                     <Image
                                       loading="lazy"
-                                      src={product.thumbnail || ''}
-                                      alt={''}
+                                      src={product.thumbnail || ""}
+                                      alt={""}
                                       className="object-cover object-center group-hover:opacity-75"
                                     />
                                     <div className="flex flex-col justify-end">
@@ -283,7 +281,7 @@ const SearchDrawerInternal: FC<
                               {collections && collections.length > 0 && (
                                 <div>
                                   <p className="font-bold">Collections</p>
-                                  {collections.map(collection => (
+                                  {collections.map((collection) => (
                                     <ul key={collection.id}>
                                       <li className="mt-2 text-lg">
                                         <Link
@@ -331,18 +329,18 @@ const SearchDrawerInternal: FC<
         </div>
       </Dialog>
     </Transition.Root>
-  );
-};
+  )
+}
 
 export const SearchDrawer = () => {
-  const matches = useMatches();
-  const rootMatch = matches[0] as UIMatch<typeof getRootLoader>;
+  const matches = useMatches()
+  const rootMatch = matches[0] as UIMatch<typeof getRootLoader>
 
   return (
     <Suspense>
       <Await resolve={rootMatch.data.searchPromise}>
-        {search => <SearchDrawerInternal initial={search as any} />}
+        {(search) => <SearchDrawerInternal initial={search as any} />}
       </Await>
     </Suspense>
-  );
-};
+  )
+}

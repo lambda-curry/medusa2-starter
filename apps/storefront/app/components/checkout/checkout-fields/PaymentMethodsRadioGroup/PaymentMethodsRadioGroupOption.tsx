@@ -6,9 +6,9 @@ import TrashIcon from "@heroicons/react/24/outline/TrashIcon"
 import clsx from "clsx"
 import { CustomerAction } from "~/routes/_todo/api.customer"
 import type { CreditCardBrand, PaymentMethod } from "@utils/types"
-import { CreditCardIcon } from "@components/icons/CreditCardIcon"
-import { IconButton } from "@components/buttons/IconButton"
-import { ConfirmModal } from "@components/modals/ConfirmModal"
+import { CreditCardIcon } from "@ui-components/common/icons/CreditCardIcon"
+import { IconButton } from "@ui-components/common/buttons/IconButton"
+import { ConfirmModal } from "@ui-components/common/modals/ConfirmModal"
 
 export interface PaymentMethodsRadioGroupProps {
   paymentMethod: PaymentMethod

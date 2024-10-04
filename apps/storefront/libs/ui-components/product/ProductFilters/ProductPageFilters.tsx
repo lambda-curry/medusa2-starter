@@ -1,20 +1,20 @@
-import { FC, ReactNode, useState } from 'react';
-import { FilterOptions } from '@libs/util/product-filters';
+import { FC, ReactNode, useState } from "react"
+import { FilterOptions } from "@libs/util/product-filters"
 import {
   FilterState,
   ProductPageFiltersHook,
   useProductPageFilters,
-} from '../../hooks/useProductPageFilters';
-import { Button } from '@components/buttons';
-import { Modal } from '@components/modals/Modal';
-import { ProductCategoriesList } from './ProductCategories/ProductCategoriesList';
-import { ProductCollectionsList } from './ProductCollections/ProductCollectionsList';
-import { ProductTagsList } from './ProductTags/ProductTagsList';
+} from "../../hooks/useProductPageFilters"
+import { Button } from "@ui-components/common/buttons"
+import { Modal } from "@ui-components/common/modals/Modal"
+import { ProductCategoriesList } from "./ProductCategories/ProductCategoriesList"
+import { ProductCollectionsList } from "./ProductCollections/ProductCollectionsList"
+import { ProductTagsList } from "./ProductTags/ProductTagsList"
 
 interface FilterGroupProps extends FilterState {
-  title: string;
-  items?: FilterOptions[keyof FilterOptions];
-  children: ReactNode;
+  title: string
+  items?: FilterOptions[keyof FilterOptions]
+  children: ReactNode
 }
 
 const FilterGroup: FC<FilterGroupProps> = ({
@@ -24,8 +24,8 @@ const FilterGroup: FC<FilterGroupProps> = ({
   selected,
   clearSelected,
 }) => {
-  if (!items || items.length === 0) return null;
-  const hasSelected = selected && selected.length > 0;
+  if (!items || items.length === 0) return null
+  const hasSelected = selected && selected.length > 0
   return (
     <div className="border-1 h-fit w-full rounded-lg border border-gray-100 bg-white px-2 pb-2 pt-3">
       <div className="flex min-h-[28px] justify-between gap-2 px-2">
@@ -42,8 +42,8 @@ const FilterGroup: FC<FilterGroupProps> = ({
       </div>
       {children}
     </div>
-  );
-};
+  )
+}
 
 const ProductFilters: FC<{ productPageFilters: ProductPageFiltersHook }> = ({
   productPageFilters,
@@ -53,7 +53,7 @@ const ProductFilters: FC<{ productPageFilters: ProductPageFiltersHook }> = ({
     categoryFilterState,
     collectionFilterState,
     tagFilterState,
-  } = productPageFilters;
+  } = productPageFilters
 
   return (
     <>
@@ -81,31 +81,31 @@ const ProductFilters: FC<{ productPageFilters: ProductPageFiltersHook }> = ({
         <ProductTagsList tags={tags} {...tagFilterState} />
       </FilterGroup>
     </>
-  );
-};
+  )
+}
 
 export const ProductPageFilters: FC<{
-  filterOptions: FilterOptions;
-  allFilterOptions: FilterOptions;
+  filterOptions: FilterOptions
+  allFilterOptions: FilterOptions
 }> = ({ filterOptions, allFilterOptions }) => {
   const productPageFilters = useProductPageFilters({
     filterOptions,
     allFilterOptions,
-  });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  })
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const activeFilterCount = Object.values(
-    productPageFilters.filterQuery
+    productPageFilters.filterQuery,
   ).reduce(
     (count, value) =>
       count + (Array.isArray(value) ? value.length : value ? 1 : 0),
-    0
-  );
-  const hasActiveFilters = activeFilterCount > 0;
+    0,
+  )
+  const hasActiveFilters = activeFilterCount > 0
   const hasNoFilters = Object.values(allFilterOptions).every(
-    options => !options?.length
-  );
+    (options) => !options?.length,
+  )
 
-  if (hasNoFilters) return null;
+  if (hasNoFilters) return null
 
   return (
     <>
@@ -116,19 +116,19 @@ export const ProductPageFilters: FC<{
         <Button
           className={`w-full rounded-md p-2 text-sm font-medium ${
             hasActiveFilters
-              ? 'bg-primary-600 text-white'
-              : 'border border-gray-300 bg-white text-gray-800'
+              ? "bg-primary-600 text-white"
+              : "border border-gray-300 bg-white text-gray-800"
           }`}
           onClick={() => setIsModalOpen(true)}
         >
-          {`Filters${hasActiveFilters ? ` (${activeFilterCount})` : ''}`}
+          {`Filters${hasActiveFilters ? ` (${activeFilterCount})` : ""}`}
         </Button>
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <div className="mb-4">
             <h2 className="text-lg font-medium text-gray-900">
-              {' '}
+              {" "}
               {`Product Filters${
-                hasActiveFilters ? ` (${activeFilterCount})` : ''
+                hasActiveFilters ? ` (${activeFilterCount})` : ""
               }`}
             </h2>
           </div>
@@ -139,5 +139,5 @@ export const ProductPageFilters: FC<{
         </Modal>
       </div>
     </>
-  );
-};
+  )
+}

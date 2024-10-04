@@ -1,19 +1,19 @@
-import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
+import ArrowRightIcon from "@heroicons/react/24/solid/ArrowRightIcon"
 import {
   CustomAction,
   TranslatableRichTextField,
-} from '@libs/util/medusa/types';
-import { FC, PropsWithChildren, ReactNode } from 'react';
-import { SectionHeading } from '../content/SectionHeading';
-import { SectionText } from '../content/SectionText';
-import { URLAwareNavLink } from '@components/link';
+} from "@libs/util/medusa/types"
+import { FC, PropsWithChildren, ReactNode } from "react"
+import { SectionHeading } from "../content/SectionHeading"
+import { SectionText } from "../content/SectionText"
+import { URLAwareNavLink } from "@ui-components/common/link"
 
 export interface ProductListHeaderProps extends PropsWithChildren {
-  className?: string;
-  heading?: ReactNode;
-  text?: TranslatableRichTextField;
-  actions?: CustomAction[];
-  customActions?: ReactNode;
+  className?: string
+  heading?: ReactNode
+  text?: TranslatableRichTextField
+  actions?: CustomAction[]
+  customActions?: ReactNode
 }
 
 export const ProductListHeader: FC<ProductListHeaderProps> = ({
@@ -29,14 +29,16 @@ export const ProductListHeader: FC<ProductListHeaderProps> = ({
     !actions?.length &&
     !customActions
   )
-    return null;
+    return null
 
   return (
     <header className="mb-4 flex flex-col items-start gap-2 md:mb-6 md:flex-row md:gap-4 lg:mb-8">
       <div className="w-full flex-1 md:w-auto">
         <div className="inline-grid !max-w-prose gap-6">
           {(heading || children) && (
-            <SectionHeading>{heading || children}</SectionHeading>
+            <SectionHeading className="font-italiana">
+              {heading || children}
+            </SectionHeading>
           )}
           {text && <SectionText content={text.value} />}
         </div>
@@ -45,19 +47,23 @@ export const ProductListHeader: FC<ProductListHeaderProps> = ({
       {!!actions?.length && (
         <div className="flex grow-0 items-center gap-2">
           {actions.map(({ label, url }, index) => {
-            if (!label?.value) return null;
+            const [labelValue, urlValue] = // TODO: REMOVE THIS
+              typeof label === "string"
+                ? [label, url]
+                : [(label as any)?.value, (url as any)?.value]
+            if (!labelValue) return null
 
             return (
               <URLAwareNavLink
                 key={index}
-                url={url.value}
+                url={urlValue}
                 prefetch="render"
                 className="flex items-center hover:underline"
               >
-                {label?.value}
+                {labelValue}
                 <ArrowRightIcon className="ml-1.5 h-4" />
               </URLAwareNavLink>
-            );
+            )
           })}
         </div>
       )}
@@ -68,5 +74,5 @@ export const ProductListHeader: FC<ProductListHeaderProps> = ({
         </div>
       )}
     </header>
-  );
-};
+  )
+}

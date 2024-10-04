@@ -1,40 +1,40 @@
-import { Button } from '@components/buttons/Button';
-import { Image } from '@components/images/Image';
-import { LineItemQuantitySelect } from '@ui-components/cart/line-items/LineItemQuantitySelect';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useRemoveCartItem } from '@ui-components/hooks/useRemoveCartItem';
-import type { Cart, LineItem } from '@libs/util/medusa';
-import { formatPrice } from '@libs/util/prices';
-import { Link } from '@remix-run/react';
-import { FC } from 'react';
+import { Button } from "@ui-components/common/buttons/Button"
+import { Image } from "@ui-components/common/images/Image"
+import { LineItemQuantitySelect } from "@ui-components/cart/line-items/LineItemQuantitySelect"
+import { useCart } from "@ui-components/hooks/useCart"
+import { useRemoveCartItem } from "@ui-components/hooks/useRemoveCartItem"
+import type { Cart, LineItem } from "@libs/util/medusa"
+import { formatPrice } from "@libs/util/prices"
+import { Link } from "@remix-run/react"
+import { FC } from "react"
 
 export interface CheckoutOrderSummaryItemsProps {
-  cart: Cart;
-  name: string;
+  cart: Cart
+  name: string
 }
 
 export interface CheckoutOrderSummaryItemProps {
-  item: LineItem;
-  name: string;
+  item: LineItem
+  name: string
 }
 
 export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
   item,
   name,
 }) => {
-  const { cart } = useCart();
-  const removeCartItem = useRemoveCartItem();
-  const isRemovingFromCart = ['loading', 'submitting'].includes(
-    removeCartItem.state
-  );
+  const { cart } = useCart()
+  const removeCartItem = useRemoveCartItem()
+  const isRemovingFromCart = ["loading", "submitting"].includes(
+    removeCartItem.state,
+  )
 
-  if (!cart) return null;
+  if (!cart) return null
 
   return (
     <li className="flex px-4 py-6 sm:px-6">
       <div className="flex-shrink-0">
         <Image
-          src={item.thumbnail || ''}
+          src={item.thumbnail || ""}
           alt={`${item.title} thumbnail`}
           className="w-20 rounded-md"
         />
@@ -71,7 +71,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
                 <p className="mt-0.5 text-xs text-gray-500">
                   {item.customer_product_response
                     ? item.customer_product_response
-                    : 'No response given'}
+                    : "No response given"}
                 </p>
               </>
             )}
@@ -84,7 +84,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
               disabled={isRemovingFromCart}
               className="text-sm"
             >
-              {isRemovingFromCart ? 'Removing' : 'Remove'}
+              {isRemovingFromCart ? "Removing" : "Remove"}
             </Button>
           </div>
         </div>
@@ -104,16 +104,16 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
         </div>
       </div>
     </li>
-  );
-};
+  )
+}
 
 export const CheckoutOrderSummaryItems: FC<CheckoutOrderSummaryItemsProps> = ({
   cart,
   name,
 }) => (
   <ul role="list" className="divide-y divide-gray-200">
-    {cart.items?.map(item => (
+    {cart.items?.map((item) => (
       <CheckoutOrderSummaryItem key={item.id} item={item} name={name} />
     ))}
   </ul>
-);
+)

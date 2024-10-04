@@ -1,26 +1,26 @@
-import { FC } from 'react';
-import { NavLink } from '@remix-run/react';
-import clsx from 'clsx';
+import { FC } from "react"
+import { NavLink } from "@remix-run/react"
+import clsx from "clsx"
 import {
   ContentBlockTypes,
   type ParagraphContentBlock,
-  type Post,
-} from '@libs/util/medusa/types';
-import { formatDate } from '@libs/util/formatters';
-import { Card } from '@components/card/Card';
-import { CardThumbnail } from '@components/card/CardThumbnail';
-import { CardContent } from '@components/card/CardContent';
-import { CardHeader } from '@components/card/CardHeader';
-import { CardTitle } from '@components/card/CardTitle';
-import { CardLabel } from '@components/card/CardLabel';
-import { CardBody } from '@components/card/CardBody';
-import { CardExcerpt } from '@components/card/CardExcerpt';
-import { CardDate } from '@components/card/CardDate';
-import { CardFooter } from '@components/card';
+  type Page,
+} from "@libs/util/medusa/types"
+import { formatDate } from "@libs/util/formatters"
+import { Card } from "@ui-components/common/card/Card"
+import { CardThumbnail } from "@ui-components/common/card/CardThumbnail"
+import { CardContent } from "@ui-components/common/card/CardContent"
+import { CardHeader } from "@ui-components/common/card/CardHeader"
+import { CardTitle } from "@ui-components/common/card/CardTitle"
+import { CardLabel } from "@ui-components/common/card/CardLabel"
+import { CardBody } from "@ui-components/common/card/CardBody"
+import { CardExcerpt } from "@ui-components/common/card/CardExcerpt"
+import { CardDate } from "@ui-components/common/card/CardDate"
+import { CardFooter } from "@ui-components/common/card"
 
 export interface PostCardProps {
-  className?: string;
-  post: Post;
+  className?: string
+  post: Page
 }
 
 export const PostCard: FC<PostCardProps> = ({ className, post }) => {
@@ -28,9 +28,9 @@ export const PostCard: FC<PostCardProps> = ({ className, post }) => {
     post.excerpt ||
     (
       post.content?.blocks?.find(
-        block => block.type === ContentBlockTypes.paragraph
+        (block) => block.type === ContentBlockTypes.paragraph,
       ) as ParagraphContentBlock
-    )?.data?.text;
+    )?.data?.text
 
   return (
     <NavLink
@@ -42,15 +42,15 @@ export const PostCard: FC<PostCardProps> = ({ className, post }) => {
       {({ isTransitioning }) => (
         <Card
           className={clsx(
-            'post-card h-full scale-[.99] text-left transition-all hover:scale-100 hover:shadow-lg active:scale-[.98] active:shadow-md',
-            className
+            "post-card h-full scale-[.99] text-left transition-all hover:scale-100 hover:shadow-lg active:scale-[.98] active:shadow-md",
+            className,
           )}
         >
           {post.featured_image?.url && (
             <CardThumbnail
               style={{
                 viewTransitionName: isTransitioning
-                  ? 'post-thumbnail'
+                  ? "post-thumbnail"
                   : undefined,
               }}
               className="aspect-2 !m-0 w-full object-cover object-center"
@@ -62,7 +62,7 @@ export const PostCard: FC<PostCardProps> = ({ className, post }) => {
             <CardHeader className="mb-2 flex-wrap gap-2">
               <CardTitle className="!m-0 w-full pr-2">{post.title}</CardTitle>
               <div className="my-1 flex w-full gap-2">
-                {post.tags.map(tag => (
+                {post.tags.map((tag) => (
                   <CardLabel key={tag.id}>{tag.label}</CardLabel>
                 ))}
               </div>
@@ -92,5 +92,5 @@ export const PostCard: FC<PostCardProps> = ({ className, post }) => {
         </Card>
       )}
     </NavLink>
-  );
-};
+  )
+}

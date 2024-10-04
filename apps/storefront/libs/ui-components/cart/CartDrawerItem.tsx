@@ -1,15 +1,15 @@
-import { formatLineItemPrice } from '@libs/util/prices';
-import clsx from 'clsx';
-import type { FC } from 'react';
-import { useRemoveCartItem } from '../hooks/useRemoveCartItem';
-import { Button } from '@components/buttons/Button';
-import { Image } from '@components/images/Image';
-import { LineItem } from '@libs/util/medusa';
+import { formatLineItemPrice } from "@libs/util/prices"
+import clsx from "clsx"
+import type { FC } from "react"
+import { useRemoveCartItem } from "../hooks/useRemoveCartItem"
+import { Button } from "@ui-components/common/buttons/Button"
+import { Image } from "@ui-components/common/images/Image"
+import { LineItem } from "@libs/util/medusa"
 
 export interface CartDrawerItemProps {
-  item: LineItem;
-  currencyCode: string;
-  isRemoving?: boolean;
+  item: LineItem
+  currencyCode: string
+  isRemoving?: boolean
 }
 
 export const CartDrawerItem: FC<CartDrawerItemProps> = ({
@@ -17,21 +17,21 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
   currencyCode,
   isRemoving,
 }) => {
-  const removeCartItem = useRemoveCartItem();
-  const handleRemoveFromCart = () => removeCartItem.submit(item);
+  const removeCartItem = useRemoveCartItem()
+  const handleRemoveFromCart = () => removeCartItem.submit(item)
 
   return (
     <li
       key={item.id}
-      className={clsx('flex h-36 py-6 opacity-100 transition-all', {
-        '!h-0 !p-0 !opacity-0': isRemoving,
+      className={clsx("flex h-36 py-6 opacity-100 transition-all", {
+        "!h-0 !p-0 !opacity-0": isRemoving,
       })}
     >
       <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
         <Image
-          src={item.thumbnail || ''}
-          alt={item.description || 'product thumbnail'}
-          proxyOptions={{ context: 'tiny_square' }}
+          src={item.thumbnail || ""}
+          alt={item.description || "product thumbnail"}
+          proxyOptions={{ context: "tiny_square" }}
           className="h-full w-full object-cover object-center"
         />
       </div>
@@ -53,7 +53,7 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
               disabled={isRemoving}
               className="text-sm"
             >
-              {isRemoving ? 'Removing' : 'Remove'}
+              {isRemoving ? "Removing" : "Remove"}
             </Button>
           </div>
         </div>
@@ -67,5 +67,5 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
         </div>
       </div>
     </li>
-  );
-};
+  )
+}

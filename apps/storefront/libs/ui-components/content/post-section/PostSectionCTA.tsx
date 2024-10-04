@@ -1,25 +1,26 @@
-import clsx from 'clsx';
-import { type CTAPostSection } from '@libs/util/medusa/types';
-import { PostSectionBase } from './shared/PostSectionBase';
-import { type PostSectionComponent } from './types';
-import { ActionList } from '../ActionList';
-import { SectionHeading } from '../SectionHeading';
-import { SectionText } from '../SectionText';
-import { Container } from '@components/container/Container';
-import { Grid } from '@components/grid/Grid';
-import { GridColumn } from '@components/grid/GridColumn';
+import clsx from "clsx"
+import { type CTAPageSection } from "@libs/util/medusa/types"
+import { PostSectionBase, SectionBaseProps } from "./shared/PostSectionBase"
+import { type SectionComponent } from "./types"
+import { ActionList } from "../ActionList"
+import { SectionHeading } from "../SectionHeading"
+import { SectionText } from "../SectionText"
+import { Container } from "@ui-components/common/container/Container"
+import { Grid } from "@ui-components/common/grid/Grid"
+import { GridColumn } from "@ui-components/common/grid/GridColumn"
+import { FC } from "react"
 
-export const PostSectionCTA: PostSectionComponent<CTAPostSection> = ({
-  section,
-}) => {
-  const { heading, text, actions } = section.content;
+export const PostSectionCTA: FC<SectionBaseProps> = ({ data }) => {
+  if (!data) return null
+
+  const { heading, text, actions } = data
 
   return (
     <PostSectionBase
-      section={section}
+      data={data}
       className={clsx(
         `[--default-background-color:var(--color-primary-900)] [--default-color:var(--color-primary-100)]`,
-        `[--default-text-align:left] [--mobile-text-align:center]`
+        `[--default-text-align:left] [--mobile-text-align:center]`,
       )}
     >
       <Container className="!max-w-6xl">
@@ -39,7 +40,7 @@ export const PostSectionCTA: PostSectionComponent<CTAPostSection> = ({
         </Grid>
       </Container>
     </PostSectionBase>
-  );
-};
+  )
+}
 
-export default PostSectionCTA;
+export default PostSectionCTA

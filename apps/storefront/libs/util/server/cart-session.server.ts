@@ -29,7 +29,8 @@ export const getCartSession = async (
   return {
     cartId,
     regionId: regionId || region?.id,
-    currencyCode: currencyCode || region?.currency_code,
+    // currencyCode: currencyCode || region?.currency_code,
+    currencyCode: "eur",
   }
 }
 

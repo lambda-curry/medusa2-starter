@@ -7,12 +7,12 @@ import {
   vendorContactFormValidator,
 } from "~/routes/_todo/api.vendors"
 import { useCustomer } from "@ui-components/hooks/useCustomer"
-import { Alert } from "@components/alert"
-import { SubmitButton } from "@components/buttons"
-import { FieldGroup } from "@components/forms/fields/FieldGroup"
-import { FieldText } from "@components/forms/fields/FieldText"
-import { FieldTextarea } from "@components/forms/fields/FieldTextarea"
-import { Form } from "@components/forms/Form"
+import { Alert } from "@ui-components/common/alert"
+import { SubmitButton } from "@ui-components/common/buttons"
+import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
+import { FieldText } from "@ui-components/common/forms/fields/FieldText"
+import { FieldTextarea } from "@ui-components/common/forms/fields/FieldTextarea"
+import { Form } from "@ui-components/common/forms/Form"
 
 export interface VendorContactFormProps {
   vendor: Vendor

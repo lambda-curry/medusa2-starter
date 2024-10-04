@@ -1,19 +1,21 @@
-import type { FC } from 'react';
-import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
-import { Button } from '@components/buttons/Button';
-import { MenuButton } from '@components/menu/MenuButton';
-import { Menu } from '@components/menu/Menu';
-import { MenuItems } from '@components/menu/MenuItems';
-import { ProductCategoriesList } from './ProductCategoriesList';
-import { FilterState } from '../../../hooks/useProductPageFilters';
-import { FilterOptions } from '@libs/util/product-filters';
+import type { FC } from "react"
+import ChevronDownIcon from "@heroicons/react/24/solid/ChevronDownIcon"
+import { Button } from "@ui-components/common/buttons/Button"
+import { MenuButton } from "@ui-components/common/menu/MenuButton"
+import { Menu } from "@ui-components/common/menu/Menu"
+import { MenuItems } from "@ui-components/common/menu/MenuItems"
+import { ProductCategoriesList } from "./ProductCategoriesList"
+import { FilterState } from "../../../hooks/useProductPageFilters"
+import { FilterOptions } from "@libs/util/product-filters"
 
 export interface ProductCategoriesMenuProps extends FilterState {
-  categories: FilterOptions['categories'];
+  categories: FilterOptions["categories"]
 }
 
-export const ProductCategoriesMenu: FC<ProductCategoriesMenuProps> = props => {
-  if (!props.categories?.length) return null;
+export const ProductCategoriesMenu: FC<ProductCategoriesMenuProps> = (
+  props,
+) => {
+  if (!props.categories?.length) return null
 
   return (
     <Menu>
@@ -27,5 +29,5 @@ export const ProductCategoriesMenu: FC<ProductCategoriesMenuProps> = props => {
         <ProductCategoriesList {...props} />
       </MenuItems>
     </Menu>
-  );
-};
+  )
+}

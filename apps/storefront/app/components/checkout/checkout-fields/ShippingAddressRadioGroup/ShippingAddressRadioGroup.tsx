@@ -1,24 +1,24 @@
-import { Label, Radio, RadioGroup } from '@headlessui/react';
-import PlusCircleIcon from '@heroicons/react/24/outline/PlusCircleIcon';
-import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
-import { ButtonLink } from '@components/buttons/ButtonLink';
-import clsx from 'clsx';
-import type { FC } from 'react';
-import { useControlField } from 'remix-validated-form';
-import { ShippingAddressRadioGroupOption } from './ShippingAddressRadioGroupOption';
-import { Address, Customer } from '@libs/util/medusa';
+import { Label, Radio, RadioGroup } from "@headlessui/react"
+import PlusCircleIcon from "@heroicons/react/24/outline/PlusCircleIcon"
+import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon"
+import { ButtonLink } from "@ui-components/common/buttons/ButtonLink"
+import clsx from "clsx"
+import type { FC } from "react"
+import { useControlField } from "remix-validated-form"
+import { ShippingAddressRadioGroupOption } from "./ShippingAddressRadioGroupOption"
+import { Address, Customer } from "@libs/util/medusa"
 
 export interface ShippingAddressRadioGroupProps {
-  customer?: Customer | undefined;
+  customer?: Customer | undefined
 }
 
 export const ShippingAddressRadioGroup: FC<ShippingAddressRadioGroupProps> = ({
   customer,
 }) => {
   const [value, setValue] = useControlField(
-    'shippingAddressId',
-    'checkoutAccountDetailsForm'
-  );
+    "shippingAddressId",
+    "checkoutAccountDetailsForm",
+  )
 
   return (
     <>
@@ -37,7 +37,7 @@ export const ShippingAddressRadioGroup: FC<ShippingAddressRadioGroupProps> = ({
                 <Label as="span">
                   <ButtonLink
                     className={clsx(
-                      'inline-flex items-center border-2 border-transparent !text-sm'
+                      "inline-flex items-center border-2 border-transparent !text-sm",
                     )}
                   >
                     {checked && (
@@ -55,5 +55,5 @@ export const ShippingAddressRadioGroup: FC<ShippingAddressRadioGroupProps> = ({
         </RadioGroup>
       )}
     </>
-  );
-};
+  )
+}

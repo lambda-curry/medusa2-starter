@@ -1,16 +1,16 @@
-import type { FC } from 'react';
-import { PaginationWithContext } from '@components/Pagination/pagination-with-context';
+import type { FC } from "react"
+import { PaginationWithContext } from "@ui-components/common/Pagination/pagination-with-context"
 import {
   type ProductListProps,
   ProductGrid,
-} from '@ui-components/product/ProductGrid';
-import type { PaginationConfig } from '@components/Pagination';
-import { ProductWithReviews } from '../../../libs/util/medusa';
+} from "@ui-components/product/ProductGrid"
+import type { PaginationConfig } from "@ui-components/common/Pagination"
+import { ProductWithReviews } from "../../../libs/util/medusa"
 
 export interface ProductListWithPaginationProps extends ProductListProps {
-  products?: ProductWithReviews[];
-  paginationConfig?: PaginationConfig;
-  context: string;
+  products?: ProductWithReviews[]
+  paginationConfig?: PaginationConfig
+  context: string
 }
 
 export const ProductListWithPagination: FC<ProductListWithPaginationProps> = ({
@@ -27,4 +27,4 @@ export const ProductListWithPagination: FC<ProductListWithPaginationProps> = ({
       />
     )}
   </div>
-);
+)

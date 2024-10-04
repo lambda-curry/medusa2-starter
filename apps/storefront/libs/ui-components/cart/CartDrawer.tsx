@@ -1,48 +1,39 @@
-import { FC, Fragment, PropsWithChildren, useEffect } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
-import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { CartDrawerItem } from './CartDrawerItem';
-import { formatCartSubtotal, formatPrice } from '@libs/util/prices';
-import { useCart } from '../hooks/useCart';
-import { IconButton } from '@components/buttons/IconButton';
-import { ButtonLink } from '@components/buttons/ButtonLink';
-import { Button } from '@components/buttons/Button';
-import { useNavigate } from '@remix-run/react';
-import { useSendEvent } from '../../util/analytics/useAnalytics';
-import { useRegion } from '../hooks/useRegion';
+import { FC, Fragment, PropsWithChildren, useEffect } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon"
+import { CartDrawerItem } from "./CartDrawerItem"
+import { formatCartSubtotal, formatPrice } from "@libs/util/prices"
+import { useCart } from "../hooks/useCart"
+import { IconButton } from "@ui-components/common/buttons/IconButton"
+import { ButtonLink } from "@ui-components/common/buttons/ButtonLink"
+import { Button } from "@ui-components/common/buttons/Button"
+import { useNavigate } from "@remix-run/react"
+import { useRegion } from "../hooks/useRegion"
 
 export const CartDrawer: FC<PropsWithChildren> = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const {
     cart,
     cartDrawerOpen,
     toggleCartDrawer,
     isAddingItem,
     isRemovingItemId,
-  } = useCart();
-  const sendViewCartEvent = useSendEvent('view_cart');
-  const { region } = useRegion();
-  let lineItems = cart?.items ?? [];
-  let lineItemsCount = lineItems.length;
-  const lineItemsTotal = lineItems.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  );
+  } = useCart()
+  const { region } = useRegion()
+  let lineItems = cart?.items ?? []
+  let lineItemsCount = lineItems.length
+  const lineItemsTotal = lineItems.reduce((acc, item) => acc + item.quantity, 0)
   const isRemovingLastItem =
-    lineItems.length === 1 && isRemovingItemId === lineItems[0].id;
+    lineItems.length === 1 && isRemovingItemId === lineItems[0].id
 
   const handleCheckoutClick = () => {
-    navigate('/checkout');
-    toggleCartDrawer();
-  };
+    navigate("/checkout")
+    toggleCartDrawer()
+  }
 
   useEffect(() => {
-    if (lineItemsCount < 1 || isRemovingLastItem) toggleCartDrawer(false);
-  }, [lineItemsCount]);
-
-  useEffect(() => {
-    if (cartDrawerOpen && cart) sendViewCartEvent({ cart });
-  }, [cartDrawerOpen]);
+    if (lineItemsCount < 1 || isRemovingLastItem) toggleCartDrawer(false)
+  }, [lineItemsCount])
 
   return (
     <Transition.Root show={!!cartDrawerOpen} as={Fragment}>
@@ -80,11 +71,11 @@ export const CartDrawer: FC<PropsWithChildren> = () => {
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-lg font-bold text-gray-900">
-                          My Cart{' '}
+                          My Cart{" "}
                           {lineItemsTotal > 0 && (
                             <span className="pl-2">
                               ({lineItemsTotal} item
-                              {lineItemsTotal > 1 ? 's' : ''})
+                              {lineItemsTotal > 1 ? "s" : ""})
                             </span>
                           )}
                         </Dialog.Title>
@@ -108,8 +99,8 @@ export const CartDrawer: FC<PropsWithChildren> = () => {
                           )}
 
                           <ul className="-my-6 divide-y divide-gray-200">
-                            {lineItems.map(item => {
-                              const isRemoving = isRemovingItemId === item.id;
+                            {lineItems.map((item) => {
+                              const isRemoving = isRemovingItemId === item.id
                               return (
                                 <CartDrawerItem
                                   key={item.id}
@@ -117,7 +108,7 @@ export const CartDrawer: FC<PropsWithChildren> = () => {
                                   item={item}
                                   currencyCode={region.currency_code}
                                 />
-                              );
+                              )
                             })}
 
                             {isAddingItem && (
@@ -171,7 +162,7 @@ export const CartDrawer: FC<PropsWithChildren> = () => {
                       </div>
                       <div className="mt-4 flex justify-center text-center text-sm text-gray-500">
                         <p>
-                          or{' '}
+                          or{" "}
                           <ButtonLink
                             size="sm"
                             onClick={() => toggleCartDrawer(false)}
@@ -192,5 +183,5 @@ export const CartDrawer: FC<PropsWithChildren> = () => {
         </div>
       </Dialog>
     </Transition.Root>
-  );
-};
+  )
+}

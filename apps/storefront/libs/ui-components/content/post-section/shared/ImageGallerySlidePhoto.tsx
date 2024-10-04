@@ -4,48 +4,48 @@ import {
   isImageFitCover,
   isImageSlide,
   useLightboxProps,
-} from 'yet-another-react-lightbox';
-import { ImageBase } from '@components/images/ImageBase';
+} from "yet-another-react-lightbox"
+import { ImageBase } from "@ui-components/common/images/ImageBase"
 
 export default function ImageGallerySlidePhoto({
   slide,
   rect,
 }: RenderSlideProps<
   Slide & {
-    blurDataURL?: string;
+    blurDataURL?: string
   }
 >) {
-  const { imageFit } = useLightboxProps().carousel;
-  const cover = isImageSlide(slide) && isImageFitCover(slide, imageFit);
+  const { imageFit } = useLightboxProps().carousel
+  const cover = isImageSlide(slide) && isImageFitCover(slide, imageFit)
 
-  if (!slide.width || !slide.height) return undefined;
+  if (!slide.width || !slide.height) return undefined
 
   const width = !cover
     ? Math.round(
-        Math.min(rect.width, (rect.height / slide.height) * slide.width)
+        Math.min(rect.width, (rect.height / slide.height) * slide.width),
       )
-    : rect.width;
+    : rect.width
 
   const height = !cover
     ? Math.round(
-        Math.min(rect.height, (rect.width / slide.width) * slide.height)
+        Math.min(rect.height, (rect.width / slide.width) * slide.height),
       )
-    : rect.height;
+    : rect.height
 
   return (
-    <div style={{ position: 'relative', width, height }}>
+    <div style={{ position: "relative", width, height }}>
       <ImageBase
-        alt={slide.alt || ''}
+        alt={slide.alt || ""}
         src={slide.src}
         loading="eager"
         draggable={false}
         // placeholder={slide.blurDataURL ? 'blur' : undefined}
-        style={{ objectFit: cover ? 'cover' : 'contain' }}
+        style={{ objectFit: cover ? "cover" : "contain" }}
         sizes={`${Math.ceil((width / window.innerWidth) * 100)}vw`}
         proxyOptions={{
-          context: 'post_header',
+          context: "post_header",
         }}
       />
     </div>
-  );
+  )
 }

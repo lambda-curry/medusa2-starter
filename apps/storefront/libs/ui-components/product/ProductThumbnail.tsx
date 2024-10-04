@@ -1,11 +1,11 @@
-import clsx from 'clsx';
-import { FC, HTMLAttributes } from 'react';
-import { type ProductWithReviews } from '../../util';
-import { Image } from '@components/images/Image';
+import clsx from "clsx"
+import { FC, HTMLAttributes } from "react"
+import { type ProductWithReviews } from "../../util"
+import { Image } from "@ui-components/common/images/Image"
 
 export interface ProductThumbnailProps extends HTMLAttributes<HTMLElement> {
-  product: ProductWithReviews;
-  isTransitioning?: boolean;
+  product: ProductWithReviews
+  isTransitioning?: boolean
 }
 
 export const ProductThumbnail: FC<ProductThumbnailProps> = ({
@@ -16,26 +16,26 @@ export const ProductThumbnail: FC<ProductThumbnailProps> = ({
 }) => {
   const thumbnailImage =
     (product.images && product.images[0] && product.images[0].url) ||
-    product.thumbnail;
+    product.thumbnail
   const hoverImage =
-    product.images && product.images[1] && product.images[1].url;
+    product.images && product.images[1] && product.images[1].url
 
   return (
     <figure
       className={clsx(
-        'product-thumbnail',
-        'aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg border border-black border-opacity-5',
-        className
+        "product-thumbnail",
+        "aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg border border-black border-opacity-5",
+        className,
       )}
       style={{
-        viewTransitionName: isTransitioning ? 'product-thumbnail' : undefined,
+        viewTransitionName: isTransitioning ? "product-thumbnail" : undefined,
       }}
       {...props}
     >
       {hoverImage && (
         <Image
           loading="lazy"
-          proxyOptions={{ context: 'small_square' }}
+          proxyOptions={{ context: "small_square" }}
           src={hoverImage}
           alt={product.title}
           className="h-full w-full object-cover object-center opacity-0 transition-all duration-300 group-hover/product-card:scale-105 group-hover/product-card:opacity-100"
@@ -44,15 +44,15 @@ export const ProductThumbnail: FC<ProductThumbnailProps> = ({
       {thumbnailImage ? (
         <Image
           loading="lazy"
-          proxyOptions={{ context: 'small_square' }}
+          proxyOptions={{ context: "small_square" }}
           src={thumbnailImage}
           alt={product.title}
           className={clsx(
-            'h-full w-full object-cover object-center transition-all duration-300',
+            "h-full w-full object-cover object-center transition-all duration-300",
             {
-              'group-hover/product-card:opacity-0': hoverImage,
-              'group-hover/product-card:opacity-75': !hoverImage,
-            }
+              "group-hover/product-card:opacity-0": hoverImage,
+              "group-hover/product-card:opacity-75": !hoverImage,
+            },
           )}
         />
       ) : (
@@ -61,5 +61,5 @@ export const ProductThumbnail: FC<ProductThumbnailProps> = ({
         </div>
       )}
     </figure>
-  );
-};
+  )
+}

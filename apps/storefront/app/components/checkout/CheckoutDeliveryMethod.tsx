@@ -1,9 +1,9 @@
 import { useCart } from "@ui-components/hooks/useCart"
 import { useCheckout } from "@ui-components/hooks/useCheckout"
 import { CheckoutStep } from "@ui-components/providers/checkout-provider"
-import { Alert } from "@components/alert/Alert"
-import { Form } from "@components/forms/Form"
-import { FormError } from "@components/forms/FormError"
+import { Alert } from "@ui-components/common/alert/Alert"
+import { Form } from "@ui-components/common/forms/Form"
+import { FormError } from "@ui-components/common/forms/FormError"
 import {
   checkAccountDetailsComplete,
   checkDeliveryMethodComplete,

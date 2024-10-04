@@ -12,7 +12,7 @@ import { UpdatePaymentInput } from "~/routes/_todo/api.checkout"
 import { CompleteCheckoutForm } from "../CompleteCheckoutForm"
 import { medusaAddressToAddress } from "@utils/addresses"
 import { useCart } from "@ui-components/hooks/useCart"
-import { Alert } from "@components/alert/Alert"
+import { Alert } from "@ui-components/common/alert/Alert"
 
 export interface StripePaymentFormProps extends PropsWithChildren {
   isActiveStep: boolean

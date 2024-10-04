@@ -1,21 +1,20 @@
-import { type FC, useState } from 'react';
-import { Modal, type ModalProps } from '@components/modals/Modal';
-import { Input } from '@components/forms/inputs/Input';
-import { Button } from '@components/buttons/Button';
-import LinkIcon from '@heroicons/react/24/outline/LinkIcon';
-import CheckIcon from '@heroicons/react/24/outline/CheckIcon';
-import { FacebookIcon, TwitterIcon } from '@components/assets/icons';
-import { isBrowser } from '@utils/browser';
-import { type ShareItemType } from './Share.types';
-import { useSendEvent } from '@libs/util/analytics/useAnalytics';
+import { type FC, useState } from "react"
+import { Modal, type ModalProps } from "@ui-components/common/modals/Modal"
+import { Input } from "@ui-components/common/forms/inputs/Input"
+import { Button } from "@ui-components/common/buttons/Button"
+import LinkIcon from "@heroicons/react/24/outline/LinkIcon"
+import CheckIcon from "@heroicons/react/24/outline/CheckIcon"
+import { FacebookIcon, TwitterIcon } from "@ui-components/common/assets/icons"
+import { isBrowser } from "@utils/browser"
+import { type ShareItemType } from "./Share.types"
 
-type ShareState = 'pending' | 'success' | 'error';
+type ShareState = "pending" | "success" | "error"
 
 export interface ShareModalProps extends ModalProps {
-  itemType?: ShareItemType;
-  shareData: ShareData;
-  onClose: () => void;
-  onError?: (error?: unknown) => void;
+  itemType?: ShareItemType
+  shareData: ShareData
+  onClose: () => void
+  onError?: (error?: unknown) => void
 }
 
 export const ShareModal: FC<ShareModalProps> = ({
@@ -24,78 +23,74 @@ export const ShareModal: FC<ShareModalProps> = ({
   onError,
   ...props
 }) => {
-  const [state, setState] = useState<ShareState>('pending');
-  const sendShareEvent = useSendEvent('share');
+  const [state, setState] = useState<ShareState>("pending")
 
-  if (!isBrowser()) return null;
+  if (!isBrowser()) return null
 
   shareData.url =
-    shareData.url || `${window.location.origin}${window.location.pathname}`;
+    shareData.url || `${window.location.origin}${window.location.pathname}`
 
   const getCopyButtonText = (state: ShareState) => {
     switch (state) {
-      case 'success':
+      case "success":
         return (
           <>
             <CheckIcon className="h-5 w-5" />
             <span className="hidden sm:block">Copied</span>
           </>
-        );
-      case 'pending':
+        )
+      case "pending":
       default:
         return (
           <>
             <LinkIcon className="h-5 w-5" />
             <span className="hidden sm:block">Copy link</span>
           </>
-        );
+        )
     }
-  };
+  }
 
   const handleCopyClick = async () => {
     try {
-      await navigator.clipboard.writeText(shareData.url || '');
-      sendShareEvent({ method: 'copy', ...shareData });
-      setState('success');
-      setTimeout(() => setState('pending'), 1000);
+      await navigator.clipboard.writeText(shareData.url || "")
+      setState("success")
+      setTimeout(() => setState("pending"), 1000)
     } catch (err) {
-      onError?.(err);
-      setState('error');
+      onError?.(err)
+      setState("error")
     }
-  };
+  }
 
   const handleFacebookClick = () => {
-    sendShareEvent({ method: 'Facebook', ...shareData });
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shareData.url || ''
+        shareData.url || "",
       )}`,
-      'facebook-share-dialog',
-      'width=626,height=436'
-    );
-  };
+      "facebook-share-dialog",
+      "width=626,height=436",
+    )
+  }
 
   const handleTwitterClick = () => {
-    sendShareEvent({ method: 'Twitter', ...shareData });
     window.open(
       `http://twitter.com/share?url=${encodeURIComponent(
-        shareData.url || ''
-      )}&text=${encodeURIComponent(shareData.title || '')}${
-        shareData.text ? encodeURIComponent(` | ${shareData.text}`) : ''
+        shareData.url || "",
+      )}&text=${encodeURIComponent(shareData.title || "")}${
+        shareData.text ? encodeURIComponent(` | ${shareData.text}`) : ""
       }`,
-      'facebook-share-dialog',
-      'width=626,height=436'
-    );
-  };
+      "facebook-share-dialog",
+      "width=626,height=436",
+    )
+  }
 
   return (
     <Modal {...props}>
       <div className="flex flex-col gap-4">
         <h3 className="text-lg font-bold text-gray-900">
-          Share this {itemType ? itemType.toLocaleLowerCase() : 'page'}
+          Share this {itemType ? itemType.toLocaleLowerCase() : "page"}
         </h3>
 
-        {state === 'error' && (
+        {state === "error" && (
           <div>
             <p>
               Unable to copy to clipboard, please manually copy the url to
@@ -121,9 +116,9 @@ export const ShareModal: FC<ShareModalProps> = ({
             </Button>
           </div>
 
-          <Input value={shareData.url || ''} readOnly />
+          <Input value={shareData.url || ""} readOnly />
         </div>
       </div>
     </Modal>
-  );
-};
+  )
+}

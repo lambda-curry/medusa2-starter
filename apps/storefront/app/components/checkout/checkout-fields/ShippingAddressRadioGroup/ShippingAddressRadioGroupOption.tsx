@@ -5,9 +5,9 @@ import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon"
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon"
 import clsx from "clsx"
 import { CustomerAction } from "~/routes/_todo/api.customer"
-import { Address } from "@components/Address/Address"
-import { IconButton } from "@components/buttons/IconButton"
-import { ConfirmModal } from "@components/modals/ConfirmModal"
+import { Address } from "@ui-components/common/Address/Address"
+import { IconButton } from "@ui-components/common/buttons/IconButton"
+import { ConfirmModal } from "@ui-components/common/modals/ConfirmModal"
 import { Address as MedusaAddress } from "@libs/util/medusa"
 
 export interface ShippingAddressRadioGroupOptionProps {

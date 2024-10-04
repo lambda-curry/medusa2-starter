@@ -1,18 +1,18 @@
-import { Tab } from '@headlessui/react';
-import { URLAwareNavLink } from '@components/link';
-import { TabButton } from './TabButton';
-import { TabList } from './TabList';
+import { Tab } from "@headlessui/react"
+import { URLAwareNavLink } from "@ui-components/common/link"
+import { TabButton } from "./TabButton"
+import { TabList } from "./TabList"
 
 export interface ButtonTabsLinkGroupProps {
-  tabs: { id: string; title: string; href: string }[];
-  selectedTabIndex: number;
-  defaultHref?: string;
+  tabs: { id: string; title: string; href: string }[]
+  selectedTabIndex: number
+  defaultHref?: string
 }
 
 export const ButtonTabsLinkGroup = ({
   tabs,
   selectedTabIndex,
-  defaultHref = '/',
+  defaultHref = "/",
 }: ButtonTabsLinkGroupProps) => (
   <TabList>
     <Tab
@@ -20,7 +20,7 @@ export const ButtonTabsLinkGroup = ({
       as={() => (
         <TabButton
           selected={selectedTabIndex < 0}
-          as={buttonProps => (
+          as={(buttonProps) => (
             <URLAwareNavLink
               url={defaultHref}
               preventScrollReset={true}
@@ -38,7 +38,7 @@ export const ButtonTabsLinkGroup = ({
         {() => (
           <TabButton
             selected={selectedTabIndex === tabIndex}
-            as={buttonProps => (
+            as={(buttonProps) => (
               <URLAwareNavLink
                 url={selectedTabIndex === tabIndex ? defaultHref : tab.href}
                 preventScrollReset={true}
@@ -52,4 +52,4 @@ export const ButtonTabsLinkGroup = ({
       </Tab>
     ))}
   </TabList>
-);
+)

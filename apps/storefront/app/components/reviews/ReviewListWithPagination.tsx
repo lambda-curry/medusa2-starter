@@ -1,14 +1,14 @@
-import { FC } from 'react';
-import { PaginationWithContext } from '@components/Pagination/pagination-with-context';
-import { PaginationConfig } from '@components/Pagination';
-import type { ProductReview } from '@libs/util/medusa/types';
-import { ProductReviewList, ProductReviewListProps } from './ProductReviewList';
+import { FC } from "react"
+import { PaginationWithContext } from "@ui-components/common/Pagination/pagination-with-context"
+import { PaginationConfig } from "@ui-components/common/Pagination"
+import type { ProductReview } from "@libs/util/medusa/types"
+import { ProductReviewList, ProductReviewListProps } from "./ProductReviewList"
 
 export interface ProductReviewListWithPaginationProps
   extends ProductReviewListProps {
-  productReviews: ProductReview[];
-  paginationConfig?: PaginationConfig;
-  context: string;
+  productReviews: ProductReview[]
+  paginationConfig?: PaginationConfig
+  context: string
 }
 
 export const ProductReviewListWithPagination: FC<
@@ -21,9 +21,9 @@ export const ProductReviewListWithPagination: FC<
         <PaginationWithContext
           context={context}
           paginationConfig={paginationConfig}
-          section={'reviews'}
+          section={"reviews"}
         />
       )}
     </div>
   </>
-);
+)

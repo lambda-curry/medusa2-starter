@@ -1,58 +1,58 @@
-import clsx from 'clsx';
-import { useEffect } from 'react';
-import { useFetcher } from '@remix-run/react';
-import { type BlogListPostSection } from '@libs/util/medusa/types';
-import { PostSectionBase } from './shared/PostSectionBase';
-import { type PostSectionComponent } from './types';
-import { PageHeading } from '../PageHeading';
-import { SectionText } from '../SectionText';
-import { Container } from '@components/container/Container';
-import { CardGrid } from '@components/card/CardGrid';
-import { PostCard } from '../../../../app/components/cards/PostCard';
-import { Suspense } from 'react';
-import { Await } from '@remix-run/react';
-import type { Post } from '@libs/util/medusa';
-import { buildSearchParamsFromObject } from '../../../util';
-import { LoaderFunctionArgs } from '@remix-run/node';
+import clsx from "clsx"
+import { useEffect } from "react"
+import { useFetcher } from "@remix-run/react"
+import { type BlogListPageSection } from "@libs/util/medusa/types"
+import { PostSectionBase } from "./shared/PostSectionBase"
+import { type SectionComponent } from "./types"
+import { PageHeading } from "../PageHeading"
+import { SectionText } from "../SectionText"
+import { Container } from "@ui-components/common/container/Container"
+import { CardGrid } from "@ui-components/common/card/CardGrid"
+import { PostCard } from "../../../../app/components/cards/PostCard"
+import { Suspense } from "react"
+import { Await } from "@remix-run/react"
+import type { Page } from "@libs/util/medusa"
+import { buildSearchParamsFromObject } from "../../../util"
+import { LoaderFunctionArgs } from "@remix-run/node"
 
-export const PostSectionBlogList: PostSectionComponent<
-  BlogListPostSection,
+export const PostSectionBlogList: SectionComponent<
+  BlogListPageSection,
   Promise<{
-    posts: Post[];
+    posts: Page[]
     paginationConfig: {
-      limit: number;
-      offset: number;
-      count: number;
-      prefix: string;
-    };
+      limit: number
+      offset: number
+      count: number
+      prefix: string
+    }
   }>
 > = ({ section, data }) => {
-  const { heading, text } = section.content;
-  const fetcher = useFetcher<(args: LoaderFunctionArgs) => { posts: Post[] }>();
+  const { heading, text } = section.content
+  const fetcher = useFetcher<(args: LoaderFunctionArgs) => { posts: Page[] }>()
 
   const queryString = buildSearchParamsFromObject({
-    subloader: 'blogPostList',
+    subloader: "blogPostList",
     data: JSON.stringify({
       id: section.id,
     }),
-  });
+  })
 
   useEffect(() => {
     if (fetcher.data === undefined) {
-      fetcher.load(`/api/post-section-data?${queryString}`);
+      fetcher.load(`/api/post-section-data?${queryString}`)
     }
-  }, [fetcher.data]);
+  }, [fetcher.data])
 
   const isPreview =
-    typeof window !== 'undefined' &&
-    window.location.pathname.includes('/preview');
+    typeof window !== "undefined" &&
+    window.location.pathname.includes("/preview")
 
   return (
     <PostSectionBase
       section={section}
       className={clsx(
         `[--default-background-color:white] [--default-text-align:center]`,
-        `border-b-gray-200 first:border-b group-first:border-b`
+        `border-b-gray-200 first:border-b group-first:border-b`,
       )}
     >
       <Container>
@@ -63,11 +63,11 @@ export const PostSectionBlogList: PostSectionComponent<
 
         {isPreview ? (
           <>
-            {fetcher.state === 'loading' && <div>Loading posts...</div>}
+            {fetcher.state === "loading" && <div>Loading posts...</div>}
             {fetcher.data && (
               <CardGrid>
-                {fetcher.data.posts.map(post => (
-                  <PostCard key={post.id} post={post as unknown as Post} />
+                {fetcher.data.posts.map((post) => (
+                  <PostCard key={post.id} post={post as unknown as Page} />
                 ))}
               </CardGrid>
             )}
@@ -78,26 +78,26 @@ export const PostSectionBlogList: PostSectionComponent<
         ) : (
           <Suspense fallback={<div>Loading posts...</div>}>
             <Await resolve={data}>
-              {resolvedData => {
-                if (!resolvedData) return null;
+              {(resolvedData) => {
+                if (!resolvedData) return null
 
-                const { posts } = resolvedData;
+                const { posts } = resolvedData
                 return posts.length > 0 ? (
                   <CardGrid>
-                    {posts.map(post => (
+                    {posts.map((post) => (
                       <PostCard key={post.id} post={post} />
                     ))}
                   </CardGrid>
                 ) : (
                   <div className="my-8 font-bold">No posts found</div>
-                );
+                )
               }}
             </Await>
           </Suspense>
         )}
       </Container>
     </PostSectionBase>
-  );
-};
+  )
+}
 
-export default PostSectionBlogList;
+export default PostSectionBlogList

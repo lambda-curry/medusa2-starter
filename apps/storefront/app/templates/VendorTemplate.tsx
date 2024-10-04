@@ -4,24 +4,24 @@ import ArrowUturnLeftIcon from "@heroicons/react/24/outline/ArrowUturnLeftIcon"
 import CalendarIcon from "@heroicons/react/24/outline/CalendarIcon"
 import MapPinIcon from "@heroicons/react/24/outline/MapPinIcon"
 import type {
-  Post,
-  PostSection,
-  PostTemplate,
+  Page,
+  BasePageSection,
+  PageTemplate,
   ProductWithReviews,
   Vendor,
 } from "@libs/util/medusa/types"
-import { Container } from "@components/container/Container"
-import { Image } from "@components/images/Image"
-import { Button } from "@components/buttons/Button"
-import { RenderPostSection } from "@ui-components/content/post-section/PostSection"
+import { Container } from "@ui-components/common/container/Container"
+import { Image } from "@ui-components/common/images/Image"
+import { Button } from "@ui-components/common/buttons/Button"
+import { RenderPageSection } from "@ui-components/content/post-section/PostSection"
 import { ProductListWithPagination } from "~/components/products/ProductListWithPagination"
 import { VendorContactFormModal } from "~/components/vendor/VendorContactFormModal/VendorContactFormModal"
 import type { PostData } from "~/routes/_todo/api.post-section-data"
-import { Modal } from "@components/modals"
+import { Modal } from "@ui-components/common/modals"
 
 export interface VendorTemplateProps {
   vendor: Vendor
-  post?: Post | PostTemplate
+  post?: Page | PageTemplate
   products?: ProductWithReviews[]
   isPreview?: boolean
   data?: PostData
@@ -135,9 +135,9 @@ export const VendorTemplate: FC<VendorTemplateProps> = ({
       {hasSections && (
         <>
           {post.sections.map((section, index) => (
-            <RenderPostSection
+            <RenderPageSection
               key={`${section.id}_${index}`}
-              section={section as PostSection}
+              section={section as BasePageSection}
               isPreview={isPreview}
               data={data?.[section.id]}
             />

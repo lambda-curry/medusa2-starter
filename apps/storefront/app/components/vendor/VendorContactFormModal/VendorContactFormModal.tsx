@@ -1,10 +1,10 @@
-import { FC } from 'react';
-import type { Vendor } from '@libs/util/medusa/types';
-import { VendorContactForm } from './VendorContactForm';
-import { Modal, ModalProps } from '@components/modals/Modal';
+import { FC } from "react"
+import type { Vendor } from "@libs/util/medusa/types"
+import { VendorContactForm } from "./VendorContactForm"
+import { Modal, ModalProps } from "@ui-components/common/modals/Modal"
 
 export interface VendorContactFormModalProps extends ModalProps {
-  vendor: Vendor;
+  vendor: Vendor
 }
 
 export const VendorContactFormModal: FC<VendorContactFormModalProps> = ({
@@ -15,4 +15,4 @@ export const VendorContactFormModal: FC<VendorContactFormModalProps> = ({
     <h2 className="text-lg font-bold text-gray-900">Contact {vendor.name}</h2>
     <VendorContactForm vendor={vendor} />
   </Modal>
-);
+)

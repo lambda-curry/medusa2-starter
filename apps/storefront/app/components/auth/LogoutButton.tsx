@@ -1,14 +1,14 @@
-import { FC } from 'react';
-import { useFetcher } from '@remix-run/react';
-import ArrowLeftOnRectangleIcon from '@heroicons/react/24/outline/ArrowLeftOnRectangleIcon';
-import { IconButton } from '@components/buttons';
+import { FC } from "react"
+import { useFetcher } from "@remix-run/react"
+import ArrowLeftOnRectangleIcon from "@heroicons/react/24/outline/ArrowLeftOnRectangleIcon"
+import { IconButton } from "@ui-components/common/buttons"
 
 export interface LogoutButtonProps {
-  redirect?: string;
+  redirect?: string
 }
 
-export const LogoutButton: FC<LogoutButtonProps> = ({ redirect = '/' }) => {
-  const fetcher = useFetcher<{}>();
+export const LogoutButton: FC<LogoutButtonProps> = ({ redirect = "/" }) => {
+  const fetcher = useFetcher<{}>()
 
   return (
     <fetcher.Form method="post" action="/api/auth">
@@ -21,5 +21,5 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ redirect = '/' }) => {
         className="rotate-180"
       />
     </fetcher.Form>
-  );
-};
+  )
+}

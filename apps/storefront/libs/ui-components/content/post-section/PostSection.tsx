@@ -1,54 +1,62 @@
-import { PostSection, PostSectionStatus, PostSectionType } from '@libs/util/medusa/types';
-import { type PostSectionComponent } from './types';
-import PostSectionPreviewWrapper from './shared/PostSectionPreviewWrapper';
-import PostSectionButtonList from './PostSectionButtonList';
-import PostSectionCTA from './PostSectionCTA';
-import PostSectionHeader from './PostSectionHeader';
-import PostSectionHero from './PostSectionHero';
-import PostSectionRawHTML from './PostSectionRawHTML';
-import PostSectionRichText from './PostSectionRichText';
-import PostSectionProductListCarousel from './PostSectionProductListCarousel';
-import PostSectionProductListGrid from './PostSectionProductListGrid';
-import { PostSectionImageGallery } from './PostSectionImageGallery';
-import PostSectionBlogList from './PostSectionBlogList';
+import {
+  BasePageSectionContent,
+  BasePageSection,
+  PageSectionStatus,
+  PageSectionType,
+  PageSection,
+} from "@libs/util/medusa/types"
+import { type SectionComponent } from "./types"
+import PostSectionButtonList from "./PostSectionButtonList"
+import PostSectionCTA from "./PostSectionCTA"
+import PostSectionHeader from "./PostSectionHeader"
+import PostSectionHero from "./PostSectionHero"
+import PostSectionRawHTML from "./PostSectionRawHTML"
+import PostSectionRichText from "./PostSectionRichText"
+import PostSectionProductListCarousel from "./PostSectionProductListCarousel"
+import PostSectionProductListGrid from "./PostSectionProductListGrid"
+import { PostSectionImageGallery } from "./PostSectionImageGallery"
+// import PostSectionBlogList from "./PostSectionBlogList"
+import { SectionBaseProps } from "./shared/PostSectionBase"
+import { FC } from "react"
 
 const COMPONENT_MAP = {
-  [PostSectionType.BUTTON_LIST]: PostSectionButtonList,
-  [PostSectionType.CTA]: PostSectionCTA,
-  [PostSectionType.HEADER]: PostSectionHeader,
-  [PostSectionType.HERO]: PostSectionHero,
-  [PostSectionType.RAW_HTML]: PostSectionRawHTML,
-  [PostSectionType.RICH_TEXT]: PostSectionRichText,
-  [PostSectionType.PRODUCT_CAROUSEL]: PostSectionProductListCarousel,
-  [PostSectionType.PRODUCT_GRID]: PostSectionProductListGrid,
-  [PostSectionType.IMAGE_GALLERY]: PostSectionImageGallery,
-  [PostSectionType.BLOG_LIST]: PostSectionBlogList
-};
+  [PageSectionType.BUTTON_LIST]: PostSectionButtonList,
+  [PageSectionType.CTA]: PostSectionCTA,
+  [PageSectionType.HEADER]: PostSectionHeader,
+  [PageSectionType.HERO]: PostSectionHero,
+  [PageSectionType.RAW_HTML]: PostSectionRawHTML,
+  [PageSectionType.RICH_TEXT]: PostSectionRichText,
+  [PageSectionType.PRODUCT_CAROUSEL]: PostSectionProductListCarousel,
+  [PageSectionType.PRODUCT_GRID]: PostSectionProductListGrid,
+  [PageSectionType.IMAGE_GALLERY]: PostSectionImageGallery,
+  // [PageSectionType.BLOG_LIST]: PostSectionBlogList,
+} as unknown as Partial<Record<PageSectionType, FC<SectionBaseProps>>> // TODO: REMOVE this casting ^
 
 // Add types to the props
-interface PostSectionSelectorProps {
-  section: PostSection;
-  isPreview?: boolean;
-  data?: any;
+interface SectionSelectorProps {
+  section: PageSection
 }
 
-const PostSectionSelector: React.FC<PostSectionSelectorProps> = props => {
-  const Component = COMPONENT_MAP[props.section.type] as PostSectionComponent<PostSection>;
-  if (!Component) return null;
-  return <Component {...props} />;
-};
+const SectionSelector: React.FC<SectionSelectorProps> = ({
+  section,
+  ...props
+}) => {
+  const Component = COMPONENT_MAP[section.type]
 
-export const RenderPostSection: PostSectionComponent<PostSection> = ({ section, isPreview, data }) => {
-  if (section.status !== PostSectionStatus.PUBLISHED && !isPreview) return null;
+  if (!Component) return null
 
-  if (isPreview)
-    return (
-      <PostSectionPreviewWrapper section={section}>
-        <PostSectionSelector section={section} isPreview={isPreview} data={data} />
-      </PostSectionPreviewWrapper>
-    );
+  return <Component {...props} data={section.content} />
+}
 
-  if (!section) return null;
+export const RenderPageSection: SectionComponent = ({ section }) => {
+  console.log("🚀 ~ RenderPageSection ~ section:", section?.type)
 
-  return <PostSectionSelector section={section} isPreview={isPreview} data={data} />;
-};
+  if (!section) return null
+
+  // TODO: Remove this
+  if ([PageSectionType.BLOG_LIST].includes(section.type)) {
+    return null
+  }
+
+  return <SectionSelector section={section as PageSection} />
+}

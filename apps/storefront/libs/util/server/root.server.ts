@@ -1,12 +1,8 @@
-import { generateCSSVariablesInnerHTML } from "@libs/util/css"
 // import {
 //   createMedusaClient,
 //   type Medusa,
 // } from '@libs/util/medusa/client.server';
-// import {
-//   type SiteDetailsRootData,
-//   type SiteSettings,
-// } from "@libs/util/medusa/types"
+import { SiteDetailsRootData, type SiteSettings } from "@libs/util/medusa/types"
 // import type {
 //   Customer,
 //   PricedProduct,
@@ -25,6 +21,11 @@ import { getOrSetCart } from "./data/cart.server"
 import { listRegions } from "./data/regions.server"
 import { sdk } from "./client.server"
 import { StoreRegion } from "@medusajs/types"
+import { siteSettings } from "@libs/config/site/site-settings"
+import {
+  footerNavigationItems,
+  headerNavigationItems,
+} from "@libs/config/site/navigation-items"
 
 // const checkEmail = async (
 //   email: string | null,
@@ -119,24 +120,24 @@ const selectRegion = (regions: StoreRegion[]) => {
 //   return regions
 // }
 
-export const fetchFontCss = async () => {
-  // if (!siteSettings.display_font && !siteSettings.body_font) return ""
+export const fetchFontCss = async (siteSettings: SiteSettings) => {
+  if (!siteSettings.display_font && !siteSettings.body_font) return ""
 
   const googleFontsUrl = new URL(
     "https://fonts.googleapis.com/css2?display=swap",
   )
 
-  // if (siteSettings?.display_font)
-  //   googleFontsUrl.searchParams.append(
-  //     "family",
-  //     siteSettings.display_font.family.replace(" ", "+"),
-  //   )
+  if (siteSettings?.display_font)
+    googleFontsUrl.searchParams.append(
+      "family",
+      siteSettings.display_font.family.replace(" ", "+"),
+    )
 
-  // if (siteSettings?.body_font)
-  //   googleFontsUrl.searchParams.append(
-  //     "family",
-  //     siteSettings.body_font.family.replace(" ", "+"),
-  //   )
+  if (siteSettings?.body_font)
+    googleFontsUrl.searchParams.append(
+      "family",
+      siteSettings.body_font.family.replace(" ", "+"),
+    )
 
   const fontCssUrl = decodeURIComponent(googleFontsUrl.toString())
 
@@ -199,17 +200,20 @@ const fetchHasProducts = async () => {
 // }
 
 export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
-  const cartId = await getCartId(request.headers)
+  // const cartId = await getCartId(request.headers)
 
   const responseHeaders = new Headers()
 
+  const [firstRegion] = await listRegions()
+  const [firstRegionCountry] = firstRegion?.countries ?? []
+
   const [cart, regions, hasPublishedProducts] = await Promise.all([
-    getOrSetCart(request, "us"), // TODO: make region param dynamic?
+    getOrSetCart(request, firstRegionCountry?.iso_2!), // TODO: make region param dynamic?
     listRegions(),
     fetchHasProducts(),
   ])
 
-  // const fontCss = await fetchFontCss(siteDetails.site_settings);
+  const fontCss = await fetchFontCss(siteSettings)
 
   const googleFontsUrl = getGoogleFontsUrls()
 
@@ -217,29 +221,17 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
 
   const region = selectRegion(regions)
 
-  // const globalCSS =
-  //   generateCSSVariablesInnerHTML({ ...siteDetails.site_settings }) +
-  //   `${
-  //     siteDetails.site_settings?.global_css
-  //       ? siteDetails.site_settings?.global_css
-  //       : ''
-  //   }` +
-  //   fontCss;
-
   return {
     // searchPromise: searchPromise(medusa),
     hasPublishedProducts,
     fontLinks,
     googleFontsUrl,
-    // globalCSS,
     env: {
       NODE_ENV: config.NODE_ENV,
-      GOOGLE_ANALYTICS_ID: config.GOOGLE_ANALYTICS_ID,
       ENVIRONMENT: config.ENVIRONMENT,
       STRIPE_PUBLIC_KEY: config.STRIPE_PUBLIC_KEY,
       PUBLIC_MEDUSA_API_URL: config.PUBLIC_MEDUSA_API_URL,
       STOREFRONT_URL: config.STOREFRONT_URL,
-      DISABLE_SHIPPING: config.DISABLE_SHIPPING,
       SENTRY_DSN: config.SENTRY_DSN,
       SENTRY_ENVIRONMENT: config.SENTRY_ENVIRONMENT,
       EVENT_LOGGING: config.EVENT_LOGGING,
@@ -247,7 +239,14 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
     // customer,
     regions,
     region,
-    // siteDetails,
+    siteDetails: {
+      store: {
+        name: "BARRIO",
+      },
+      settings: siteSettings,
+      headerNavigationItems,
+      footerNavigationItems,
+    } as SiteDetailsRootData,
     cart: cart,
     // ? {
     //     ...cart,

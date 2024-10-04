@@ -1,24 +1,24 @@
-import { NavLink } from '@remix-run/react';
-import clsx from 'clsx';
-import { memo, type FC } from 'react';
-import { ProductWithReviews } from '../../util';
-import { useScrollArrows } from '@utils/hooks/useScrollArrows';
-import { ScrollArrowButtons } from '@components/buttons/ScrollArrowButtons';
-import { ProductCarouselSkeleton } from './ProductCarouselSkeleton';
-import type { ProductListItemProps } from './ProductListItem';
-import { ProductListItem } from './ProductListItem';
+import { NavLink } from "@remix-run/react"
+import clsx from "clsx"
+import { memo, type FC } from "react"
+import { useScrollArrows } from "@utils/hooks/useScrollArrows"
+import { ScrollArrowButtons } from "@ui-components/common/buttons/ScrollArrowButtons"
+import { ProductCarouselSkeleton } from "./ProductCarouselSkeleton"
+import type { ProductListItemProps } from "./ProductListItem"
+import { ProductListItem } from "./ProductListItem"
+import { StoreProduct } from "@medusajs/types"
 
 export interface ProductCarouselProps {
-  products?: ProductWithReviews[];
-  className?: string;
-  renderItem?: FC<ProductListItemProps>;
+  products?: StoreProduct[]
+  className?: string
+  renderItem?: FC<ProductListItemProps>
 }
 
-export const ProductRow: FC<{ products: ProductWithReviews[] }> = memo(
+export const ProductRow: FC<{ products: StoreProduct[] }> = memo(
   ({ products }) => {
     return (
       <>
-        {products.map(product => (
+        {products.map((product) => (
           <div
             key={product.id}
             // Note: not sure if there is a better way to handle the width of these items, but these match closely to our grid layout
@@ -39,9 +39,9 @@ export const ProductRow: FC<{ products: ProductWithReviews[] }> = memo(
           </div>
         ))}
       </>
-    );
-  }
-);
+    )
+  },
+)
 
 export const ProductCarousel: FC<ProductCarouselProps> = ({
   products,
@@ -50,12 +50,12 @@ export const ProductCarousel: FC<ProductCarouselProps> = ({
   const { scrollableDivRef, ...scrollArrowProps } = useScrollArrows({
     buffer: 100,
     resetOnDepChange: [products],
-  });
+  })
 
-  if (!products) return <ProductCarouselSkeleton length={4} />;
+  if (!products) return <ProductCarouselSkeleton length={4} />
 
   return (
-    <div className={clsx('product-carousel relative', className)}>
+    <div className={clsx("product-carousel relative", className)}>
       <div
         ref={scrollableDivRef}
         className="w-full snap-both snap-mandatory overflow-x-auto whitespace-nowrap pb-2 sm:snap-proximity"
@@ -64,7 +64,7 @@ export const ProductCarousel: FC<ProductCarouselProps> = ({
       </div>
       <ScrollArrowButtons className="-mt-12" {...scrollArrowProps} />
     </div>
-  );
-};
+  )
+}
 
-export default ProductCarousel;
+export default ProductCarousel

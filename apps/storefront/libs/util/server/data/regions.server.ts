@@ -27,6 +27,7 @@ export const getRegion = async function (countryCode: string) {
     }
 
     const regions = await listRegions()
+    console.log("🚀 ~ getRegion ~ regions:", regions)
 
     if (!regions) {
       return null

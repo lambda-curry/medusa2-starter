@@ -1,12 +1,15 @@
-import { BaseHttpRequest, CancelablePromise } from '@markethaus/storefront-client';
-import { PostTagsResponse } from '../types';
+import {
+  BaseHttpRequest,
+  CancelablePromise,
+} from "@markethaus/storefront-client"
+import { PageTagsResponse } from "../types"
 
 export interface PostTagsListQueryOptions {
-  limit?: number;
-  offset?: number;
-  id?: string;
-  label?: string;
-  handle?: string | string[];
+  limit?: number
+  offset?: number
+  id?: string
+  label?: string
+  handle?: string | string[]
 }
 
 export class PostTagsResource {
@@ -14,15 +17,15 @@ export class PostTagsResource {
 
   list(
     options: PostTagsListQueryOptions = {},
-    customHeaders: Record<string, any> = {}
-  ): CancelablePromise<PostTagsResponse> {
-    const query = new URLSearchParams([...Object.entries(options)]).toString();
-    const path = `/store/post-tags${query.length > 0 ? `?${query}` : ''}`;
+    customHeaders: Record<string, any> = {},
+  ): CancelablePromise<PageTagsResponse> {
+    const query = new URLSearchParams([...Object.entries(options)]).toString()
+    const path = `/store/post-tags${query.length > 0 ? `?${query}` : ""}`
 
     return this.request.request({
-      method: 'GET',
+      method: "GET",
       url: path,
-      headers: customHeaders
-    });
+      headers: customHeaders,
+    })
   }
 }

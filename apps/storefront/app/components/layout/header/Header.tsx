@@ -1,73 +1,72 @@
-import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
-import MagnifyingGlassIcon from '@heroicons/react/24/outline/MagnifyingGlassIcon';
-import ShoppingCartIcon from '@heroicons/react/24/outline/ShoppingCartIcon';
-import UserCircleIcon from '@heroicons/react/24/solid/UserCircleIcon';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useCustomer } from '@ui-components/hooks/useCustomer';
-import { useLogin } from '@ui-components/hooks/useLogin';
-import { useRootLoaderData } from '@ui-components/hooks/useRootLoaderData';
-import { useSearch } from '@ui-components/hooks/useSearch';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
-import { ButtonBase, IconButton } from '@components/buttons';
-import { Container } from '@components/container/Container';
-import { URLAwareNavLink } from '@components/link';
-import { NavigationItem } from '@libs/util/medusa/types';
-import clsx from 'clsx';
-import { FC, useState } from 'react';
-import { HeaderSideNav } from './HeaderSideNav';
-import { HeaderUserMenu } from './HeaderUserMenu';
-import { useActiveSection } from './useActiveSection';
-import { LogoStoreName } from '~/components/LogoStoreName/LogoStoreName';
+import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon"
+import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon"
+import ShoppingCartIcon from "@heroicons/react/24/outline/ShoppingCartIcon"
+import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon"
+import { useCart } from "@ui-components/hooks/useCart"
+import { useCustomer } from "@ui-components/hooks/useCustomer"
+import { useLogin } from "@ui-components/hooks/useLogin"
+import { useRootLoaderData } from "@ui-components/hooks/useRootLoaderData"
+import { useSearch } from "@ui-components/hooks/useSearch"
+import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
+import { ButtonBase, IconButton } from "@ui-components/common/buttons"
+import { Container } from "@ui-components/common/container/Container"
+import { URLAwareNavLink } from "@ui-components/common/link"
+import { NavigationItem } from "@libs/util/medusa/types"
+import clsx from "clsx"
+import { FC, useState } from "react"
+import { HeaderSideNav } from "./HeaderSideNav"
+import { HeaderUserMenu } from "./HeaderUserMenu"
+import { useActiveSection } from "./useActiveSection"
+import { LogoStoreName } from "~/components/LogoStoreName/LogoStoreName"
 
 export interface HeaderProps {}
 
 export const Header: FC<HeaderProps> = () => {
-  const [sideNavOpen, setSideNavOpen] = useState<boolean>(false);
-  const { store, header_navigation_items } = useSiteDetails();
-  const { customer } = useCustomer();
-  const { cart, toggleCartDrawer } = useCart();
-  const { toggleSearchDrawer } = useSearch();
-  const { toggleLoginModal } = useLogin();
-  const navItems = header_navigation_items as NavigationItem[];
-  const { activeSection } = useActiveSection(navItems);
-  const rootLoader = useRootLoaderData();
-  const hasProducts = rootLoader?.hasPublishedProducts;
+  const [sideNavOpen, setSideNavOpen] = useState<boolean>(false)
+  const { headerNavigationItems } = useSiteDetails()
+  const { customer } = useCustomer()
+  const { cart, toggleCartDrawer } = useCart()
+  const { toggleSearchDrawer } = useSearch()
+  const { toggleLoginModal } = useLogin()
+  const { activeSection } = useActiveSection(headerNavigationItems)
+  const rootLoader = useRootLoaderData()
+  const hasProducts = rootLoader?.hasPublishedProducts
 
-  const isLoggedIn = customer?.id;
+  const isLoggedIn = customer?.id
 
-  if (!store) return <>Loading...</>;
+  if (!headerNavigationItems) return <>Loading...</>
 
   return (
-    <header id="mkt-header" className="sticky top-0 z-40">
+    <header className="sticky top-0 z-40 mkt-header text-white">
       <nav aria-label="Top">
-        <div className="bg-white">
-          <div className="border-b border-gray-200">
+        <div className="bg-transparent">
+          <div className="">
             <Container>
               {hasProducts && (
                 <div className="-mb-2 flex w-full items-center justify-end gap-4 pt-2 sm:hidden">
-                  {!isLoggedIn && (
+                  {/* {!isLoggedIn && (
                     <IconButton
                       aria-label="open login modal"
                       onClick={() => toggleLoginModal(true)}
                       icon={UserCircleIcon}
-                      iconProps={{ className: '!w-[28px] !h-[28px]' }}
+                      iconProps={{ className: "!w-[28px] !h-[28px]" }}
                       className="mkt-header-login-button hover:!bg-primary-50 focus:!bg-primary-50"
                     />
-                  )}
+                  )} */}
 
-                  {isLoggedIn && <HeaderUserMenu />}
+                  {/* {isLoggedIn && <HeaderUserMenu />} */}
 
                   {!!cart && (
                     <IconButton
                       aria-label="open shopping cart"
-                      className="mkt-header-cart-button sm:mr-0.5"
-                      icon={iconProps => (
+                      className="text-white sm:mr-0.5"
+                      icon={(iconProps) => (
                         <div className="relative">
                           <ShoppingCartIcon
                             {...iconProps}
                             className={clsx(
                               iconProps.className,
-                              'hover:!bg-primary-50 focus:!bg-primary-50'
+                              "hover:!bg-primary-50 focus:!bg-primary-50",
                             )}
                           />
                           {cart.items && cart.items.length > 0 && (
@@ -75,8 +74,8 @@ export const Header: FC<HeaderProps> = () => {
                               <span>
                                 {cart.items.reduce(
                                   (acc, item) => acc + item.quantity,
-                                  0
-                                )}{' '}
+                                  0,
+                                )}{" "}
                                 <span className="sr-only">
                                   items in cart, view bag
                                 </span>
@@ -92,12 +91,12 @@ export const Header: FC<HeaderProps> = () => {
                   <div className="flex-auto" />
 
                   <ButtonBase
-                    className="mkt-header-search-button flex items-center gap-2 rounded-full px-2 py-2 pl-3 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700 sm:hidden"
+                    className="mkt-header-search-button flex items-center gap-2 rounded-full px-2 py-2 pl-3 hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700 sm:hidden"
                     onClick={() => toggleSearchDrawer(true)}
                   >
                     <span className="text-sm font-bold">Search</span>
                     <MagnifyingGlassIcon
-                      className={clsx('-mr-0.5 h-6 w-6 text-current')}
+                      className={clsx("-mr-0.5 h-6 w-6 text-current")}
                     />
                   </ButtonBase>
                 </div>
@@ -105,14 +104,14 @@ export const Header: FC<HeaderProps> = () => {
 
               <div
                 className={clsx(
-                  'xs:min-h-[64px] flex min-h-[48px] flex-nowrap items-center justify-between gap-2 py-2'
+                  "h-[var(--mkt-header-height)] flex sm:h-[var(--mkt-header-height-desktop)] flex-nowrap items-center justify-between gap-2 py-2",
                 )}
               >
                 <LogoStoreName className="xs:h-14 h-8" primary />
                 <div className="flex flex-wrap-reverse items-center gap-x-6 sm:justify-end">
-                  {header_navigation_items && (
+                  {headerNavigationItems && (
                     <div className="hidden h-full gap-6 md:flex">
-                      {navItems
+                      {headerNavigationItems
                         .slice(0, 6)
                         .map(({ id, new_tab, ...navItemProps }, index) => (
                           <URLAwareNavLink
@@ -121,21 +120,21 @@ export const Header: FC<HeaderProps> = () => {
                             newTab={new_tab}
                             className={({ isActive }) =>
                               clsx(
-                                'my-4 flex items-center whitespace-nowrap text-sm font-normal text-gray-700 hover:text-gray-800',
+                                "my-4 flex items-center whitespace-nowrap text-sm font-normal hover:text-gray-500",
                                 {
-                                  'border-b-primary-200 border-b-2':
+                                  "border-b-primary-200 border-b-2":
                                     isActive &&
-                                    (!navItemProps.url.includes('#') ||
+                                    (!navItemProps.url.includes("#") ||
                                       activeSection ===
                                         navItemProps.url
-                                          .split('#')[1]
-                                          .split('?')[0]),
-                                  'hidden 2xl:inline-block': index === 5,
-                                  'hidden xl:inline-block':
+                                          .split("#")[1]
+                                          .split("?")[0]),
+                                  "hidden 2xl:inline-block": index === 5,
+                                  "hidden xl:inline-block":
                                     index === 3 || index === 4,
-                                  'hidden lg:inline-block': index === 2,
-                                  'hidden md:inline-block': index === 1,
-                                }
+                                  "hidden lg:inline-block": index === 2,
+                                  "hidden md:inline-block": index === 1,
+                                },
                               )
                             }
                             prefetch="intent"
@@ -150,12 +149,12 @@ export const Header: FC<HeaderProps> = () => {
                     <div className="flex items-center gap-x-3 text-sm">
                       {hasProducts && (
                         <ButtonBase
-                          className="mkt-header-search-button hidden items-center gap-2 rounded-full px-3 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700 sm:flex"
+                          className="mkt-header-search-button hidden items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700 sm:flex"
                           onClick={() => toggleSearchDrawer(true)}
                         >
                           <span className="text-sm font-bold">Search</span>
                           <MagnifyingGlassIcon
-                            className={clsx('-mr-0.5 h-6 w-6 text-current')}
+                            className={clsx("-mr-0.5 h-6 w-6 text-current")}
                           />
                         </ButtonBase>
                       )}
@@ -163,14 +162,14 @@ export const Header: FC<HeaderProps> = () => {
                       {!!cart && hasProducts && (
                         <IconButton
                           aria-label="open shopping cart"
-                          className="mkt-header-cart-button hidden sm:mr-0.5 sm:inline-flex"
-                          icon={iconProps => (
+                          className="text-white hidden sm:mr-0.5 sm:inline-flex"
+                          icon={(iconProps) => (
                             <div className="relative">
                               <ShoppingCartIcon
                                 {...iconProps}
                                 className={clsx(
                                   iconProps.className,
-                                  'hover:!bg-primary-50 focus:!bg-primary-50'
+                                  "hover:!bg-primary-50 focus:!bg-primary-50",
                                 )}
                               />
                               {cart.items && cart.items.length > 0 && (
@@ -178,8 +177,8 @@ export const Header: FC<HeaderProps> = () => {
                                   <span>
                                     {cart.items.reduce(
                                       (acc, item) => acc + item.quantity,
-                                      0
-                                    )}{' '}
+                                      0,
+                                    )}{" "}
                                     <span className="sr-only">
                                       items in cart, view bag
                                     </span>
@@ -192,31 +191,31 @@ export const Header: FC<HeaderProps> = () => {
                         />
                       )}
 
-                      {!isLoggedIn && hasProducts && (
+                      {/* {!isLoggedIn && hasProducts && (
                         <IconButton
                           aria-label="open login modal"
                           onClick={() => toggleLoginModal(true)}
                           icon={UserCircleIcon}
-                          iconProps={{ className: '!w-[28px] !h-[28px]' }}
+                          iconProps={{ className: "!w-[28px] !h-[28px]" }}
                           className="mkt-header-login-button hover:!bg-primary-50 focus:!bg-primary-50 hidden sm:inline-flex"
                         />
                       )}
 
                       {isLoggedIn && hasProducts && (
                         <HeaderUserMenu className="hidden sm:block" />
-                      )}
+                      )} */}
 
-                      {!!header_navigation_items?.length && (
+                      {!!headerNavigationItems?.length && (
                         <IconButton
                           aria-label="open navigation menu"
                           onClick={() => setSideNavOpen(true)}
                           className={clsx(
-                            'hover:!bg-primary-50 focus:!bg-primary-50 sm:inline-flex',
+                            "text-white hover:!bg-primary-50 focus:!bg-primary-50 sm:inline-flex",
                             {
-                              '2xl:hidden': header_navigation_items.length <= 5,
-                              'xl:hidden': header_navigation_items.length <= 4,
-                              'lg:hidden': header_navigation_items.length <= 3,
-                            }
+                              "2xl:hidden": headerNavigationItems.length <= 5,
+                              "xl:hidden": headerNavigationItems.length <= 4,
+                              "lg:hidden": headerNavigationItems.length <= 3,
+                            },
                           )}
                           icon={Bars3Icon}
                         />
@@ -235,5 +234,5 @@ export const Header: FC<HeaderProps> = () => {
         setOpen={setSideNavOpen}
       />
     </header>
-  );
-};
+  )
+}

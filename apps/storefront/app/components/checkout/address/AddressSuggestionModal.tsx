@@ -1,5 +1,5 @@
-import { Button } from "@components/buttons/Button"
-import { Modal } from "@components/modals/Modal"
+import { Button } from "@ui-components/common/buttons/Button"
+import { Modal } from "@ui-components/common/modals/Modal"
 
 import { type Address } from "@utils/types"
 import { FetcherWithComponents } from "@remix-run/react"

@@ -1,32 +1,28 @@
-import { FC, ImgHTMLAttributes } from 'react';
-import clsx from 'clsx';
-import { ResponsiveImageField } from '@libs/util/medusa';
-import { Image } from '@components/images/Image';
+import { FC, ImgHTMLAttributes } from "react"
+import clsx from "clsx"
+import { ImageField, ResponsiveImageField } from "@libs/util/medusa"
+import { Image } from "@ui-components/common/images/Image"
 
 export interface PostSectionImageProps
   extends ImgHTMLAttributes<HTMLImageElement> {
-  image: ResponsiveImageField;
+  image: ImageField
 }
 
 export const PostSectionImage: FC<PostSectionImageProps> = ({
   image,
   className,
 }) => {
-  if (!image?.default?.url) return null;
+  if (!image?.url) return null
 
   return (
     <Image
-      className={clsx(`mkt-post-section__image`, className)}
-      alt={image?.default?.alt?.value || ''}
+      className={clsx(`mkt-section__image`, className)}
+      alt={image?.alt?.value || ""}
       sources={[
         {
-          src: image?.mobile?.url || '',
-          media: `(max-width: 639px)`,
-        },
-        {
-          src: image?.default?.url,
+          src: image?.url,
         },
       ]}
     />
-  );
-};
+  )
+}

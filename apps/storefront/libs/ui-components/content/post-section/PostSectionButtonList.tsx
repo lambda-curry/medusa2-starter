@@ -1,22 +1,17 @@
-import { FC } from 'react';
-import { type ButtonListPostSection } from '@libs/util/medusa/types';
-import { PostSectionBase } from './shared/PostSectionBase';
-import { ActionList } from '../ActionList';
-import { SectionHeading } from '../SectionHeading';
-import { SectionText } from '../SectionText';
-import { Container } from '@components/container/Container';
-import { PostSectionComponent } from './types';
+import { FC } from "react"
+import { PostSectionBase, SectionBaseProps } from "./shared/PostSectionBase"
+import { ActionList } from "../ActionList"
+import { SectionHeading } from "../SectionHeading"
+import { SectionText } from "../SectionText"
+import { Container } from "@ui-components/common/container/Container"
 
-export const PostSectionButtonList: PostSectionComponent<
-  ButtonListPostSection
-> = ({ section }) => {
-  const { heading, text, actions } = section.content;
+export const PostSectionButtonList: FC<SectionBaseProps> = ({ data }) => {
+  if (!data) return null
+
+  const { heading, text, actions } = data
 
   return (
-    <PostSectionBase
-      className="[--default-text-align:center]"
-      section={section}
-    >
+    <PostSectionBase className="[--default-text-align:center]" data={data}>
       <Container>
         {(heading || text) && (
           <header className="mb-4 md:mb-6 lg:mb-8">
@@ -34,7 +29,7 @@ export const PostSectionButtonList: PostSectionComponent<
         )}
       </Container>
     </PostSectionBase>
-  );
-};
+  )
+}
 
-export default PostSectionButtonList;
+export default PostSectionButtonList

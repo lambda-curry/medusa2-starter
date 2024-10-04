@@ -1,26 +1,31 @@
-import clsx from 'clsx';
-import { type HeaderPostSection } from '@libs/util/medusa/types';
-import { PostSectionBase } from './shared/PostSectionBase';
-import { type PostSectionComponent } from './types';
-import { PageHeading } from '../PageHeading';
-import { SectionText } from '../SectionText';
-import { ActionList } from '../ActionList';
-import { Container } from '@components/container/Container';
+import clsx from "clsx"
+import {
+  BasePageSectionContent,
+  type HeaderPageSection,
+} from "@libs/util/medusa/types"
+import { PostSectionBase, SectionBaseProps } from "./shared/PostSectionBase"
+import { type SectionComponent } from "./types"
+import { PageHeading } from "../PageHeading"
+import { SectionText } from "../SectionText"
+import { ActionList } from "../ActionList"
+import { Container } from "@ui-components/common/container/Container"
+import { FC } from "react"
 
-export const PostSectionHeader: PostSectionComponent<HeaderPostSection> = ({
-  section,
-}) => {
-  const { heading, text, actions } = section.content;
+export const PostSectionHeader: FC<SectionBaseProps> = ({ data }) => {
+  if (!data) return null
+
+  const { heading, text, actions } = data
+  console.log("🚀 ~ PostSectionHeader ~ text:", text)
 
   return (
     <PostSectionBase
-      section={section}
+      data={data}
       className={clsx(
         `[--default-background-color:white] [--default-text-align:center]`,
-        `border-b-gray-200 first:border-b group-first:border-b`
+        `border-b-gray-200 first:border-b group-first:border-b`,
       )}
     >
-      <Container className="!max-w-6xl">
+      <Container className="!max-w-6xl bg-accent-50">
         <div className="inline-grid max-w-prose gap-6">
           {heading && <PageHeading>{heading.value}</PageHeading>}
           <SectionText content={text?.value} />
@@ -33,7 +38,7 @@ export const PostSectionHeader: PostSectionComponent<HeaderPostSection> = ({
         )}
       </Container>
     </PostSectionBase>
-  );
-};
+  )
+}
 
-export default PostSectionHeader;
+export default PostSectionHeader

@@ -1,27 +1,29 @@
 import HomeIcon from "@heroicons/react/24/solid/HomeIcon"
-import { RenderPostSection } from "@ui-components/content/post-section/PostSection"
+import { RenderPageSection } from "@ui-components/content/post-section/PostSection"
 import { useCart } from "@ui-components/hooks/useCart"
 import { useProductPriceDetails } from "@ui-components/hooks/useProductPriceDetails"
 import { useRegion } from "@ui-components/hooks/useRegion"
 import { ProductImageGallery } from "@ui-components/product/ProductImageGallery"
 import { ProductPrice } from "@ui-components/product/ProductPrice"
 import { ProductPriceRange } from "@ui-components/product/ProductPriceRange"
-import { Breadcrumb, Breadcrumbs } from "@components/breadcrumbs/Breadcrumbs"
-import { Button } from "@components/buttons/Button"
-import { SubmitButton } from "@components/buttons/SubmitButton"
-import { Container } from "@components/container/Container"
-import { Form } from "@components/forms/Form"
-import { FormError } from "@components/forms/FormError"
-import { FieldGroup } from "@components/forms/fields/FieldGroup"
-import { FieldTextarea } from "@components/forms/fields/FieldTextarea"
-import { Grid } from "@components/grid/Grid"
-import { GridColumn } from "@components/grid/GridColumn"
-import { Share } from "~/components/share"
-import { useSendEvent } from "@libs/util/analytics/useAnalytics"
 import {
-  Post,
-  PostSection,
-  PostTemplate,
+  Breadcrumb,
+  Breadcrumbs,
+} from "@ui-components/common/breadcrumbs/Breadcrumbs"
+import { Button } from "@ui-components/common/buttons/Button"
+import { SubmitButton } from "@ui-components/common/buttons/SubmitButton"
+import { Container } from "@ui-components/common/container/Container"
+import { Form } from "@ui-components/common/forms/Form"
+import { FormError } from "@ui-components/common/forms/FormError"
+import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
+import { FieldTextarea } from "@ui-components/common/forms/fields/FieldTextarea"
+import { Grid } from "@ui-components/common/grid/Grid"
+import { GridColumn } from "@ui-components/common/grid/GridColumn"
+import { Share } from "~/components/share"
+import {
+  Page,
+  BasePageSection,
+  PageTemplate,
   PricedProduct,
   PricedVariant,
   ProductOptionValue,
@@ -43,14 +45,14 @@ import {
   selectVariantMatrix,
 } from "@libs/util/products"
 import { useProductInventory } from "../../libs/ui-components/hooks/useProductInventory"
-import { FieldLabel } from "@components/forms/fields/FieldLabel"
+import { FieldLabel } from "@ui-components/common/forms/fields/FieldLabel"
 import { formatDate } from "../../libs/util/formatters"
 import { variantSaleEndDate } from "../../libs/util/prices"
 import { ProductOptionSelectorRadio } from "../components/products/ProductOptionSelectorRadio"
 import { ProductReviewSection } from "../components/reviews/ProductReviewSection"
 import { ProductReviewStars } from "../components/reviews/ProductReviewStars"
-import { ImageUploadWithPreview } from "@components/ImageUpload/ImageUploadWithPreview"
-import { QuantitySelector } from "@components/field-groups/QuantitySelector"
+import { ImageUploadWithPreview } from "@ui-components/common/ImageUpload/ImageUploadWithPreview"
+import { QuantitySelector } from "@ui-components/common/field-groups/QuantitySelector"
 
 export interface AddToCartFormValues {
   productId: string
@@ -145,7 +147,7 @@ export const SaleEndsOn = ({ dateSaleEnds }: { dateSaleEnds: Date | null }) => {
 
 export interface ProductTemplateProps {
   product: ProductWithReviews
-  post?: Post | PostTemplate
+  post?: Page | PageTemplate
   isPreview?: boolean
   data?: PostData
 }
@@ -171,7 +173,6 @@ export const ProductTemplate = ({
   const isSubmitting = ["submitting", "loading"].includes(
     addToCartFetcher.state,
   )
-  const sendAddToCartEvent = useSendEvent("add_to_cart")
   const productPriceDetails = useProductPriceDetails(product)
   const validator = getAddToCartValidator(product)
 
@@ -266,18 +267,6 @@ export const ProductTemplate = ({
       formRef.current?.reset()
     }
   }, [isSubmitting, hasErrors])
-
-  useEffect(() => {
-    if (
-      addToCartFetcher.data &&
-      cart &&
-      addToCartFetcher.data?.cart?.items?.length > 0
-    )
-      sendAddToCartEvent({
-        updatedCart: addToCartFetcher.data.cart,
-        previousCart: cart,
-      })
-  }, [addToCartFetcher.data])
 
   const soldOut = variantIsSoldOut(selectedVariant) || productSoldOut
   const hasSections = !!post?.sections.length
@@ -549,9 +538,9 @@ export const ProductTemplate = ({
       {hasSections && (
         <>
           {post.sections.map((section, index) => (
-            <RenderPostSection
+            <RenderPageSection
               key={`${section.id}_${index}`}
-              section={section as PostSection}
+              section={section as BasePageSection}
               isPreview={isPreview}
               data={data?.[section.id]}
             />

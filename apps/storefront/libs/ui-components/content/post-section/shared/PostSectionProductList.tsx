@@ -1,146 +1,91 @@
-import { buildSearchParamsFromObject } from '@libs/util/buildSearchParamsFromObject';
+import { buildSearchParamsFromObject } from "@libs/util/buildSearchParamsFromObject"
 import type {
-  ProductCarouselPostSection,
-  ProductCategory,
-  ProductCollection,
-  ProductGridPostSection,
-  ProductWithReviews,
-} from '@libs/util/medusa/types';
-import { Await, useFetcher } from '@remix-run/react';
-import clsx from 'clsx';
+  ProductListContent,
+  ProductListFilter,
+} from "@libs/util/medusa/types"
+import { useFetcher } from "@remix-run/react"
+import clsx from "clsx"
+import { memo, useEffect, useState, type FC, type ReactNode } from "react"
+import { ProductCategoryTabs } from "../../../product/ProductCategoryTabs"
+import { ProductCollectionTabs } from "../../../product/ProductCollectionTabs"
+import type { ProductListProps } from "../../../product/ProductGrid"
+import { ProductListHeader } from "../../../product/ProductListHeader"
+import { Container } from "@ui-components/common/container/Container"
+import { PostSectionBase, type SectionBaseProps } from "./PostSectionBase"
 import {
-  Suspense,
-  memo,
-  useEffect,
-  useState,
-  type FC,
-  type ReactNode,
-} from 'react';
-import { useSessionStorage } from '../../../hooks/useLocalStorage';
-import { ProductCategoryTabs } from '../../../product/ProductCategoryTabs';
-import { ProductCollectionTabs } from '../../../product/ProductCollectionTabs';
-import type { ProductListProps } from '../../../product/ProductGrid';
-import { ProductListHeader } from '../../../product/ProductListHeader';
-import { Container } from '@components/container/Container';
-import { PostSectionBase, type PostSectionBaseProps } from './PostSectionBase';
+  StoreCollection,
+  StoreProduct,
+  StoreProductCategory,
+} from "@medusajs/types"
 
-export interface PostSectionProductListProps
-  extends PostSectionBaseProps<
-    ProductGridPostSection | ProductCarouselPostSection
-  > {
-  component: FC<ProductListProps>;
-  fallback: ReactNode;
-  data?: Promise<{
-    products: ProductWithReviews[];
-    collection_tabs: ProductCollection[];
-    category_tabs: ProductCategory[];
-  }>;
+export interface SectionProductListProps
+  extends SectionBaseProps<ProductListContent> {
+  className?: string
+  component: FC<ProductListProps>
+  fallback: ReactNode
 }
 
-const PostSectionProductListBase: FC<
-  Omit<PostSectionProductListProps, 'data'> & {
-    data?: {
-      products: ProductWithReviews[];
-      collection_tabs: ProductCollection[];
-      category_tabs: ProductCategory[];
-    };
-  }
-> = ({ section, component, className, data, ...props }) => {
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [selectedTab, setSelectedTab] = useState<number | undefined>(undefined);
+const SectionProductListBase: FC<SectionProductListProps> = ({
+  component,
+  ...props
+}) => {
+  console.log("🚀 ~ SectionProductListBase -> props:", props)
+  const [isInitialized, setIsInitialized] = useState<boolean>(false)
+  const [selectedTab, setSelectedTab] = useState<number | undefined>(undefined)
   const fetcher = useFetcher<{
-    products: ProductWithReviews[];
-    collection_tabs: ProductCollection[];
-    category_tabs: ProductCategory[];
-  }>();
-  const [localData, setLocalData] = useSessionStorage<{
-    products: ProductWithReviews[];
-    collection_tabs: ProductCollection[];
-    category_tabs: ProductCategory[];
-  }>(`mkt_data_${section.id}`, data);
+    products: StoreProduct[]
+    collection_tabs: StoreCollection[]
+    category_tabs: StoreProductCategory[]
+  }>()
 
-  const { collection_tabs, category_tabs, products } =
-    fetcher.data || data || localData || {};
+  const { collection_tabs, category_tabs, products } = fetcher.data || {}
 
-  const {
-    product_filter,
-    include_collection_tabs,
-    include_category_tabs,
-    product_select,
-    product_id,
-    collection_tab_id,
-    category_tab_id,
-  } = section.content;
+  const hasCollectionTabs = !!collection_tabs?.length
+  const hasCategoryTabs = !!category_tabs?.length
+  const hasProducts = isInitialized && !products?.length
+  const ProductListComponent = component
 
-  const hasCollectionTabs =
-    product_select === 'filter' && !!collection_tabs?.length;
-  const hasCategoryTabs =
-    product_select === 'filter' && !!category_tabs?.length;
-  const hasProducts = isInitialized && !products?.length;
-  const ProductListComponent = component;
-
-  const fetchData = (filters?: {
-    collection_id?: string;
-    category_id?: string;
-  }) => {
-    // Added category_id to the filters type
-    const { collection_id, category_id } = filters || product_filter || {};
-
+  const fetchData = (filters?: ProductListFilter) => {
     const queryString = buildSearchParamsFromObject({
-      subloader: 'productList',
+      subloader: "productList",
       data: JSON.stringify({
-        content: {
-          product_select,
-          product_id,
-          include_collection_tabs,
-          include_category_tabs,
-          collection_tab_id,
-          category_tab_id,
-          product_filter: {
-            ...(product_filter || {}),
-            collection_id,
-            category_id,
-          },
-        },
+        content: filters,
       }),
-    });
+    })
 
-    fetcher.load(`/api/post-section-data?${queryString}`);
-  };
+    fetcher.load(`/api/page-section-data?${queryString}`)
+  }
 
   useEffect(() => {
-    // Don't fetch if we have data coming from loader, which is configured to only be passed on non-preview routes.
+    // // Don't fetch if we have data coming from loader, which is configured to only be passed on non-preview routes.
 
-    if (data) {
-      setLocalData(data);
-      return;
+    if (fetcher.data || fetcher.state === "loading") {
+      return
     }
 
-    fetchData();
-  }, [section]);
+    console.log("SectionProductListBase => fetching products...")
 
-  const handleTabChange = (index: number, type: 'collection' | 'category') => {
-    if (type === 'collection') {
-      const collection = collection_tabs?.[index - 1];
-      setSelectedTab(index);
-      fetchData({ collection_id: collection?.id });
+    fetchData(props.data?.filters)
+  }, [])
+
+  const handleTabChange = (index: number, type: "collection" | "category") => {
+    if (type === "collection") {
+      const collection = collection_tabs?.[index - 1]
+      setSelectedTab(index)
+      fetchData({ collection_id: [collection?.id!] })
     }
-    if (type === 'category') {
-      const category = category_tabs?.[index - 1];
-      setSelectedTab(index);
-      fetchData({ category_id: category?.id });
+    if (type === "category") {
+      const category = category_tabs?.[index - 1]
+      setSelectedTab(index)
+      fetchData({ category_id: [category?.id!] })
     }
-  };
+  }
 
   useEffect(() => {
     if (!isInitialized && fetcher.data) {
-      setIsInitialized(true);
+      setIsInitialized(true)
     }
-  }, [fetcher.data]);
-
-  const isPreview =
-    typeof window !== 'undefined' &&
-    window?.location.pathname.includes('/preview');
+  }, [fetcher.data])
 
   return (
     <>
@@ -149,7 +94,7 @@ const PostSectionProductListBase: FC<
           <ProductCollectionTabs
             selectedIndex={selectedTab}
             collections={collection_tabs}
-            onChange={index => handleTabChange(index, 'collection')}
+            onChange={(index) => handleTabChange(index, "collection")}
           />
         </div>
       )}
@@ -158,8 +103,8 @@ const PostSectionProductListBase: FC<
           <ProductCategoryTabs
             selectedIndex={selectedTab}
             categories={category_tabs}
-            onChange={index => handleTabChange(index, 'category')}
-          />{' '}
+            onChange={(index) => handleTabChange(index, "category")}
+          />{" "}
         </div>
       )}
 
@@ -168,64 +113,35 @@ const PostSectionProductListBase: FC<
           <h3 className="text-lg font-bold text-gray-900">
             There are no products to show
             {hasCollectionTabs || hasCategoryTabs
-              ? ` in this ${hasCollectionTabs ? 'collection' : 'category'}.`
-              : ''}
+              ? ` in this ${hasCollectionTabs ? "collection" : "category"}.`
+              : ""}
           </h3>
-          {isPreview &&
-            (hasCollectionTabs || hasCategoryTabs) &&
-            Number.isInteger(selectedTab) && (
-              <p className="mt-2 text-gray-500">
-                Modify your filters to view products.
-              </p>
-            )}
         </div>
       )}
 
       {!hasProducts && <ProductListComponent products={products} />}
     </>
-  );
-};
+  )
+}
 
-export const PostSectionProductList: FC<PostSectionProductListProps> = memo(
-  ({ data, ...props }) => {
-    const { section, className } = props;
-    const { heading, text, actions } = section.content;
+export const SectionProductList: FC<SectionProductListProps> = memo((props) => {
+  const { heading, text, actions } = props.data || {}
 
-    const [localData] = useSessionStorage<{
-      products: ProductWithReviews[];
-      collection_tabs: ProductCollection[];
-      category_tabs: ProductCategory[];
-    }>(`mkt_data_${section.id}`);
+  return (
+    <PostSectionBase
+      {...props}
+      className={clsx(`overflow-x-hidden`, props.className)}
+    >
+      <Container>
+        <ProductListHeader
+          heading={heading?.value}
+          text={text}
+          actions={actions}
+        />
+        <SectionProductListBase {...props} />
+      </Container>
+    </PostSectionBase>
+  )
+})
 
-    const fallback = localData ? (
-      <PostSectionProductListBase data={localData} {...props} />
-    ) : (
-      props.fallback
-    );
-
-    return (
-      <PostSectionBase
-        className={clsx(`overflow-x-hidden`, className)}
-        {...props}
-      >
-        <Container>
-          <ProductListHeader
-            heading={heading?.value}
-            text={text}
-            actions={actions}
-          />
-          <Suspense fallback={fallback}>
-            {!!data && (
-              <Await resolve={data}>
-                {data => <PostSectionProductListBase data={data} {...props} />}
-              </Await>
-            )}
-            {!data && <PostSectionProductListBase {...props} />}
-          </Suspense>
-        </Container>
-      </PostSectionBase>
-    );
-  }
-);
-
-export default PostSectionProductList;
+export default SectionProductList

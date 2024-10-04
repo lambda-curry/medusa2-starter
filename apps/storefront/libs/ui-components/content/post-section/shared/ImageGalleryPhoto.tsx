@@ -1,7 +1,7 @@
-import { FC } from 'react';
-import { RenderPhotoProps } from 'react-photo-album';
-import { ImageBase } from '@components/images/ImageBase';
-import { MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
+import { FC } from "react"
+import { RenderPhotoProps } from "react-photo-album"
+import { ImageBase } from "@ui-components/common/images/ImageBase"
+import { MagnifyingGlassPlusIcon } from "@heroicons/react/24/outline"
 
 export const ImageGalleryPhoto: FC<RenderPhotoProps> = ({
   imageProps,
@@ -16,7 +16,7 @@ export const ImageGalleryPhoto: FC<RenderPhotoProps> = ({
         loading="lazy"
         {...imageProps}
         proxyOptions={{
-          context: 'image_gallery',
+          context: "image_gallery",
         }}
         className="!mb-0 !h-full !w-full object-cover ease-in-out"
       />
@@ -24,5 +24,5 @@ export const ImageGalleryPhoto: FC<RenderPhotoProps> = ({
         <MagnifyingGlassPlusIcon className="h-8 w-8 text-white" />
       </div>
     </div>
-  );
-};
+  )
+}

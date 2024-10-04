@@ -1,14 +1,14 @@
-import { useCart } from '@ui-components/hooks/useCart';
-import { useLogin } from '@ui-components/hooks/useLogin';
-import { Modal } from '@components/modals';
-import { LoginForm } from './LoginForm';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
-import { URLAwareNavLink } from '@components/link';
+import { useCart } from "@ui-components/hooks/useCart"
+import { useLogin } from "@ui-components/hooks/useLogin"
+import { Modal } from "@ui-components/common/modals"
+import { LoginForm } from "./LoginForm"
+import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
+import { URLAwareNavLink } from "@ui-components/common/link"
 
 export const LoginModal = () => {
-  const { cart } = useCart();
-  const { login, toggleLoginModal } = useLogin();
-  const { admin_url } = useSiteDetails();
+  const { cart } = useCart()
+  const { login, toggleLoginModal } = useLogin()
+  const { admin_url } = useSiteDetails()
 
   return (
     <Modal isOpen={!!login.open} onClose={() => toggleLoginModal(false)}>
@@ -17,7 +17,7 @@ export const LoginModal = () => {
       </h2>
       <LoginForm
         redirect={login.redirect}
-        defaultValues={{ email: cart?.email ?? '' }}
+        defaultValues={{ email: cart?.email ?? "" }}
         onSuccess={() => toggleLoginModal(false)}
       />
       <div className="flex justify-end gap-2 pt-6">
@@ -32,5 +32,5 @@ export const LoginModal = () => {
         </URLAwareNavLink>
       </div>
     </Modal>
-  );
-};
+  )
+}

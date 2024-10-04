@@ -29,11 +29,11 @@ import {
 import isEqual from "lodash/isEqual"
 import { useEnv } from "@ui-components/hooks/useEnv"
 import { useCart } from "@ui-components/hooks/useCart"
-import { SubmitButton } from "@components/buttons/SubmitButton"
-import { Form } from "@components/forms/Form"
-import { FieldGroup } from "@components/forms/fields/FieldGroup"
-import { FieldCheckbox } from "@components/forms/fields/FieldCheckbox"
-import { FormError } from "@components/forms/FormError"
+import { SubmitButton } from "@ui-components/common/buttons/SubmitButton"
+import { Form } from "@ui-components/common/forms/Form"
+import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
+import { FieldCheckbox } from "@ui-components/common/forms/fields/FieldCheckbox"
+import { FormError } from "@ui-components/common/forms/FormError"
 import { AddressDisplay } from "./address/AddressDisplay"
 import {
   MedusaStripeAddress,

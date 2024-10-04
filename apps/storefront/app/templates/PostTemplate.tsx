@@ -2,20 +2,20 @@ import { FC, PropsWithChildren } from "react"
 import clsx from "clsx"
 import truncate from "lodash/truncate"
 import {
-  type Post,
-  PostContentMode,
-  type PostSection,
+  type Page,
+  PageContentMode,
+  type BasePageSection,
 } from "@libs/util/medusa/types"
 import { formatDate, formatList } from "@libs/util/formatters"
-import { RenderPostSection } from "@ui-components/content/post-section"
+import { RenderPageSection } from "@ui-components/content/post-section"
 import { RichTextContent } from "@ui-components/content/rich-text-content"
-import { Container } from "@components/container/Container"
+import { Container } from "@ui-components/common/container/Container"
 import { Share } from "~/components/share"
 import { PostData } from "~/routes/_todo/api.post-section-data"
 import { imageProxyURL } from "@utils/img-proxy"
 
 export interface PostTemplateProps {
-  post: Post
+  post: Page
   isPreview?: boolean
   data?: PostData
 }
@@ -25,8 +25,8 @@ export const PostTemplate: FC<PropsWithChildren<PostTemplateProps>> = ({
   isPreview,
   data,
 }) => {
-  const isBasic = post.content_mode === PostContentMode.BASIC
-  const isAdvanced = post.content_mode === PostContentMode.ADVANCED
+  const isBasic = post.content_mode === PageContentMode.BASIC
+  const isAdvanced = post.content_mode === PageContentMode.ADVANCED
 
   const authorsList = formatList(
     (post.authors || [])
@@ -103,9 +103,9 @@ export const PostTemplate: FC<PropsWithChildren<PostTemplateProps>> = ({
       {isAdvanced && !!post.sections.length && (
         <>
           {post.sections.map((section) => (
-            <RenderPostSection
+            <RenderPageSection
               key={section.id}
-              section={section as PostSection}
+              section={section as BasePageSection}
               isPreview={isPreview}
               data={data?.[section.id]}
             />

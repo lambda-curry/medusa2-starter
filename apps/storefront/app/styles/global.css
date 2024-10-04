@@ -3,6 +3,92 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-primary-50: 248 250 252;
+    --color-primary-100: 241 245 249;
+    --color-primary-200: 226 232 240;
+    --color-primary-300: 203 213 225;
+    --color-primary-400: 148 163 184;
+    --color-primary-500: 100 116 139;
+    --color-primary-600: 71 85 105;
+    --color-primary-700: 51 65 85;
+    --color-primary-800: 30 41 59;
+    --color-primary-900: 15 23 42;
+    --color-primary-DEFAULT: 148 163 184;
+    --color-accent-50: 93 106 81;
+    --color-accent-100: 105 122 93;
+    --color-accent-200: 117 138 105;
+    --color-accent-300: 129 154 117;
+    --color-accent-400: 141 170 129;
+    --color-accent-500: 153 186 141;
+    --color-accent-600: 165 202 153;
+    --color-accent-700: 177 218 165;
+    --color-accent-800: 189 234 177;
+    --color-accent-900: 193 210 181;
+    --color-accent-DEFAULT: 193 210 181;
+    --color-highlight-50: 255 251 245;
+    --color-highlight-100: 248 249 241;
+    --color-highlight-200: 244 247 235;
+    --color-highlight-300: 240 245 229;
+    --color-highlight-400: 236 243 223;
+    --color-highlight-500: 232 241 217;
+    --color-highlight-600: 228 239 211;
+    --color-highlight-700: 224 237 205;
+    --color-highlight-800: 220 235 199;
+    --color-highlight-900: 243 234 209;
+    --color-highlight-DEFAULT: 243 234 209;
+    --font-display: "Sen", ui-serif, Georgia, Cambria, "Times New Roman", Times,
+      serif;
+    --font-body: Sen, ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+      "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", "Noto Color Emoji";
+
+    --mkt-header-height: 112px;
+    --mkt-header-height-desktop: 72px;
+  }
+
+  @font-face {
+    font-family: "Sen", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/sen/v1/6xK-dSZaM9iE.ttf)
+      format("truetype");
+  }
+  @font-face {
+    font-family: "Italiana", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/italiana/v12/xn7iYH8xwmSyTvOlIVYsqA.ttf)
+      format("truetype");
+  }
+  @font-face {
+    font-family: "Ballet", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/ballet/v1/xn7iYH8xwmSyTvOlIVYsqA.ttf)
+      format("truetype");
+  }
+  /* @font-face {
+    font-family: "Grandstander";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/grandstander/v17/ga6fawtA-GpSsTWrnNHPCSIMZhhKpFjyNZIQD1--D3g.ttf)
+      format("truetype");
+  }
+  @font-face {
+    font-family: "Montserrat Alternates";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/montserratalternates/v17/mFTvWacfw6zH4dthXcyms1lPpC8I_b0juU0J7A.ttf)
+      format("truetype");
+  } */
+
   h1,
   h2,
   h3,
@@ -76,7 +162,18 @@
   }
 }
 
-.mkt-post-section {
+.mkt-header {
+  background-color: rgba(
+    0,
+    0,
+    0,
+    var(--default-background-overlay-opacity, 0.3)
+  );
+  backdrop-filter: blur(var(--default-background-overlay-blur, 0px));
+  mix-blend-mode: var(--default-background-overlay-blend-mode, normal);
+}
+
+.mkt-section {
   color: rgb(var(--default-color));
   text-align: var(--default-text-align);
   font-family: var(--default-font-family);
@@ -97,7 +194,7 @@
   margin-left: var(--default-margin-left);
 }
 
-.mkt-post-section__background-overlay {
+.mkt-section__background-overlay {
   @apply absolute top-0 left-0 right-0 bottom-0;
   background-color: rgb(
     var(--default-background-overlay-color) /
@@ -108,7 +205,7 @@
 }
 
 @media (max-width: 639px) {
-  .mkt-post-section {
+  .mkt-section {
     color: rgb(var(--mobile-color, var(--default-color)));
     text-align: var(--mobile-text-align, var(--default-text-align));
     font-family: var(--mobile-font-family, var(--default-font-family));
@@ -143,7 +240,7 @@
     margin-left: var(--mobile-margin-left, var(--default-margin-left));
   }
 
-  .mkt-post-section__background-overlay {
+  .mkt-section__background-overlay {
     background-color: rgb(
       var(
           --mobile-background-overlay-color,

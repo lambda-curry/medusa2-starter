@@ -1,30 +1,30 @@
-import { type FC, memo } from 'react';
-import { Image } from '@components/images/Image';
-import { ScrollArrowButtons } from '@components/buttons/ScrollArrowButtons';
-import { useScrollArrows } from '@utils/hooks/useScrollArrows';
-import { MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
+import { type FC, memo } from "react"
+import { Image } from "@ui-components/common/images/Image"
+import { ScrollArrowButtons } from "@ui-components/common/buttons/ScrollArrowButtons"
+import { useScrollArrows } from "@utils/hooks/useScrollArrows"
+import { MagnifyingGlassPlusIcon } from "@heroicons/react/24/outline"
 
 export interface GalleryImage {
-  url: string;
-  alt?: string;
-  name?: string;
+  url: string
+  alt?: string
+  name?: string
 }
 
 export interface ReviewImageThumbnailRowProps {
-  galleryImages?: GalleryImage[];
-  onClick?: (index: number) => void;
+  galleryImages?: GalleryImage[]
+  onClick?: (index: number) => void
 }
 
 const GalleryImagesRow: FC<{
-  galleryImages: GalleryImage[];
-  onClick?: (index: number) => void;
+  galleryImages: GalleryImage[]
+  onClick?: (index: number) => void
 }> = memo(({ galleryImages, onClick }) => {
   return (
     <div className="py flex flex-row gap-2 after:block after:h-8 after:w-8 after:min-w-[8px] after:content-[''] md:p-0">
       {galleryImages.map((image, imageIndex) => (
         <div
           onClick={() => {
-            if (typeof onClick === 'function') onClick(imageIndex);
+            if (typeof onClick === "function") onClick(imageIndex)
           }}
           key={image.url}
           className="group relative flex h-24 w-24 flex-shrink-0 cursor-pointer justify-center overflow-hidden rounded-md border border-gray-100 bg-white text-sm font-bold uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-1"
@@ -32,7 +32,7 @@ const GalleryImagesRow: FC<{
           <Image
             src={image.url}
             alt="Gallery Image"
-            proxyOptions={{ context: 'tiny_square' }}
+            proxyOptions={{ context: "tiny_square" }}
             className="h-full w-full object-contain object-center transition group-hover:scale-110"
           />
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 transition group-hover:bg-opacity-50">
@@ -41,20 +41,20 @@ const GalleryImagesRow: FC<{
         </div>
       ))}
     </div>
-  );
-});
+  )
+})
 
 export const ReviewImageThumbnailRow: FC<ReviewImageThumbnailRowProps> = ({
   galleryImages,
   onClick,
 }) => {
-  if (!galleryImages) return null;
+  if (!galleryImages) return null
 
   const { scrollableDivRef, showStartArrow, showEndArrow, handleArrowClick } =
     useScrollArrows({
       buffer: 50,
       resetOnDepChange: [galleryImages],
-    });
+    })
 
   return (
     <div className="py-4">
@@ -84,5 +84,5 @@ export const ReviewImageThumbnailRow: FC<ReviewImageThumbnailRowProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,32 +1,288 @@
-import { Container } from '@components/container';
-import { type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
-import { PageTemplate } from '~/templates/PageTemplate';
-import { getMergedPostMeta } from '@libs/util/posts';
+import { Container } from "@ui-components/common/container"
+import { type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node"
+import { useLoaderData } from "@remix-run/react"
+import { PageTemplate } from "~/templates/PageTemplate"
+import { getMergedPostMeta } from "@libs/util/posts"
+import { fetchPageData, getHomePage } from "@libs/util/server/page.server"
+import HeroSection from "@ui-components/content/sections/HeroSection"
+import { Image } from "@ui-components/common/images/Image"
+import { ListItemsSection } from "@ui-components/content/sections/ListItemsSection"
+import PostSectionProductListCarousel from "@ui-components/content/post-section/PostSectionProductListCarousel"
 import {
-  fetchPostData,
-  getHomePage,
-} from '@libs/util/server/posts.server';
+  Card,
+  CardBody,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@ui-components/common/card"
+import { SideBySideSection } from "@ui-components/content/sections/SideBySideSection"
+import { GridCTASection } from "@ui-components/content/sections/GridCTASection"
+import { ActionList } from "@ui-components/content/ActionList"
+// import {
+//   fetchPostData,
+//   getHomePage,
+// } from '@libs/util/server/posts.server';
 
 export const loader = async (args: LoaderFunctionArgs) => {
-  const post = await getHomePage(args);
+  const page = await getHomePage(args)
 
-  const data = fetchPostData({ post: post!, ...args });
+  const data = fetchPageData({ page: page!, ...args })
 
-  return { post, ...data };
-};
+  return { page, data }
+}
 
-export const meta: MetaFunction<typeof loader> = getMergedPostMeta;
+export const meta: MetaFunction<typeof loader> = getMergedPostMeta
 
 export default function IndexRoute() {
-  const { post, ...data } = useLoaderData<typeof loader>();
+  const { page, ...data } = useLoaderData<typeof loader>()
 
-  if (!post)
-    return (
-      <Container className="my-8">
-        <h2>This page doesn't exist.</h2>
+  return (
+    <>
+      <HeroSection
+        className="h-[800px] -mt-[184px] md:-mt-[var(--mkt-header-height)] pt-[var(--mkt-header-height)]"
+        content={
+          <div className="text-center w-full space-y-9">
+            <h4 className="font-italiana">COFFEE & COMMUNITY</h4>
+            <h1 className="text-8xl font-italiana">BARRIO</h1>
+            <p>
+              Discover our artisan-roasted coffee, crafted with care and
+              delivered to your door. At Barrio, we’re more than a coffee
+              roastery—we’re a neighborhood.
+            </p>
+          </div>
+        }
+        actions={[
+          {
+            label: "Discover Our Blends",
+            url: "/products",
+          },
+        ]}
+        image={{
+          url: "/assets/images/barrio-banner.png",
+          alt: "Barrio background",
+        }}
+      />
+
+      <Container className="p-14 lg:pt-24 relative flex flex-col-reverse items-center md:flex-row">
+        <div className="md:absolute w-80 md:-top-48 lg:-top-[260px] md:left-0 lg:w-[420px]">
+          <Image
+            src="/assets/images/header-image-1.png"
+            alt="Barrio background"
+            height={520}
+            width={420}
+          />
+        </div>
+
+        <div className="md:w-full flex flex-col justify-center max-md:items-center">
+          <div className="w-full flex text-center md:text-left">
+            <h2 className="ml-auto text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-ballet">
+              Building Community
+            </h2>
+          </div>
+          <p className="font-italiana text-6xl md:text-7xl mt-6 sm:mt-10 md:mt-24">
+            one cup at a time
+          </p>
+        </div>
       </Container>
-    );
 
-  return <PageTemplate post={post} data={data} />;
+      <Container className="p-14 pt-0">
+        <HeroSection
+          className="h-[594px]"
+          backgroundClassName="rounded-3xl"
+          image={{
+            url: "/assets/images/banner-coffee-shop.png",
+            alt: "Barrio background",
+          }}
+        />
+      </Container>
+
+      <ListItemsSection
+        itemsClassName="mb-2"
+        title="About our products"
+        items={[
+          {
+            title: "Responsibly Sourced",
+            description:
+              "We believe good coffee happens when great people come together to build longterm relationships.",
+            image: {
+              src: "/assets/images/benefit-1.png",
+              alt: "Responsibly Sourced",
+              width: 60,
+              height: 60,
+            },
+          },
+          {
+            title: "Meticulous Roasted",
+            description:
+              "Our custom roast profiles are designed to elevate the natural beauty of our coffees - from sparkling acidity to brown sugar sweetness.",
+            image: {
+              src: "/assets/images/benefit-2.png",
+              alt: "Meticulous Roasted",
+              width: 60,
+              height: 60,
+            },
+          },
+          {
+            title: "Giving Back",
+            description:
+              "Every time you buy a bag of our coffee, we donate a portion of our proceeds to our non-profit partners.",
+            image: {
+              src: "/assets/images/benefit-3.png",
+              alt: "Giving Back",
+              width: 60,
+              height: 60,
+            },
+          },
+        ]}
+      />
+
+      <PostSectionProductListCarousel
+        className="!pb-[100px]"
+        data={{
+          heading: { value: "Our Blends" },
+          actions: [
+            {
+              label: "View all",
+              url: "/products",
+            },
+          ],
+        }}
+      />
+
+      <HeroSection
+        className="pb-10 min-h-[734px]"
+        content={
+          <div className="text-center w-full space-y-9">
+            <h4 className="font-italiana">SUBSCRIBE & SAVE</h4>
+            <h1 className="text-7xl font-italiana">
+              Sit back, let us take care of your coffee
+            </h1>
+
+            <ListItemsSection
+              className="text-left w-full text-black justify-between p-0"
+              itemsClassName="rounded-3xl bg-highlight-900 p-10 text-sm"
+              useFillTitle
+              items={[
+                {
+                  title: "Choose your coffee",
+                  description:
+                    "From single origin to our house blend, or even surprise offerings for the more adventurous, we have the coffee tofit your taste.",
+                },
+                {
+                  title: "Choose a frequency",
+                  description:
+                    "Receive 12 oz of our whole bean coffee weekly, every 2 weeks, every 3 weeks, or monthly—whatever frequency meets your needs.",
+                },
+                {
+                  title: "enjoy :)",
+                  description:
+                    "You’ve chosen your coffee and how often you want it delivered—all that’s left to do is sit back and relax while we do all the work.",
+                },
+              ]}
+            />
+          </div>
+        }
+        actions={[
+          {
+            label: "Get your coffee",
+            url: "/products",
+          },
+        ]}
+        image={{
+          url: "/assets/images/barrio-banner.png",
+          alt: "Barrio background",
+        }}
+      />
+
+      <Container className="flex flex-col-reverse items-center lg:items-start lg:flex-row p-14 lg:pt-24 lg:px-24 relative lg:min-h-[354px]">
+        <div className="flex justify-center md:justify-end md:absolute md:-top-[30%] w-60 md:w-80 md:right-0 lg:right-20 lg:w-[420px]">
+          <Image
+            src="/assets/images/header-image-2.png"
+            alt="Barrio background"
+            height={520}
+            width={420}
+          />
+        </div>
+
+        <div className="w-full flex justify-center md:justify-start text-center md:text-left">
+          <h2 className="md:w-3/5 xl:w-4/5 text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-italiana">
+            The Art of Roasting
+            <br />
+            <span className="font-ballet text-[150%]">at Barrio</span>
+            <br />
+            Crafting with Care
+          </h2>
+        </div>
+      </Container>
+
+      <SideBySideSection
+        className="p-14 md:pt-28 lg:pt-24 lg:px-24"
+        left={
+          <div className="w-full h-full flex items-center justify-center">
+            <div
+              className="bg-cover bg-no-repeat bg-center w-full rounded-3xl h-[410px]"
+              style={{
+                backgroundImage: `url(/assets/images/coffee-shop-2.png)`,
+              }}
+            />
+          </div>
+        }
+        right={
+          <p className="text-sm h-full flex items-center justify-center">
+            At Barrio, our roasting process is a carefully honed craft,
+            combining traditional techniques with a modern, sustainable
+            approach. Each batch of coffee is roasted in small quantities to
+            ensure precise control over every stage of the process, allowing the
+            unique characteristics of the beans to shine through.
+            <br />
+            <br />
+            We start by selecting high-quality, ethically sourced beans from
+            farmers who share our commitment to sustainability and community.
+            The roasting process begins with a slow, even heat that coaxes out
+            the natural flavors, developing rich aromas and deep, complex
+            profiles. Every bean undergoes a transformation, revealing its
+            distinct notes—whether it's the bright acidity of a light roast, the
+            balanced sweetness of a medium roast, or the bold, rich depth of a
+            dark roast.
+            <br />
+            <br />
+            Our goal is to honor the origin of each coffee, preserving its
+            natural flavors while adding our own touch of expertise. The result?
+            A perfectly roasted coffee that reflects the heart of our
+            community—vibrant, diverse, and full of life. At Barrio, every roast
+            tells a story, and every cup connects you to the hands that nurtured
+            it.
+          </p>
+        }
+      />
+      <GridCTASection
+        className="p-14 md:pt-28 lg:pt-24 lg:px-24"
+        images={[
+          {
+            src: "/assets/images/grid-cta-1.png",
+            alt: "Barrio background",
+          },
+          {
+            src: "/assets/images/grid-cta-2.png",
+            alt: "Barrio background",
+          },
+        ]}
+        content={
+          <div className="space-y-10 flex flex-col justify-center items-center">
+            <h4 className="text-xl font-italiana">FIND YOUR COMMUNITY</h4>
+            <h3 className="text-7xl  font-italiana">BARRIO</h3>
+            <p className="text-xl">Ship, Share & Connect Over Coffee</p>
+            <ActionList
+              actions={[
+                {
+                  label: "Subscribe for Events",
+                  url: "#",
+                },
+              ]}
+            />
+          </div>
+        }
+      />
+    </>
+  )
 }

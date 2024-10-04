@@ -1,15 +1,17 @@
-import { type FC } from 'react';
-import { ButtonBase, ButtonBaseProps } from '@components/buttons/ButtonBase';
-import { useSendEvent } from '../../../libs/util/analytics/useAnalytics';
+import { type FC } from "react"
+import {
+  ButtonBase,
+  ButtonBaseProps,
+} from "@ui-components/common/buttons/ButtonBase"
 
 export interface ShareButtonProps {
-  shareData: ShareData;
-  onSuccess?: () => void;
-  onError?: (error?: unknown) => void;
-  onNonNativeShare?: () => void;
-  onInteraction?: () => void;
-  disabled?: boolean;
-  ButtonComponent?: FC<ButtonBaseProps>;
+  shareData: ShareData
+  onSuccess?: () => void
+  onError?: (error?: unknown) => void
+  onNonNativeShare?: () => void
+  onInteraction?: () => void
+  disabled?: boolean
+  ButtonComponent?: FC<ButtonBaseProps>
 }
 
 export const ShareButton: FC<ShareButtonProps> = ({
@@ -21,27 +23,24 @@ export const ShareButton: FC<ShareButtonProps> = ({
   disabled,
   ButtonComponent = ButtonBase,
 }) => {
-  const useSendNativeShareEvent = useSendEvent('share');
-
   const handleClick = async () => {
-    onInteraction?.();
+    onInteraction?.()
 
     if (navigator.share) {
       shareData.url =
-        shareData.url || `${window.location.origin}${window.location.pathname}`;
+        shareData.url || `${window.location.origin}${window.location.pathname}`
       try {
-        await navigator.share(shareData);
-        useSendNativeShareEvent({ method: 'native', ...shareData });
-        onSuccess && onSuccess();
+        await navigator.share(shareData)
+        onSuccess && onSuccess()
       } catch (err) {
-        onError && onError(err);
+        onError && onError(err)
       }
     } else {
-      onNonNativeShare?.();
+      onNonNativeShare?.()
     }
-  };
+  }
 
   return (
     <ButtonComponent onClick={handleClick} type="button" disabled={disabled} />
-  );
-};
+  )
+}

@@ -1,22 +1,22 @@
-import { FC, useState } from 'react';
-import { Link } from '@remix-run/react';
-import { IconButton } from '@components/buttons';
-import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
+import { FC, useState } from "react"
+import { Link } from "@remix-run/react"
+import { IconButton } from "@ui-components/common/buttons"
+import PencilIcon from "@heroicons/react/24/outline/PencilIcon"
 
 import {
   GalleryImage,
   ReviewImageThumbnailRow,
-} from './ReviewImageThumbnailRow';
-import { StarRating } from './StarRating';
-import { LightboxGallery } from '@components/images/LightboxGallery';
-import { LineItem } from '@libs/util/medusa';
+} from "./ReviewImageThumbnailRow"
+import { StarRating } from "./StarRating"
+import { LightboxGallery } from "@ui-components/common/images/LightboxGallery"
+import { LineItem } from "@libs/util/medusa"
 
 export interface ProductReviewViewProps {
-  lineItem: LineItem;
-  rating?: number;
-  content?: string;
-  galleryImages?: GalleryImage[] | undefined;
-  setEditing?: (value: boolean) => void;
+  lineItem: LineItem
+  rating?: number
+  content?: string
+  galleryImages?: GalleryImage[] | undefined
+  setEditing?: (value: boolean) => void
 }
 
 export const ProductReviewView: FC<ProductReviewViewProps> = ({
@@ -26,7 +26,7 @@ export const ProductReviewView: FC<ProductReviewViewProps> = ({
   galleryImages,
   setEditing,
 }) => {
-  const [lightboxIndex, setLightboxIndex] = useState(-1);
+  const [lightboxIndex, setLightboxIndex] = useState(-1)
 
   return (
     <>
@@ -46,7 +46,7 @@ export const ProductReviewView: FC<ProductReviewViewProps> = ({
         <div className="flex items-center gap-1">
           <StarRating value={rating ?? 0} readOnly />
 
-          {typeof setEditing === 'function' && (
+          {typeof setEditing === "function" && (
             <IconButton
               icon={() => <PencilIcon className="text-primary h-5" />}
               onClick={() => setEditing(true)}
@@ -76,5 +76,5 @@ export const ProductReviewView: FC<ProductReviewViewProps> = ({
         </>
       )}
     </>
-  );
-};
+  )
+}

@@ -1,16 +1,16 @@
-import { type FC, Fragment } from 'react';
-import clsx from 'clsx';
-import { Dialog, Transition } from '@headlessui/react';
-import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
-import { IconButton } from '@components/buttons';
-import { URLAwareNavLink } from '@components/link';
+import { type FC, Fragment } from "react"
+import clsx from "clsx"
+import { Dialog, Transition } from "@headlessui/react"
+import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon"
+import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
+import { IconButton } from "@ui-components/common/buttons"
+import { URLAwareNavLink } from "@ui-components/common/link"
 
 export interface HeaderSideNavProps {
-  className?: string;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  activeSection?: string | null;
+  className?: string
+  open: boolean
+  setOpen: (open: boolean) => void
+  activeSection?: string | null
 }
 
 export const HeaderSideNav: FC<HeaderSideNavProps> = ({
@@ -18,7 +18,7 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
   setOpen,
   activeSection,
 }) => {
-  const { header_navigation_items } = useSiteDetails();
+  const { header_navigation_items } = useSiteDetails()
 
   return (
     <Transition.Root show={!!open} as={Fragment}>
@@ -80,15 +80,15 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
                                     onClick={() => setOpen(false)}
                                     className={({ isActive }) =>
                                       clsx(
-                                        'group flex items-center rounded-md px-4 py-3 text-sm font-normal',
+                                        "group flex items-center rounded-md px-4 py-3 text-sm font-normal",
                                         isActive &&
-                                          (!navItemProps.url.includes('#') ||
+                                          (!navItemProps.url.includes("#") ||
                                             activeSection ===
                                               navItemProps.url
-                                                .split('#')[1]
-                                                .split('?')[0])
-                                          ? 'bg-gray-100 text-gray-900'
-                                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                                .split("#")[1]
+                                                .split("?")[0])
+                                          ? "bg-gray-100 text-gray-900"
+                                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
                                       )
                                     }
                                     prefetch="intent"
@@ -97,7 +97,7 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
                                       {navItemProps.label}
                                     </span>
                                   </URLAwareNavLink>
-                                )
+                                ),
                               )}
                             </nav>
                           </div>
@@ -112,5 +112,5 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
         </div>
       </Dialog>
     </Transition.Root>
-  );
-};
+  )
+}

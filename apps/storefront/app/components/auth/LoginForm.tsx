@@ -1,77 +1,74 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect } from "react"
 import {
   FetcherWithComponents,
   useFetcher,
   useNavigate,
-} from '@remix-run/react';
-import { withYup } from '@remix-validated-form/with-yup';
-import * as Yup from 'yup';
-import { useCustomer } from '@ui-components/hooks/useCustomer';
-import { useLogin } from '@ui-components/hooks/useLogin';
-import { Form, FormProps } from '@components/forms/Form';
-import { FormError } from '@components/forms/FormError';
-import { ButtonLink, SubmitButton } from '@components/buttons';
-import { FieldCheckbox } from '@components/forms/fields/FieldCheckbox';
-import { FieldGroup } from '@components/forms/fields/FieldGroup';
-import { FieldPassword } from '@components/forms/fields/FieldPassword';
-import { FieldText } from '@components/forms/fields/FieldText';
-import { useSendEvent } from '@libs/util/analytics/useAnalytics';
+} from "@remix-run/react"
+import { withYup } from "@remix-validated-form/with-yup"
+import * as Yup from "yup"
+import { useCustomer } from "@ui-components/hooks/useCustomer"
+import { useLogin } from "@ui-components/hooks/useLogin"
+import { Form, FormProps } from "@ui-components/common/forms/Form"
+import { FormError } from "@ui-components/common/forms/FormError"
+import { ButtonLink, SubmitButton } from "@ui-components/common/buttons"
+import { FieldCheckbox } from "@ui-components/common/forms/fields/FieldCheckbox"
+import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
+import { FieldPassword } from "@ui-components/common/forms/fields/FieldPassword"
+import { FieldText } from "@ui-components/common/forms/fields/FieldText"
 
 export interface LoginFormValues {
-  email: string;
-  password: string;
+  email: string
+  password: string
 }
 
 export interface LoginFormProps
-  extends Partial<FormProps<LoginFormValues, 'login'>> {
-  redirect?: string;
-  onSuccess?: () => void;
-  defaultValues?: Partial<LoginFormValues>;
+  extends Partial<FormProps<LoginFormValues, "login">> {
+  redirect?: string
+  onSuccess?: () => void
+  defaultValues?: Partial<LoginFormValues>
 }
 
 export const loginFormValidator = withYup(
   Yup.object().shape({
-    email: Yup.string().required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    email: Yup.string().required("Email is required"),
+    password: Yup.string().required("Password is required"),
     rememberMe: Yup.string().optional(),
-  })
-);
+  }),
+)
 
 export const LoginForm: FC<LoginFormProps> = ({
   redirect,
   onSuccess,
   ...props
 }) => {
-  const fetcher = useFetcher<{ name: string }>();
-  const navigate = useNavigate();
-  const { customer } = useCustomer();
-  const { toggleLoginModal } = useLogin();
-  const sendLoginEvent = useSendEvent('login');
-  const isLoggedIn = customer?.id;
+  const fetcher = useFetcher<{ name: string }>()
+  const navigate = useNavigate()
+  const { customer } = useCustomer()
+  const { toggleLoginModal } = useLogin()
+  const isLoggedIn = customer?.id
   const isSubmitting =
-    fetcher.state === 'submitting' || fetcher.state === 'loading';
+    fetcher.state === "submitting" || fetcher.state === "loading"
 
   const defaultValues = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     rememberMe: false,
     ...props.defaultValues,
-  };
+  }
 
   useEffect(() => {
     if (!isSubmitting && isLoggedIn && onSuccess) {
-      sendLoginEvent({ method: 'password' });
-      onSuccess();
+      onSuccess()
     }
-  }, [isSubmitting, isLoggedIn]);
+  }, [isSubmitting, isLoggedIn])
 
   const handleForgotPasswordClick = () => {
-    toggleLoginModal(false);
-    navigate('/forgot-password');
-  };
+    toggleLoginModal(false)
+    navigate("/forgot-password")
+  }
 
   return (
-    <Form<LoginFormValues, 'login'>
+    <Form<LoginFormValues, "login">
       id="loginForm"
       method="post"
       action="/api/auth"
@@ -92,9 +89,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           label="Email address"
           fieldOptions={{
             validationBehavior: {
-              initial: 'onSubmit',
-              whenTouched: 'onSubmit',
-              whenSubmitted: 'onChange',
+              initial: "onSubmit",
+              whenTouched: "onSubmit",
+              whenSubmitted: "onChange",
             },
           }}
         />
@@ -103,9 +100,9 @@ export const LoginForm: FC<LoginFormProps> = ({
           label="Password"
           fieldOptions={{
             validationBehavior: {
-              initial: 'onSubmit',
-              whenTouched: 'onSubmit',
-              whenSubmitted: 'onChange',
+              initial: "onSubmit",
+              whenTouched: "onSubmit",
+              whenSubmitted: "onChange",
             },
           }}
         />
@@ -121,8 +118,8 @@ export const LoginForm: FC<LoginFormProps> = ({
       </FieldGroup>
 
       <SubmitButton className="block w-full">
-        {isSubmitting ? 'Logging in...' : 'Log in'}
+        {isSubmitting ? "Logging in..." : "Log in"}
       </SubmitButton>
     </Form>
-  );
-};
+  )
+}

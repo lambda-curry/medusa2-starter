@@ -1,13 +1,13 @@
-import { FC, useState } from 'react';
-import { Image } from '@components/images/Image';
-import { ProductReviewView } from './ProductReviewView';
-import { ProductReviewForm } from './ProductReviewForm';
-import { ProductReview, LineItem } from '@libs/util/index';
+import { FC, useState } from "react"
+import { Image } from "@ui-components/common/images/Image"
+import { ProductReviewView } from "./ProductReviewView"
+import { ProductReviewForm } from "./ProductReviewForm"
+import { ProductReview, LineItem } from "@libs/util/index"
 
 export interface ProductReviewProps {
-  lineItem?: LineItem;
-  productReview?: ProductReview;
-  requestId?: string;
+  lineItem?: LineItem
+  productReview?: ProductReview
+  requestId?: string
 }
 
 export const ProductReviewComponent: FC<ProductReviewProps> = ({
@@ -15,9 +15,9 @@ export const ProductReviewComponent: FC<ProductReviewProps> = ({
   productReview,
   requestId,
 }) => {
-  if (!lineItem) return null;
+  if (!lineItem) return null
 
-  const [editing, setEditing] = useState<boolean>(!productReview);
+  const [editing, setEditing] = useState<boolean>(!productReview)
 
   return (
     <div className="xs:grid my-4 grid-cols-6 gap-8 sm:grid-cols-5">
@@ -38,7 +38,7 @@ export const ProductReviewComponent: FC<ProductReviewProps> = ({
             content={productReview?.content}
             galleryImages={
               productReview?.images
-                ? productReview.images?.map(image => ({
+                ? productReview.images?.map((image) => ({
                     url: image.url,
                     alt: "Customer's review image",
                     name: "Customer's review image",
@@ -57,5 +57,5 @@ export const ProductReviewComponent: FC<ProductReviewProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

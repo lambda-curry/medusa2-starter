@@ -1,19 +1,19 @@
-import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
-import type { FC } from 'react';
-import { FilterOptions } from '@libs/util/product-filters';
-import { FilterState } from '../../../hooks/useProductPageFilters';
-import { Button } from '@components/buttons/Button';
-import { Menu } from '@components/menu/Menu';
-import { MenuButton } from '@components/menu/MenuButton';
-import { MenuItems } from '@components/menu/MenuItems';
-import { ProductTagsList } from './ProductTagsList';
+import ChevronDownIcon from "@heroicons/react/24/solid/ChevronDownIcon"
+import type { FC } from "react"
+import { FilterOptions } from "@libs/util/product-filters"
+import { FilterState } from "../../../hooks/useProductPageFilters"
+import { Button } from "@ui-components/common/buttons/Button"
+import { Menu } from "@ui-components/common/menu/Menu"
+import { MenuButton } from "@ui-components/common/menu/MenuButton"
+import { MenuItems } from "@ui-components/common/menu/MenuItems"
+import { ProductTagsList } from "./ProductTagsList"
 
 export interface ProductTagsMenuProps extends FilterState {
-  tags?: FilterOptions['tags'];
+  tags?: FilterOptions["tags"]
 }
 
-export const ProductTagsMenu: FC<ProductTagsMenuProps> = props => {
-  if (!props.tags?.length) return null;
+export const ProductTagsMenu: FC<ProductTagsMenuProps> = (props) => {
+  if (!props.tags?.length) return null
 
   return (
     <Menu>
@@ -27,5 +27,5 @@ export const ProductTagsMenu: FC<ProductTagsMenuProps> = props => {
         <ProductTagsList {...props} />
       </MenuItems>
     </Menu>
-  );
-};
+  )
+}

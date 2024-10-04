@@ -4,7 +4,7 @@ import { useFetcher } from "@remix-run/react"
 import { useStorefront } from "./useStorefront"
 import { PricedProduct } from "@markethaus/storefront-client"
 import { loader as searchLoader } from "../../../app/routes/_todo/search"
-import { PaginationConfig } from "@components/Pagination"
+import { PaginationConfig } from "@ui-components/common/Pagination"
 import {
   ProductCategory,
   ProductCollection,

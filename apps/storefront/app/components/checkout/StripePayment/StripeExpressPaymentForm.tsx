@@ -1,4 +1,4 @@
-import { Alert } from "@components/alert"
+import { Alert } from "@ui-components/common/alert"
 import { PricedShippingOption } from "@markethaus/storefront-client"
 import { convertToFormData } from "@utils/forms/objectToFormData"
 import { Address } from "@utils/types"

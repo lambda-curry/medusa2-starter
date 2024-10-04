@@ -1,13 +1,13 @@
-import { FC, PropsWithChildren } from 'react';
-import { Button } from '@components/buttons/Button';
-import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
-import { CheckoutStep } from '../../../libs/ui-components/providers/checkout-provider';
+import { FC, PropsWithChildren } from "react"
+import { Button } from "@ui-components/common/buttons/Button"
+import CheckIcon from "@heroicons/react/24/solid/CheckIcon"
+import { CheckoutStep } from "../../../libs/ui-components/providers/checkout-provider"
 
 export const CheckoutSectionHeader: FC<
   PropsWithChildren<{
-    completed: boolean;
-    setStep: (step: CheckoutStep) => void;
-    step: CheckoutStep;
+    completed: boolean
+    setStep: (step: CheckoutStep) => void
+    step: CheckoutStep
   }>
 > = ({ completed, setStep, step, children }) => {
   return (
@@ -28,5 +28,5 @@ export const CheckoutSectionHeader: FC<
         </>
       )}
     </header>
-  );
-};
+  )
+}

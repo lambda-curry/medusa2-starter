@@ -1,35 +1,35 @@
-import type { FC } from 'react';
-import clsx from 'clsx';
+import type { FC } from "react"
+import clsx from "clsx"
 import {
   Menu,
   MenuButton,
   MenuItems,
   MenuItem,
   type MenuItemRenderProps,
-} from '@components/menu';
-import ArrowsUpDownIcon from '@heroicons/react/24/solid/ArrowsUpDownIcon';
-import { useProductPageFilters } from '../../../libs/ui-components/hooks/useProductPageFilters';
-import { type FilterOptions } from '@libs/util/product-filters';
-import { Button } from '@components/buttons';
+} from "@ui-components/common/menu"
+import ArrowsUpDownIcon from "@heroicons/react/24/solid/ArrowsUpDownIcon"
+import { useProductPageFilters } from "../../../libs/ui-components/hooks/useProductPageFilters"
+import { type FilterOptions } from "@libs/util/product-filters"
+import { Button } from "@ui-components/common/buttons"
 
 export const ProductSortDropdown: FC<{
-  filterOptions: FilterOptions;
-  allFilterOptions: FilterOptions;
+  filterOptions: FilterOptions
+  allFilterOptions: FilterOptions
 }> = ({ filterOptions, allFilterOptions }) => {
   const { orderState } = useProductPageFilters({
     filterOptions,
     allFilterOptions,
-  });
+  })
 
   const handleSortChange = (sortOption: string) => {
-    orderState.setSelected(sortOption);
-  };
+    orderState.setSelected(sortOption)
+  }
 
   const orderDisplayMap = {
-    popularity: 'Most Popular',
-    product_rating: 'Highest Rated',
-    '-created_at': 'Recently Added',
-  };
+    popularity: "Most Popular",
+    product_rating: "Highest Rated",
+    "-created_at": "Recently Added",
+  }
 
   return (
     <Menu>
@@ -48,12 +48,12 @@ export const ProductSortDropdown: FC<{
                 variant="ghost"
                 {...itemProps}
                 className={clsx(
-                  'hover:!bg-primary-50 focus:!bg-primary-50 cursor-pointer !justify-start text-start',
+                  "hover:!bg-primary-50 focus:!bg-primary-50 cursor-pointer !justify-start text-start",
                   {
-                    'text-primary-700 font-bold':
+                    "text-primary-700 font-bold":
                       orderState.selected === sortOption,
                   },
-                  itemProps.className
+                  itemProps.className,
                 )}
                 onClick={() => handleSortChange(sortOption)}
               >
@@ -66,5 +66,5 @@ export const ProductSortDropdown: FC<{
         ))}
       </MenuItems>
     </Menu>
-  );
-};
+  )
+}

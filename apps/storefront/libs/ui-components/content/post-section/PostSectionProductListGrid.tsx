@@ -1,22 +1,21 @@
-import { FC, lazy } from 'react';
-import PostSectionProductList, {
-  PostSectionProductListProps,
-} from './shared/PostSectionProductList';
-import { ProductGridSkeleton } from '@ui-components/product/ProductGridSkeleton';
+import { FC, lazy } from "react"
+import SectionProductList, {
+  SectionProductListProps,
+} from "./shared/PostSectionProductList"
+import { ProductGridSkeleton } from "@ui-components/product/ProductGridSkeleton"
 
-const ProductGrid = lazy(() => import('../../product/ProductGrid'));
+const ProductGrid = lazy(() => import("../../product/ProductGrid"))
 
-export const PostSectionProductListGrid: FC<PostSectionProductListProps> = ({
-  isPreview,
-  ...props
-}) => {
+export const PostSectionProductListGrid: FC<SectionProductListProps> = (
+  props,
+) => {
   return (
-    <PostSectionProductList
+    <SectionProductList
       {...props}
       component={ProductGrid}
       fallback={<ProductGridSkeleton length={3} />}
     />
-  );
-};
+  )
+}
 
-export default PostSectionProductListGrid;
+export default PostSectionProductListGrid

@@ -1,7 +1,7 @@
-import StripeBadge from '@components/assets/markethaus/StripeBadge.png';
+import StripeBadge from "@ui-components/common/assets/markethaus/StripeBadge.png"
 
 export interface StripeSecurityImageProps {
-  className?: string;
+  className?: string
 }
 
 export const StripeSecurityImage = ({
@@ -14,5 +14,5 @@ export const StripeSecurityImage = ({
       src={StripeBadge}
       alt="stripe security badge"
     />
-  );
-};
+  )
+}
