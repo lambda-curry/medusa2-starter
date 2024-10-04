@@ -20,15 +20,7 @@ import { FieldTextarea } from "@ui-components/common/forms/fields/FieldTextarea"
 import { Grid } from "@ui-components/common/grid/Grid"
 import { GridColumn } from "@ui-components/common/grid/GridColumn"
 import { Share } from "~/components/share"
-import {
-  Page,
-  BasePageSection,
-  PageTemplate,
-  PricedProduct,
-  PricedVariant,
-  ProductOptionValue,
-  ProductWithReviews,
-} from "@libs/util/medusa/types"
+import { BasePageSection } from "@libs/util/medusa/types"
 import { Link, useFetcher } from "@remix-run/react"
 import { withYup } from "@remix-validated-form/with-yup"
 import clsx from "clsx"
@@ -36,8 +28,7 @@ import truncate from "lodash/truncate"
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import * as Yup from "yup"
 import { ProductOptionSelectorSelect } from "~/components/products/ProductOptionSelectorSelect"
-import { LineItemActions } from "~/routes/_todo/api.cart.line-items"
-import { PostData } from "~/routes/_todo/api.post-section-data"
+import { LineItemActions } from "~/routes/api.cart.line-items"
 import {
   getFilteredOptionValues,
   getOptionValuesWithDiscountLabels,
@@ -47,12 +38,17 @@ import {
 import { useProductInventory } from "../../libs/ui-components/hooks/useProductInventory"
 import { FieldLabel } from "@ui-components/common/forms/fields/FieldLabel"
 import { formatDate } from "../../libs/util/formatters"
-import { variantSaleEndDate } from "../../libs/util/prices"
+// import { variantSaleEndDate } from "@libs/util/prices"
 import { ProductOptionSelectorRadio } from "../components/products/ProductOptionSelectorRadio"
 import { ProductReviewSection } from "../components/reviews/ProductReviewSection"
 import { ProductReviewStars } from "../components/reviews/ProductReviewStars"
 import { ImageUploadWithPreview } from "@ui-components/common/ImageUpload/ImageUploadWithPreview"
 import { QuantitySelector } from "@ui-components/common/field-groups/QuantitySelector"
+import {
+  StoreProduct,
+  StoreProductOptionValue,
+  StoreProductVariant,
+} from "@medusajs/types"
 
 export interface AddToCartFormValues {
   productId: string
@@ -64,14 +60,14 @@ export interface AddToCartFormValues {
   customer_file_uploads?: string[]
 }
 
-export const getAddToCartValidator = (product: PricedProduct) => {
+export const getAddToCartValidator = (product: StoreProduct) => {
   const optionsValidation = product.options!.reduce((acc, option) => {
     if (!option.id) return acc
 
     acc[option.id] = Yup.string().required(`${option.title} is required`)
 
     return acc
-  }, {} as { [key: string]: Yup.SchemaOf<string> })
+  }, {} as { [key: string]: Yup.Schema<string> })
 
   const schemaShape: Record<keyof AddToCartFormValues, Yup.AnySchema> = {
     productId: Yup.string().required("Product ID is required"),
@@ -81,17 +77,17 @@ export const getAddToCartValidator = (product: PricedProduct) => {
     customer_file_uploads: Yup.mixed().optional(),
   }
 
-  if (product.customer_response_prompt) {
-    schemaShape.customer_product_response =
-      product.customer_response_prompt_required
-        ? Yup.string().required("Response is required")
-        : Yup.string().optional()
-  }
+  // if (product.customer_response_prompt) {
+  //   schemaShape.customer_product_response =
+  //     product.customer_response_prompt_required
+  //       ? Yup.string().required("Response is required")
+  //       : Yup.string().optional()
+  // }
 
   return withYup(Yup.object().shape(schemaShape))
 }
 
-const getBreadcrumbs = (product: PricedProduct) => {
+const getBreadcrumbs = (product: StoreProduct) => {
   const breadcrumbs: Breadcrumb[] = [
     {
       label: (
@@ -146,24 +142,16 @@ export const SaleEndsOn = ({ dateSaleEnds }: { dateSaleEnds: Date | null }) => {
 }
 
 export interface ProductTemplateProps {
-  product: ProductWithReviews
-  post?: Page | PageTemplate
-  isPreview?: boolean
-  data?: PostData
+  product: StoreProduct
 }
 
-const variantIsSoldOut: (variant: PricedVariant | undefined) => boolean = (
-  variant,
-) => {
+const variantIsSoldOut: (
+  variant: StoreProductVariant | undefined,
+) => boolean = (variant) => {
   return !!(variant?.manage_inventory && variant?.inventory_quantity! < 1)
 }
 
-export const ProductTemplate = ({
-  product,
-  post,
-  isPreview,
-  data,
-}: ProductTemplateProps) => {
+export const ProductTemplate = ({ product }: ProductTemplateProps) => {
   const formRef = useRef<HTMLFormElement>(null)
   const addToCartFetcher = useFetcher<any>()
   const { cart, toggleCartDrawer } = useCart()
@@ -209,9 +197,10 @@ export const ProductTemplate = ({
           controlledOptions,
           option.id,
         )
-        const optionValues = option.values as unknown as (ProductOptionValue & {
-          disabled?: boolean
-        })[]
+        const optionValues =
+          option.values as unknown as (StoreProductOptionValue & {
+            disabled?: boolean
+          })[]
 
         optionValues.forEach((optionValue) => {
           if (
@@ -269,18 +258,13 @@ export const ProductTemplate = ({
   }, [isSubmitting, hasErrors])
 
   const soldOut = variantIsSoldOut(selectedVariant) || productSoldOut
-  const hasSections = !!post?.sections.length
-  const selectedVariantSaleEndDate = selectedVariant
-    ? variantSaleEndDate(selectedVariant, currencyCode)
-    : null
+  // const selectedVariantSaleEndDate = selectedVariant
+  //   ? variantSaleEndDate(selectedVariant, currencyCode)
+  //   : null
 
   return (
     <>
-      <section
-        className={clsx("bg-white pb-12 sm:pt-6", {
-          "min-h-screen": !hasSections,
-        })}
-      >
+      <section className="bg-white pb-12 sm:pt-6 min-h-screen">
         <Form<AddToCartFormValues, LineItemActions.CREATE>
           id="addToCartForm"
           formRef={formRef}
@@ -324,7 +308,8 @@ export const ProductTemplate = ({
                               shareData={{
                                 title: product.title,
                                 text: truncate(
-                                  product.description || post?.seo?.description,
+                                  product.description ||
+                                    "Check out this product",
                                   {
                                     length: 200,
                                     separator: " ",
@@ -333,18 +318,7 @@ export const ProductTemplate = ({
                               }}
                             />
                           </header>
-                          <p className="my-1 text-sm text-gray-500">
-                            by{" "}
-                            <Link
-                              to={`/vendors/${product.vendor!.handle}`}
-                              className="hover:text-gray-700 hover:underline"
-                            >
-                              {product.vendor!.name}
-                            </Link>
-                          </p>
                         </div>
-
-                        <ProductReviewStars reviewStats={product.reviewStats} />
 
                         <section
                           aria-labelledby="product-information"
@@ -354,9 +328,9 @@ export const ProductTemplate = ({
                             Product information
                           </h2>
 
-                          <SaleEndsOn
+                          {/* <SaleEndsOn
                             dateSaleEnds={selectedVariantSaleEndDate}
-                          />
+                          /> */}
                           <p className="text-lg text-gray-900 sm:text-xl">
                             {/* TODO: Should show price based on product variant selected and show "compare at" price if there is a discount active */}
                             {selectedVariant ? (
@@ -428,7 +402,7 @@ export const ProductTemplate = ({
                         <FormError />
 
                         <div className="my-2 flex flex-col gap-2">
-                          {product.customer_response_prompt && (
+                          {/* {product.customer_response_prompt && (
                             <FieldTextarea
                               name="customer_product_response"
                               label={product.customer_response_prompt}
@@ -441,7 +415,7 @@ export const ProductTemplate = ({
                               className="mt-4"
                               name="customer_file_uploads"
                             />
-                          )}
+                          )} */}
 
                           <div className="flex items-center gap-4 py-2">
                             {!soldOut && (
@@ -466,12 +440,9 @@ export const ProductTemplate = ({
                           {!!product.description && (
                             <div className="mt-4">
                               <h3 className="mb-2">Description</h3>
-                              <div
-                                className="whitespace-pre-wrap text-base text-gray-500"
-                                dangerouslySetInnerHTML={{
-                                  __html: product.description || "",
-                                }}
-                              />
+                              <div className="whitespace-pre-wrap text-base text-gray-500">
+                                {product.description}
+                              </div>
                             </div>
                           )}
 
@@ -534,20 +505,6 @@ export const ProductTemplate = ({
           </Container>
         </Form>{" "}
       </section>
-
-      {hasSections && (
-        <>
-          {post.sections.map((section, index) => (
-            <RenderPageSection
-              key={`${section.id}_${index}`}
-              section={section as BasePageSection}
-              isPreview={isPreview}
-              data={data?.[section.id]}
-            />
-          ))}
-        </>
-      )}
-      <ProductReviewSection />
     </>
   )
 }

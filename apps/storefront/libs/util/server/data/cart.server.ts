@@ -87,7 +87,7 @@ export const addToCart = withAuthHeaders(
       throw new Error("Error retrieving or creating cart")
     }
 
-    await sdk.store.cart
+    return await sdk.store.cart
       .createLineItem(
         cart.id,
         {
@@ -122,7 +122,7 @@ export const updateLineItem = withAuthHeaders(
       throw new Error("Missing cart ID when updating line item")
     }
 
-    await sdk.store.cart
+    return await sdk.store.cart
       .updateLineItem(cartId, lineId, { quantity }, {}, authHeaders)
       .catch(medusaError)
   },
@@ -139,7 +139,7 @@ export const deleteLineItem = withAuthHeaders(
       throw new Error("Missing cart ID when deleting line item")
     }
 
-    await sdk.store.cart
+    return await sdk.store.cart
       .deleteLineItem(cartId, lineId, authHeaders)
       .catch(medusaError)
   },
