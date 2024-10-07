@@ -46,7 +46,7 @@ const selectSizeClassNames = (
 const selectVariantClassNames = (variant: ButtonProps["variant"]) => {
   switch (variant) {
     case "primary":
-      return "button--primary text-white bg-primary-600 hover:bg-primary-800 focus:border-primary-500"
+      return "button--primary text-white bg-primary hover:bg-primary-800 focus:border-primary-500"
 
     case "link":
       return "button--link text-primary-600 hover:text-primary-500"

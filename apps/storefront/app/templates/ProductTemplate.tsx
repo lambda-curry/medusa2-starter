@@ -1,5 +1,4 @@
 import HomeIcon from "@heroicons/react/24/solid/HomeIcon"
-import { RenderPageSection } from "@ui-components/content/post-section/PostSection"
 import { useCart } from "@ui-components/hooks/useCart"
 import { useProductPriceDetails } from "@ui-components/hooks/useProductPriceDetails"
 import { useRegion } from "@ui-components/hooks/useRegion"
@@ -16,14 +15,11 @@ import { Container } from "@ui-components/common/container/Container"
 import { Form } from "@ui-components/common/forms/Form"
 import { FormError } from "@ui-components/common/forms/FormError"
 import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
-import { FieldTextarea } from "@ui-components/common/forms/fields/FieldTextarea"
 import { Grid } from "@ui-components/common/grid/Grid"
 import { GridColumn } from "@ui-components/common/grid/GridColumn"
 import { Share } from "~/components/share"
-import { BasePageSection } from "@libs/util/medusa/types"
 import { Link, useFetcher } from "@remix-run/react"
 import { withYup } from "@remix-validated-form/with-yup"
-import clsx from "clsx"
 import truncate from "lodash/truncate"
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
 import * as Yup from "yup"
@@ -38,17 +34,15 @@ import {
 import { useProductInventory } from "../../libs/ui-components/hooks/useProductInventory"
 import { FieldLabel } from "@ui-components/common/forms/fields/FieldLabel"
 import { formatDate } from "../../libs/util/formatters"
-// import { variantSaleEndDate } from "@libs/util/prices"
 import { ProductOptionSelectorRadio } from "../components/products/ProductOptionSelectorRadio"
-import { ProductReviewSection } from "../components/reviews/ProductReviewSection"
-import { ProductReviewStars } from "../components/reviews/ProductReviewStars"
-import { ImageUploadWithPreview } from "@ui-components/common/ImageUpload/ImageUploadWithPreview"
 import { QuantitySelector } from "@ui-components/common/field-groups/QuantitySelector"
 import {
   StoreProduct,
   StoreProductOptionValue,
   StoreProductVariant,
 } from "@medusajs/types"
+import PostSectionProductListCarousel from "@ui-components/content/post-section/PostSectionProductListCarousel"
+import { Validator } from "remix-validated-form"
 
 export interface AddToCartFormValues {
   productId: string
@@ -56,11 +50,11 @@ export interface AddToCartFormValues {
   options: {
     [key: string]: string
   }
-  customer_product_response?: string | null
-  customer_file_uploads?: string[]
 }
 
-export const getAddToCartValidator = (product: StoreProduct) => {
+export const getAddToCartValidator = (
+  product: StoreProduct,
+): Validator<AddToCartFormValues> => {
   const optionsValidation = product.options!.reduce((acc, option) => {
     if (!option.id) return acc
 
@@ -73,18 +67,11 @@ export const getAddToCartValidator = (product: StoreProduct) => {
     productId: Yup.string().required("Product ID is required"),
     quantity: Yup.number().optional(),
     options: Yup.object().shape(optionsValidation),
-    customer_product_response: Yup.string().nullable().optional(),
-    customer_file_uploads: Yup.mixed().optional(),
   }
 
-  // if (product.customer_response_prompt) {
-  //   schemaShape.customer_product_response =
-  //     product.customer_response_prompt_required
-  //       ? Yup.string().required("Response is required")
-  //       : Yup.string().optional()
-  // }
-
-  return withYup(Yup.object().shape(schemaShape))
+  return withYup(
+    Yup.object().shape(schemaShape),
+  ) as Validator<AddToCartFormValues>
 }
 
 const getBreadcrumbs = (product: StoreProduct) => {
@@ -168,8 +155,6 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
     productId: product.id!,
     quantity: 1,
     options: {},
-    customer_product_response: null,
-    customer_file_uploads: [],
   }
 
   const breadcrumbs = getBreadcrumbs(product)
@@ -224,7 +209,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
         )
         return {
           title: option.title,
-          product_id: option.product_id,
+          product_id: option.product_id as string,
           id: option.id,
           values: optionValuesWithLabels.map(({ value, label }) => ({
             value,
@@ -264,7 +249,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
 
   return (
     <>
-      <section className="bg-white pb-12 sm:pt-6 min-h-screen">
+      <section className="pb-12 pt-12 xl:pt-24 min-h-screen">
         <Form<AddToCartFormValues, LineItemActions.CREATE>
           id="addToCartForm"
           formRef={formRef}
@@ -286,7 +271,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
               <GridColumn>
                 <div className="md:py-6">
                   <Grid className="!gap-0">
-                    <GridColumn className="mb-8 md:col-span-6 lg:col-span-7">
+                    <GridColumn className="mb-8 md:col-span-6 lg:col-span-7 xl:pr-16 xl:pl-9">
                       <ProductImageGallery product={product} />
                     </GridColumn>
 
@@ -294,7 +279,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                       <div className="px-0 sm:px-6 md:p-10 md:pt-0">
                         <div>
                           <Breadcrumbs
-                            className="mb-6"
+                            className="mb-6 text-primary"
                             breadcrumbs={breadcrumbs}
                           />
 
@@ -328,9 +313,6 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                             Product information
                           </h2>
 
-                          {/* <SaleEndsOn
-                            dateSaleEnds={selectedVariantSaleEndDate}
-                          /> */}
                           <p className="text-lg text-gray-900 sm:text-xl">
                             {/* TODO: Should show price based on product variant selected and show "compare at" price if there is a discount active */}
                             {selectedVariant ? (
@@ -440,7 +422,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                           {!!product.description && (
                             <div className="mt-4">
                               <h3 className="mb-2">Description</h3>
-                              <div className="whitespace-pre-wrap text-base text-gray-500">
+                              <div className="whitespace-pre-wrap text-base text-primary-800">
                                 {product.description}
                               </div>
                             </div>
@@ -476,7 +458,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                             <nav aria-label="Tags" className="mt-4">
                               <h3 className="mb-2">Tags</h3>
 
-                              <ol className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
+                              <ol className="flex flex-wrap items-center gap-2 text-xs text-primary">
                                 {product.tags.map((tag, tagIndex) => (
                                   <li key={tagIndex}>
                                     <Button
@@ -486,7 +468,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                                           {...buttonProps}
                                         />
                                       )}
-                                      className="!h-auto whitespace-nowrap !rounded !px-2 !py-1 !text-xs !font-bold"
+                                      className="!h-auto whitespace-nowrap !rounded !px-2 !py-1 !text-xs !font-bold bg-accent-900"
                                     >
                                       {tag.value}
                                     </Button>
@@ -505,6 +487,12 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
           </Container>
         </Form>{" "}
       </section>
+      <PostSectionProductListCarousel
+        className="!pb-[100px] xl:px-9"
+        data={{
+          heading: { value: "You may also like" },
+        }}
+      />
     </>
   )
 }

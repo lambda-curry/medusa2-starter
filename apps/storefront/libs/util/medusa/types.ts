@@ -528,7 +528,7 @@ export interface HeroContent extends BasePageSectionContent {
 }
 
 export interface ProductListContent extends BasePageSectionContent {
-  filters: ProductListFilter
+  filters?: ProductListFilter
 }
 
 export interface RawHTMLContent extends BasePageSectionContent {

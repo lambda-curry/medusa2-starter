@@ -1,6 +1,6 @@
 import { createCookie } from "@remix-run/node"
 import { destroyCookie, getCookie, setCookie } from "./cookies.server"
-import { createMedusaClient, sdk } from "@libs/util/server/client.server"
+import { sdk } from "@libs/util/server/client.server"
 
 export type CartSessionData = {
   cartId: string

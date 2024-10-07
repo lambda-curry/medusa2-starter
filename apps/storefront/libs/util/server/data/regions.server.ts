@@ -1,6 +1,10 @@
 import { sdk } from "@libs/util/server/client.server"
 import { medusaError } from "@libs/util/medusa/medusa-error"
-import { HttpTypes } from "@medusajs/types"
+import { HttpTypes, StoreRegionCountry } from "@medusajs/types"
+
+export const getCountryCode = (country: StoreRegionCountry) => {
+  return country?.iso_2 as string
+}
 
 // TODO: Check if CACHING is needed here
 
@@ -20,7 +24,12 @@ export const retrieveRegion = async function (id: string) {
 
 const regionMap = new Map<string, HttpTypes.StoreRegion>()
 
-export const getRegion = async function (countryCode: string) {
+export const getDefaultRegion = async function () {
+  const regions = await listRegions()
+  return regions[0]
+}
+
+export const getRegion = async function (countryCode: string = "") {
   try {
     if (regionMap.has(countryCode)) {
       return regionMap.get(countryCode)
@@ -35,13 +44,11 @@ export const getRegion = async function (countryCode: string) {
 
     regions.forEach((region) => {
       region.countries?.forEach((c) => {
-        regionMap.set(c?.iso_2 ?? "", region)
+        regionMap.set(getCountryCode(c) ?? "", region)
       })
     })
 
-    const region = countryCode
-      ? regionMap.get(countryCode)
-      : regionMap.get("us")
+    const region = countryCode ? regionMap.get(countryCode) : getDefaultRegion()
 
     return region
   } catch (e: any) {

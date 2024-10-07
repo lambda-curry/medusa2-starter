@@ -77,12 +77,14 @@ export const addToCart = withAuthHeaders(
     },
   ) => {
     const { variantId, quantity, countryCode } = data
+    console.log("🚀 ~ addToCart ~ (input) data:", data)
 
     if (!variantId) {
       throw new Error("Missing variant ID when adding to cart")
     }
 
     const cart = await getOrSetCart(request, countryCode)
+    console.log("🚀 ~ addToCart ~ (current) cart.id:", cart.id)
     if (!cart) {
       throw new Error("Error retrieving or creating cart")
     }
@@ -97,6 +99,11 @@ export const addToCart = withAuthHeaders(
         {},
         authHeaders,
       )
+      .then((res) => {
+        console.log("🚀 ~ addToCart ~ (output) cart.id:", res.cart.id)
+
+        return res
+      })
       .catch(medusaError)
   },
 )
@@ -370,7 +377,12 @@ export const placeOrder = withAuthHeaders(
       const countryCode =
         cartRes.order.shipping_address?.country_code?.toLowerCase()
       removeCartId(request.headers)
-      redirect(`/${countryCode}/order/confirmed/${cartRes?.order.id}`)
+
+      const redirectUrl = `/${countryCode}/order/confirmed/${cartRes?.order.id}`
+
+      console.log("🚀 ~ placeOrder ~ redirectUrl:", redirectUrl)
+
+      redirect(redirectUrl)
     }
 
     return (

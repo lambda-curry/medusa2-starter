@@ -1,45 +1,25 @@
 import { Container } from "@ui-components/common/container"
 import { type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node"
-import { useLoaderData } from "@remix-run/react"
-import { PageTemplate } from "~/templates/PageTemplate"
 import { getMergedPostMeta } from "@libs/util/posts"
-import { fetchPageData, getHomePage } from "@libs/util/server/page.server"
 import HeroSection from "@ui-components/content/sections/HeroSection"
 import { Image } from "@ui-components/common/images/Image"
 import { ListItemsSection } from "@ui-components/content/sections/ListItemsSection"
 import PostSectionProductListCarousel from "@ui-components/content/post-section/PostSectionProductListCarousel"
-import {
-  Card,
-  CardBody,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@ui-components/common/card"
 import { SideBySideSection } from "@ui-components/content/sections/SideBySideSection"
 import { GridCTASection } from "@ui-components/content/sections/GridCTASection"
 import { ActionList } from "@ui-components/content/ActionList"
-// import {
-//   fetchPostData,
-//   getHomePage,
-// } from '@libs/util/server/posts.server';
 
 export const loader = async (args: LoaderFunctionArgs) => {
-  const page = await getHomePage(args)
-
-  const data = fetchPageData({ page: page!, ...args })
-
-  return { page, data }
+  return {}
 }
 
 export const meta: MetaFunction<typeof loader> = getMergedPostMeta
 
 export default function IndexRoute() {
-  const { page, ...data } = useLoaderData<typeof loader>()
-
   return (
     <>
       <HeroSection
-        className="h-[800px] -mt-[184px] md:-mt-[var(--mkt-header-height)] pt-[var(--mkt-header-height)]"
+        className="h-[800px] -mt-[92px] md:-mt-[calc(var(--mkt-header-height-desktop) * 2)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
         content={
           <div className="text-center w-full space-y-9">
             <h4 className="font-italiana">COFFEE & COMMUNITY</h4>

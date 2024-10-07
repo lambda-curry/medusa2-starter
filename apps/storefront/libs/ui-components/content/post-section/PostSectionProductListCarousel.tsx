@@ -6,9 +6,9 @@ import { ProductCarouselSkeleton } from "@ui-components/product/ProductCarouselS
 
 const ProductCarousel = lazy(() => import("../../product/ProductCarousel"))
 
-export const PostSectionProductListCarousel: FC<SectionProductListProps> = (
-  props,
-) => {
+export const PostSectionProductListCarousel: FC<
+  Omit<SectionProductListProps, "component" | "fallback">
+> = (props) => {
   return (
     <SectionProductList
       {...props}

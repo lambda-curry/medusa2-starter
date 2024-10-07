@@ -14,7 +14,7 @@
     --color-primary-700: 51 65 85;
     --color-primary-800: 30 41 59;
     --color-primary-900: 15 23 42;
-    --color-primary-DEFAULT: 148 163 184;
+    --color-primary-DEFAULT: 15 23 42;
     --color-accent-50: 93 106 81;
     --color-accent-100: 105 122 93;
     --color-accent-200: 117 138 105;
@@ -44,7 +44,7 @@
       "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
       "Segoe UI Symbol", "Noto Color Emoji";
 
-    --mkt-header-height: 112px;
+    --mkt-header-height: 46px;
     --mkt-header-height-desktop: 72px;
   }
 

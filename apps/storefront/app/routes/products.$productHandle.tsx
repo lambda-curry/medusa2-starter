@@ -13,11 +13,13 @@ import { StoreProduct } from "@medusajs/types"
 export const loader = async (args: LoaderFunctionArgs) => {
   const { products } = await fetchProducts(args.request, {
     handle: args.params.productHandle,
+  }).catch((e) => {
+    return { products: [] }
   })
 
-  // if (!products.length) {
-  //   return redirect("/404")
-  // }
+  if (!products.length) {
+    return redirect("/404")
+  }
 
   return { product: products[0] }
 }

@@ -1,21 +1,15 @@
-import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon"
 import MagnifyingGlassIcon from "@heroicons/react/24/outline/MagnifyingGlassIcon"
-import ShoppingCartIcon from "@heroicons/react/24/outline/ShoppingCartIcon"
-import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon"
+import ShoppingBagIcon from "@heroicons/react/24/outline/ShoppingBagIcon"
 import { useCart } from "@ui-components/hooks/useCart"
-import { useCustomer } from "@ui-components/hooks/useCustomer"
-import { useLogin } from "@ui-components/hooks/useLogin"
 import { useRootLoaderData } from "@ui-components/hooks/useRootLoaderData"
 import { useSearch } from "@ui-components/hooks/useSearch"
 import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
 import { ButtonBase, IconButton } from "@ui-components/common/buttons"
 import { Container } from "@ui-components/common/container/Container"
 import { URLAwareNavLink } from "@ui-components/common/link"
-import { NavigationItem } from "@libs/util/medusa/types"
 import clsx from "clsx"
 import { FC, useState } from "react"
 import { HeaderSideNav } from "./HeaderSideNav"
-import { HeaderUserMenu } from "./HeaderUserMenu"
 import { useActiveSection } from "./useActiveSection"
 import { LogoStoreName } from "~/components/LogoStoreName/LogoStoreName"
 
@@ -24,15 +18,11 @@ export interface HeaderProps {}
 export const Header: FC<HeaderProps> = () => {
   const [sideNavOpen, setSideNavOpen] = useState<boolean>(false)
   const { headerNavigationItems } = useSiteDetails()
-  const { customer } = useCustomer()
   const { cart, toggleCartDrawer } = useCart()
   const { toggleSearchDrawer } = useSearch()
-  const { toggleLoginModal } = useLogin()
   const { activeSection } = useActiveSection(headerNavigationItems)
   const rootLoader = useRootLoaderData()
   const hasProducts = rootLoader?.hasPublishedProducts
-
-  const isLoggedIn = customer?.id
 
   if (!headerNavigationItems) return <>Loading...</>
 
@@ -44,25 +34,13 @@ export const Header: FC<HeaderProps> = () => {
             <Container>
               {hasProducts && (
                 <div className="-mb-2 flex w-full items-center justify-end gap-4 pt-2 sm:hidden">
-                  {/* {!isLoggedIn && (
-                    <IconButton
-                      aria-label="open login modal"
-                      onClick={() => toggleLoginModal(true)}
-                      icon={UserCircleIcon}
-                      iconProps={{ className: "!w-[28px] !h-[28px]" }}
-                      className="mkt-header-login-button hover:!bg-primary-50 focus:!bg-primary-50"
-                    />
-                  )} */}
-
-                  {/* {isLoggedIn && <HeaderUserMenu />} */}
-
                   {!!cart && (
                     <IconButton
                       aria-label="open shopping cart"
                       className="text-white sm:mr-0.5"
                       icon={(iconProps) => (
                         <div className="relative">
-                          <ShoppingCartIcon
+                          <ShoppingBagIcon
                             {...iconProps}
                             className={clsx(
                               iconProps.className,
@@ -165,7 +143,7 @@ export const Header: FC<HeaderProps> = () => {
                           className="text-white hidden sm:mr-0.5 sm:inline-flex"
                           icon={(iconProps) => (
                             <div className="relative">
-                              <ShoppingCartIcon
+                              <ShoppingBagIcon
                                 {...iconProps}
                                 className={clsx(
                                   iconProps.className,
@@ -188,36 +166,6 @@ export const Header: FC<HeaderProps> = () => {
                             </div>
                           )}
                           onClick={() => toggleCartDrawer(true)}
-                        />
-                      )}
-
-                      {/* {!isLoggedIn && hasProducts && (
-                        <IconButton
-                          aria-label="open login modal"
-                          onClick={() => toggleLoginModal(true)}
-                          icon={UserCircleIcon}
-                          iconProps={{ className: "!w-[28px] !h-[28px]" }}
-                          className="mkt-header-login-button hover:!bg-primary-50 focus:!bg-primary-50 hidden sm:inline-flex"
-                        />
-                      )}
-
-                      {isLoggedIn && hasProducts && (
-                        <HeaderUserMenu className="hidden sm:block" />
-                      )} */}
-
-                      {!!headerNavigationItems?.length && (
-                        <IconButton
-                          aria-label="open navigation menu"
-                          onClick={() => setSideNavOpen(true)}
-                          className={clsx(
-                            "text-white hover:!bg-primary-50 focus:!bg-primary-50 sm:inline-flex",
-                            {
-                              "2xl:hidden": headerNavigationItems.length <= 5,
-                              "xl:hidden": headerNavigationItems.length <= 4,
-                              "lg:hidden": headerNavigationItems.length <= 3,
-                            },
-                          )}
-                          icon={Bars3Icon}
                         />
                       )}
                     </div>

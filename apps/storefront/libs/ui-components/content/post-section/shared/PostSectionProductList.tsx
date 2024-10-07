@@ -29,7 +29,6 @@ const SectionProductListBase: FC<SectionProductListProps> = ({
   component,
   ...props
 }) => {
-  console.log("🚀 ~ SectionProductListBase -> props:", props)
   const [isInitialized, setIsInitialized] = useState<boolean>(false)
   const [selectedTab, setSelectedTab] = useState<number | undefined>(undefined)
   const fetcher = useFetcher<{

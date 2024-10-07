@@ -1,8 +1,7 @@
 import { FormValidationError } from "@utils/validation/validation-error"
 import { V2ActionHandler, handleActionV2 } from "@libs/util/handleAction.server"
 import { getVariantBySelectedOptions } from "@libs/util/products"
-import { cartIdCookie } from "@libs/util/server/cart-session.server"
-import { setCookie } from "@libs/util/server/cookies.server"
+import { setCartId } from "@libs/util/server/cookies.server"
 import type { ActionFunctionArgs, NodeOnDiskFile } from "@remix-run/node"
 import { unstable_data as data } from "@remix-run/node"
 import { withYup } from "@remix-validated-form/with-yup"
@@ -11,10 +10,15 @@ import { StoreCart, StoreCartResponse } from "@medusajs/types"
 import {
   addToCart,
   deleteLineItem,
+  getOrSetCart,
   retrieveCart,
   updateLineItem,
 } from "@libs/util/server/data/cart.server"
 import { getProductsById } from "@libs/util/server/data/products.server"
+import {
+  getCountryCode,
+  getDefaultRegion,
+} from "@libs/util/server/data/regions.server"
 
 export const addCartItemValidation = withYup(
   Yup.object().shape({
@@ -52,27 +56,6 @@ export interface DeleteLineItemRequestPayload {
   lineItemId: string
 }
 
-// const uploadImages = async (
-//   images: NodeOnDiskFile[] | NodeOnDiskFile | null | undefined,
-//   client: Medusa,
-// ): Promise<
-//   {
-//     url: string
-//     key: string
-//   }[]
-// > => {
-//   if (!images) return []
-//   const imagesToUpload = Array.isArray(images) ? images : [images]
-//   if (!imagesToUpload || imagesToUpload.length === 0) return []
-//   const uploadResponse = await client.productReviews.uploadImages(
-//     imagesToUpload,
-//   )
-//   if (!uploadResponse) return []
-//   const uploads = uploadResponse.uploads
-
-//   return Array.isArray(uploads) ? uploads : [{ ...uploads }]
-// }
-
 export interface LineItemRequestResponse extends StoreCartResponse {}
 
 const createItem: V2ActionHandler<StoreCartResponse> = async (
@@ -83,8 +66,6 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
 
   if (result.error) throw new FormValidationError(result.error)
 
-  let cartId = await cartIdCookie.parse(request.headers.get("Cookie") || "")
-
   const {
     productId,
     options,
@@ -93,11 +74,16 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
     customer_file_uploads,
   } = payload
 
-  const currentCart = await retrieveCart(request)
+  const region = await getDefaultRegion() // TODO: remove hardcoded region
+  const [fistCountry] = region.countries || []
+
+  const countryCode = getCountryCode(fistCountry)
+
+  const currentCart = await getOrSetCart(request, countryCode) // TODO: get region from request
 
   const [product] = await getProductsById({
     ids: [productId],
-    regionId: currentCart?.region_id || "US",
+    regionId: currentCart.region_id as string,
   }).catch(() => [])
 
   if (!product)
@@ -120,10 +106,10 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
   const { cart } = await addToCart(request, {
     variantId: variant.id!,
     quantity: parseInt(quantity, 10),
-    countryCode: "US",
+    countryCode: countryCode,
   })
 
-  await setCookie(responseHeaders, cartIdCookie, cart.id)
+  setCartId(responseHeaders, cart.id)
 
   return data({ cart }, { headers: responseHeaders })
 }
