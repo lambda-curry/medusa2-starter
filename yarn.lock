@@ -2767,21 +2767,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@headlessui/react@npm:2.1.2":
-  version: 2.1.2
-  resolution: "@headlessui/react@npm:2.1.2"
-  dependencies:
-    "@floating-ui/react": "npm:^0.26.16"
-    "@react-aria/focus": "npm:^3.17.1"
-    "@react-aria/interactions": "npm:^3.21.3"
-    "@tanstack/react-virtual": "npm:^3.8.1"
-  peerDependencies:
-    react: ^18
-    react-dom: ^18
-  checksum: 10c0/40f356b43f3774ce0387f5ebdadd307496ea64e9dae7baaa5046a9b76cbbf6350e3d5dfd7b4f497b161e56a3e408671da724c521ecad6631a95421ce5b59db50
-  languageName: node
-  linkType: hard
-
 "@headlessui/react@npm:^2.1.9":
   version: 2.1.9
   resolution: "@headlessui/react@npm:2.1.9"
@@ -11575,7 +11560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-table@npm:8.20.5, @tanstack/react-table@npm:^8.20.1":
+"@tanstack/react-table@npm:8.20.5":
   version: 8.20.5
   resolution: "@tanstack/react-table@npm:8.20.5"
   dependencies:
@@ -14607,28 +14592,6 @@ __metadata:
   checksum: 10c0/23efe47ff0a1a7c91489271b3a1e1d2a171c12ec7f9b35b29b2fce51270124aff0ec890087e2bc2182c1cb746e232ab7561aaafe05f1e7452aea733d2bfe3f63
   languageName: node
   linkType: hard
-
-"components@npm:0.0.1, components@workspace:packages/_to_DELETE_components":
-  version: 0.0.0-use.local
-  resolution: "components@workspace:packages/_to_DELETE_components"
-  dependencies:
-    "@headlessui/react": "npm:2.1.2"
-    "@remix-run/node": "npm:2.12.0"
-    "@remix-run/react": "npm:2.12.0"
-    "@remix-validated-form/with-yup": "npm:^3.0.1"
-    "@tanstack/react-table": "npm:^8.20.1"
-    "@types/react": "npm:^18.2.31"
-    "@types/react-dom": "npm:^18.2.14"
-    react: "npm:18.3.0-canary-c5b937576-20231219"
-    react-dom: "npm:18.3.0-canary-c5b937576-20231219"
-    react-drag-drop-files: "npm:2.3.10"
-    remix-validated-form: "npm:^5.1.5"
-    typescript: "npm:^5.6.2"
-    yet-another-react-lightbox: "npm:^3.14.0"
-  peerDependencies:
-    clsx: ^2.1.1
-  languageName: unknown
-  linkType: soft
 
 "compressible@npm:~2.0.16":
   version: 2.0.18
@@ -25958,7 +25921,6 @@ __metadata:
     clsx: "npm:^2.1.1"
     color: "npm:^4.2.3"
     common-tags: "npm:^1.8.2"
-    components: "npm:0.0.1"
     concurrently: "npm:^7.2.1"
     dotenv: "npm:^16.4.5"
     dotenv-cli: "npm:^7.4.2"
