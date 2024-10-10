@@ -12,19 +12,18 @@ import {
   useFetcher,
   useFetchers,
 } from "@remix-run/react"
-import { emptyAddress, medusaAddressToAddress } from "@utils/addresses"
-import { type PaymentMethods } from "@utils/types"
-import { convertToFormData } from "@utils/forms/objectToFormData"
+import { type PaymentMethods } from "@libs/utils-to-merge/types"
+import { convertToFormData } from "@libs/utils-to-merge/forms/objectToFormData"
 import {
   CheckoutAction,
   UpdatePaymentInput,
   UpdateBillingAddressInput,
-} from "~/routes/_todo/api.checkout"
+} from "~/routes/api.checkout"
 import { useFormContext } from "remix-validated-form"
 import {
   CheckoutOrderSummary,
   checkoutPaymentValidator,
-  PaymentMethodsRadioGroup,
+  // PaymentMethodsRadioGroup,
 } from "."
 import isEqual from "lodash/isEqual"
 import { useEnv } from "@ui-components/hooks/useEnv"
@@ -41,6 +40,8 @@ import {
   type StripeAddress,
 } from "./MedusaStripeAddress/MedusaStripeAddress"
 import HiddenAddressGroup from "./HiddenAddressGroup"
+import { emptyAddress } from "@libs/util"
+import { StoreCartAddress } from "@medusajs/types"
 
 export interface CompleteCheckoutFormProps extends PropsWithChildren {
   id: string
@@ -97,6 +98,10 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
     }
   }, [stripeFieldError])
 
+  const activeSession = cart?.payment_collection?.payment_sessions?.find(
+    (paymentSession) => paymentSession.status === "pending",
+  )
+
   const paymentMethodsForProvider = paymentMethods.filter(
     (paymentMethod) => paymentMethod.provider_id === providerId,
   )
@@ -109,23 +114,21 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
   )
   // const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useControlField('paymentMethodId', id);
 
-  const shippingDisabled: boolean = env.DISABLE_SHIPPING
-
   if (!cart) return null
 
-  const billingAddress = medusaAddressToAddress(cart.billing_address)
+  const billingAddress = cart.billing_address
 
   const countryOptions =
-    cart.region?.countries?.map((country) => ({
+    (cart.region?.countries?.map((country) => ({
       value: country.iso_2,
       label: country.display_name,
-    })) ?? []
+    })) as { value: string; label: string }[]) ?? []
 
   const defaultValues: UpdatePaymentInput = {
     cartId: cart.id,
     paymentMethodId: initialPaymentMethodId,
     sameAsShipping: true,
-    billingAddress: emptyAddress,
+    billingAddress: emptyAddress as StoreCartAddress,
     providerId,
   }
 
@@ -146,9 +149,9 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
       !isEqual(billingAddress, data.billingAddress)
     ) {
       const formData = convertToFormData({
-        cartId: data.cartId,
+        cart_id: data.cartId,
         subaction: CheckoutAction.UPDATE_BILLING_ADDRESS,
-        billingAddress: data.billingAddress,
+        billing_address: data.billingAddress,
       } as UpdateBillingAddressInput)
 
       await fetch("/api/checkout", { method: "post", body: formData })
@@ -178,7 +181,7 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
     </SubmitButton>
   )
 
-  if (!cart.payment_session) return null
+  if (!activeSession) return null
 
   return (
     <>
@@ -202,11 +205,7 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
         <FieldGroup>
           <FieldCheckbox
             name="sameAsShipping"
-            label={
-              !shippingDisabled
-                ? "Same as shipping address"
-                : "Same as account details"
-            }
+            label="Same as shipping address"
             onChange={(event) => setSameAsShipping(event.target.checked)}
             inputProps={{ defaultChecked: sameAsShipping }}
             className="mb-2"
@@ -216,7 +215,7 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
         {!sameAsShipping && (
           <MedusaStripeAddress
             mode="billing"
-            address={billingAddress}
+            address={billingAddress as StoreCartAddress}
             setAddress={setNewBillingAddress}
           />
         )}
@@ -229,7 +228,7 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
         {sameAsShipping && (
           <div className="-mt-2 mb-4">
             <AddressDisplay
-              address={billingAddress}
+              address={billingAddress as StoreCartAddress}
               countryOptions={countryOptions}
             />
           </div>
@@ -239,12 +238,12 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
           <input type="hidden" name="paymentMethodId" value="new" />
         )}
 
-        {hasPaymentMethods && (
+        {/* {hasPaymentMethods && (
           <PaymentMethodsRadioGroup
             formId={id}
             paymentMethods={paymentMethodsForProvider}
           />
-        )}
+        )} */}
 
         <div
           className={`stripe-payment-form ${

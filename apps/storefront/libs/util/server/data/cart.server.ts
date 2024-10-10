@@ -159,7 +159,7 @@ export async function enrichLineItems(
     | null,
   regionId: string,
 ) {
-  if (!lineItems) return []
+  if (!lineItems?.length) return []
 
   // Prepare query parameters
   const queryParams = {
@@ -170,7 +170,7 @@ export async function enrichLineItems(
   // Fetch products by their IDs
   const products = await getProductsById(queryParams)
   // If there are no line items or products, return an empty array
-  if (!lineItems?.length || !products) {
+  if (!products?.length) {
     return []
   }
 
@@ -205,16 +205,16 @@ export const setShippingMethod = withAuthHeaders(
     authHeaders,
     {
       cartId,
-      shippingMethodId,
+      shippingOptionId,
     }: {
       cartId: string
-      shippingMethodId: string
+      shippingOptionId: string
     },
   ) => {
     return sdk.store.cart
       .addShippingMethod(
         cartId,
-        { option_id: shippingMethodId },
+        { option_id: shippingOptionId },
         {},
         authHeaders,
       )
@@ -352,14 +352,10 @@ export async function setAddresses(
         province: formData.get("billing_address.province"),
         phone: formData.get("billing_address.phone"),
       }
-    await updateCart(request, data)
+    return await updateCart(request, data)
   } catch (e: any) {
     return e.message
   }
-
-  redirect(
-    `/${formData.get("shipping_address.country_code")}/checkout?step=delivery`,
-  )
 }
 
 export const placeOrder = withAuthHeaders(

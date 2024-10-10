@@ -1,4 +1,4 @@
-import { FormValidationError } from "@utils/validation/validation-error"
+import { FormValidationError } from "@libs/utils-to-merge/validation/validation-error"
 import { V2ActionHandler, handleActionV2 } from "@libs/util/handleAction.server"
 import { getVariantBySelectedOptions } from "@libs/util/products"
 import { setCartId } from "@libs/util/server/cookies.server"

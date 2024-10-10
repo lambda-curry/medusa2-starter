@@ -1,30 +1,35 @@
-import { CreditCardBrand, Payment } from '@utils/types';
-import { PaymentMethod } from '@stripe/stripe-js';
+import { CreditCardBrand, Payment } from "@libs/utils-to-merge/types"
+import { PaymentMethod } from "@stripe/stripe-js"
 
 export interface PaymentMethodDetails {
-  type: 'card';
+  type: "card"
   card?: {
-    brand: CreditCardBrand;
-    last4: PaymentMethod.Card['last4'];
-    exp_month: PaymentMethod.Card['exp_month'];
-    exp_year: PaymentMethod.Card['exp_year'];
-  };
+    brand: CreditCardBrand
+    last4: PaymentMethod.Card["last4"]
+    exp_month: PaymentMethod.Card["exp_month"]
+    exp_year: PaymentMethod.Card["exp_year"]
+  }
 }
 
-export const getOrderPaymentData = (payments: Payment[]): PaymentMethodDetails | null => {
-  const payment = payments.filter(p => p.provider_id === 'stripe')[0];
-  if (!payment) return null;
+export const getOrderPaymentData = (
+  payments: Payment[],
+): PaymentMethodDetails | null => {
+  const payment = payments.filter((p) => p.provider_id === "stripe")[0]
+  if (!payment) return null
 
-  if (payment.data.payment_method?.type === 'card') {
-    return { type: 'card', card: payment.data.payment_method.card as PaymentMethodDetails['card'] };
+  if (payment.data.payment_method?.type === "card") {
+    return {
+      type: "card",
+      card: payment.data.payment_method.card as PaymentMethodDetails["card"],
+    }
   }
 
   if (payment.data.charges?.data?.length) {
     return {
-      type: 'card',
-      card: payment.data.charges.data[0].payment_method_details.card
-    };
+      type: "card",
+      card: payment.data.charges.data[0].payment_method_details.card,
+    }
   }
 
-  return null;
-};
+  return null
+}

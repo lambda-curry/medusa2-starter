@@ -6,7 +6,7 @@ import {
 } from "@libs/util/prices"
 import type { MetaFunction } from "@remix-run/node"
 import { UIMatch } from "@remix-run/react"
-import { getProxySrc } from "@utils/img-proxy"
+import { getProxySrc } from "@libs/utils-to-merge/img-proxy"
 import { getCommonMeta, getParentMeta, mergeMeta } from "./meta"
 import { getPostMeta } from "./posts"
 import { RootLoader } from "./server/root.server"

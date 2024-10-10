@@ -11,7 +11,7 @@ import {
 import { useRef } from "react"
 import { Page } from "./components/layout/Page"
 import { RootProviders } from "./providers/root-providers"
-import { getProxySrc, imageProxyURL } from "@utils/img-proxy"
+import { getProxySrc, imageProxyURL } from "@libs/utils-to-merge/img-proxy"
 import { MetaFunction } from "@remix-run/node"
 import { getCommonMeta, mergeMeta } from "@libs/util/meta"
 import { getRootLoader } from "@libs/util/server/root.server"

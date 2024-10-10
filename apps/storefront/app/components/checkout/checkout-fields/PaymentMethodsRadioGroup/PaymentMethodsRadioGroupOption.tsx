@@ -4,8 +4,8 @@ import { Description, Label, Radio } from "@headlessui/react"
 import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon"
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon"
 import clsx from "clsx"
-import { CustomerAction } from "~/routes/_todo/api.customer"
-import type { CreditCardBrand, PaymentMethod } from "@utils/types"
+// import { CustomerAction } from "~/routes/api.customer"
+import type { CreditCardBrand, PaymentMethod } from "@libs/utils-to-merge/types"
 import { CreditCardIcon } from "@ui-components/common/icons/CreditCardIcon"
 import { IconButton } from "@ui-components/common/buttons/IconButton"
 import { ConfirmModal } from "@ui-components/common/modals/ConfirmModal"
@@ -34,7 +34,7 @@ export const PaymentMethodsRadioGroupOption: FC<
   const handleConfirmDelete = () => {
     removePaymentMethodFetcher.submit(
       {
-        subaction: CustomerAction.DELETE_PAYMENT_METHOD,
+        // subaction: CustomerAction.DELETE_PAYMENT_METHOD,
         paymentProviderId: paymentMethod.provider_id,
         paymentMethodId: paymentMethod.data?.id,
       },

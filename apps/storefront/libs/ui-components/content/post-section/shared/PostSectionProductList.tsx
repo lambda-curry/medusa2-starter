@@ -52,7 +52,7 @@ const SectionProductListBase: FC<SectionProductListProps> = ({
       }),
     })
 
-    fetcher.load(`/api/page-section-data?${queryString}`)
+    fetcher.load(`/api/page-data?${queryString}`)
   }
 
   useEffect(() => {

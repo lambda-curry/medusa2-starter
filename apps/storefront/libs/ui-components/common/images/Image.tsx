@@ -1,6 +1,9 @@
 import { FC, ImgHTMLAttributes } from "react"
 import clsx from "clsx"
-import { ImageProxyURLOptions, useImageProxySrc } from "@utils/img-proxy"
+import {
+  ImageProxyURLOptions,
+  useImageProxySrc,
+} from "@libs/utils-to-merge/img-proxy"
 import { ImageBase } from "./ImageBase"
 
 export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {

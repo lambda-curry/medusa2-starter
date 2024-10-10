@@ -28,6 +28,7 @@
 import { Image } from "@medusajs/medusa"
 import type { LanguageCode } from "./languages"
 import {
+  BaseAddress,
   HttpTypes,
   StoreCollection,
   StoreCustomer,
@@ -41,7 +42,8 @@ import {
   PostSectionType,
   ProductCarouselPostSection,
   ProductGridPostSection,
-} from "@utils/medusa"
+} from "@libs/utils-to-merge/medusa"
+import { BaseRegionCountry } from "@medusajs/types/dist/http/region/common"
 
 // export type MedusaClientSerialized<T> = T
 // export type PricedProduct = MedusaClientSerialized<MedusaPricedProduct>
@@ -628,3 +630,19 @@ export interface SiteSettings {
   social_snapchat?: string
   storefront_url?: string
 }
+
+export interface Address {
+  firstName: string
+  lastName: string
+  company?: string | null
+  address1: string
+  address2?: string | null
+  city: string
+  province: string
+  countryCode: string
+  postalCode: string
+  phone?: string | null
+  country?: string | null // BaseRegionCountry["iso_2"]
+}
+
+export type MedusaAddress = Omit<BaseAddress, "id" | "customer_id">

@@ -11,8 +11,8 @@ import { RenderPageSection } from "@ui-components/content/post-section"
 import { RichTextContent } from "@ui-components/content/rich-text-content"
 import { Container } from "@ui-components/common/container/Container"
 import { Share } from "~/components/share"
-import { PostData } from "~/routes/_todo/api.post-section-data"
-import { imageProxyURL } from "@utils/img-proxy"
+import { PostData } from "~/routes/api.post-section-data"
+import { imageProxyURL } from "@libs/utils-to-merge/img-proxy"
 
 export interface PostTemplateProps {
   post: Page

@@ -1,14 +1,14 @@
 import { Button } from "@ui-components/common/buttons/Button"
 import { Modal } from "@ui-components/common/modals/Modal"
 
-import { type Address } from "@utils/types"
+import { type Address } from "@libs/utils-to-merge/types"
 import { FetcherWithComponents } from "@remix-run/react"
 import { FC } from "react"
 import {
   CheckoutAction,
   UpdateAccountDetailsInput,
-} from "~/routes/_todo/api.checkout"
-import { convertToFormData } from "@utils/forms/objectToFormData"
+} from "~/routes/api.checkout"
+import { convertToFormData } from "@libs/utils-to-merge/forms/objectToFormData"
 
 export interface AddressSuggestions {
   original: Address

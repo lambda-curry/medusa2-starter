@@ -7,12 +7,14 @@ import {
 } from "@stripe/stripe-js"
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import clsx from "clsx"
-import { Address, PaymentMethods } from "@utils/types"
-import { UpdatePaymentInput } from "~/routes/_todo/api.checkout"
+import { Address, PaymentMethods } from "@libs/utils-to-merge/types"
+import { UpdatePaymentInput } from "~/routes/api.checkout"
 import { CompleteCheckoutForm } from "../CompleteCheckoutForm"
-import { medusaAddressToAddress } from "@utils/addresses"
+// import { medusaAddressToAddress } from "@libs/utils-to-merge/addresses"
 import { useCart } from "@ui-components/hooks/useCart"
 import { Alert } from "@ui-components/common/alert/Alert"
+import { useCheckout } from "@ui-components/hooks/useCheckout"
+import { BaseCartAddress } from "@medusajs/types/dist/http/cart/common"
 
 export interface StripePaymentFormProps extends PropsWithChildren {
   isActiveStep: boolean
@@ -28,23 +30,30 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
   const stripe = useStripe()
   const elements = useElements()
   const { cart } = useCart()
+  const { activePaymentSession } = useCheckout()
 
   useEffect(() => {
     if (!elements) return
     elements.fetchUpdates()
-  }, [cart?.payment_session?.updated_at])
+  }, [activePaymentSession?.payment?.updated_at]) // TODO: CHECK if this is correct
 
   const hasPaymentMethods = paymentMethods.length > 0
   const initialPaymentMethodId = hasPaymentMethods
     ? paymentMethods[0].data.id
     : "new"
-  // const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useControlField('paymentMethodId', 'stripePaymentForm');
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useControlField(
+    "paymentMethodId",
+    "stripePaymentForm",
+  )
 
-  // useEffect(() => setSelectedPaymentMethodId(initialPaymentMethodId), [paymentMethods]);
+  useEffect(
+    () => setSelectedPaymentMethodId(initialPaymentMethodId),
+    [paymentMethods],
+  )
 
-  // useEffect(() => {
-  //   if (isActiveStep && stripeElement) stripeElement.focus();
-  // }, [selectedPaymentMethodId, isActiveStep, stripeElement]);
+  useEffect(() => {
+    if (isActiveStep && stripeElement) stripeElement.focus()
+  }, [selectedPaymentMethodId, isActiveStep, stripeElement])
 
   if (!cart || !stripe || !elements) return null
 
@@ -66,22 +75,20 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
     }
     // NOTE: We default the cart billing address to be the same as the shipping address in the `ACCOUNT_DETAILS` step.
     const address = (
-      data.sameAsShipping
-        ? medusaAddressToAddress(cart.billing_address)
-        : data.billingAddress
-    ) as Address
+      data.sameAsShipping ? cart.billing_address : data.billingAddress
+    ) as BaseCartAddress
 
     const stripeBillingDetails: PaymentMethodCreateParams.BillingDetails = {
-      name: `${address.firstName} ${address.lastName}`,
+      name: `${address.first_name} ${address.last_name}`,
       email: cart.email,
       phone: address.phone || "",
       address: {
-        line1: address.address1 || "",
-        line2: address.address2 || "",
+        line1: address.address_1 || "",
+        line2: address.address_2 || "",
         city: address.city || "",
         state: address.province || "",
-        postal_code: address.postalCode || "",
-        country: address.countryCode || "",
+        postal_code: address.postal_code || "",
+        country: address.country_code || "",
       },
     }
 

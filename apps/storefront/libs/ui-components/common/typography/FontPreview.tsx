@@ -1,12 +1,12 @@
-import { Font } from '@utils/medusa';
-import { Card } from '../card';
-import clsx from 'clsx';
+import { Font } from "@libs/utils-to-merge/medusa"
+import { Card } from "../card"
+import clsx from "clsx"
 
 interface FontPreviewProps {
-  className?: string;
-  label: string;
-  displayFont: Font;
-  bodyFont: Font;
+  className?: string
+  label: string
+  displayFont: Font
+  bodyFont: Font
 }
 
 export const FontPreview = ({
@@ -18,8 +18,8 @@ export const FontPreview = ({
   return (
     <Card
       className={clsx(
-        'flex flex-col items-start justify-center overflow-hidden border-4 border-transparent p-8 pb-1 pr-3 text-left !shadow',
-        className
+        "flex flex-col items-start justify-center overflow-hidden border-4 border-transparent p-8 pb-1 pr-3 text-left !shadow",
+        className,
       )}
     >
       <span
@@ -34,5 +34,5 @@ export const FontPreview = ({
         {label}
       </span>
     </Card>
-  );
-};
+  )
+}

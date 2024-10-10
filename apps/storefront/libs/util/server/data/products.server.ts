@@ -31,57 +31,52 @@ export const getProductByHandle = async (handle: string, regionId: string) => {
     .then(({ products }) => products[0])
 }
 
-export const getProductsList = withAuthHeaders(
-  async (
-    request,
-    authHeaders,
-    {
-      pageParam = 1,
-      queryParams,
-      countryCode,
-    }: {
-      pageParam?: number
-      queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
-      countryCode: string
-    },
-  ): Promise<{
-    response: { products: HttpTypes.StoreProduct[]; count: number }
-    nextPage: number | null
-    queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
-  }> => {
-    const limit = queryParams?.limit || 12
-    const offset = (pageParam - 1) * limit
-    const region = await getRegion(request, countryCode)
+export const getProductsList = async ({
+  pageParam = 1,
+  queryParams,
+  countryCode,
+}: {
+  pageParam?: number
+  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+  countryCode: string
+}): Promise<{
+  response: { products: HttpTypes.StoreProduct[]; count: number }
+  nextPage: number | null
+  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+}> => {
+  const limit = queryParams?.limit || 12
+  const offset = (pageParam - 1) * limit
+  const region = await getRegion(countryCode)
+  console.log("🚀 ~ getProductsList ~ region:", region)
 
-    if (!region) {
-      return {
-        response: { products: [], count: 0 },
-        nextPage: null,
-      }
+  if (!region) {
+    return {
+      response: { products: [], count: 0 },
+      nextPage: null,
     }
+  }
 
-    return sdk.store.product
-      .list({
-        limit,
-        offset,
-        region_id: region.id,
-        fields: "*variants.calculated_price",
-        ...queryParams,
-      })
-      .then(({ products, count }) => {
-        const nextPage = count > offset + limit ? pageParam + 1 : null
+  return sdk.store.product
+    .list({
+      limit,
+      offset,
+      region_id: region.id,
+      fields: "*variants.calculated_price",
+      ...queryParams,
+    })
+    .then(({ products, count }) => {
+      const nextPage = count > offset + limit ? pageParam + 1 : null
 
-        return {
-          response: {
-            products,
-            count,
-          },
-          nextPage: nextPage,
-          queryParams,
-        }
-      })
-  },
-)
+      return {
+        response: {
+          products,
+          count,
+        },
+        nextPage: nextPage,
+        queryParams,
+      }
+    })
+}
 
 /**
  * This will fetch 100 products to the Next.js cache and sort them based on the sortBy parameter.

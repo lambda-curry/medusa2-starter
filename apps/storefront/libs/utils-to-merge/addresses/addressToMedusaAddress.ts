@@ -1,18 +1,18 @@
-import { Address, MedusaAddress } from '../types';
+import { Address, MedusaAddress } from "@libs/util/medusa"
 
 export const addressToMedusaAddress = (address: Address): MedusaAddress => {
-  if (!address) return {} as MedusaAddress;
+  if (!address) return {} as MedusaAddress
 
   return {
     first_name: address.firstName,
     last_name: address.lastName,
-    company: address.company || '',
+    company: address.company || "",
     address_1: address.address1,
-    address_2: address.address2 || '',
+    address_2: address.address2 || "",
     city: address.city,
     country_code: address.countryCode,
-    phone: address.phone || '',
+    phone: address.phone || "",
     postal_code: address.postalCode,
-    province: address.province
-  };
-};
+    province: address.province,
+  } as MedusaAddress
+}

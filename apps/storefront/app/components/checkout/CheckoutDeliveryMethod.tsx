@@ -18,20 +18,16 @@ import {
 } from "@remix-run/react"
 import { FC, Fragment, useEffect, useMemo, useRef } from "react"
 import { useField } from "remix-validated-form"
-import {
-  AddShippingMethodInput,
-  CheckoutAction,
-} from "~/routes/_todo/api.checkout"
+import { AddShippingMethodInput, CheckoutAction } from "~/routes/api.checkout"
 import { CheckoutSectionHeader } from "./CheckoutSectionHeader"
 import { ShippingOptionsRadioGroup } from "./checkout-fields/ShippingOptionsRadioGroup/ShippingOptionsRadioGroup"
 import { getCheckoutAddShippingMethodValidator } from "./checkout-form-helpers"
 import { StripeSecurityImage } from "../images/StripeSecurityImage"
-import { Cart } from "@libs/util/medusa"
-import { ShippingOption } from "@markethaus/storefront-client"
+import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
 
 const getShippingOptionsDefaultValues = (
-  cart: Cart,
-  shippingOptionsByProfile: { [key: string]: ShippingOption[] },
+  cart: StoreCart,
+  shippingOptionsByProfile: { [key: string]: StoreCartShippingOption[] },
 ) => {
   const values = cart.shipping_methods?.map((sm) => sm.shipping_option_id) ?? []
 
@@ -46,15 +42,16 @@ const getShippingOptionsDefaultValues = (
 }
 
 const getDefaultValues = (
-  cart: Cart,
-  shippingOptionsByProfile: { [key: string]: ShippingOption[] },
-) => ({
-  cartId: cart.id,
-  shippingOptionIds: getShippingOptionsDefaultValues(
-    cart,
-    shippingOptionsByProfile,
-  ),
-})
+  cart: StoreCart,
+  shippingOptionsByProfile: { [key: string]: StoreCartShippingOption[] },
+) =>
+  ({
+    cartsId: cart.id,
+    shippingOptionIds: getShippingOptionsDefaultValues(
+      cart,
+      shippingOptionsByProfile,
+    ),
+  } as AddShippingMethodInput)
 
 export const CheckoutDeliveryMethod: FC = () => {
   const fetcher = useFetcher<{ fieldErrors: any }>()
@@ -138,15 +135,16 @@ export const CheckoutDeliveryMethod: FC = () => {
             <StripeSecurityImage className="mt-4" />
           )}
           <dl>
-            {cart.shipping_methods?.map(
-              ({ id, shipping_option, price }, shippingMethodIndex) => {
+            TODO: FIX THIS
+            {/* {cart.shipping_methods?.map(
+              ({ id, shipping_option, price }: BaseCartShippingMethod, shippingMethodIndex) => {
                 const profileItems = cart.items?.filter(
                   (item) =>
                     item.variant?.product?.profile_id ===
                     shipping_option?.profile_id,
                 )
                 const profileItemsList = profileItems
-                  ?.map((item) => item.variant?.product?.title)
+                  ?.map((item) => item.product_title)
                   .join(", ")
 
                 return (
@@ -168,7 +166,7 @@ export const CheckoutDeliveryMethod: FC = () => {
                   </Fragment>
                 )
               },
-            )}
+            )} */}
           </dl>
         </>
       )}
@@ -190,7 +188,7 @@ export const CheckoutDeliveryMethod: FC = () => {
               const profileItems =
                 cart.items?.filter(
                   (item) => item.variant?.product?.profile_id === profileId,
-                ) ?? []
+                ) ?? [] // TODO: how to get profile_id?
               const profileItemsList = profileItems
                 .map((item) => item.variant?.product?.title)
                 .join(", ")

@@ -1,5 +1,8 @@
 import { DOMAttributes, useCallback, useState } from "react"
-import { ImageProxyURLOptions, useImageProxySrc } from "@utils/img-proxy"
+import {
+  ImageProxyURLOptions,
+  useImageProxySrc,
+} from "@libs/utils-to-merge/img-proxy"
 import { brokenImgSrc } from "./brokenImgSrc"
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {

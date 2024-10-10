@@ -8,14 +8,11 @@ import { Form } from "@ui-components/common/forms/Form"
 import { FormError } from "@ui-components/common/forms/FormError"
 import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
 import { FieldText } from "@ui-components/common/forms/fields/FieldText"
-import { Country } from "@markethaus/storefront-client"
-import { emptyAddress, medusaAddressToAddress } from "@utils/addresses"
 import { useCart } from "@ui-components/hooks/useCart"
 import { useCheckout } from "@ui-components/hooks/useCheckout"
 import { useCustomer } from "@ui-components/hooks/useCustomer"
 import { useRegions } from "@ui-components/hooks/useRegions"
 import { checkAccountDetailsComplete } from "@libs/util/checkout"
-import { Region } from "@libs/util/medusa"
 import { useFetcher } from "@remix-run/react"
 import debounce from "lodash/debounce"
 import { useEffect, useRef, useState } from "react"
@@ -24,7 +21,7 @@ import {
   CheckoutAction,
   UpdateAccountDetailsInput,
   UpdateContactInfoInput,
-} from "~/routes/_todo/api.checkout"
+} from "~/routes/api.checkout"
 import { useLogin } from "../../../libs/ui-components/hooks/useLogin"
 import { CheckoutStep } from "../../../libs/ui-components/providers/checkout-provider"
 import { emailAddressValidation } from "../../../libs/util/validation"
@@ -46,6 +43,9 @@ import {
   checkoutUpdateContactInfoValidator,
   selectInitialShippingAddressId,
 } from "./checkout-form-helpers"
+import { StoreRegion, StoreRegionCountry } from "@medusajs/types"
+import { emptyAddress } from "@libs/util"
+import { MedusaAddress, medusaAddressToAddress } from "@libs/util"
 
 const NEW_SHIPPING_ADDRESS_ID = "new"
 export const CheckoutAccountDetails = () => {
@@ -64,8 +64,11 @@ export const CheckoutAccountDetails = () => {
   if (!cart) return null
 
   const { regions } = useRegions()
-  const allowedCountries = (regions ?? []).flatMap((region: Region) =>
-    region.countries!.map((country: Country) => country.iso_2),
+  const allowedCountries = (regions ?? []).flatMap(
+    (region: StoreRegion) =>
+      region.countries!.map(
+        (country: StoreRegionCountry) => country.iso_2,
+      ) as string[],
   )
   const [newShippingAddress, setNewShippingAddress] = useState<StripeAddress>(
     defaultStripeAddress(),
@@ -83,8 +86,12 @@ export const CheckoutAccountDetails = () => {
   const hasSuggestions = !!checkoutAccountDetailsFormFetcher.data?.suggestions
   const isLoggedIn = !!customer?.id
 
+  // const hasShippingAddresses: boolean = !!(
+  //   customer?.addresses && customer?.addresses.length > 0
+  // )
+
   const hasShippingAddresses: boolean = !!(
-    customer?.shipping_addresses && customer?.shipping_addresses.length > 0
+    customer?.addresses && customer?.addresses.length > 0
   )
 
   const initialShippingAddressId = selectInitialShippingAddressId(
@@ -97,10 +104,10 @@ export const CheckoutAccountDetails = () => {
   const { toggleLoginModal } = useLogin()
 
   const countryOptions =
-    cart.region?.countries?.map((country) => ({
+    (cart.region?.countries?.map((country) => ({
       value: country.iso_2,
       label: country.display_name,
-    })) ?? []
+    })) as { value: string; label: string }[]) ?? []
 
   const addressWithUserPostalCode = cart.shipping_address
     ? {
@@ -109,7 +116,9 @@ export const CheckoutAccountDetails = () => {
       }
     : null
 
-  const shippingAddress = medusaAddressToAddress(addressWithUserPostalCode)
+  const shippingAddress = medusaAddressToAddress(
+    addressWithUserPostalCode as MedusaAddress,
+  )
 
   const defaultValues = {
     cartId: cart.id,
@@ -127,8 +136,8 @@ export const CheckoutAccountDetails = () => {
   useEffect(() => {
     if (
       !formRef.current ||
-      !customer?.shipping_addresses ||
-      customer.shipping_addresses.length > 1 ||
+      !customer?.addresses ||
+      customer.addresses.length > 1 ||
       initialShippingAddressId
     )
       return
@@ -142,7 +151,7 @@ export const CheckoutAccountDetails = () => {
 
   useEffect(
     () => setSelectedShippingAddressId(initialShippingAddressId),
-    [customer?.shipping_addresses?.length],
+    [customer?.addresses?.length],
   )
 
   useEffect(() => {
@@ -256,25 +265,6 @@ export const CheckoutAccountDetails = () => {
               </FieldGroup>
 
               <FormError />
-
-              {cart.emailExists && (
-                <Alert
-                  type="default"
-                  className="-mt-2 mb-2 text-sm"
-                  action={() => (
-                    <Button
-                      className="whitespace-nowrap"
-                      size="sm"
-                      onClick={() => toggleLoginModal(true)}
-                    >
-                      Log in
-                    </Button>
-                  )}
-                >
-                  Looks like there is already and account associated with the
-                  email "{cart.email}."
-                </Alert>
-              )}
             </Form>
           )}
 
@@ -321,18 +311,6 @@ export const CheckoutAccountDetails = () => {
                 allowedCountries={allowedCountries}
                 setAddress={setNewShippingAddress}
               />
-            )}
-
-            {!isLoggedIn && !cart.emailExists && (
-              <>
-                <h2 className="mt-8 text-lg font-bold text-gray-900">
-                  Create an account (optional)
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Enter a password to create an account.
-                </p>
-                <ConfirmPasswordFieldGroup />
-              </>
             )}
 
             <FormError />

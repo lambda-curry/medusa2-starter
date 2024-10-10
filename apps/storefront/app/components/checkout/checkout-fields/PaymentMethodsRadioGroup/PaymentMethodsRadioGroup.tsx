@@ -6,7 +6,7 @@ import PlusCircleIcon from "@heroicons/react/24/outline/PlusCircleIcon"
 import clsx from "clsx"
 import { ButtonLink } from "@ui-components/common/buttons/ButtonLink"
 import { PaymentMethodsRadioGroupOption } from "./PaymentMethodsRadioGroupOption"
-import { type PaymentMethod } from "@utils/types"
+import { type PaymentMethod } from "@libs/utils-to-merge/types"
 
 export interface PaymentMethodsRadioGroupProps {
   formId: string

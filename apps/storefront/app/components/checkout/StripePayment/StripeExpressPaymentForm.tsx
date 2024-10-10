@@ -1,7 +1,7 @@
 import { Alert } from "@ui-components/common/alert"
 import { PricedShippingOption } from "@markethaus/storefront-client"
-import { convertToFormData } from "@utils/forms/objectToFormData"
-import { Address } from "@utils/types"
+import { convertToFormData } from "@libs/utils-to-merge/forms/objectToFormData"
+import { Address } from "@libs/utils-to-merge/types"
 import { useCart } from "@ui-components/hooks/useCart"
 import { useCheckout } from "@ui-components/hooks/useCheckout"
 import { useEnv } from "@ui-components/hooks/useEnv"
@@ -30,7 +30,7 @@ import {
   UpdateExpressCheckoutAddressInput,
   UpdateExpressCheckoutAddressResponse,
   type UpdatePaymentInput,
-} from "~/routes/_todo/api.checkout"
+} from "~/routes/api.checkout"
 type ExpressCartResponse = {
   cart: Cart
   setupIntent: SetupIntent

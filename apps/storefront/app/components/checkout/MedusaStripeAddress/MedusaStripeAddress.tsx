@@ -1,5 +1,3 @@
-import { type Address, type CountryCode } from "@utils/types"
-import type { Address as MedusaAddress } from "@markethaus/storefront-client"
 import { AddressElement, Elements } from "@stripe/react-stripe-js"
 import { type AddressMode, loadStripe } from "@stripe/stripe-js"
 import { useMemo, type Dispatch, type FC, type SetStateAction } from "react"
@@ -8,14 +6,17 @@ import { useRegion } from "@ui-components/hooks/useRegion"
 import { useCart } from "@ui-components/hooks/useCart"
 import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
 import { useRootLoaderData } from "@ui-components/hooks/useRootLoaderData"
-import { FontWeight } from "@utils/medusa"
+import { FontWeight } from "@libs/utils-to-merge/medusa"
+import { BaseCartAddress } from "@medusajs/types/dist/http/cart/common"
+import { Address } from "@libs/util"
+
 export interface StripeAddress {
   address: Address
   completed: boolean
 }
 
 export const defaultStripeAddress = (
-  address?: MedusaAddress | null | undefined,
+  address?: BaseCartAddress | null | undefined,
 ): StripeAddress => ({
   address: {
     firstName: address?.first_name || "",
@@ -24,7 +25,7 @@ export const defaultStripeAddress = (
     address2: address?.address_2 || "",
     province: address?.province || "",
     city: address?.city || "",
-    countryCode: (address?.country_code as CountryCode) || "us",
+    countryCode: address?.country_code || "us",
     postalCode: address?.postal_code || "",
     phone: address?.phone || "",
   },
@@ -107,7 +108,7 @@ export const MedusaStripeAddress: FC<MedusaStripeAddressProps> = ({
                 city: address.city,
                 state: address.province,
                 postal_code: address.postalCode,
-                country: address.countryCode.toUpperCase(),
+                country: address.countryCode?.toUpperCase() || "us",
               },
               phone: address.phone,
               firstName: address.firstName,
@@ -115,18 +116,19 @@ export const MedusaStripeAddress: FC<MedusaStripeAddressProps> = ({
             },
           }}
           onChange={(e) => {
+            // Stripe does not return province for some countries
+            const useProvincePlaceHolder = e.complete && !e.value.address.state
             setAddress({
               address: {
                 firstName: e.value.firstName ?? "",
                 lastName: e.value.lastName ?? "",
                 address1: e.value.address.line1,
-                address2: e.value.address.line2,
-                province: e.value.address.state,
+                address2: e.value.address.line2 ?? "",
+                province: useProvincePlaceHolder ? "-" : e.value.address.state,
                 city: e.value.address.city,
-                countryCode:
-                  e.value.address.country?.toLowerCase() as CountryCode,
+                countryCode: e.value.address.country?.toLowerCase() as string,
                 postalCode: e.value.address.postal_code,
-                phone: e.value.phone,
+                phone: e.value.phone ?? "",
               },
               completed: e.complete,
             })

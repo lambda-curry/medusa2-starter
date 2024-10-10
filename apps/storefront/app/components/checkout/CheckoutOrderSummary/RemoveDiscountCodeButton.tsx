@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { useFetcher } from "@remix-run/react"
 import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon"
-import { CartDiscountAction } from "~/routes/_todo/api.cart.discounts"
+// import { CartDiscountAction } from "~/routes/api.cart.discounts"
 import { Cart, Discount } from "@libs/util/medusa"
 
 export interface RemoveDiscountCodeButtonProps {
@@ -19,11 +19,11 @@ export const RemoveDiscountCodeButton: FC<RemoveDiscountCodeButtonProps> = ({
 
   return (
     <fetcher.Form method="post" action="/api/cart/discounts">
-      <input
+      {/* <input
         type="hidden"
         name="subaction"
         value={CartDiscountAction.deleteItem}
-      />
+      /> */}
       <input type="hidden" name="cartId" value={cart.id} />
       <input type="hidden" name="code" value={discount.code} />
 

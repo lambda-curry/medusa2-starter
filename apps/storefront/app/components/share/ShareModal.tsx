@@ -5,7 +5,7 @@ import { Button } from "@ui-components/common/buttons/Button"
 import LinkIcon from "@heroicons/react/24/outline/LinkIcon"
 import CheckIcon from "@heroicons/react/24/outline/CheckIcon"
 import { FacebookIcon, TwitterIcon } from "@ui-components/common/assets/icons"
-import { isBrowser } from "@utils/browser"
+import { isBrowser } from "@libs/utils-to-merge/browser"
 import { type ShareItemType } from "./Share.types"
 
 type ShareState = "pending" | "success" | "error"

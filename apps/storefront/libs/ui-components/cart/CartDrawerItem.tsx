@@ -29,7 +29,7 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
     >
       <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
         <Image
-          src={item.thumbnail || ""}
+          src={item.variant?.product?.thumbnail || ""}
           alt={item.description || "product thumbnail"}
           proxyOptions={{ context: "tiny_square" }}
           className="h-full w-full object-cover object-center"
@@ -41,10 +41,10 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
           <div className="flex items-start justify-between">
             <div>
               <h3 className="text-base font-bold text-gray-900">
-                {item.title}
+                {item.product_title}
               </h3>
               <p className="mt-0.5 text-sm text-gray-500">
-                {item.variant?.title}
+                {item.variant_title}
               </p>
             </div>
             <Button

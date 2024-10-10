@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import { Field, Label, Radio, RadioGroup } from '@headlessui/react';
-import { FontPreview } from './FontPreview';
-import clsx from 'clsx';
-import type { Font } from '@utils/medusa';
-import { ScrollArrowButtons } from '../buttons/ScrollArrowButtons';
-import { useScrollArrows } from '@utils/hooks/useScrollArrows';
+import { useState } from "react"
+import { Field, Label, Radio, RadioGroup } from "@headlessui/react"
+import { FontPreview } from "./FontPreview"
+import clsx from "clsx"
+import type { Font } from "@libs/utils-to-merge/medusa"
+import { ScrollArrowButtons } from "../buttons/ScrollArrowButtons"
+import { useScrollArrows } from "@libs/utils-to-merge/hooks/useScrollArrows"
 
 interface FontSet {
-  label: string;
-  displayFont: Font;
-  bodyFont: Font;
+  label: string
+  displayFont: Font
+  bodyFont: Font
 }
 
 interface FontPreviewRadioGroupProps {
-  initialValue?: FontSet;
-  fontSets: FontSet[];
-  className?: string;
-  onChange?: (fontSet: FontSet) => void;
+  initialValue?: FontSet
+  fontSets: FontSet[]
+  className?: string
+  onChange?: (fontSet: FontSet) => void
 }
 
 export const FontPreviewRadioGroup = ({
@@ -26,12 +26,12 @@ export const FontPreviewRadioGroup = ({
   initialValue,
 }: FontPreviewRadioGroupProps) => {
   const [selectedFontSet, setSelectedFontSet] = useState<FontSet | null>(
-    initialValue || null
-  );
+    initialValue || null,
+  )
   const { scrollableDivRef, ...scrollArrowProps } = useScrollArrows({
     buffer: 100,
     resetOnDepChange: [],
-  });
+  })
 
   return (
     <div className="relative pb-10">
@@ -59,11 +59,11 @@ export const FontPreviewRadioGroup = ({
           </>
         )}
         <RadioGroup
-          className={clsx(className, 'whitespace-nowrap')}
+          className={clsx(className, "whitespace-nowrap")}
           value={selectedFontSet}
-          onChange={fontSet => {
-            setSelectedFontSet(fontSet);
-            if (fontSet) onChange?.(fontSet);
+          onChange={(fontSet) => {
+            setSelectedFontSet(fontSet)
+            if (fontSet) onChange?.(fontSet)
           }}
           aria-label="Font Set"
         >
@@ -75,8 +75,8 @@ export const FontPreviewRadioGroup = ({
               <Label className="w-full cursor-pointer">
                 <Radio value={fontSet} className="hidden" />
                 <FontPreview
-                  className={clsx('w-full', {
-                    '!border-primary-400': selectedFontSet === fontSet,
+                  className={clsx("w-full", {
+                    "!border-primary-400": selectedFontSet === fontSet,
                   })}
                   label={fontSet.label}
                   displayFont={fontSet.displayFont}
@@ -88,5 +88,5 @@ export const FontPreviewRadioGroup = ({
         </RadioGroup>
       </div>
     </div>
-  );
-};
+  )
+}

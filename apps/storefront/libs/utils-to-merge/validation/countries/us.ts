@@ -1,37 +1,37 @@
-import { Address } from '@utils/types/addresses';
+import { Address } from "@libs/utils-to-merge/types/addresses"
 import {
   AddressValidationResponse,
   listPostalCodes,
   listProvinces,
-} from '../address-validation';
+} from "../address-validation"
 
 export const validateUsAddress = async (
-  address: Address
+  address: Address,
 ): Promise<AddressValidationResponse> => {
-  const provinces = await listProvinces(address.countryCode);
+  const provinces = await listProvinces(address.countryCode)
 
   const province = provinces.provinces.find(
-    p =>
+    (p) =>
       p.province_code.toLowerCase() === address.province.toLowerCase() ||
-      p.province_name.toLowerCase() === address.province.toLowerCase()
-  );
+      p.province_name.toLowerCase() === address.province.toLowerCase(),
+  )
 
   if (!province)
     return {
       address,
-      errors: { province: 'State is not valid' },
+      errors: { province: "State is not valid" },
       invalid: true,
-    };
+    }
 
   // automatically update province. ex: "new york" -> "NY"
-  address.province = province.province_code;
+  address.province = province.province_code
 
   const postalCodes = await listPostalCodes({
     province_code: province.province_code,
     country_code: province.country_code,
-  });
+  })
 
-  const postalCode = address.postalCode.split('-')[0];
+  const postalCode = address.postalCode.split("-")[0]
 
   if (!postalCodes.postal_codes.includes(postalCode))
     return {
@@ -40,7 +40,7 @@ export const validateUsAddress = async (
         postalCode: `Postal code is not valid for ${address.province}`,
       },
       invalid: true,
-    };
+    }
 
-  return { address, invalid: false };
-};
+  return { address, invalid: false }
+}

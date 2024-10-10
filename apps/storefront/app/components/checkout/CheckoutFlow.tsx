@@ -7,14 +7,8 @@ import { Alert } from "@ui-components/common/alert/Alert"
 import { CheckoutAccountDetails } from "./CheckoutAccountDetails"
 import { CheckoutDeliveryMethod } from "./CheckoutDeliveryMethod"
 import { CheckoutPayment } from "./CheckoutPayment"
-import {
-  useCheckoutAnalytics,
-  useSendBeginCheckoutEvent,
-} from "@libs/util/analytics/hooks/checkout"
-import { StripeExpressCheckout } from "./StripePayment/StripeExpressPayment"
 
 export const CheckoutFlow: FC = () => {
-  const { env } = useEnv()
   const { cart } = useCart()
   const { customer } = useCustomer()
   const { goToNextStep } = useCheckout()
@@ -22,15 +16,10 @@ export const CheckoutFlow: FC = () => {
 
   if (!cart) return
 
-  useCheckoutAnalytics()
-  useSendBeginCheckoutEvent(cart)
-
   useEffect(() => {
     if (isLoggedIn) goToNextStep()
     return () => goToNextStep()
   }, [isLoggedIn])
-
-  const shippingDisabled = env.DISABLE_SHIPPING
 
   return (
     <>
@@ -44,17 +33,11 @@ export const CheckoutFlow: FC = () => {
           </Alert>
         )}
 
-        <StripeExpressCheckout cart={cart} />
-
         <CheckoutAccountDetails />
 
         <hr className="my-10" />
 
-        {!shippingDisabled && (
-          <>
-            <CheckoutDeliveryMethod />
-          </>
-        )}
+        <CheckoutDeliveryMethod />
 
         <CheckoutPayment />
       </div>

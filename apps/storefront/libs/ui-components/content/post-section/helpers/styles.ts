@@ -1,7 +1,7 @@
 import omit from "lodash/omit"
 import kebabCase from "lodash/kebabCase"
 import { BasePageSection, type BaseStyles } from "@libs/util/medusa/types"
-import { imageProxyURL } from "@utils/img-proxy"
+import { imageProxyURL } from "@libs/utils-to-merge/img-proxy"
 import Color from "color"
 
 const formatColorValue = (color: string) => {

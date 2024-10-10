@@ -1,7 +1,7 @@
 import { HeadersFunction, LoaderFunctionArgs, redirect } from "@remix-run/node"
 import { createMedusaClient } from "@libs/util/server/client.server"
-import { imageProxyURL } from "@utils/img-proxy"
-import { defaultHeaders } from "@utils/defaultHeaders"
+import { imageProxyURL } from "@libs/utils-to-merge/img-proxy"
+import { defaultHeaders } from "@libs/utils-to-merge/defaultHeaders"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // const client = await createMedusaClient({ request });

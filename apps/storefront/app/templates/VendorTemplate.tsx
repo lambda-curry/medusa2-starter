@@ -16,7 +16,7 @@ import { Button } from "@ui-components/common/buttons/Button"
 import { RenderPageSection } from "@ui-components/content/post-section/PostSection"
 import { ProductListWithPagination } from "~/components/products/ProductListWithPagination"
 import { VendorContactFormModal } from "~/components/vendor/VendorContactFormModal/VendorContactFormModal"
-import type { PostData } from "~/routes/_todo/api.post-section-data"
+import type { PostData } from "~/routes/api.post-section-data"
 import { Modal } from "@ui-components/common/modals"
 
 export interface VendorTemplateProps {

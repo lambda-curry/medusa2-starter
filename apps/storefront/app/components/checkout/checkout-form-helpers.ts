@@ -1,108 +1,113 @@
-import { getShippingOptionsByProfile } from '@libs/util/checkout';
+import { getShippingOptionsByProfile } from "@libs/util/checkout"
 
 import {
   addressValidation,
-  confirmPasswordValidation,
   emailAddressValidation,
   nameValidation,
-  phoneValidation
-} from '@libs/util/validation';
-import { withYup } from '@remix-validated-form/with-yup';
-import * as Yup from 'yup';
-import { Cart, Customer } from '@libs/util/medusa/types';
-import { ShippingOption } from '@markethaus/storefront-client';
+  phoneValidation,
+} from "@libs/util/validation"
+import {
+  StoreCart,
+  StoreCartShippingOption,
+  StoreCustomer,
+} from "@medusajs/types"
+import { withYup } from "@remix-validated-form/with-yup"
+import * as Yup from "yup"
 
 const checkoutValidation = {
-  cartId: Yup.string().required('Cart ID is missing')
-};
+  cartId: Yup.string().required("Cart ID is missing"),
+}
 
 const addressValidationSchema = Yup.object().shape({
   ...nameValidation,
   ...addressValidation,
-  ...phoneValidation
-});
+  ...phoneValidation,
+})
 
 export const checkoutUpdateContactInfoValidator = withYup(
   Yup.object().shape({
     ...checkoutValidation,
-    ...emailAddressValidation
-  })
-);
+    ...emailAddressValidation,
+  }),
+)
 
 export const checkoutUpdateBillingAddressValidator = withYup(
   Yup.object().shape({
     ...checkoutValidation,
-    billingAddress: addressValidationSchema
-  })
-);
+    billingAddress: addressValidationSchema,
+  }),
+)
 
 const accountDetailsSchema = Yup.object().shape({
   ...checkoutValidation,
   ...emailAddressValidation,
   allowSuggestions: Yup.boolean().optional(),
-  shippingAddressId: Yup.string().required('Shipping address ID is required'),
-  shippingAddress: Yup.object().when('shippingAddressId', {
-    is: 'new',
-    then: addressValidationSchema
+  shippingAddressId: Yup.string().required("Shipping address ID is required"),
+  shippingAddress: Yup.object().when("shippingAddressId", {
+    is: "new",
+    then: () => addressValidationSchema,
   }),
-  ...confirmPasswordValidation
-});
+})
 
-export const checkoutAccountDetailsValidator = withYup(accountDetailsSchema);
+export const checkoutAccountDetailsValidator = withYup(accountDetailsSchema)
 
-// NOTE: ignored fields will be validated agains `checkoutAccountDetailsValidator` in final step of express checkout
-export const expressCheckoutAccountDetailsValidator = withYup(
-  accountDetailsSchema.shape({
-    email: emailAddressValidation.email.optional(),
-    shippingAddress: Yup.object().when('shippingAddressId', {
-      is: 'new',
-      then: addressValidationSchema.pick(['city', 'province', 'countryCode', 'postalCode'])
-    })
-  })
-);
-
-export const getCheckoutAddShippingMethodValidator = (shippingOptions: ShippingOption[]) => {
-  const shippingOptionsByProfile = getShippingOptionsByProfile(shippingOptions);
-  const shippingOptionsProfileIds = Object.keys(shippingOptionsByProfile);
+export const getCheckoutAddShippingMethodValidator = (
+  shippingOptions: StoreCartShippingOption[],
+) => {
+  const shippingOptionsByProfile = getShippingOptionsByProfile(shippingOptions)
+  const shippingOptionsProfileIds = Object.keys(shippingOptionsByProfile)
 
   return withYup(
     Yup.object().shape({
       ...checkoutValidation,
-      shippingOptionIds: Yup.array(Yup.string().required('Please select a delivery method'))
-        .length(shippingOptionsProfileIds.length, 'Please select a delivery method for all items')
-        .required('Please select a delivery method for all items')
-    })
-  );
-};
+      shippingOptionIds: Yup.array(
+        Yup.string().required("Please select a delivery method"),
+      )
+        .length(
+          shippingOptionsProfileIds.length,
+          "Please select a delivery method for all items",
+        )
+        .required("Please select a delivery method for all items"),
+    }),
+  )
+}
 
 export const checkoutPaymentValidator = withYup(
   Yup.object().shape({
     ...checkoutValidation,
-    providerId: Yup.string().required('Provider ID is required'),
-    paymentMethodId: Yup.string().required('Payment method ID is required'),
+    providerId: Yup.string().required("Provider ID is required"),
+    paymentMethodId: Yup.string().required("Payment method ID is required"),
     sameAsShipping: Yup.string().optional(),
-    billingAddress: Yup.object().when(['paymentMethodId', 'sameAsShipping'], {
+    billingAddress: Yup.object().when(["paymentMethodId", "sameAsShipping"], {
       is: (paymentMethodId: string, sameAsShipping: string | boolean) => {
-        return paymentMethodId === 'new' && !sameAsShipping;
+        return paymentMethodId === "new" && !sameAsShipping
       },
-      then: addressValidationSchema,
-      otherwise: Yup.object().strip()
-    })
-  })
-);
+      then: () => addressValidationSchema,
+      otherwise: (schema: Yup.ObjectSchema<any>) => schema.strip(),
+    }),
+  }),
+)
 
 export const checkoutAddDiscountCodeValidator = withYup(
   Yup.object().shape({
     ...checkoutValidation,
-    code: Yup.string().optional()
-  })
-);
+    code: Yup.string().optional(),
+  }),
+)
 
-export const selectInitialShippingAddressId = (cart: Cart, customer?: Pick<Customer, 'shipping_addresses'>) => {
-  if (!customer || !customer?.shipping_addresses?.length) return 'new';
+export const selectInitialShippingAddressId = (
+  cart: StoreCart,
+  customer?: StoreCustomer,
+) => {
+  if (customer?.default_shipping_address_id)
+    return customer?.default_shipping_address_id
 
-  const firstAddress = customer?.shipping_addresses[0];
-  const selectedAddress = customer?.shipping_addresses.find(a => a.id === cart.shipping_address_id);
+  if (!customer || !customer?.addresses?.length) return "new"
 
-  return selectedAddress?.id || firstAddress.id;
-};
+  const firstAddress = customer?.addresses[0]
+  const selectedAddress = customer?.addresses.find(
+    (a) => a.id === cart.shipping_address?.id,
+  )
+
+  return selectedAddress?.id || firstAddress.id
+}

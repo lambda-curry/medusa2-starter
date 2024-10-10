@@ -14,22 +14,23 @@ import { SiteDetailsRootData, type SiteSettings } from "@libs/util/medusa/types"
 // } from '@markethaus/storefront-client';
 import { LoaderFunctionArgs } from "@remix-run/node"
 import { fontLinksCache } from "~/cache/fontLinksCache"
-import { ONE_WEEK, useCache } from "@utils/use-cache"
+import { ONE_WEEK, useCache } from "@libs/utils-to-merge/use-cache"
 import { config } from "./config.server"
 import { getCartId } from "./cookies.server"
-import { getOrSetCart } from "./data/cart.server"
+import { enrichLineItems, getOrSetCart } from "./data/cart.server"
 import {
   getCountryCode,
   getDefaultRegion,
   listRegions,
 } from "./data/regions.server"
 import { sdk } from "./client.server"
-import { StoreRegion } from "@medusajs/types"
+import { HttpTypes, StoreRegion } from "@medusajs/types"
 import { siteSettings } from "@libs/config/site/site-settings"
 import {
   footerNavigationItems,
   headerNavigationItems,
 } from "@libs/config/site/navigation-items"
+import { getCustomer } from "./data/customer.server"
 
 // const searchPromise = (medusa: Medusa) => {
 //   return Promise.all([
@@ -63,11 +64,17 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
   const region = await getDefaultRegion() // TODO: make region param dynamic?
   const [firstCountry] = region?.countries ?? []
 
-  const [cart, regions, hasPublishedProducts] = await Promise.all([
+  const [cart, regions, customer, hasPublishedProducts] = await Promise.all([
     getOrSetCart(request, getCountryCode(firstCountry)!), // TODO: make region param dynamic?
     listRegions(),
+    getCustomer(request),
     fetchHasProducts(),
   ])
+
+  if (cart?.items?.length) {
+    const enrichedItems = await enrichLineItems(cart?.items, cart?.region_id!)
+    cart.items = enrichedItems as HttpTypes.StoreCartLineItem[]
+  }
 
   const fontLinks: string[] = []
 
@@ -85,7 +92,7 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
       SENTRY_ENVIRONMENT: config.SENTRY_ENVIRONMENT,
       EVENT_LOGGING: config.EVENT_LOGGING,
     },
-    // customer,
+    customer,
     regions,
     region,
     siteDetails: {

@@ -1,8 +1,5 @@
 import { FC, useEffect, useRef, useState } from "react"
-import {
-  AddDiscountCodeInput,
-  CheckoutAction,
-} from "~/routes/_todo/api.checkout"
+import { AddDiscountCodeInput, CheckoutAction } from "~/routes/api.checkout"
 import { checkoutAddDiscountCodeValidator } from "../checkout-form-helpers"
 import { FetcherWithComponents, useFetcher } from "@remix-run/react"
 import { RemoveDiscountCodeButton } from "./RemoveDiscountCodeButton"

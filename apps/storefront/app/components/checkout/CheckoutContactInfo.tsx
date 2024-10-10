@@ -2,10 +2,7 @@ import { FC, useEffect, useRef } from "react"
 import { useFetcher } from "@remix-run/react"
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon"
 import PencilIcon from "@heroicons/react/24/outline/PencilIcon"
-import {
-  CheckoutAction,
-  UpdateContactInfoInput,
-} from "~/routes/_todo/api.checkout"
+import { CheckoutAction, UpdateContactInfoInput } from "~/routes/api.checkout"
 import { checkoutUpdateContactInfoValidator } from "./checkout-form-helpers"
 import { checkContactInfoComplete } from "@libs/util/checkout"
 import { useCart } from "@ui-components/hooks/useCart"

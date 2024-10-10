@@ -1,7 +1,7 @@
 import { type FC, memo } from "react"
 import { Image } from "@ui-components/common/images/Image"
 import { ScrollArrowButtons } from "@ui-components/common/buttons/ScrollArrowButtons"
-import { useScrollArrows } from "@utils/hooks/useScrollArrows"
+import { useScrollArrows } from "@libs/utils-to-merge/hooks/useScrollArrows"
 import { MagnifyingGlassPlusIcon } from "@heroicons/react/24/outline"
 
 export interface GalleryImage {

@@ -2572,6 +2572,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@headlessui/react@npm:^2.1.9":
+  version: 2.1.9
+  resolution: "@headlessui/react@npm:2.1.9"
+  dependencies:
+    "@floating-ui/react": "npm:^0.26.16"
+    "@react-aria/focus": "npm:^3.17.1"
+    "@react-aria/interactions": "npm:^3.21.3"
+    "@tanstack/react-virtual": "npm:^3.8.1"
+  peerDependencies:
+    react: ^18
+    react-dom: ^18
+  checksum: 10c0/bcee8b0a6d331ad6a55761f51f0c6cc68416e7dff161b18cda1477f71a6d0d7c83d17fb743adddedb88c5733fc0a222cb45d6c6744ee8e19ccfeed617bcc1feb
+  languageName: node
+  linkType: hard
+
 "@heroicons/react@npm:^2.0.18":
   version: 2.1.5
   resolution: "@heroicons/react@npm:2.1.5"
@@ -11103,12 +11118,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.isequal@npm:^4":
+  version: 4.5.8
+  resolution: "@types/lodash.isequal@npm:4.5.8"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/6db28cacf165d55421fbf2970ccfb1682a7b82b743bb7aba4398fa8ab98f1711fca2fe4afa1aa2b7b4afb3eff76c8aca13b22206f5efeb038d99e41300589bca
+  languageName: node
+  linkType: hard
+
 "@types/lodash.omit@npm:^4":
   version: 4.5.9
   resolution: "@types/lodash.omit@npm:4.5.9"
   dependencies:
     "@types/lodash": "npm:*"
   checksum: 10c0/3b60c8ee8e9a691392d9a3ceabb32c85f888784bd3307eac3de01aeb7ff37383dc8899f027fe852641f5e0f56158fb19785cc3d20a4922e85b5810f14cba23f6
+  languageName: node
+  linkType: hard
+
+"@types/lodash.pick@npm:^4":
+  version: 4.4.9
+  resolution: "@types/lodash.pick@npm:4.4.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/61ae2fb9fe817a2f398863d10dc57e3cb864ebadefb7f3554d8d0c189448e08a174d6bfdd6e0220988ea084a2d47c3377908cf037e2b3ce552aa79ce0f36bc9f
   languageName: node
   linkType: hard
 
@@ -13696,9 +13729,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"components@npm:0.0.1, components@workspace:packages/components":
+"components@npm:0.0.1, components@workspace:packages/_to_DELETE_components":
   version: 0.0.0-use.local
-  resolution: "components@workspace:packages/components"
+  resolution: "components@workspace:packages/_to_DELETE_components"
   dependencies:
     "@headlessui/react": "npm:2.1.2"
     "@remix-run/node": "npm:2.12.0"
@@ -20076,6 +20109,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.isequal@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.isequal@npm:4.5.0"
+  checksum: 10c0/dfdb2356db19631a4b445d5f37868a095e2402292d59539a987f134a8778c62a2810c2452d11ae9e6dcac71fc9de40a6fedcb20e2952a15b431ad8b29e50e28f
+  languageName: node
+  linkType: hard
+
 "lodash.isinteger@npm:^4.0.4":
   version: 4.0.4
   resolution: "lodash.isinteger@npm:4.0.4"
@@ -20129,6 +20169,13 @@ __metadata:
   version: 4.1.1
   resolution: "lodash.once@npm:4.1.1"
   checksum: 10c0/46a9a0a66c45dd812fcc016e46605d85ad599fe87d71a02f6736220554b52ffbe82e79a483ad40f52a8a95755b0d1077fba259da8bfb6694a7abbf4a48f1fc04
+  languageName: node
+  linkType: hard
+
+"lodash.pick@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "lodash.pick@npm:4.4.0"
+  checksum: 10c0/a04c460b95d1aaa44e9513d1dacf72ea74d838da843e45831de9de64c303f13cdde1859702a6f4dcef417816898ffd47c6ae0614c957ac70245bed2809b8d2e2
   languageName: node
   linkType: hard
 
@@ -25272,7 +25319,7 @@ __metadata:
   dependencies:
     "@epic-web/cachified": "npm:^5.2.0"
     "@googlemaps/addressvalidation": "npm:^1.0.2"
-    "@headlessui/react": "npm:2.1.2"
+    "@headlessui/react": "npm:^2.1.9"
     "@heroicons/react": "npm:^2.0.18"
     "@loadable/component": "npm:^5.15.3"
     "@medusajs/js-sdk": "npm:0.0.2-preview-20240925143312"
@@ -25304,7 +25351,9 @@ __metadata:
     "@types/jest": "npm:28.1.8"
     "@types/jsonwebtoken": "npm:^9"
     "@types/loadable__component": "npm:^5.13.4"
+    "@types/lodash.isequal": "npm:^4"
     "@types/lodash.omit": "npm:^4"
+    "@types/lodash.pick": "npm:^4"
     "@types/multer": "npm:^1.4.11"
     "@types/node": "npm:18.18.6"
     "@types/react": "npm:^18.2.31"
@@ -25334,7 +25383,9 @@ __metadata:
     js-base64: "npm:^3.7.2"
     jsonc-eslint-parser: "npm:^2.1.0"
     jsonwebtoken: "npm:^9.0.2"
+    lodash.isequal: "npm:^4.5.0"
     lodash.omit: "npm:^4.5.0"
+    lodash.pick: "npm:^4.4.0"
     lru-cache: "npm:^7.14.1"
     luxon: "npm:^3.4.4"
     multer: "npm:^1.4.5-lts.1"
@@ -26953,12 +27004,6 @@ __metadata:
   checksum: 10c0/02ba649de1b7ca8854bfe20a82f1dfbdda3fb57a22ab4a8972a63a34553cf7aa51bc9081cf7e001b035b88186d23689d69e71b510e610a09a4c66f68aa95b672
   languageName: node
   linkType: hard
-
-"utils@workspace:packages/utils":
-  version: 0.0.0-use.local
-  resolution: "utils@workspace:packages/utils"
-  languageName: unknown
-  linkType: soft
 
 "uuid@npm:^8.3.2":
   version: 8.3.2

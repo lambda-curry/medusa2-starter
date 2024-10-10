@@ -1,21 +1,21 @@
-import { useState, useRef } from 'react';
-import { Field, Label, Radio, RadioGroup } from '@headlessui/react';
-import { ColorRange } from './ColorRange';
-import clsx from 'clsx';
-import { ScrollArrowButtons } from '../buttons/ScrollArrowButtons';
-import type { StyleColor } from '@utils/medusa';
-import { useScrollArrows } from '@utils/hooks/useScrollArrows';
+import { useState, useRef } from "react"
+import { Field, Label, Radio, RadioGroup } from "@headlessui/react"
+import { ColorRange } from "./ColorRange"
+import clsx from "clsx"
+import { ScrollArrowButtons } from "../buttons/ScrollArrowButtons"
+import type { StyleColor } from "@libs/utils-to-merge/medusa"
+import { useScrollArrows } from "@libs/utils-to-merge/hooks/useScrollArrows"
 
 export interface ColorSet {
-  label: string;
-  colors: StyleColor;
+  label: string
+  colors: StyleColor
 }
 
 interface ColorRangeRadioGroupProps {
-  initialValue?: ColorSet;
-  colorSets: ColorSet[];
-  className?: string;
-  onChange?: (colorSet: ColorSet) => void;
+  initialValue?: ColorSet
+  colorSets: ColorSet[]
+  className?: string
+  onChange?: (colorSet: ColorSet) => void
 }
 
 export const ColorRangeRadioGroup = ({
@@ -25,12 +25,12 @@ export const ColorRangeRadioGroup = ({
   initialValue,
 }: ColorRangeRadioGroupProps) => {
   const [selectedColorSet, setSelectedColorSet] = useState<ColorSet | null>(
-    initialValue || null
-  );
+    initialValue || null,
+  )
   const { scrollableDivRef, ...scrollArrowProps } = useScrollArrows({
     buffer: 100,
     resetOnDepChange: [],
-  });
+  })
 
   return (
     <div className="relative pb-10">
@@ -44,7 +44,7 @@ export const ColorRangeRadioGroup = ({
         className="relative mb-2 w-full overflow-x-scroll"
       >
         {selectedColorSet &&
-          Object.keys(selectedColorSet.colors).map(key => (
+          Object.keys(selectedColorSet.colors).map((key) => (
             <div key={key}>
               <input
                 type="hidden"
@@ -59,11 +59,11 @@ export const ColorRangeRadioGroup = ({
             </div>
           ))}
         <RadioGroup
-          className={clsx(className, 'whitespace-nowrap')}
+          className={clsx(className, "whitespace-nowrap")}
           value={selectedColorSet}
-          onChange={colorSet => {
-            setSelectedColorSet(colorSet);
-            if (colorSet) onChange?.(colorSet);
+          onChange={(colorSet) => {
+            setSelectedColorSet(colorSet)
+            if (colorSet) onChange?.(colorSet)
           }}
           aria-label="Color Set"
         >
@@ -73,8 +73,8 @@ export const ColorRangeRadioGroup = ({
               className="mr-4 inline-flex items-center gap-2 last:mr-0"
             >
               <Label
-                className={clsx('flex flex-col gap-2', {
-                  '[&_.color-range]:border-primary-400':
+                className={clsx("flex flex-col gap-2", {
+                  "[&_.color-range]:border-primary-400":
                     selectedColorSet === colorSet,
                 })}
               >
@@ -82,7 +82,7 @@ export const ColorRangeRadioGroup = ({
                 <span
                   className="-mb-2 pl-1 text-sm font-bold"
                   style={{
-                    color: colorSet.colors['800'],
+                    color: colorSet.colors["800"],
                   }}
                 >
                   {colorSet.label}
@@ -94,5 +94,5 @@ export const ColorRangeRadioGroup = ({
         </RadioGroup>
       </div>
     </div>
-  );
-};
+  )
+}

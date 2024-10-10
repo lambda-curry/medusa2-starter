@@ -5,7 +5,7 @@ import {
   VendorAction,
   VendorContactFormInput,
   vendorContactFormValidator,
-} from "~/routes/_todo/api.vendors"
+} from "~/routes/api.vendors"
 import { useCustomer } from "@ui-components/hooks/useCustomer"
 import { Alert } from "@ui-components/common/alert"
 import { SubmitButton } from "@ui-components/common/buttons"
