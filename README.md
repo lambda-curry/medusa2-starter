@@ -86,15 +86,19 @@ This will start both the Medusa backend and the Remix storefront in development 
 
 8. Set the Publishable API Key in `apps/storefront/.env` file:
 
-   - Replace the `MEDUSA_PUBLISHABLE_KEY` environment variables in the `.env` file with the API key created in the previous step.
+   - Replace the `MEDUSA_PUBLISHABLE_KEY` environment variable in the `.env` file with the API key created in the previous step.
 
-9. Restart the Remix server:
+9. Set the Stripe API Key values in `apps/storefront/.env` file:
 
-   - From the root of the monorepo:
+   - Replace the `STRIPE_PUBLIC_KEY`, `STRIPE_SECRET_KEY` environment variable in the `.env` file with your Stripe public and private key values.
 
-     ```
-     yarn dev
-     ```
+10. Restart the Remix server:
+
+- From the root of the monorepo:
+
+  ```
+  yarn dev
+  ```
 
 ## Useful Links
 
