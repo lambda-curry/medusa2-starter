@@ -1,3 +1,7 @@
+import { loadEnv } from "./env"
+
+loadEnv()
+
 export const config = {
   NODE_ENV: process.env.NODE_ENV,
   GOOGLE_ANALYTICS_ID: process.env.GOOGLE_ANALYTICS_ID,
