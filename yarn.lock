@@ -3964,17 +3964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/js-sdk@npm:0.0.2-preview-20240925143312":
-  version: 0.0.2-preview-20240925143312
-  resolution: "@medusajs/js-sdk@npm:0.0.2-preview-20240925143312"
-  dependencies:
-    fetch-event-stream: "npm:^0.1.5"
-    qs: "npm:^6.12.1"
-  checksum: 10c0/92d4587fe570e3dd5cecd906200b258bb658fd3b96172921d68274a4ebfae06079d0d02a73bf2e7226e69035af32fcb0dcb76eb7bde7a1f5faf754d665b069ef
-  languageName: node
-  linkType: hard
-
-"@medusajs/js-sdk@npm:1.0.0-rc-20241003153304":
+"@medusajs/js-sdk@npm:1.0.0-rc-20241003153304, @medusajs/js-sdk@npm:rc":
   version: 1.0.0-rc-20241003153304
   resolution: "@medusajs/js-sdk@npm:1.0.0-rc-20241003153304"
   dependencies:
@@ -4488,14 +4478,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/types@npm:1.12.0-preview-20240925143312":
-  version: 1.12.0-preview-20240925143312
-  resolution: "@medusajs/types@npm:1.12.0-preview-20240925143312"
-  checksum: 10c0/14efb260de04a80b2b87ac6e2f8b322fff7757bd746b495351f953003be71be23e02f143a31ffa0b42b14b2e1d11c12eaf0a77af3bed1f49bce7363155a5b593
-  languageName: node
-  linkType: hard
-
-"@medusajs/types@npm:2.0.0-rc-20241003153304":
+"@medusajs/types@npm:2.0.0-rc-20241003153304, @medusajs/types@npm:rc":
   version: 2.0.0-rc-20241003153304
   resolution: "@medusajs/types@npm:2.0.0-rc-20241003153304"
   dependencies:
@@ -21342,16 +21325,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-2-starter@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "medusa-2-starter@workspace:."
-  dependencies:
-    prettier: "npm:^3.2.5"
-    turbo: "npm:^2.1.2"
-    typescript: "npm:^5.6.2"
-  languageName: unknown
-  linkType: soft
-
 "medusa-core-utils@npm:^1.2.2, medusa-core-utils@npm:^1.2.3":
   version: 1.2.3
   resolution: "medusa-core-utils@npm:1.2.3"
@@ -25226,6 +25199,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"root@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root@workspace:."
+  dependencies:
+    prettier: "npm:^3.2.5"
+    turbo: "npm:^2.1.2"
+    typescript: "npm:^5.6.2"
+  languageName: unknown
+  linkType: soft
+
 "run-async@npm:^2.4.0":
   version: 2.4.1
   resolution: "run-async@npm:2.4.1"
@@ -25876,10 +25859,10 @@ __metadata:
     "@headlessui/react": "npm:^2.1.9"
     "@heroicons/react": "npm:^2.0.18"
     "@loadable/component": "npm:^5.15.3"
-    "@medusajs/js-sdk": "npm:0.0.2-preview-20240925143312"
+    "@medusajs/js-sdk": "npm:rc"
     "@medusajs/medusa": "npm:1.20.6"
     "@medusajs/medusa-js": "npm:6.1.2"
-    "@medusajs/types": "npm:1.12.0-preview-20240925143312"
+    "@medusajs/types": "npm:rc"
     "@radix-ui/react-slot": "npm:^1.0.2"
     "@remix-run/dev": "npm:2.12.0"
     "@remix-run/eslint-config": "npm:2.12.0"

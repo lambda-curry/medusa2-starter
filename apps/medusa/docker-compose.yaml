@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: postgres
+    image: postgres:16
     container_name: medusa-starter-postgres
     volumes:
       - database:/var/lib/postgresql/data
