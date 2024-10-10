@@ -27,7 +27,7 @@ import { IPaymentModuleService } from '@medusajs/framework/types';
 
 export default async function seedDemoData({ container }: ExecArgs) {
   const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER);
-  const remoteLink: RemoteLink = container.resolve(
+  const remoteLink = container.resolve<RemoteLink>(
     ContainerRegistrationKeys.REMOTE_LINK
   );
   const fulfillmentModuleService: IFulfillmentModuleService = container.resolve(
@@ -221,19 +221,19 @@ export default async function seedDemoData({ container }: ExecArgs) {
         prices: [
           {
             currency_code: 'usd',
-            amount: 5,
+            amount: 5_00,
           },
           {
             currency_code: 'cad',
-            amount: 5,
+            amount: 5_00,
           },
           {
             region_id: usRegion.id,
-            amount: 5,
+            amount: 5_00,
           },
           {
             region_id: caRegion.id,
-            amount: 5,
+            amount: 5_00,
           },
         ],
         rules: [
@@ -263,19 +263,19 @@ export default async function seedDemoData({ container }: ExecArgs) {
         prices: [
           {
             currency_code: 'usd',
-            amount: 10,
+            amount: 10_00,
           },
           {
             currency_code: 'cad',
-            amount: 10,
+            amount: 10_00,
           },
           {
             region_id: usRegion.id,
-            amount: 10,
+            amount: 10_00,
           },
           {
             region_id: caRegion.id,
-            amount: 10,
+            amount: 10_00,
           },
         ],
         rules: [
@@ -320,8 +320,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
   const publishableApiKey = publishableApiKeyResult[0];
-
-  console.log('PUBLISHABLE_API_KEY', publishableApiKey);
 
   await linkSalesChannelsToApiKeyWorkflow(container).run({
     input: {
