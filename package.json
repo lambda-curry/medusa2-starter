@@ -1,5 +1,5 @@
 {
-  "name": "medusa-2-starter",
+  "name": "root",
   "private": true,
   "scripts": {
     "build": "turbo build",

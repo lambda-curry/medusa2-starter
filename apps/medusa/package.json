@@ -13,6 +13,7 @@
     "medusa"
   ],
   "scripts": {
+    "nukedb": "docker compose down -v && docker compose up -d",
     "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "start": "medusa start",

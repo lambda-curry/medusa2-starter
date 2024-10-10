@@ -21379,16 +21379,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"medusa-2-starter@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "medusa-2-starter@workspace:."
-  dependencies:
-    prettier: "npm:^3.2.5"
-    turbo: "npm:^2.1.2"
-    typescript: "npm:^5.6.2"
-  languageName: unknown
-  linkType: soft
-
 "medusa-core-utils@npm:^1.2.2, medusa-core-utils@npm:^1.2.3":
   version: 1.2.3
   resolution: "medusa-core-utils@npm:1.2.3"
@@ -25262,6 +25252,16 @@ __metadata:
   checksum: 10c0/9b9432206ecc2f68edca965f8cf119eccd5346c86c392f733a8062b7c6a309b70c35e8448024146bd0e3444d8b3797758c8e29248b273d1433de94a4ea265246
   languageName: node
   linkType: hard
+
+"root@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root@workspace:."
+  dependencies:
+    prettier: "npm:^3.2.5"
+    turbo: "npm:^2.1.2"
+    typescript: "npm:^5.6.2"
+  languageName: unknown
+  linkType: soft
 
 "run-async@npm:^2.4.0":
   version: 2.4.1
