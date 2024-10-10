@@ -40,3 +40,4 @@ yarn-error.log*
 *.pem
 
 .yarn/install-state.gz
+./values/*
