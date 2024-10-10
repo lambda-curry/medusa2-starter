@@ -22,7 +22,6 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 
 RUN yarn turbo build --filter=medusa && \
-    yarn workspaces focus --all --production && \
     rm -rf node_modules/.cache .yarn/cache
 
 FROM base AS runner
