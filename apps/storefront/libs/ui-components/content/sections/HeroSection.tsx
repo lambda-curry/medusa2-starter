@@ -1,8 +1,8 @@
 import clsx from "clsx"
-import { CustomAction, ImageField } from "@libs/util/medusa/types"
+import type { CustomAction, ImageField } from "@libs/util/medusa/types"
 import { ActionList } from "../ActionList"
 import { Container } from "@ui-components/common/container/Container"
-import { FC, ReactNode } from "react"
+import type { FC, ReactNode } from "react"
 import { Image } from "@ui-components/common/images/Image"
 
 export const HeroSection: FC<{

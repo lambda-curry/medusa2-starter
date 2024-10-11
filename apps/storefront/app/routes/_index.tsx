@@ -1,5 +1,5 @@
 import { Container } from "@ui-components/common/container"
-import { type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node"
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
 import { getMergedPostMeta } from "@libs/util/posts"
 import HeroSection from "@ui-components/content/sections/HeroSection"
 import { Image } from "@ui-components/common/images/Image"
@@ -19,15 +19,15 @@ export default function IndexRoute() {
   return (
     <>
       <HeroSection
-        className="h-[800px] -mt-[92px] md:-mt-[calc(var(--mkt-header-height-desktop) * 2)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
+        className="h-[800px] !max-w-full -mt-[calc(var(--mkt-header-height)+3rem)] md:-mt-[calc(var(--mkt-header-height-desktop)+2rem)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
         content={
           <div className="text-center w-full space-y-9">
-            <h4 className="font-italiana">COFFEE & COMMUNITY</h4>
+            <h4 className="font-italiana text-2xl">COFFEE & COMMUNITY</h4>
             <h1 className="text-8xl font-italiana">BARRIO</h1>
-            <p>
+            <p className="max-w-prose mx-auto text-lg">
               Discover our artisan-roasted coffee, crafted with care and
               delivered to your door. At Barrio, we’re more than a coffee
-              roastery—we’re a neighborhood.
+              roastery—we’re&nbsp;a&nbsp;neighborhood.
             </p>
           </div>
         }
@@ -43,8 +43,8 @@ export default function IndexRoute() {
         }}
       />
 
-      <Container className="p-14 lg:pt-24 relative flex flex-col-reverse items-center md:flex-row">
-        <div className="md:absolute w-80 md:-top-48 lg:-top-[260px] md:left-0 lg:w-[420px]">
+      <Container className="p-14 pt-60 lg:pt-24 relative flex flex-col items-center lg:flex-row">
+        <div className="absolute w-80 left-4 -top-[200px] md:-top-[240px] lg:left-20 lg:w-[420px]">
           <Image
             src="/assets/images/header-image-1.png"
             alt="Barrio background"
@@ -53,13 +53,13 @@ export default function IndexRoute() {
           />
         </div>
 
-        <div className="md:w-full flex flex-col justify-center max-md:items-center">
-          <div className="w-full flex text-center md:text-left">
-            <h2 className="ml-auto text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-ballet">
+        <div className="lg:w-full flex flex-col justify-center max-lg:items-center">
+          <div className="w-full flex text-center lg:text-left">
+            <h2 className="mx-auto lg:mx-0 lg:ml-auto text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-ballet">
               Building Community
             </h2>
           </div>
-          <p className="font-italiana text-6xl md:text-7xl mt-6 sm:mt-10 md:mt-24">
+          <p className="font-italiana text-6xl lg:text-7xl mt-6 sm:mt-10 lg:mt-24">
             one cup at a time
           </p>
         </div>
@@ -130,12 +130,12 @@ export default function IndexRoute() {
       />
 
       <HeroSection
-        className="pb-10 min-h-[734px]"
+        className="pb-10 min-h-[734px] !max-w-full"
         content={
-          <div className="text-center w-full space-y-9">
-            <h4 className="font-italiana">SUBSCRIBE & SAVE</h4>
-            <h1 className="text-7xl font-italiana">
-              Sit back, let us take care of your coffee
+          <div className="text-center w-full space-y-9 pt-9">
+            <h4 className="font-italiana text-2xl">SUBSCRIBE & SAVE</h4>
+            <h1 className="text-4xl lg:text-7xl font-italiana">
+              Sit back, let us take care&nbsp;of&nbsp;your&nbsp;coffee
             </h1>
 
             <ListItemsSection
@@ -174,7 +174,7 @@ export default function IndexRoute() {
         }}
       />
 
-      <Container className="flex flex-col-reverse items-center lg:items-start lg:flex-row p-14 lg:pt-24 lg:px-24 relative lg:min-h-[354px]">
+      <Container className="flex flex-col-reverse gap-8 items-center lg:items-start lg:flex-row p-14 lg:pt-24 lg:px-24 relative lg:min-h-[354px]">
         <div className="flex justify-center md:justify-end md:absolute md:-top-[30%] w-60 md:w-80 md:right-0 lg:right-20 lg:w-[420px]">
           <Image
             src="/assets/images/header-image-2.png"
@@ -196,7 +196,7 @@ export default function IndexRoute() {
       </Container>
 
       <SideBySideSection
-        className="p-14 md:pt-28 lg:pt-24 lg:px-24"
+        className="p-14 md:pt-16 lg:pt-24 lg:px-24"
         left={
           <div className="w-full h-full flex items-center justify-center">
             <div
@@ -248,7 +248,7 @@ export default function IndexRoute() {
           },
         ]}
         content={
-          <div className="space-y-10 flex flex-col justify-center items-center">
+          <div className="space-y-8 flex flex-col justify-center items-center">
             <h4 className="text-xl font-italiana">FIND YOUR COMMUNITY</h4>
             <h3 className="text-7xl  font-italiana">BARRIO</h3>
             <p className="text-xl">Ship, Share & Connect Over Coffee</p>

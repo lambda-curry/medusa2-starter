@@ -71,7 +71,7 @@ export const Footer = () => {
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-2 ">
               <Select
-                className="!text-base !pl-0 text-white bg-transparent border-none rounded-none !shadow-none"
+                className="!text-base border-1 border-white text-white bg-transparent !shadow-none"
                 options={[
                   {
                     label: "United States (USD $)",
@@ -82,7 +82,7 @@ export const Footer = () => {
                     value: "CAD",
                   },
                 ]}
-                onChange={() => {}}
+                onChange={() => { }}
               />
             </div>
 

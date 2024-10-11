@@ -14,34 +14,25 @@ import {
   updateStoresWorkflow,
 } from '@medusajs/core-flows';
 import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
-import { Logger } from '@medusajs/medusa';
-import { RemoteLink } from '@medusajs/modules-sdk';
-import {
+import type { Logger } from '@medusajs/medusa';
+import type { RemoteLink } from '@medusajs/modules-sdk';
+import type {
   ExecArgs,
   IFulfillmentModuleService,
   ISalesChannelModuleService,
   IStoreModuleService,
 } from '@medusajs/types';
 import { seedProducts } from './seed/products';
-import { IPaymentModuleService } from '@medusajs/framework/types';
+import type { IPaymentModuleService } from '@medusajs/framework/types';
 
 export default async function seedDemoData({ container }: ExecArgs) {
   const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER);
-  const remoteLink = container.resolve<RemoteLink>(
-    ContainerRegistrationKeys.REMOTE_LINK
-  );
-  const fulfillmentModuleService: IFulfillmentModuleService = container.resolve(
-    Modules.FULFILLMENT
-  );
-  const salesChannelModuleService: ISalesChannelModuleService =
-    container.resolve(Modules.SALES_CHANNEL);
-  const storeModuleService: IStoreModuleService = container.resolve(
-    Modules.STORE
-  );
+  const remoteLink = container.resolve<RemoteLink>(ContainerRegistrationKeys.REMOTE_LINK);
+  const fulfillmentModuleService: IFulfillmentModuleService = container.resolve(Modules.FULFILLMENT);
+  const salesChannelModuleService: ISalesChannelModuleService = container.resolve(Modules.SALES_CHANNEL);
+  const storeModuleService: IStoreModuleService = container.resolve(Modules.STORE);
 
-  const paymentModuleService: IPaymentModuleService = container.resolve(
-    Modules.PAYMENT
-  );
+  const paymentModuleService: IPaymentModuleService = container.resolve(Modules.PAYMENT);
 
   const canadianCountries = ['ca'];
   const americanCountries = ['us'];
@@ -56,9 +47,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   if (!defaultSalesChannel.length) {
     // create the default sales channel
-    const { result: salesChannelResult } = await createSalesChannelsWorkflow(
-      container
-    ).run({
+    const { result: salesChannelResult } = await createSalesChannelsWorkflow(container).run({
       input: {
         salesChannelsData: [
           {
@@ -114,7 +103,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   logger.info('Seeding tax regions...');
 
   await createTaxRegionsWorkflow(container).run({
-    input: allCountries.map(country_code => ({
+    input: allCountries.map((country_code) => ({
       country_code,
     })),
   });
@@ -123,9 +112,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info('Seeding stock location data...');
 
-  const { result: stockLocationResult } = await createStockLocationsWorkflow(
-    container
-  ).run({
+  const { result: stockLocationResult } = await createStockLocationsWorkflow(container).run({
     input: {
       locations: [
         {
@@ -156,45 +143,43 @@ export default async function seedDemoData({ container }: ExecArgs) {
   ]);
 
   logger.info('Seeding fulfillment data...');
-  const { result: shippingProfileResult } =
-    await createShippingProfilesWorkflow(container).run({
-      input: {
-        data: [
-          {
-            name: 'Default',
-            type: 'default',
-          },
-        ],
-      },
-    });
+  const { result: shippingProfileResult } = await createShippingProfilesWorkflow(container).run({
+    input: {
+      data: [
+        {
+          name: 'Default',
+          type: 'default',
+        },
+      ],
+    },
+  });
 
   const shippingProfile = shippingProfileResult[0];
 
-  const northAmericanFulfillmentSet =
-    await fulfillmentModuleService.createFulfillmentSets({
-      name: 'North American delivery',
-      type: 'shipping',
-      service_zones: [
-        {
-          name: 'United States',
-          geo_zones: [
-            {
-              country_code: 'us',
-              type: 'country',
-            },
-          ],
-        },
-        {
-          name: 'Canada',
-          geo_zones: [
-            {
-              country_code: 'ca',
-              type: 'country',
-            },
-          ],
-        },
-      ],
-    });
+  const northAmericanFulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
+    name: 'North American delivery',
+    type: 'shipping',
+    service_zones: [
+      {
+        name: 'United States',
+        geo_zones: [
+          {
+            country_code: 'us',
+            type: 'country',
+          },
+        ],
+      },
+      {
+        name: 'Canada',
+        geo_zones: [
+          {
+            country_code: 'ca',
+            type: 'country',
+          },
+        ],
+      },
+    ],
+  });
 
   await remoteLink.create({
     [Modules.STOCK_LOCATION]: {
@@ -306,9 +291,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
   logger.info('Finished seeding stock location data.');
 
   logger.info('Seeding publishable API key data...');
-  const { result: publishableApiKeyResult } = await createApiKeysWorkflow(
-    container
-  ).run({
+  const { result: publishableApiKeyResult } = await createApiKeysWorkflow(container).run({
     input: {
       api_keys: [
         {
@@ -332,9 +315,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info('Seeding product data...');
 
-  const { result: categoryResult } = await createProductCategoriesWorkflow(
-    container
-  ).run({
+  const { result: categoryResult } = await createProductCategoriesWorkflow(container).run({
     input: {
       product_categories: [
         {
@@ -349,9 +330,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
 
-  const { result: productTagsResult } = await createProductTagsWorkflow(
-    container
-  ).run({
+  const { result: productTagsResult } = await createProductTagsWorkflow(container).run({
     input: {
       product_tags: [
         {
