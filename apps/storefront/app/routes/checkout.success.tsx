@@ -17,7 +17,7 @@ export const loader = async ({
 
   if (!orderId) {
     // @ts-ignore
-    return redirect('/')
+    throw redirect('/')
   }
 
   const order = await retrieveOrder(request, orderId)
