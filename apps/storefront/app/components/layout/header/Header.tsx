@@ -8,18 +8,18 @@ import { ButtonBase, IconButton } from "@ui-components/common/buttons"
 import { Container } from "@ui-components/common/container/Container"
 import { URLAwareNavLink } from "@ui-components/common/link"
 import clsx from "clsx"
-import { FC, useState } from "react"
+import { type FC, useState } from "react"
 import { HeaderSideNav } from "./HeaderSideNav"
 import { useActiveSection } from "./useActiveSection"
 import { LogoStoreName } from "~/components/LogoStoreName/LogoStoreName"
 
-export interface HeaderProps {}
+export type HeaderProps = {}
 
 export const Header: FC<HeaderProps> = () => {
   const [sideNavOpen, setSideNavOpen] = useState<boolean>(false)
   const { headerNavigationItems } = useSiteDetails()
   const { cart, toggleCartDrawer } = useCart()
-  const { toggleSearchDrawer } = useSearch()
+  // const { toggleSearchDrawer } = useSearch()
   const { activeSection } = useActiveSection(headerNavigationItems)
   const rootLoader = useRootLoaderData()
   const hasProducts = rootLoader?.hasPublishedProducts
@@ -27,7 +27,7 @@ export const Header: FC<HeaderProps> = () => {
   if (!headerNavigationItems) return <>Loading...</>
 
   return (
-    <header className="sticky top-0 z-40 mkt-header text-white">
+    <header className="sticky top-0 z-40 mkt-header text-white bg-[#3F432C] opacity-75 backdrop-blur">
       <nav aria-label="Top">
         <div className="bg-transparent">
           <div className="">
@@ -68,7 +68,7 @@ export const Header: FC<HeaderProps> = () => {
 
                   <div className="flex-auto" />
 
-                  <ButtonBase
+                  {/* <ButtonBase
                     className="mkt-header-search-button flex items-center gap-2 rounded-full px-2 py-2 pl-3 hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700 sm:hidden"
                     onClick={() => toggleSearchDrawer(true)}
                   >
@@ -76,7 +76,7 @@ export const Header: FC<HeaderProps> = () => {
                     <MagnifyingGlassIcon
                       className={clsx("-mr-0.5 h-6 w-6 text-current")}
                     />
-                  </ButtonBase>
+                  </ButtonBase> */}
                 </div>
               )}
 
@@ -98,15 +98,15 @@ export const Header: FC<HeaderProps> = () => {
                             newTab={new_tab}
                             className={({ isActive }) =>
                               clsx(
-                                "my-4 flex items-center whitespace-nowrap text-sm font-normal hover:text-gray-500",
+                                "my-4 flex items-center whitespace-nowrap text-base font-normal hover:underline",
                                 {
                                   "border-b-primary-200 border-b-2":
                                     isActive &&
                                     (!navItemProps.url.includes("#") ||
                                       activeSection ===
-                                        navItemProps.url
-                                          .split("#")[1]
-                                          .split("?")[0]),
+                                      navItemProps.url
+                                        .split("#")[1]
+                                        .split("?")[0]),
                                   "hidden 2xl:inline-block": index === 5,
                                   "hidden xl:inline-block":
                                     index === 3 || index === 4,
@@ -125,7 +125,7 @@ export const Header: FC<HeaderProps> = () => {
 
                   <div className="flex items-center justify-end">
                     <div className="flex items-center gap-x-3 text-sm">
-                      {hasProducts && (
+                      {/* {hasProducts && (
                         <ButtonBase
                           className="mkt-header-search-button hidden items-center gap-2 rounded-full px-3 py-2 hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700 sm:flex"
                           onClick={() => toggleSearchDrawer(true)}
@@ -135,7 +135,7 @@ export const Header: FC<HeaderProps> = () => {
                             className={clsx("-mr-0.5 h-6 w-6 text-current")}
                           />
                         </ButtonBase>
-                      )}
+                      )} */}
 
                       {!!cart && hasProducts && (
                         <IconButton
