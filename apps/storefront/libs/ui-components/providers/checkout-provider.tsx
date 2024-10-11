@@ -1,31 +1,31 @@
 import {
   checkAccountDetailsComplete,
   checkContactInfoComplete,
-} from "@libs/util/checkout"
-import { createReducer } from "@libs/util/createReducer"
+} from '@libs/util/checkout'
+import { createReducer } from '@libs/util/createReducer'
 import {
   createContext,
   FC,
   PropsWithChildren,
   useMemo,
   useReducer,
-} from "react"
-import { useCart } from "../hooks/useCart"
-import { useCustomer } from "../hooks/useCustomer"
-import { useEnv } from "../hooks/useEnv"
+} from 'react'
+import { useCart } from '../hooks/useCart'
+import { useCustomer } from '../hooks/useCustomer'
+import { useEnv } from '../hooks/useEnv'
 import {
   StoreCartShippingOption,
   StorePaymentProvider,
   StoreShippingOption,
-} from "@medusajs/types"
-import { BasePaymentSession } from "@medusajs/types/dist/http/payment/common"
-import { ContextValue } from "../../../types"
+} from '@medusajs/types'
+import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common'
+import { ContextValue } from '../../../types'
 
 export enum CheckoutStep {
-  CONTACT_INFO = "contactInfo",
-  ACCOUNT_DETAILS = "accountDetails",
-  PAYMENT = "payment",
-  SUCCESS = "success",
+  CONTACT_INFO = 'contactInfo',
+  ACCOUNT_DETAILS = 'accountDetails',
+  PAYMENT = 'payment',
+  SUCCESS = 'success',
 }
 
 export interface CheckoutState {
@@ -36,7 +36,7 @@ export interface CheckoutState {
 }
 
 export type CheckoutAction = {
-  name: "setStep"
+  name: 'setStep'
   payload: CheckoutStep
 }
 
@@ -51,14 +51,14 @@ export interface CheckoutProviderProps extends PropsWithChildren {
 }
 
 export const useNextStep = (
-  state: Omit<CheckoutState, "step">,
+  state: Omit<CheckoutState, 'step'>,
 ): CheckoutStep => {
   const { cart } = useCart()
   const { customer } = useCustomer()
   const isLoggedIn = !!customer?.id
 
   const contactInfoComplete = useMemo(
-    () => checkContactInfoComplete(cart!, customer),
+    () => checkContactInfoComplete(cart!, customer!),
     [cart, customer],
   )
   const accountDetailsComplete = useMemo(

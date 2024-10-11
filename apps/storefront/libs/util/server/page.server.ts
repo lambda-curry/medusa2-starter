@@ -1,14 +1,14 @@
-import { BasePageSection } from "@libs/util/medusa/types"
-import type { LoaderFunctionArgs } from "@remix-run/node"
-import { fetchProducts } from "./products.server"
+import { BasePageSection } from '@libs/util/medusa/types'
+import type { LoaderFunctionArgs } from '@remix-run/node'
+import { fetchProducts } from './products.server'
 import {
   HttpTypes,
   StoreCollection,
   StoreProductCategory,
-} from "@medusajs/types"
-import { getCountryCode, getDefaultRegion } from "./data/regions.server"
-import { home as homePage } from "@libs/config/pages/home"
-import { getOrSetCart } from "./data/cart.server"
+} from '@medusajs/types'
+import { getCountryCode, getDefaultRegion } from './data/regions.server'
+import { home as homePage } from '@libs/config/pages/home'
+import { getOrSetCart } from './data/cart.server'
 
 export const getHomePage = async (loaderArgs: LoaderFunctionArgs) => {
   const { request } = loaderArgs
@@ -33,7 +33,7 @@ export const getProductListData = async (request: Request) => {
     ...producstQuery,
     currency_code: cart.currency_code,
     region_id: cart.region_id,
-    fields: "id,title,handle,thumbnail,variants.*,variants.prices.*",
+    fields: 'id,title,handle,thumbnail,variants.*,variants.prices.*',
     // fields:
     //   producstQuery.fields ??
     //   "id,title,handle,thumbnail,variants,categories,collection", // TODO: CHECK IF FIELDS ARE CORRECT

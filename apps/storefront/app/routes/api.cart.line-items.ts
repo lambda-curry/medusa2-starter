@@ -1,24 +1,24 @@
-import { FormValidationError } from "@libs/utils-to-merge/validation/validation-error"
-import { V2ActionHandler, handleActionV2 } from "@libs/util/handleAction.server"
-import { getVariantBySelectedOptions } from "@libs/util/products"
-import { setCartId } from "@libs/util/server/cookies.server"
-import type { ActionFunctionArgs, NodeOnDiskFile } from "@remix-run/node"
-import { unstable_data as data } from "@remix-run/node"
-import { withYup } from "@remix-validated-form/with-yup"
-import * as Yup from "yup"
-import { StoreCart, StoreCartResponse } from "@medusajs/types"
+import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
+import { V2ActionHandler, handleActionV2 } from '@libs/util/handleAction.server'
+import { getVariantBySelectedOptions } from '@libs/util/products'
+import { setCartId } from '@libs/util/server/cookies.server'
+import type { ActionFunctionArgs, NodeOnDiskFile } from '@remix-run/node'
+import { unstable_data as data } from '@remix-run/node'
+import { withYup } from '@remix-validated-form/with-yup'
+import * as Yup from 'yup'
+import { StoreCart, StoreCartResponse } from '@medusajs/types'
 import {
   addToCart,
   deleteLineItem,
   getOrSetCart,
   retrieveCart,
   updateLineItem,
-} from "@libs/util/server/data/cart.server"
-import { getProductsById } from "@libs/util/server/data/products.server"
+} from '@libs/util/server/data/cart.server'
+import { getProductsById } from '@libs/util/server/data/products.server'
 import {
   getCountryCode,
   getDefaultRegion,
-} from "@libs/util/server/data/regions.server"
+} from '@libs/util/server/data/regions.server'
 
 export const addCartItemValidation = withYup(
   Yup.object().shape({
@@ -31,9 +31,9 @@ export const addCartItemValidation = withYup(
 )
 
 export enum LineItemActions {
-  CREATE = "createItem",
-  UPDATE = "updateItem",
-  DELETE = "deleteItem",
+  CREATE = 'createItem',
+  UPDATE = 'updateItem',
+  DELETE = 'deleteItem',
 }
 
 export interface CreateLineItemPayLoad {
@@ -88,7 +88,7 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
 
   if (!product)
     throw new FormValidationError({
-      fieldErrors: { formError: "Product not found." },
+      fieldErrors: { formError: 'Product not found.' },
     })
 
   const variant = getVariantBySelectedOptions(product.variants || [], options)
@@ -97,7 +97,7 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
     throw new FormValidationError({
       fieldErrors: {
         formError:
-          "Product variant not found. Please select all required options.",
+          'Product variant not found. Please select all required options.',
       },
     })
 
@@ -109,7 +109,7 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
     countryCode: countryCode,
   })
 
-  setCartId(responseHeaders, cart.id)
+  await setCartId(responseHeaders, cart.id)
 
   return data({ cart }, { headers: responseHeaders })
 }

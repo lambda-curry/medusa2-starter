@@ -1,13 +1,13 @@
-import { formatLineItemPrice } from "@libs/util/prices"
-import clsx from "clsx"
-import type { FC } from "react"
-import { useRemoveCartItem } from "../hooks/useRemoveCartItem"
-import { Button } from "@ui-components/common/buttons/Button"
-import { Image } from "@ui-components/common/images/Image"
-import { LineItem } from "@libs/util/medusa"
+import { formatLineItemPrice } from '@libs/util/prices'
+import clsx from 'clsx'
+import type { FC } from 'react'
+import { useRemoveCartItem } from '../hooks/useRemoveCartItem'
+import { Button } from '@ui-components/common/buttons/Button'
+import { Image } from '@ui-components/common/images/Image'
+import { StoreCartLineItem } from '@medusajs/types'
 
 export interface CartDrawerItemProps {
-  item: LineItem
+  item: StoreCartLineItem
   currencyCode: string
   isRemoving?: boolean
 }
@@ -23,15 +23,15 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
   return (
     <li
       key={item.id}
-      className={clsx("flex h-36 py-6 opacity-100 transition-all", {
-        "!h-0 !p-0 !opacity-0": isRemoving,
+      className={clsx('flex h-36 py-6 opacity-100 transition-all', {
+        '!h-0 !p-0 !opacity-0': isRemoving,
       })}
     >
       <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
         <Image
-          src={item.variant?.product?.thumbnail || ""}
-          alt={item.description || "product thumbnail"}
-          proxyOptions={{ context: "tiny_square" }}
+          src={item.variant?.product?.thumbnail || ''}
+          alt={item.product_title || 'product thumbnail'}
+          proxyOptions={{ context: 'tiny_square' }}
           className="h-full w-full object-cover object-center"
         />
       </div>
@@ -53,7 +53,7 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
               disabled={isRemoving}
               className="text-sm"
             >
-              {isRemoving ? "Removing" : "Remove"}
+              {isRemoving ? 'Removing' : 'Remove'}
             </Button>
           </div>
         </div>

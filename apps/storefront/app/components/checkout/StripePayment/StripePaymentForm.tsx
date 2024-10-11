@@ -1,24 +1,33 @@
-import { FC, FormEvent, PropsWithChildren, useEffect, useState } from "react"
-import { SubmitFunction } from "@remix-run/react"
-import { useControlField } from "remix-validated-form"
+import {
+  FC,
+  FormEvent,
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { SubmitFunction } from '@remix-run/react'
+import { useControlField } from 'remix-validated-form'
 import {
   PaymentMethodCreateParams,
   StripePaymentElement,
-} from "@stripe/stripe-js"
-import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
-import clsx from "clsx"
-import { Address, PaymentMethods } from "@libs/utils-to-merge/types"
-import { UpdatePaymentInput } from "~/routes/api.checkout"
-import { CompleteCheckoutForm } from "../CompleteCheckoutForm"
+} from '@stripe/stripe-js'
+import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
+import clsx from 'clsx'
+import { CustomPaymentSession } from '@libs/utils-to-merge/types'
+import { UpdatePaymentInput } from '~/routes/api.checkout'
+import { CompleteCheckoutForm } from '../CompleteCheckoutForm'
 // import { medusaAddressToAddress } from "@libs/utils-to-merge/addresses"
-import { useCart } from "@ui-components/hooks/useCart"
-import { Alert } from "@ui-components/common/alert/Alert"
-import { useCheckout } from "@ui-components/hooks/useCheckout"
-import { BaseCartAddress } from "@medusajs/types/dist/http/cart/common"
+import { useCart } from '@ui-components/hooks/useCart'
+import { Alert } from '@ui-components/common/alert/Alert'
+import { useCheckout } from '@ui-components/hooks/useCheckout'
+import { BaseCartAddress } from '@medusajs/types/dist/http/cart/common'
+import { PaymentProvider } from '@medusajs/medusa'
+import { Address, MedusaAddress, medusaAddressToAddress } from '@libs/util'
 
 export interface StripePaymentFormProps extends PropsWithChildren {
   isActiveStep: boolean
-  paymentMethods: PaymentMethods
+  paymentMethods: CustomPaymentSession[]
 }
 
 export const StripePaymentForm: FC<StripePaymentFormProps> = ({
@@ -31,29 +40,34 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
   const elements = useElements()
   const { cart } = useCart()
   const { activePaymentSession } = useCheckout()
+  const stripePaymentMethods = useMemo(
+    () => paymentMethods?.filter((pm) => pm.provider_id === 'pp_stripe_stripe'),
+    [paymentMethods],
+  )
 
   useEffect(() => {
     if (!elements) return
     elements.fetchUpdates()
   }, [activePaymentSession?.payment?.updated_at]) // TODO: CHECK if this is correct
 
-  const hasPaymentMethods = paymentMethods.length > 0
-  const initialPaymentMethodId = hasPaymentMethods
-    ? paymentMethods[0].data.id
-    : "new"
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useControlField(
-    "paymentMethodId",
-    "stripePaymentForm",
-  )
+  const hasPaymentMethods = stripePaymentMethods.length > 0
 
-  useEffect(
-    () => setSelectedPaymentMethodId(initialPaymentMethodId),
-    [paymentMethods],
-  )
+  const initialPaymentMethodId = hasPaymentMethods
+    ? stripePaymentMethods[0].data?.id
+    : 'new'
+  // const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useControlField(
+  //   'paymentMethodId',
+  //   'stripePaymentForm',
+  // )
+
+  // useEffect(
+  //   () => setSelectedPaymentMethodId(initialPaymentMethodId),
+  //   [stripePaymentMethods],
+  // )
 
   useEffect(() => {
     if (isActiveStep && stripeElement) stripeElement.focus()
-  }, [selectedPaymentMethodId, isActiveStep, stripeElement])
+  }, [isActiveStep, stripeElement])
 
   if (!cart || !stripe || !elements) return null
 
@@ -69,26 +83,28 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
     },
   ) => {
     setStripeError(undefined)
-    if (data.paymentMethodId !== "new") {
+    if (data.paymentMethodId !== 'new') {
       submit(event.target as HTMLFormElement)
       return
     }
     // NOTE: We default the cart billing address to be the same as the shipping address in the `ACCOUNT_DETAILS` step.
     const address = (
-      data.sameAsShipping ? cart.billing_address : data.billingAddress
-    ) as BaseCartAddress
+      data.sameAsShipping
+        ? medusaAddressToAddress(cart.billing_address as MedusaAddress)
+        : data.billingAddress
+    ) as Address
 
     const stripeBillingDetails: PaymentMethodCreateParams.BillingDetails = {
-      name: `${address.first_name} ${address.last_name}`,
+      name: `${address.firstName} ${address.lastName}`,
       email: cart.email,
-      phone: address.phone || "",
+      phone: address.phone || '',
       address: {
-        line1: address.address_1 || "",
-        line2: address.address_2 || "",
-        city: address.city || "",
-        state: address.province || "",
-        postal_code: address.postal_code || "",
-        country: address.country_code || "",
+        line1: address.address1 || '',
+        line2: address.address2 || '',
+        city: address.city || '',
+        state: address.province || '',
+        postal_code: address.postalCode || '',
+        country: address.countryCode || '',
       },
     }
 
@@ -100,13 +116,13 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
         elements,
         confirmParams: {
           // return_url: siteURL(redirectPath),
-          return_url: "http://localhost:3000/checkout/success",
+          return_url: 'http://localhost:3000/checkout/success',
 
           // We need to add the billing details manually because we are disabling
           // the billing address fields on the `PaymentElement`
           payment_method_data: { billing_details: stripeBillingDetails },
         },
-        redirect: "if_required",
+        redirect: 'if_required',
       })
       .then(({ paymentIntent, error }) => {
         if (error) {
@@ -137,15 +153,15 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
   return (
     <>
       <CompleteCheckoutForm
-        providerId="stripe"
+        providerId="pp_stripe_stripe"
         id="stripePaymentForm"
-        paymentMethods={paymentMethods}
+        paymentMethods={stripePaymentMethods}
         onSubmit={handleSubmit}
       >
         <div
           className={clsx({
-            "h-0 overflow-hidden opacity-0":
-              hasPaymentMethods && initialPaymentMethodId !== "new",
+            'h-0 overflow-hidden opacity-0':
+              hasPaymentMethods && initialPaymentMethodId !== 'new',
           })}
         >
           <PaymentElement
@@ -155,14 +171,14 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
               // To disable these fields in the form, we have to pass the billing country at "confirm-time"
               fields: {
                 billingDetails: {
-                  address: { country: "never", postalCode: "never" },
+                  address: { country: 'never', postalCode: 'never' },
                 },
               },
-              terms: { card: "never" },
+              terms: { card: 'never' },
             }}
           />
           {stripeError && (
-            <Alert type="error" className={clsx("form__error -mt-4 mb-2")}>
+            <Alert type="error" className={clsx('form__error -mt-4 mb-2')}>
               {stripeError}
             </Alert>
           )}

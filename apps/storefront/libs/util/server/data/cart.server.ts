@@ -1,12 +1,12 @@
-import { HttpTypes } from "@medusajs/types"
-import omit from "lodash.omit"
-import { getCartId, removeCartId, setCartId } from "../cookies.server"
-import { getProductsById } from "./products.server"
-import { getRegion } from "./regions.server"
-import { sdk } from "@libs/util/server/client.server"
-import { redirect } from "@remix-run/node"
-import { medusaError } from "@libs/util/medusa/medusa-error"
-import { withAuthHeaders } from "../auth.server"
+import { HttpTypes, StoreCart } from '@medusajs/types'
+import omit from 'lodash.omit'
+import { getCartId, removeCartId, setCartId } from '../cookies.server'
+import { getProductsById } from './products.server'
+import { getRegion } from './regions.server'
+import { sdk } from '@libs/util/server/client.server'
+import { redirect } from '@remix-run/node'
+import { medusaError } from '@libs/util/medusa/medusa-error'
+import { withAuthHeaders } from '../auth.server'
 
 export const retrieveCart = withAuthHeaders(async (request, authHeaders) => {
   const cartId = await getCartId(request.headers)
@@ -35,7 +35,7 @@ export const getOrSetCart = withAuthHeaders(
     if (!cart) {
       const cartResp = await sdk.store.cart.create({ region_id: region.id })
       cart = cartResp.cart
-      setCartId(request.headers, cart.id)
+      await setCartId(request.headers, cart.id)
     }
 
     if (cart && cart?.region_id !== region.id) {
@@ -56,7 +56,7 @@ export const updateCart = withAuthHeaders(
     const cartId = await getCartId(request.headers)
     if (!cartId) {
       throw new Error(
-        "No existing cart found, please create one before updating",
+        'No existing cart found, please create one before updating',
       )
     }
 
@@ -77,16 +77,15 @@ export const addToCart = withAuthHeaders(
     },
   ) => {
     const { variantId, quantity, countryCode } = data
-    console.log("🚀 ~ addToCart ~ (input) data:", data)
+    console.log('🚀 ~ addToCart ~ (input) data:', data)
 
     if (!variantId) {
-      throw new Error("Missing variant ID when adding to cart")
+      throw new Error('Missing variant ID when adding to cart')
     }
 
     const cart = await getOrSetCart(request, countryCode)
-    console.log("🚀 ~ addToCart ~ (current) cart.id:", cart.id)
     if (!cart) {
-      throw new Error("Error retrieving or creating cart")
+      throw new Error('Error retrieving or creating cart')
     }
 
     return await sdk.store.cart
@@ -99,11 +98,6 @@ export const addToCart = withAuthHeaders(
         {},
         authHeaders,
       )
-      .then((res) => {
-        console.log("🚀 ~ addToCart ~ (output) cart.id:", res.cart.id)
-
-        return res
-      })
       .catch(medusaError)
   },
 )
@@ -121,12 +115,12 @@ export const updateLineItem = withAuthHeaders(
     },
   ) => {
     if (!lineId) {
-      throw new Error("Missing lineItem ID when updating line item")
+      throw new Error('Missing lineItem ID when updating line item')
     }
 
     const cartId = await getCartId(request.headers)
     if (!cartId) {
-      throw new Error("Missing cart ID when updating line item")
+      throw new Error('Missing cart ID when updating line item')
     }
 
     return await sdk.store.cart
@@ -138,12 +132,12 @@ export const updateLineItem = withAuthHeaders(
 export const deleteLineItem = withAuthHeaders(
   async (request, authHeaders, lineId: string) => {
     if (!lineId) {
-      throw new Error("Missing lineItem ID when deleting line item")
+      throw new Error('Missing lineItem ID when deleting line item')
     }
 
     const cartId = await getCartId(request.headers)
     if (!cartId) {
-      throw new Error("Missing cart ID when deleting line item")
+      throw new Error('Missing cart ID when deleting line item')
     }
 
     return await sdk.store.cart
@@ -191,7 +185,7 @@ export async function enrichLineItems(
       ...item,
       variant: {
         ...variant,
-        product: omit(product, "variants"),
+        product: omit(product, 'variants'),
       },
     }
   }) as HttpTypes.StoreCartLineItem[]
@@ -242,7 +236,7 @@ export const applyPromotions = withAuthHeaders(
   async (request, authHeaders, codes: string[]) => {
     const cartId = await getCartId(request.headers)
     if (!cartId) {
-      throw new Error("No existing cart found")
+      throw new Error('No existing cart found')
     }
 
     await updateCart(request, { promo_codes: codes }).catch(medusaError)
@@ -297,7 +291,7 @@ export const submitPromotionForm = async (
   currentState: unknown,
   formData: FormData,
 ) => {
-  const code = formData.get("code") as string
+  const code = formData.get('code') as string
   try {
     await applyPromotions(request, [code])
   } catch (e: any) {
@@ -313,44 +307,44 @@ export async function setAddresses(
 ) {
   try {
     if (!formData) {
-      throw new Error("No form data found when setting addresses")
+      throw new Error('No form data found when setting addresses')
     }
     const cartId = await getCartId(request.headers)
     if (!cartId) {
-      throw new Error("No existing cart found when setting addresses")
+      throw new Error('No existing cart found when setting addresses')
     }
 
     const data = {
       shipping_address: {
-        first_name: formData.get("shipping_address.first_name"),
-        last_name: formData.get("shipping_address.last_name"),
-        address_1: formData.get("shipping_address.address_1"),
-        address_2: "",
-        company: formData.get("shipping_address.company"),
-        postal_code: formData.get("shipping_address.postal_code"),
-        city: formData.get("shipping_address.city"),
-        country_code: formData.get("shipping_address.country_code"),
-        province: formData.get("shipping_address.province"),
-        phone: formData.get("shipping_address.phone"),
+        first_name: formData.get('shipping_address.first_name'),
+        last_name: formData.get('shipping_address.last_name'),
+        address_1: formData.get('shipping_address.address_1'),
+        address_2: '',
+        company: formData.get('shipping_address.company'),
+        postal_code: formData.get('shipping_address.postal_code'),
+        city: formData.get('shipping_address.city'),
+        country_code: formData.get('shipping_address.country_code'),
+        province: formData.get('shipping_address.province'),
+        phone: formData.get('shipping_address.phone'),
       },
-      email: formData.get("email"),
+      email: formData.get('email'),
     } as any
 
-    const sameAsBilling = formData.get("same_as_billing")
-    if (sameAsBilling === "on") data.billing_address = data.shipping_address
+    const sameAsBilling = formData.get('same_as_billing')
+    if (sameAsBilling === 'on') data.billing_address = data.shipping_address
 
-    if (sameAsBilling !== "on")
+    if (sameAsBilling !== 'on')
       data.billing_address = {
-        first_name: formData.get("billing_address.first_name"),
-        last_name: formData.get("billing_address.last_name"),
-        address_1: formData.get("billing_address.address_1"),
-        address_2: "",
-        company: formData.get("billing_address.company"),
-        postal_code: formData.get("billing_address.postal_code"),
-        city: formData.get("billing_address.city"),
-        country_code: formData.get("billing_address.country_code"),
-        province: formData.get("billing_address.province"),
-        phone: formData.get("billing_address.phone"),
+        first_name: formData.get('billing_address.first_name'),
+        last_name: formData.get('billing_address.last_name'),
+        address_1: formData.get('billing_address.address_1'),
+        address_2: '',
+        company: formData.get('billing_address.company'),
+        postal_code: formData.get('billing_address.postal_code'),
+        city: formData.get('billing_address.city'),
+        country_code: formData.get('billing_address.country_code'),
+        province: formData.get('billing_address.province'),
+        phone: formData.get('billing_address.phone'),
       }
     return await updateCart(request, data)
   } catch (e: any) {
@@ -362,30 +356,14 @@ export const placeOrder = withAuthHeaders(
   async (request: Request, authHeaders) => {
     const cartId = await getCartId(request.headers)
     if (!cartId) {
-      throw new Error("No existing cart found when placing an order")
+      throw new Error('No existing cart found when placing an order')
     }
 
     const cartRes = await sdk.store.cart
       .complete(cartId, {}, authHeaders)
       .catch(medusaError)
 
-    if (cartRes?.type === "order") {
-      const countryCode =
-        cartRes.order.shipping_address?.country_code?.toLowerCase()
-      removeCartId(request.headers)
-
-      const redirectUrl = `/${countryCode}/order/confirmed/${cartRes?.order.id}`
-
-      console.log("🚀 ~ placeOrder ~ redirectUrl:", redirectUrl)
-
-      redirect(redirectUrl)
-    }
-
-    return (
-      cartRes as {
-        cart: HttpTypes.StoreCart
-      }
-    )?.cart
+    return cartRes
   },
 )
 

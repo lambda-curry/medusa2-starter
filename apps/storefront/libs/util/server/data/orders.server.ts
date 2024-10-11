@@ -1,11 +1,11 @@
-import { sdk } from "@libs/util/server/client.server"
-import { withAuthHeaders } from "../auth.server"
-import { medusaError } from "@libs/util/medusa/medusa-error"
+import { sdk } from '@libs/util/server/client.server'
+import { withAuthHeaders } from '../auth.server'
+import { medusaError } from '@libs/util/medusa/medusa-error'
 
 export const retrieveOrder = withAuthHeaders(
   async (request, authHeaders, id: string) => {
     return sdk.store.order
-      .retrieve(id, { fields: "*payment_collections.payments" }, authHeaders)
+      .retrieve(id, { fields: '*payment_collections.payments' }, authHeaders)
       .then(({ order }) => order)
       .catch(medusaError)
   },

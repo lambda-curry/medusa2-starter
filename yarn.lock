@@ -21415,8 +21415,10 @@ __metadata:
   dependencies:
     "@medusajs/admin-sdk": "npm:rc"
     "@medusajs/framework": "npm:rc"
+    "@medusajs/js-sdk": "npm:rc"
     "@medusajs/medusa": "npm:rc"
     "@medusajs/medusa-cli": "npm:rc"
+    "@medusajs/types": "npm:rc"
     "@mikro-orm/cli": "npm:5.9.7"
     "@mikro-orm/core": "npm:5.9.7"
     "@mikro-orm/knex": "npm:5.9.7"

@@ -1,23 +1,23 @@
-import { FC } from "react"
-import { useControlField } from "remix-validated-form"
-import { Label, Radio, RadioGroup } from "@headlessui/react"
-import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon"
-import PlusCircleIcon from "@heroicons/react/24/outline/PlusCircleIcon"
-import clsx from "clsx"
-import { ButtonLink } from "@ui-components/common/buttons/ButtonLink"
-import { PaymentMethodsRadioGroupOption } from "./PaymentMethodsRadioGroupOption"
-import { type PaymentMethod } from "@libs/utils-to-merge/types"
+import { FC } from 'react'
+import { useControlField } from 'remix-validated-form'
+import { Label, Radio, RadioGroup } from '@headlessui/react'
+import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon'
+import PlusCircleIcon from '@heroicons/react/24/outline/PlusCircleIcon'
+import clsx from 'clsx'
+import { ButtonLink } from '@ui-components/common/buttons/ButtonLink'
+import { PaymentMethodsRadioGroupOption } from './PaymentMethodsRadioGroupOption'
+import { type CustomPaymentSession } from '@libs/utils-to-merge/types'
 
 export interface PaymentMethodsRadioGroupProps {
   formId: string
-  paymentMethods: PaymentMethod[]
+  paymentMethods: CustomPaymentSession[]
 }
 
 export const PaymentMethodsRadioGroup: FC<PaymentMethodsRadioGroupProps> = ({
   formId,
   paymentMethods,
 }) => {
-  const [value, setValue] = useControlField("paymentMethodId", formId)
+  const [value, setValue] = useControlField('paymentMethodId', formId)
 
   return (
     <RadioGroup name="paymentMethodId" value={value} onChange={setValue}>
@@ -35,7 +35,7 @@ export const PaymentMethodsRadioGroup: FC<PaymentMethodsRadioGroupProps> = ({
               <ButtonLink
                 size="sm"
                 className={clsx(
-                  "inline-flex items-center border-2 border-transparent",
+                  'inline-flex items-center border-2 border-transparent',
                 )}
               >
                 {checked && (

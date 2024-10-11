@@ -1,4 +1,3 @@
-import { InnerHtml } from "~/components/html/InnerHTML"
 import {
   Links,
   Meta,
@@ -7,33 +6,32 @@ import {
   ScrollRestoration,
   useLoaderData,
   useRouteError,
-} from "@remix-run/react"
-import { useRef } from "react"
-import { Page } from "./components/layout/Page"
-import { RootProviders } from "./providers/root-providers"
-import { getProxySrc, imageProxyURL } from "@libs/utils-to-merge/img-proxy"
-import { MetaFunction } from "@remix-run/node"
-import { getCommonMeta, mergeMeta } from "@libs/util/meta"
-import { getRootLoader } from "@libs/util/server/root.server"
+} from '@remix-run/react'
+import { useRef } from 'react'
+import { Page } from './components/layout/Page'
+import { RootProviders } from './providers/root-providers'
+import { MetaFunction } from '@remix-run/node'
+import { getCommonMeta, mergeMeta } from '@libs/util/meta'
+import { getRootLoader } from '@libs/util/server/root.server'
 
-import "~/styles/global.css"
+import '~/styles/global.css'
 
 export const getRootMeta: MetaFunction = ({ data }) => {
-  const title = "Barrio Store"
+  const title = 'Barrio Store'
   const description =
-    "Discover our artisan-roasted coffee, crafted with care and delivered to your door."
+    'Discover our artisan-roasted coffee, crafted with care and delivered to your door.'
   const ogTitle = title
   const ogDescription = description
-  const ogImage = "" // getProxySrc(siteDetails.store.logo?.url)
+  const ogImage = '' // getProxySrc(siteDetails.store.logo?.url)
   const ogImageAlt = !!ogImage ? `${ogTitle} logo` : undefined
 
   return [
     { title },
-    { name: "description", content: description },
-    { property: "og:title", content: ogTitle },
-    { property: "og:description", content: ogDescription },
-    { property: "og:image", content: ogImage },
-    { property: "og:image:alt", content: ogImageAlt },
+    { name: 'description', content: description },
+    { property: 'og:title', content: ogTitle },
+    { property: 'og:description', content: ogDescription },
+    { property: 'og:image', content: ogImage },
+    { property: 'og:image:alt', content: ogImageAlt },
   ]
 }
 
@@ -47,7 +45,6 @@ export const loader = getRootLoader
 function App() {
   const headRef = useRef<HTMLHeadElement>(null)
   const data = useLoaderData<typeof getRootLoader>()
-  console.log("🚀 ~ App ~ data:", data)
 
   const { env, cart, fontLinks, siteDetails } = data
 
@@ -98,6 +95,17 @@ function App() {
             href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap"
             rel="stylesheet"
           />
+
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossOrigin="anonymous"
+          />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Aboreto&display=swap"
+            rel="stylesheet"
+          />
           <Links />
           {siteDetails.settings.description && (
             <meta
@@ -128,7 +136,7 @@ export default App
 export function ErrorBoundary() {
   const error = useRouteError()
 
-  console.error("error boundary error", error)
+  console.error('error boundary error', error)
 
   return (
     <html>

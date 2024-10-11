@@ -1,17 +1,20 @@
-import { FC, useState } from "react"
-import { useFetcher } from "@remix-run/react"
-import { Description, Label, Radio } from "@headlessui/react"
-import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon"
-import TrashIcon from "@heroicons/react/24/outline/TrashIcon"
-import clsx from "clsx"
+import { FC, useState } from 'react'
+import { useFetcher } from '@remix-run/react'
+import { Description, Label, Radio } from '@headlessui/react'
+import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon'
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon'
+import clsx from 'clsx'
 // import { CustomerAction } from "~/routes/api.customer"
-import type { CreditCardBrand, PaymentMethod } from "@libs/utils-to-merge/types"
-import { CreditCardIcon } from "@ui-components/common/icons/CreditCardIcon"
-import { IconButton } from "@ui-components/common/buttons/IconButton"
-import { ConfirmModal } from "@ui-components/common/modals/ConfirmModal"
+import type {
+  CreditCardBrand,
+  CustomPaymentSession,
+} from '@libs/utils-to-merge/types'
+import { CreditCardIcon } from '@ui-components/common/icons/CreditCardIcon'
+import { IconButton } from '@ui-components/common/buttons/IconButton'
+import { ConfirmModal } from '@ui-components/common/modals/ConfirmModal'
 
 export interface PaymentMethodsRadioGroupProps {
-  paymentMethod: PaymentMethod
+  paymentMethod: CustomPaymentSession
 }
 
 export const PaymentMethodsRadioGroupOption: FC<
@@ -20,7 +23,7 @@ export const PaymentMethodsRadioGroupOption: FC<
   const removePaymentMethodFetcher = useFetcher<{}>()
   const [isConfirming, setIsConfirming] = useState<boolean>(false)
   const isDeleting =
-    removePaymentMethodFetcher.formData?.get("paymentMethodId") ===
+    removePaymentMethodFetcher.formData?.get('paymentMethodId') ===
     paymentMethod.data.id
   const { brand } = paymentMethod.data?.card || {}
 
@@ -39,8 +42,8 @@ export const PaymentMethodsRadioGroupOption: FC<
         paymentMethodId: paymentMethod.data?.id,
       },
       {
-        method: "post",
-        action: "/api/customer",
+        method: 'post',
+        action: '/api/customer',
       },
     )
     setIsConfirming(false)
@@ -55,11 +58,11 @@ export const PaymentMethodsRadioGroupOption: FC<
         disabled={isDeleting}
         className={({ checked }) =>
           clsx(
-            "group",
-            checked ? "border-transparent" : "border-gray-300",
-            "active:ring-primary-500 active:ring-2",
-            isDeleting ? "opacity-50" : "",
-            "relative col-span-1 cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none",
+            'group',
+            checked ? 'border-transparent' : 'border-gray-300',
+            'active:ring-primary-500 active:ring-2',
+            isDeleting ? 'opacity-50' : '',
+            'relative col-span-1 cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none',
           )
         }
       >
@@ -72,8 +75,8 @@ export const PaymentMethodsRadioGroupOption: FC<
               >
                 <CreditCardIcon
                   className="-my-1"
-                  brand={(brand || "unknown") as CreditCardBrand}
-                />{" "}
+                  brand={(brand || 'unknown') as CreditCardBrand}
+                />{' '}
                 <span>
                   &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
                   &bull;&bull;&bull;&bull; {paymentMethod.data.card?.last4}
@@ -103,15 +106,15 @@ export const PaymentMethodsRadioGroupOption: FC<
                 icon={TrashIcon}
                 title="Edit shipping address"
                 className="relative top-1 -mr-1.5 !h-8 !w-8"
-                iconProps={{ className: "!w-5 !h-5" }}
+                iconProps={{ className: '!w-5 !h-5' }}
                 onClick={handleDeleteClick}
               />
             </Description>
 
             <div
               className={clsx(
-                checked ? "border-primary-500" : "border-transparent",
-                "pointer-events-none absolute -inset-px rounded-lg border-2 active:border",
+                checked ? 'border-primary-500' : 'border-transparent',
+                'pointer-events-none absolute -inset-px rounded-lg border-2 active:border',
               )}
               aria-hidden="true"
             />
@@ -132,8 +135,8 @@ export const PaymentMethodsRadioGroupOption: FC<
               <div>
                 <CreditCardIcon
                   className="-mb-2 mr-2"
-                  brand={(brand || "unknown") as CreditCardBrand}
-                />{" "}
+                  brand={(brand || 'unknown') as CreditCardBrand}
+                />{' '}
                 <span>
                   &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;
                   &bull;&bull;&bull;&bull; {paymentMethod.data.card?.last4}

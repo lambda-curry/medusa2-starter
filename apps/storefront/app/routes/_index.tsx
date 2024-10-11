@@ -1,13 +1,13 @@
-import { Container } from "@ui-components/common/container"
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
-import { getMergedPostMeta } from "@libs/util/posts"
-import HeroSection from "@ui-components/content/sections/HeroSection"
-import { Image } from "@ui-components/common/images/Image"
-import { ListItemsSection } from "@ui-components/content/sections/ListItemsSection"
-import PostSectionProductListCarousel from "@ui-components/content/post-section/PostSectionProductListCarousel"
-import { SideBySideSection } from "@ui-components/content/sections/SideBySideSection"
-import { GridCTASection } from "@ui-components/content/sections/GridCTASection"
-import { ActionList } from "@ui-components/content/ActionList"
+import { Container } from '@ui-components/common/container'
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
+import { getMergedPostMeta } from '@libs/util/posts'
+import HeroSection from '@ui-components/content/sections/HeroSection'
+import { Image } from '@ui-components/common/images/Image'
+import { ListItemsSection } from '@ui-components/content/sections/ListItemsSection'
+import PostSectionProductListCarousel from '@ui-components/content/post-section/PostSectionProductListCarousel'
+import { SideBySideSection } from '@ui-components/content/sections/SideBySideSection'
+import { GridCTASection } from '@ui-components/content/sections/GridCTASection'
+import { ActionList } from '@ui-components/content/ActionList'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return {}
@@ -23,7 +23,7 @@ export default function IndexRoute() {
         content={
           <div className="text-center w-full space-y-9">
             <h4 className="font-italiana text-2xl">COFFEE & COMMUNITY</h4>
-            <h1 className="text-8xl font-italiana">BARRIO</h1>
+            <h1 className="text-8xl font-aboreto">BARRIO</h1>
             <p className="max-w-prose mx-auto text-lg">
               Discover our artisan-roasted coffee, crafted with care and
               delivered to your door. At Barrio, we’re more than a coffee
@@ -33,13 +33,13 @@ export default function IndexRoute() {
         }
         actions={[
           {
-            label: "Discover Our Blends",
-            url: "/products",
+            label: 'Discover Our Blends',
+            url: '/products',
           },
         ]}
         image={{
-          url: "/assets/images/barrio-banner.png",
-          alt: "Barrio background",
+          url: '/assets/images/barrio-banner.png',
+          alt: 'Barrio background',
         }}
       />
 
@@ -70,8 +70,8 @@ export default function IndexRoute() {
           className="h-[594px]"
           backgroundClassName="rounded-3xl"
           image={{
-            url: "/assets/images/banner-coffee-shop.png",
-            alt: "Barrio background",
+            url: '/assets/images/banner-coffee-shop.png',
+            alt: 'Barrio background',
           }}
         />
       </Container>
@@ -81,34 +81,34 @@ export default function IndexRoute() {
         title="About our products"
         items={[
           {
-            title: "Responsibly Sourced",
+            title: 'Responsibly Sourced',
             description:
-              "We believe good coffee happens when great people come together to build longterm relationships.",
+              'We believe good coffee happens when great people come together to build longterm relationships.',
             image: {
-              src: "/assets/images/benefit-1.png",
-              alt: "Responsibly Sourced",
+              src: '/assets/images/benefit-1.png',
+              alt: 'Responsibly Sourced',
               width: 60,
               height: 60,
             },
           },
           {
-            title: "Meticulous Roasted",
+            title: 'Meticulously Roasted',
             description:
-              "Our custom roast profiles are designed to elevate the natural beauty of our coffees - from sparkling acidity to brown sugar sweetness.",
+              'Our custom roast profiles are designed to elevate the natural beauty of our coffees - from sparkling acidity to brown sugar sweetness.',
             image: {
-              src: "/assets/images/benefit-2.png",
-              alt: "Meticulous Roasted",
+              src: '/assets/images/benefit-2.png',
+              alt: 'Meticulously Roasted',
               width: 60,
               height: 60,
             },
           },
           {
-            title: "Giving Back",
+            title: 'Giving Back',
             description:
-              "Every time you buy a bag of our coffee, we donate a portion of our proceeds to our non-profit partners.",
+              'Every time you buy a bag of our coffee, we donate a portion of our proceeds to our non-profit partners.',
             image: {
-              src: "/assets/images/benefit-3.png",
-              alt: "Giving Back",
+              src: '/assets/images/benefit-3.png',
+              alt: 'Giving Back',
               width: 60,
               height: 60,
             },
@@ -119,11 +119,11 @@ export default function IndexRoute() {
       <PostSectionProductListCarousel
         className="!pb-[100px]"
         data={{
-          heading: { value: "Our Blends" },
+          heading: { value: 'Our Blends' },
           actions: [
             {
-              label: "View all",
-              url: "/products",
+              label: 'View all',
+              url: '/products',
             },
           ],
         }}
@@ -144,19 +144,19 @@ export default function IndexRoute() {
               useFillTitle
               items={[
                 {
-                  title: "Choose your coffee",
+                  title: 'Choose your coffee',
                   description:
-                    "From single origin to our house blend, or even surprise offerings for the more adventurous, we have the coffee tofit your taste.",
+                    'From single origin to our house blend, or even surprise offerings for the more adventurous, we have the coffee tofit your taste.',
                 },
                 {
-                  title: "Choose a frequency",
+                  title: 'Choose a frequency',
                   description:
-                    "Receive 12 oz of our whole bean coffee weekly, every 2 weeks, every 3 weeks, or monthly—whatever frequency meets your needs.",
+                    'Receive 12 oz of our whole bean coffee weekly, every 2 weeks, every 3 weeks, or monthly—whatever frequency meets your needs.',
                 },
                 {
-                  title: "enjoy :)",
+                  title: 'enjoy :)',
                   description:
-                    "You’ve chosen your coffee and how often you want it delivered—all that’s left to do is sit back and relax while we do all the work.",
+                    'You’ve chosen your coffee and how often you want it delivered—all that’s left to do is sit back and relax while we do all the work.',
                 },
               ]}
             />
@@ -164,13 +164,13 @@ export default function IndexRoute() {
         }
         actions={[
           {
-            label: "Get your coffee",
-            url: "/products",
+            label: 'Get your coffee',
+            url: '/products',
           },
         ]}
         image={{
-          url: "/assets/images/barrio-banner.png",
-          alt: "Barrio background",
+          url: '/assets/images/barrio-banner.png',
+          alt: 'Barrio background',
         }}
       />
 
@@ -239,24 +239,24 @@ export default function IndexRoute() {
         className="p-14 md:pt-28 lg:pt-24 lg:px-24"
         images={[
           {
-            src: "/assets/images/grid-cta-1.png",
-            alt: "Barrio background",
+            src: '/assets/images/grid-cta-1.png',
+            alt: 'Barrio background',
           },
           {
-            src: "/assets/images/grid-cta-2.png",
-            alt: "Barrio background",
+            src: '/assets/images/grid-cta-2.png',
+            alt: 'Barrio background',
           },
         ]}
         content={
           <div className="space-y-8 flex flex-col justify-center items-center">
             <h4 className="text-xl font-italiana">FIND YOUR COMMUNITY</h4>
-            <h3 className="text-7xl  font-italiana">BARRIO</h3>
+            <h3 className="text-7xl  font-aboreto">BARRIO</h3>
             <p className="text-xl">Ship, Share & Connect Over Coffee</p>
             <ActionList
               actions={[
                 {
-                  label: "Subscribe for Events",
-                  url: "#",
+                  label: 'Subscribe for Events',
+                  url: '#',
                 },
               ]}
             />

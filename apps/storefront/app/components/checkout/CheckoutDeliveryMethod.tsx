@@ -1,29 +1,30 @@
-import { useCart } from "@ui-components/hooks/useCart"
-import { useCheckout } from "@ui-components/hooks/useCheckout"
-import { CheckoutStep } from "@ui-components/providers/checkout-provider"
-import { Alert } from "@ui-components/common/alert/Alert"
-import { Form } from "@ui-components/common/forms/Form"
-import { FormError } from "@ui-components/common/forms/FormError"
+import { useCart } from '@ui-components/hooks/useCart'
+import { useCheckout } from '@ui-components/hooks/useCheckout'
+import { CheckoutStep } from '@ui-components/providers/checkout-provider'
+import { Alert } from '@ui-components/common/alert/Alert'
+import { Form } from '@ui-components/common/forms/Form'
+import { FormError } from '@ui-components/common/forms/FormError'
 import {
   checkAccountDetailsComplete,
   checkDeliveryMethodComplete,
   getShippingOptionsByProfile,
-} from "@libs/util/checkout"
-import { formatPrice } from "@libs/util/prices"
+} from '@libs/util/checkout'
+import { formatPrice } from '@libs/util/prices'
 import {
   Fetcher,
   FetcherWithComponents,
   useFetcher,
   useFetchers,
-} from "@remix-run/react"
-import { FC, Fragment, useEffect, useMemo, useRef } from "react"
-import { useField } from "remix-validated-form"
-import { AddShippingMethodInput, CheckoutAction } from "~/routes/api.checkout"
-import { CheckoutSectionHeader } from "./CheckoutSectionHeader"
-import { ShippingOptionsRadioGroup } from "./checkout-fields/ShippingOptionsRadioGroup/ShippingOptionsRadioGroup"
-import { getCheckoutAddShippingMethodValidator } from "./checkout-form-helpers"
-import { StripeSecurityImage } from "../images/StripeSecurityImage"
-import { StoreCart, StoreCartShippingOption } from "@medusajs/types"
+} from '@remix-run/react'
+import { FC, Fragment, useEffect, useMemo, useRef } from 'react'
+import { useField } from 'remix-validated-form'
+import { AddShippingMethodInput, CheckoutAction } from '~/routes/api.checkout'
+import { CheckoutSectionHeader } from './CheckoutSectionHeader'
+import { ShippingOptionsRadioGroup } from './checkout-fields/ShippingOptionsRadioGroup/ShippingOptionsRadioGroup'
+import { getCheckoutAddShippingMethodValidator } from './checkout-form-helpers'
+import { StripeSecurityImage } from '../images/StripeSecurityImage'
+import { StoreCart, StoreCartShippingOption } from '@medusajs/types'
+import { BaseCartShippingMethod } from '@medusajs/types/dist/http/cart/common'
 
 const getShippingOptionsDefaultValues = (
   cart: StoreCart,
@@ -46,7 +47,7 @@ const getDefaultValues = (
   shippingOptionsByProfile: { [key: string]: StoreCartShippingOption[] },
 ) =>
   ({
-    cartsId: cart.id,
+    cartId: cart.id,
     shippingOptionIds: getShippingOptionsDefaultValues(
       cart,
       shippingOptionsByProfile,
@@ -58,7 +59,7 @@ export const CheckoutDeliveryMethod: FC = () => {
   const { cart } = useCart()
   const { step, shippingOptions, setStep, goToNextStep } = useCheckout()
   const isActiveStep = step === CheckoutStep.PAYMENT
-  const isSubmitting = ["submitting", "loading"].includes(fetcher.state)
+  const isSubmitting = ['submitting', 'loading'].includes(fetcher.state)
   if (!cart) return null
 
   const hasErrors = !!fetcher.data?.fieldErrors
@@ -73,17 +74,17 @@ export const CheckoutDeliveryMethod: FC = () => {
   )
   const fetchers = useFetchers() as (Fetcher & { formAction: string })[]
   const lineItemFetchers = fetchers.filter(
-    (f) => f.formAction && f.formAction === "/api/cart/line-items",
+    (f) => f.formAction && f.formAction === '/api/cart/line-items',
   )
   const lineItemFetchersLoading = lineItemFetchers.some((fetcher) =>
-    ["loading"].includes(fetcher.state),
+    ['loading'].includes(fetcher.state),
   )
 
   const validator = getCheckoutAddShippingMethodValidator(shippingOptions)
   const { error: fieldError, clearError: clearFieldError } = useField(
-    "shippingOptionIds",
+    'shippingOptionIds',
     {
-      formId: "checkoutDeliveryMethodForm",
+      formId: 'checkoutDeliveryMethodForm',
     },
   )
 
@@ -109,7 +110,7 @@ export const CheckoutDeliveryMethod: FC = () => {
       },
     )
 
-    fetcher.submit(formData, { action: "/api/checkout", method: "post" })
+    fetcher.submit(formData, { action: '/api/checkout', method: 'post' })
   }, [formRef.current, lineItemFetchersLoading])
 
   useEffect(() => {
@@ -135,30 +136,25 @@ export const CheckoutDeliveryMethod: FC = () => {
             <StripeSecurityImage className="mt-4" />
           )}
           <dl>
-            TODO: FIX THIS
-            {/* {cart.shipping_methods?.map(
-              ({ id, shipping_option, price }: BaseCartShippingMethod, shippingMethodIndex) => {
-                const profileItems = cart.items?.filter(
-                  (item) =>
-                    item.variant?.product?.profile_id ===
-                    shipping_option?.profile_id,
+            {cart.shipping_methods?.map(
+              (shippingMethod: BaseCartShippingMethod, shippingMethodIndex) => {
+                const { id, shipping_option_id, amount } = shippingMethod
+                const shipping_option = shippingOptions.find(
+                  (so) => so.id === shipping_option_id,
                 )
-                const profileItemsList = profileItems
-                  ?.map((item) => item.product_title)
-                  .join(", ")
 
                 return (
                   <Fragment key={id}>
                     <dt
                       className={`${
-                        shippingMethodIndex > 0 ? "mt-6" : "mt-4"
+                        shippingMethodIndex > 0 ? 'mt-6' : 'mt-4'
                       } text-sm font-bold text-gray-700`}
                     >
-                      Delivery method for: {profileItemsList}
+                      Delivery method for: All items
                     </dt>
                     <dd className="mt-0.5">
                       {shipping_option?.name} (
-                      {formatPrice(price, {
+                      {formatPrice(amount, {
                         currency: cart?.region?.currency_code,
                       })}
                       )
@@ -166,7 +162,7 @@ export const CheckoutDeliveryMethod: FC = () => {
                   </Fragment>
                 )
               },
-            )} */}
+            )}
           </dl>
         </>
       )}
@@ -185,23 +181,15 @@ export const CheckoutDeliveryMethod: FC = () => {
           <input type="hidden" name="cartId" value={cart.id} />
           {Object.entries(shippingOptionsByProfile).map(
             ([profileId, shippingOptions], shippingOptionProfileIndex) => {
-              const profileItems =
-                cart.items?.filter(
-                  (item) => item.variant?.product?.profile_id === profileId,
-                ) ?? [] // TODO: how to get profile_id?
-              const profileItemsList = profileItems
-                .map((item) => item.variant?.product?.title)
-                .join(", ")
-
               if (shippingOptions.length < 1) return null
 
               return (
                 <Fragment key={profileId}>
                   {shippingOptionProfileIndex > 0 && <hr className="my-6" />}
 
-                  {Object.keys(shippingOptionsByProfile).length > 1 && (
+                  {!!cart?.shipping_methods?.length && (
                     <Alert type="info" className="my-6">
-                      Choose your delivery option for: {profileItemsList}
+                      Choose your delivery option
                     </Alert>
                   )}
 
@@ -218,8 +206,8 @@ export const CheckoutDeliveryMethod: FC = () => {
                         value,
                       )
                       fetcher.submit(formData, {
-                        action: "/api/checkout",
-                        method: "post",
+                        action: '/api/checkout',
+                        method: 'post',
                       })
                     }}
                   />
