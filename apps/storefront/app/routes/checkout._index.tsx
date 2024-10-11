@@ -122,7 +122,7 @@ export const loader = async ({
     await removeCartId(headers)
 
     // @ts-ignore
-    return redirect(`/`, { headers })
+    throw redirect(`/`, { headers })
   }
 
   const [shippingOptions, paymentProviders, activePaymentSession] =
