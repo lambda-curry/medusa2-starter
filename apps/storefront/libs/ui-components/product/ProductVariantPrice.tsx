@@ -1,20 +1,20 @@
-import { formatPrice, getVariantPrices } from "@libs/util/prices"
-import { StoreProductVariant } from "@medusajs/types"
-import isNumber from "lodash/isNumber"
-import { type FC } from "react"
+import { formatPrice, getVariantPrices } from '@libs/util/prices';
+import { StoreProductVariant } from '@medusajs/types';
+import isNumber from 'lodash/isNumber';
+import { type FC } from 'react';
 
 export interface ProductVariantPriceProps {
-  variant: StoreProductVariant
-  currencyCode: string
+  variant: StoreProductVariant;
+  currencyCode: string;
 }
 
 export const ProductVariantPrice: FC<ProductVariantPriceProps> = ({
   variant,
   currencyCode,
 }) => {
-  const { original, calculated } = getVariantPrices(variant)
+  const { original, calculated } = getVariantPrices(variant);
 
-  const hasSale = isNumber(calculated) && calculated < (original ?? 0)
+  const hasSale = isNumber(calculated) && calculated < (original ?? 0);
 
   return (
     <>
@@ -29,5 +29,5 @@ export const ProductVariantPrice: FC<ProductVariantPriceProps> = ({
         formatPrice(original || 0, { currency: currencyCode })
       )}
     </>
-  )
-}
+  );
+};

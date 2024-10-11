@@ -1,20 +1,44 @@
-import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
-import { Container } from "@ui-components/common/container/Container"
-import { URLAwareNavLink } from "@ui-components/common/link/URLAwareNavLink"
-import type { NavigationItem } from "@libs/util/medusa/types"
-import clsx from "clsx"
-import { SocialIcons } from "./SocialIcons"
-import { MarketHausLogoMonotone } from "@ui-components/common/assets/markethaus/logos/MarketHausLogoMonotone"
-import { useRootLoaderData } from "@ui-components/hooks/useRootLoaderData"
-import { LogoStoreName } from "~/components/LogoStoreName/LogoStoreName"
-import { StripeSecurityImage } from "../../images/StripeSecurityImage"
-import { NewsletterSubscription } from "~/components/newsletter/Newsletter"
-import { Select } from "@ui-components/common/forms/inputs/Select"
+import { Container } from '@ui-components/common/container/Container';
+import { Select } from '@ui-components/common/forms/inputs/Select';
+import { URLAwareNavLink } from '@ui-components/common/link/URLAwareNavLink';
+import { useRootLoaderData } from '@ui-components/hooks/useRootLoaderData';
+import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
+import clsx from 'clsx';
+import { LogoStoreName } from '~/components/LogoStoreName/LogoStoreName';
+import { NewsletterSubscription } from '~/components/newsletter/Newsletter';
+import { StripeSecurityImage } from '../../images/StripeSecurityImage';
+import { SocialIcons } from './SocialIcons';
+import { useFetcher } from '@remix-run/react';
+import { convertToFormData } from '@libs/utils-to-merge/forms/objectToFormData';
+import { RegionActions } from '~/routes/api.region';
+import { useRegion } from '@ui-components/hooks/useRegion';
+import { useRegions } from '@ui-components/hooks/useRegions';
+import { useMemo } from 'react';
 
 export const Footer = () => {
-  const { footerNavigationItems, settings } = useSiteDetails()
-  const rootData = useRootLoaderData()
-  const hasProducts = rootData?.hasPublishedProducts
+  const { footerNavigationItems, settings } = useSiteDetails();
+  const rootData = useRootLoaderData();
+  const hasProducts = rootData?.hasPublishedProducts;
+  const fetcher = useFetcher();
+  const { regions } = useRegions();
+  const { region } = useRegion();
+
+  const regionOptions = useMemo(() => {
+    return regions.map(region => ({
+      label: `${region.name} (${region.currency_code})`,
+      value: region.id,
+    }));
+  }, [regions]);
+
+  const onRegionChange = (regionId: string) => {
+    fetcher.submit(
+      convertToFormData({
+        regionId,
+        subaction: RegionActions.CHANGE_REGION,
+      }),
+      { method: 'post', action: '/api/region' }
+    );
+  };
 
   return (
     <footer className="bg-accent-50 min-h-[140px] py-8 text-white">
@@ -34,8 +58,8 @@ export const Footer = () => {
           </div>
 
           <nav
-            className={clsx("pt-2", {
-              "columns-2 gap-16":
+            className={clsx('pt-2', {
+              'columns-2 gap-16':
                 footerNavigationItems && footerNavigationItems?.length > 5,
             })}
           >
@@ -72,17 +96,11 @@ export const Footer = () => {
             <div className="flex items-center gap-2 ">
               <Select
                 className="!text-base border-1 border-white text-white bg-transparent !shadow-none"
-                options={[
-                  {
-                    label: "United States (USD $)",
-                    value: "USD",
-                  },
-                  {
-                    label: "Canada (CAD $)",
-                    value: "CAD",
-                  },
-                ]}
-                onChange={() => { }}
+                options={regionOptions}
+                defaultValue={region?.id}
+                onChange={e => {
+                  onRegionChange(e.target.value);
+                }}
               />
             </div>
 
@@ -101,5 +119,5 @@ export const Footer = () => {
         </div>
       </Container>
     </footer>
-  )
-}
+  );
+};

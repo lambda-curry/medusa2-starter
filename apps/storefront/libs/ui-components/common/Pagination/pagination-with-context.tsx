@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { Pagination, PaginationConfig } from './Pagination';
-import { isBrowser } from '../../../utils/browser';
+import { isBrowser } from '@libs/util';
 
 function getPaginationLink({
   context,
   page,
   section,
   difference = 0,
-  prefix = ''
+  prefix = '',
 }: {
   prefix?: string;
   context: string;
@@ -16,12 +16,18 @@ function getPaginationLink({
   difference?: number;
 }) {
   const windowSearch = isBrowser() ? window.location.search : '';
-  const contextSplit = isBrowser() ? context.split('?')[1] || '' + windowSearch : context.split('?')[1];
+  const contextSplit = isBrowser()
+    ? context.split('?')[1] || '' + windowSearch
+    : context.split('?')[1];
   const contextSearchParams = new URLSearchParams(contextSplit);
   const newPage = page + difference;
 
   if (newPage > 0) contextSearchParams.set(`${prefix}page`, newPage.toString());
-  return `/${context.split('?')[0].replace('?', '')}?${contextSearchParams.toString()}${section ? `#${section}` : ''}`;
+  return `/${context
+    .split('?')[0]
+    .replace('?', '')}?${contextSearchParams.toString()}${
+    section ? `#${section}` : ''
+  }`;
 }
 
 export const PaginationWithContext: FC<{
@@ -36,13 +42,25 @@ export const PaginationWithContext: FC<{
     <Pagination
       {...props}
       getPreviousProps={({ currentPage }) => ({
-        href: getPaginationLink({ context, prefix, page: currentPage, difference: -1, section })
+        href: getPaginationLink({
+          context,
+          prefix,
+          page: currentPage,
+          difference: -1,
+          section,
+        }),
       })}
       getPaginationItemProps={({ page }) => ({
-        href: getPaginationLink({ context, prefix, page, section })
+        href: getPaginationLink({ context, prefix, page, section }),
       })}
       getNextProps={({ currentPage }) => ({
-        href: getPaginationLink({ context, prefix, page: currentPage, difference: 1, section })
+        href: getPaginationLink({
+          context,
+          prefix,
+          page: currentPage,
+          difference: 1,
+          section,
+        }),
       })}
     />
   );

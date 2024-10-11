@@ -1,8 +1,8 @@
-const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils')
+const { loadEnv, defineConfig, Modules } = require('@medusajs/framework/utils');
 
-loadEnv(process.env.NODE_ENV, process.cwd())
+loadEnv(process.env.NODE_ENV, process.cwd());
 
-const REDIS_URL = process.env.REDIS_URL
+const REDIS_URL = process.env.REDIS_URL;
 
 module.exports = defineConfig({
   projectConfig: {
@@ -51,11 +51,11 @@ module.exports = defineConfig({
     },
   },
   admin: {
-    backendUrl: process.env.ADMIN_BACKEND_URL,
+    backendUrl: process.env.ADMIN_BACKEND_URL || 'http://localhost:9000',
     vite: () => ({
       css: {
         postcss: [], // TODO: required to avoid issue, check if it can be removed after v2 is released
       },
     }),
   },
-})
+});
