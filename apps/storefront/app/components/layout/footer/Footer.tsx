@@ -105,12 +105,12 @@ export const Footer = () => {
             </div>
 
             <a
-              href="https://www.market.haus/"
+              href="https://www.lambdacurry.dev/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col items-start gap-1 text-sm"
             >
-              © {new Date().getFullYear()} Powered by MarketHaus
+              © {new Date().getFullYear()} Made with ❤️ by LambdaCurry
             </a>
           </div>
           <div className="mt-1 flex flex-col justify-end text-xs sm:mt-0">

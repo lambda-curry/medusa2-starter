@@ -1,12 +1,11 @@
 import { medusaError } from '@libs/util/medusa/medusa-error';
 import { sdk } from '@libs/util/server/client.server';
 import { HttpTypes } from '@medusajs/types';
-import { redirect } from '@remix-run/node';
 import omit from 'lodash.omit';
 import { withAuthHeaders } from '../auth.server';
 import { getCartId } from '../cookies.server';
 import { getProductsById } from './products.server';
-import { getRegion, getSelectedRegion } from './regions.server';
+import { getSelectedRegion } from './regions.server';
 
 export const retrieveCart = withAuthHeaders(async (request, authHeaders) => {
   const cartId = await getCartId(request.headers);
@@ -364,27 +363,3 @@ export const placeOrder = withAuthHeaders(
     return cartRes;
   }
 );
-
-/**
- * Updates the countrycode param and revalidates the regions cache
- * @param regionId
- * @param countryCode
- */
-export async function updateRegion(
-  request: Request,
-  countryCode: string,
-  currentPath: string
-) {
-  const cartId = await getCartId(request.headers);
-  const region = await getRegion(countryCode);
-
-  if (!region) {
-    throw new Error(`Region not found for country code: ${countryCode}`);
-  }
-
-  if (cartId) {
-    await updateCart(request, { region_id: region.id });
-  }
-
-  redirect(`/${countryCode}${currentPath}`);
-}
