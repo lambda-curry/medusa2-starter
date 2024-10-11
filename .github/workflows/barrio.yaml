@@ -1,0 +1,124 @@
+name: Barrio Deploy
+on:
+  push:
+    branches:
+      - dev
+      - storefront
+      - gh-deploy
+
+jobs:
+  setup:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        uses: ./.github/composite/monorepo-install
+
+      - uses: dtinth/setup-github-actions-caching-for-turbo@v1
+
+      - name: Build Packages
+        run: yarn build
+
+  deploy-storefront:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        uses: ./.github/composite/monorepo-install
+        with:
+          lookup-only: 'true'
+
+      - uses: dtinth/setup-github-actions-caching-for-turbo@v1
+
+      - name: Push Medusa Docker
+        uses: ./.github/composite/docker/storefront
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_REPOSITORY: ghcr.io/lambda-curry/medusa2-starter/storefront
+          DOCKER_TAG: ${{ github.sha }}
+
+      - name: Helm Update
+        uses: WyriHaximus/github-action-helm3@v2
+        env:
+          HELM_NAME: storefront
+          KUBE_NAMESPACE: barrio
+          DOCKER_TAG: ${{ github.sha }}
+          DOCKER_REPOSITORY: ghcr.io/lambda-curry/medusa2-starter/storefront
+        with:
+          exec: |
+            helm upgrade ${HELM_NAME} --reuse-values \
+            --set image.tag=${DOCKER_TAG} \
+            --set image.repository=${DOCKER_REPOSITORY} \
+            ./helm-charts/storefront/ -n ${KUBE_NAMESPACE}
+          kubeconfig: ${{ secrets.EKS_KUBECONFIG }}
+
+  deploy-medusa:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        uses: ./.github/composite/monorepo-install
+        with:
+          lookup-only: 'true'
+
+      - uses: dtinth/setup-github-actions-caching-for-turbo@v1
+
+      - name: Push Medusa Docker
+        uses: ./.github/composite/docker/medusa
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_REPOSITORY: ghcr.io/lambda-curry/medusa2-starter/medusa
+          DOCKER_TAG: ${{ github.sha }}
+
+      - name: Helm Update
+        uses: WyriHaximus/github-action-helm3@v2
+        env:
+          HELM_NAME: medusa
+          KUBE_NAMESPACE: barrio
+          DOCKER_TAG: ${{ github.sha }}
+          DOCKER_REPOSITORY: ghcr.io/lambda-curry/medusa2-starter/medusa
+        with:
+          exec: |
+            helm upgrade ${HELM_NAME} --reuse-values \
+            --set image.tag=${DOCKER_TAG} \
+            --set image.repository=${DOCKER_REPOSITORY} \
+            ./helm-charts/medusa/ -n ${KUBE_NAMESPACE}
+          kubeconfig: ${{ secrets.EKS_KUBECONFIG }}
