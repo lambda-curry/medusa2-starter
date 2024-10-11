@@ -111,7 +111,7 @@ jobs:
       - name: Helm Update
         uses: WyriHaximus/github-action-helm3@v2
         env:
-          HELM_NAME: storefront
+          HELM_NAME: medusa
           KUBE_NAMESPACE: barrio
           DOCKER_TAG: ${{ github.sha }}
           DOCKER_REPOSITORY: ghcr.io/lambda-curry/medusa2-starter/medusa
