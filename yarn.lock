@@ -3964,7 +3964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/js-sdk@npm:1.0.0-rc-20241003153304, @medusajs/js-sdk@npm:^1.0.0-rc-20241003153304, @medusajs/js-sdk@npm:rc":
+"@medusajs/js-sdk@npm:1.0.0-rc-20241003153304, @medusajs/js-sdk@npm:rc":
   version: 1.0.0-rc-20241003153304
   resolution: "@medusajs/js-sdk@npm:1.0.0-rc-20241003153304"
   dependencies:
@@ -4478,7 +4478,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@medusajs/types@npm:2.0.0-rc-20241003153304, @medusajs/types@npm:^2.0.0-rc-20241003153304, @medusajs/types@npm:rc":
+"@medusajs/types@npm:2.0.0-rc-20241003153304, @medusajs/types@npm:rc":
   version: 2.0.0-rc-20241003153304
   resolution: "@medusajs/types@npm:2.0.0-rc-20241003153304"
   dependencies:
@@ -21415,10 +21415,10 @@ __metadata:
   dependencies:
     "@medusajs/admin-sdk": "npm:rc"
     "@medusajs/framework": "npm:rc"
-    "@medusajs/js-sdk": "npm:^1.0.0-rc-20241003153304"
+    "@medusajs/js-sdk": "npm:rc"
     "@medusajs/medusa": "npm:rc"
     "@medusajs/medusa-cli": "npm:rc"
-    "@medusajs/types": "npm:^2.0.0-rc-20241003153304"
+    "@medusajs/types": "npm:rc"
     "@mikro-orm/cli": "npm:5.9.7"
     "@mikro-orm/core": "npm:5.9.7"
     "@mikro-orm/knex": "npm:5.9.7"

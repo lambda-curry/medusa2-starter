@@ -65,9 +65,9 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({
   //   [stripePaymentMethods],
   // )
 
-  // useEffect(() => {
-  //   if (isActiveStep && stripeElement) stripeElement.focus()
-  // }, [selectedPaymentMethodId, isActiveStep, stripeElement])
+  useEffect(() => {
+    if (isActiveStep && stripeElement) stripeElement.focus()
+  }, [isActiveStep, stripeElement])
 
   if (!cart || !stripe || !elements) return null
 

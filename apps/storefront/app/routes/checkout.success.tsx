@@ -33,14 +33,7 @@ export default function CheckoutSuccessRoute() {
     shipping_address: shippingAddress,
     billing_address: billingAddress,
     shipping_methods: shippingMethods,
-    payment_collections,
   } = order as StoreOrder
-
-  const [paymentCollection] = (payment_collections ||
-    []) as StorePaymentCollection[]
-
-  const isStripePayment =
-    paymentCollection?.payments?.[0].provider_id === 'pp_stripe_stripe'
 
   return (
     <section className="py-8">
@@ -210,7 +203,6 @@ export default function CheckoutSuccessRoute() {
             </dl>
 
             <dl className="mt-12 grid grid-cols-2 gap-x-4 border-t border-gray-200 pt-12 text-sm text-gray-600">
-              Paid with {isStripePayment ? 'Stripe' : 'System payment'}
               {/* {!!paymentMethodDetails && !!paymentMethodDetails.card && (
                 <div>
                   <dt className="font-bold text-gray-900">Payment method</dt>
