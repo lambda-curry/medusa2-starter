@@ -1,18 +1,18 @@
-import ShoppingCartIcon from "@heroicons/react/24/outline/ShoppingCartIcon"
-import { useCart } from "@ui-components/hooks/useCart"
-import { CheckoutProvider } from "@ui-components/providers/checkout-provider"
-import { Button } from "@ui-components/common/buttons/Button"
+import ShoppingCartIcon from '@heroicons/react/24/outline/ShoppingCartIcon'
+import { useCart } from '@ui-components/hooks/useCart'
+import { CheckoutProvider } from '@ui-components/providers/checkout-provider'
+import { Button } from '@ui-components/common/buttons/Button'
 // import { type PaymentMethod } from '@libs/utils-to-merge/types';
-import { LoaderFunctionArgs, redirect } from "@remix-run/node"
-import { Link, useLoaderData } from "@remix-run/react"
-import { CheckoutFlow } from "~/components/checkout/CheckoutFlow"
-import { CheckoutSidebar } from "~/components/checkout/CheckoutSidebar"
-import { Empty } from "@ui-components/common/Empty/Empty"
+import { LoaderFunctionArgs, redirect } from '@remix-run/node'
+import { Link, useLoaderData } from '@remix-run/react'
+import { CheckoutFlow } from '~/components/checkout/CheckoutFlow'
+import { CheckoutSidebar } from '~/components/checkout/CheckoutSidebar'
+import { Empty } from '@ui-components/common/Empty/Empty'
 import {
   destroyCartSession,
   getCartSession,
-} from "@libs/util/server/cart-session.server"
-import { checkRequestAuthentication } from "@libs/util/server/check-request-authentication.server"
+} from '@libs/util/server/cart-session.server'
+import { checkRequestAuthentication } from '@libs/util/server/check-request-authentication.server'
 import {
   CartAddressDTO,
   CartDTO,
@@ -22,22 +22,24 @@ import {
   StorePaymentProvider,
   StorePaymentSession,
   StoreShippingOption,
-} from "@medusajs/types"
-import { sdk } from "@libs/util/server/client.server"
+} from '@medusajs/types'
+import { sdk } from '@libs/util/server/client.server'
 import {
   getOrSetCart,
   initiatePaymentSession,
   retrieveCart,
-} from "@libs/util/server/data/cart.server"
+} from '@libs/util/server/data/cart.server'
 import {
   getCountryCode,
   getDefaultRegion,
-} from "@libs/util/server/data/regions.server"
-import { getCartId } from "@libs/util/server/cookies.server"
-import { listCartPaymentMethods } from "@libs/util/server/data/payment.server"
-import { BasePaymentSession } from "@medusajs/types/dist/http/payment/common"
+} from '@libs/util/server/data/regions.server'
+import { getCartId, removeCartId } from '@libs/util/server/cookies.server'
+import { listCartPaymentProviders } from '@libs/util/server/data/payment.server'
+import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common'
 // import { PaymentSession } from "@libs/util/medusa"
 // import { PricedShippingOption } from "@markethaus/storefront-client"
+
+const SYSTEM_PROVIDER_ID = 'pp_system_default'
 
 const fetchShippingOptions = async (cartId: string) => {
   if (!cartId) return []
@@ -69,21 +71,25 @@ const fetchPaymentMethods = async (
 }
 
 const ensureCartPaymentSessions = async (request: Request, cart: StoreCart) => {
-  if (!cart) throw new Error("Cart was not provided.")
+  if (!cart) throw new Error('Cart was not provided.')
 
   let activeSession = cart.payment_collection?.payment_sessions?.find(
-    (session) => session.status === "pending",
+    (session) => session.status === 'pending',
   )
 
-  const [provider] = cart.payment_collection?.payment_providers || []
+  const paymentProviders = await listCartPaymentProviders(cart.region_id!)
 
-  if (!activeSession && provider) {
+  if (!activeSession && paymentProviders.length) {
+    const provider =
+      paymentProviders.find((p) => p.id !== SYSTEM_PROVIDER_ID) ||
+      paymentProviders[0]
+
     const { payment_collection } = await initiatePaymentSession(request, cart, {
       provider_id: provider.id,
     })
 
     activeSession = payment_collection.payment_sessions?.find(
-      (session) => session.status === "pending",
+      (session) => session.status === 'pending',
     )
   }
 
@@ -97,43 +103,41 @@ export const loader = async ({
   paymentProviders: StorePaymentProvider[]
   activePaymentSession: BasePaymentSession | null
 }> => {
-  // TODO: REMOVE try/catch
-  try {
-    const cartId = await getCartId(request.headers)
+  const cartId = await getCartId(request.headers)
 
-    if (!cartId) {
-      return {
-        shippingOptions: [],
-        paymentProviders: [],
-        activePaymentSession: null,
-      }
-    }
-
-    const region = await getDefaultRegion()
-    const [firstCountry] = region.countries || []
-    const cart = await getOrSetCart(request, getCountryCode(firstCountry))
-
-    if ((cart as CartDTO).completed_at) {
-      const headers = new Headers()
-      await destroyCartSession(headers)
-      throw redirect(`/checkout/success?cart_id=${cart.id}`, { headers })
-    }
-
-    const [shippingOptions, paymentProviders, activePaymentSession] =
-      await Promise.all([
-        await fetchShippingOptions(cartId),
-        (await listCartPaymentMethods(cartId)) as StorePaymentProvider[],
-        await ensureCartPaymentSessions(request, cart),
-      ])
-
-    return { shippingOptions, paymentProviders, activePaymentSession }
-  } catch (e) {
-    console.error(e)
+  if (!cartId) {
     return {
       shippingOptions: [],
       paymentProviders: [],
       activePaymentSession: null,
     }
+  }
+
+  const region = await getDefaultRegion()
+  const [firstCountry] = region.countries || []
+  const cart = await getOrSetCart(request, getCountryCode(firstCountry))
+
+  if ((cart as CartDTO).completed_at) {
+    const headers = new Headers()
+    await removeCartId(headers)
+
+    // @ts-ignore
+    return redirect(`/`, { headers })
+  }
+
+  const [shippingOptions, paymentProviders, activePaymentSession] =
+    await Promise.all([
+      await fetchShippingOptions(cartId),
+      (await listCartPaymentProviders(
+        cart.region_id!,
+      )) as StorePaymentProvider[],
+      await ensureCartPaymentSessions(request, cart),
+    ])
+
+  return {
+    shippingOptions,
+    paymentProviders: paymentProviders,
+    activePaymentSession: activePaymentSession as BasePaymentSession,
   }
 }
 
@@ -165,7 +169,7 @@ export default function CheckoutIndexRoute() {
       data={{
         activePaymentSession: activePaymentSession,
         shippingOptions: shippingOptions,
-        paymentProviders,
+        paymentProviders: paymentProviders,
       }}
     >
       <section>

@@ -1,20 +1,20 @@
-import { Button } from "@ui-components/common/buttons/Button"
-import { Image } from "@ui-components/common/images/Image"
-import { LineItemQuantitySelect } from "@ui-components/cart/line-items/LineItemQuantitySelect"
-import { useCart } from "@ui-components/hooks/useCart"
-import { useRemoveCartItem } from "@ui-components/hooks/useRemoveCartItem"
-import type { Cart, LineItem } from "@libs/util/medusa"
-import { formatPrice } from "@libs/util/prices"
-import { Link } from "@remix-run/react"
-import { FC } from "react"
+import { Button } from '@ui-components/common/buttons/Button'
+import { Image } from '@ui-components/common/images/Image'
+import { LineItemQuantitySelect } from '@ui-components/cart/line-items/LineItemQuantitySelect'
+import { useCart } from '@ui-components/hooks/useCart'
+import { useRemoveCartItem } from '@ui-components/hooks/useRemoveCartItem'
+import { formatPrice } from '@libs/util/prices'
+import { Link } from '@remix-run/react'
+import { FC } from 'react'
+import { StoreCart, StoreCartLineItem } from '@medusajs/types'
 
 export interface CheckoutOrderSummaryItemsProps {
-  cart: Cart
+  cart: StoreCart
   name: string
 }
 
 export interface CheckoutOrderSummaryItemProps {
-  item: LineItem
+  item: StoreCartLineItem
   name: string
 }
 
@@ -24,7 +24,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
 }) => {
   const { cart } = useCart()
   const removeCartItem = useRemoveCartItem()
-  const isRemovingFromCart = ["loading", "submitting"].includes(
+  const isRemovingFromCart = ['loading', 'submitting'].includes(
     removeCartItem.state,
   )
 
@@ -34,8 +34,8 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
     <li className="flex px-4 py-6 sm:px-6">
       <div className="flex-shrink-0">
         <Image
-          src={item.thumbnail || ""}
-          alt={`${item.title} thumbnail`}
+          src={item.variant?.product?.thumbnail || ''}
+          alt={item.product_title || 'product thumbnail'}
           className="w-20 rounded-md"
         />
       </div>
@@ -44,37 +44,14 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
         <div className="flex">
           <div className="min-w-0 flex-1">
             <h4 className="text-base">
-              {!!item.variant?.product && (
-                <Link
-                  to={`/products/${item.variant.product.handle}`}
-                  className="font-bold text-gray-700 hover:text-gray-800"
-                >
-                  {item.title}
-                </Link>
-              )}
-              {!item.variant_id && (
-                <div className="font-bold text-gray-700 hover:text-gray-800">
-                  {item.title}
-                </div>
-              )}
+              <Link
+                to={`/products/${item.product_handle}`}
+                className="font-bold text-gray-700 hover:text-gray-800"
+              >
+                {item.product_title}
+              </Link>
             </h4>
-            {!!item.variant && (
-              <p className="mt-0.5 text-sm text-gray-500">
-                {item.variant?.title}
-              </p>
-            )}
-            {item.variant?.product?.customer_response_prompt && (
-              <>
-                <p className="mt-1.5 text-xs font-bold text-gray-500">
-                  {item.variant.product.customer_response_prompt}
-                </p>
-                <p className="mt-0.5 text-xs text-gray-500">
-                  {item.customer_product_response
-                    ? item.customer_product_response
-                    : "No response given"}
-                </p>
-              </>
-            )}
+            <p className="mt-0.5 text-sm text-gray-500">{item.variant_title}</p>
           </div>
 
           <div className="ml-4 flow-root flex-shrink-0">
@@ -84,7 +61,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
               disabled={isRemovingFromCart}
               className="text-sm"
             >
-              {isRemovingFromCart ? "Removing" : "Remove"}
+              {isRemovingFromCart ? 'Removing' : 'Remove'}
             </Button>
           </div>
         </div>
