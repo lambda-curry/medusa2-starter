@@ -23,7 +23,7 @@ export default function IndexRoute() {
         content={
           <div className="text-center w-full space-y-9">
             <h4 className="font-italiana text-2xl">COFFEE & COMMUNITY</h4>
-            <h1 className="text-8xl font-italiana">BARRIO</h1>
+            <h1 className="text-8xl font-aboreto">BARRIO</h1>
             <p className="max-w-prose mx-auto text-lg">
               Discover our artisan-roasted coffee, crafted with care and
               delivered to your door. At Barrio, we’re more than a coffee
@@ -250,7 +250,7 @@ export default function IndexRoute() {
         content={
           <div className="space-y-8 flex flex-col justify-center items-center">
             <h4 className="text-xl font-italiana">FIND YOUR COMMUNITY</h4>
-            <h3 className="text-7xl  font-italiana">BARRIO</h3>
+            <h3 className="text-7xl  font-aboreto">BARRIO</h3>
             <p className="text-xl">Ship, Share & Connect Over Coffee</p>
             <ActionList
               actions={[
