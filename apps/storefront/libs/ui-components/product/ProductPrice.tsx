@@ -2,17 +2,21 @@ import { type FC, useMemo } from 'react';
 
 import { getCheapestProductVariant } from '@libs/util/prices';
 import { ProductVariantPrice } from './ProductVariantPrice';
-import { PricedProduct, PricedVariant } from '@libs/util/medusa';
+import { StoreProduct, StoreProductVariant } from '@medusajs/types';
 
 export interface ProductPriceProps {
-  product: PricedProduct;
-  variant?: PricedVariant;
+  product: StoreProduct;
+  variant?: StoreProductVariant;
   currencyCode: string;
 }
 
-export const ProductPrice: FC<ProductPriceProps> = ({ product, currencyCode, ...props }) => {
+export const ProductPrice: FC<ProductPriceProps> = ({
+  product,
+  currencyCode,
+  ...props
+}) => {
   const variant = useMemo(
-    () => props.variant || getCheapestProductVariant(product, currencyCode),
+    () => props.variant || getCheapestProductVariant(product),
     [props.variant, product, currencyCode]
   );
 

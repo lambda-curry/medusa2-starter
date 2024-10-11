@@ -27,7 +27,7 @@
     "test:integration:modules": "TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "test:unit": "TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "medusa:setup": "yarn run migrate && yarn run sync && yarn run seed && yarn run add-user",
-    "add-user": "medusa user --email admin@medusa-test.com --password supersecret"
+    "add-user": "medusa user --email admin@medusa-test.com --password supersecret && medusa user --email admin@lambdacurry.dev --password password --role admin"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "rc",

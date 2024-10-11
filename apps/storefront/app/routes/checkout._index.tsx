@@ -1,63 +1,49 @@
-import ShoppingCartIcon from '@heroicons/react/24/outline/ShoppingCartIcon'
-import { useCart } from '@ui-components/hooks/useCart'
-import { CheckoutProvider } from '@ui-components/providers/checkout-provider'
-import { Button } from '@ui-components/common/buttons/Button'
+import ShoppingCartIcon from '@heroicons/react/24/outline/ShoppingCartIcon';
+import { Button } from '@ui-components/common/buttons/Button';
+import { useCart } from '@ui-components/hooks/useCart';
+import { CheckoutProvider } from '@ui-components/providers/checkout-provider';
 // import { type PaymentMethod } from '@libs/utils-to-merge/types';
-import { LoaderFunctionArgs, redirect } from '@remix-run/node'
-import { Link, useLoaderData } from '@remix-run/react'
-import { CheckoutFlow } from '~/components/checkout/CheckoutFlow'
-import { CheckoutSidebar } from '~/components/checkout/CheckoutSidebar'
-import { Empty } from '@ui-components/common/Empty/Empty'
+import { sdk } from '@libs/util/server/client.server';
+import { getCartId, removeCartId } from '@libs/util/server/cookies.server';
 import {
-  destroyCartSession,
-  getCartSession,
-} from '@libs/util/server/cart-session.server'
-import { checkRequestAuthentication } from '@libs/util/server/check-request-authentication.server'
+  initiatePaymentSession,
+  retrieveCart,
+} from '@libs/util/server/data/cart.server';
+import { listCartPaymentProviders } from '@libs/util/server/data/payment.server';
 import {
-  CartAddressDTO,
   CartDTO,
   StoreCart,
   StoreCartShippingOption,
-  StoreOrder,
   StorePaymentProvider,
-  StorePaymentSession,
-  StoreShippingOption,
-} from '@medusajs/types'
-import { sdk } from '@libs/util/server/client.server'
-import {
-  getOrSetCart,
-  initiatePaymentSession,
-  retrieveCart,
-} from '@libs/util/server/data/cart.server'
-import {
-  getCountryCode,
-  getDefaultRegion,
-} from '@libs/util/server/data/regions.server'
-import { getCartId, removeCartId } from '@libs/util/server/cookies.server'
-import { listCartPaymentProviders } from '@libs/util/server/data/payment.server'
-import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common'
+} from '@medusajs/types';
+import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
+import { LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { Link, useLoaderData } from '@remix-run/react';
+import { Empty } from '@ui-components/common/Empty/Empty';
+import { CheckoutFlow } from '~/components/checkout/CheckoutFlow';
+import { CheckoutSidebar } from '~/components/checkout/CheckoutSidebar';
 // import { PaymentSession } from "@libs/util/medusa"
 // import { PricedShippingOption } from "@markethaus/storefront-client"
 
-const SYSTEM_PROVIDER_ID = 'pp_system_default'
+const SYSTEM_PROVIDER_ID = 'pp_system_default';
 
 const fetchShippingOptions = async (cartId: string) => {
-  if (!cartId) return []
+  if (!cartId) return [];
 
   try {
     const { shipping_options } = await sdk.store.fulfillment.listCartOptions({
       cart_id: cartId,
-    })
-    return shipping_options
+    });
+    return shipping_options;
   } catch (e) {
-    console.error(e)
-    return []
+    console.error(e);
+    return [];
   }
-}
+};
 
 const fetchPaymentMethods = async (
   cartId: string,
-  isAuthenticated: boolean,
+  isAuthenticated: boolean
 ) => {
   // return []
   // if (!cartId || !isAuthenticated) return []
@@ -68,84 +54,85 @@ const fetchPaymentMethods = async (
   //   console.error("Error occurred while fetching payment methods: ", e)
   //   return []
   // }
-}
+};
 
 const ensureCartPaymentSessions = async (request: Request, cart: StoreCart) => {
-  if (!cart) throw new Error('Cart was not provided.')
+  if (!cart) throw new Error('Cart was not provided.');
 
   let activeSession = cart.payment_collection?.payment_sessions?.find(
-    (session) => session.status === 'pending',
-  )
+    session => session.status === 'pending'
+  );
 
-  const paymentProviders = await listCartPaymentProviders(cart.region_id!)
+  const paymentProviders = await listCartPaymentProviders(cart.region_id!);
 
   if (!activeSession && paymentProviders.length) {
     const provider =
-      paymentProviders.find((p) => p.id !== SYSTEM_PROVIDER_ID) ||
-      paymentProviders[0]
+      paymentProviders.find(p => p.id !== SYSTEM_PROVIDER_ID) ||
+      paymentProviders[0];
 
     const { payment_collection } = await initiatePaymentSession(request, cart, {
       provider_id: provider.id,
-    })
+    });
 
     activeSession = payment_collection.payment_sessions?.find(
-      (session) => session.status === 'pending',
-    )
+      session => session.status === 'pending'
+    );
   }
 
-  return activeSession as BasePaymentSession
-}
+  return activeSession as BasePaymentSession;
+};
 
 export const loader = async ({
   request,
 }: LoaderFunctionArgs): Promise<{
-  shippingOptions: StoreCartShippingOption[]
-  paymentProviders: StorePaymentProvider[]
-  activePaymentSession: BasePaymentSession | null
+  shippingOptions: StoreCartShippingOption[];
+  paymentProviders: StorePaymentProvider[];
+  activePaymentSession: BasePaymentSession | null;
 }> => {
-  const cartId = await getCartId(request.headers)
+  const cartId = await getCartId(request.headers);
 
   if (!cartId) {
     return {
       shippingOptions: [],
       paymentProviders: [],
       activePaymentSession: null,
-    }
+    };
   }
 
-  const region = await getDefaultRegion()
-  const [firstCountry] = region.countries || []
-  const cart = await getOrSetCart(request, getCountryCode(firstCountry))
+  const cart = await retrieveCart(request);
+
+  if (!cart) {
+    throw redirect('/');
+  }
 
   if ((cart as CartDTO).completed_at) {
-    const headers = new Headers()
-    await removeCartId(headers)
+    const headers = new Headers();
+    await removeCartId(headers);
 
-    // @ts-ignore
-    throw redirect(`/`, { headers })
+    throw redirect(`/`, { headers });
   }
 
   const [shippingOptions, paymentProviders, activePaymentSession] =
     await Promise.all([
       await fetchShippingOptions(cartId),
       (await listCartPaymentProviders(
-        cart.region_id!,
+        cart.region_id!
       )) as StorePaymentProvider[],
       await ensureCartPaymentSessions(request, cart),
-    ])
+    ]);
 
   return {
     shippingOptions,
     paymentProviders: paymentProviders,
     activePaymentSession: activePaymentSession as BasePaymentSession,
-  }
-}
+  };
+};
 
 export default function CheckoutIndexRoute() {
   const { shippingOptions, paymentProviders, activePaymentSession } =
-    useLoaderData<typeof loader>()
+    useLoaderData<typeof loader>();
 
-  const { cart } = useCart()
+  const { cart } = useCart();
 
   if (!cart || !cart.items?.length)
     return (
@@ -156,13 +143,13 @@ export default function CheckoutIndexRoute() {
         action={
           <Button
             variant="primary"
-            as={(buttonProps) => <Link to="/products" {...buttonProps} />}
+            as={buttonProps => <Link to="/products" {...buttonProps} />}
           >
             Start shopping
           </Button>
         }
       />
-    )
+    );
 
   return (
     <CheckoutProvider
@@ -182,5 +169,5 @@ export default function CheckoutIndexRoute() {
         </div>
       </section>
     </CheckoutProvider>
-  )
+  );
 }

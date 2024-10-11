@@ -1,24 +1,23 @@
-import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
-import { V2ActionHandler, handleActionV2 } from '@libs/util/handleAction.server'
-import { getVariantBySelectedOptions } from '@libs/util/products'
-import { setCartId } from '@libs/util/server/cookies.server'
-import type { ActionFunctionArgs, NodeOnDiskFile } from '@remix-run/node'
-import { unstable_data as data } from '@remix-run/node'
-import { withYup } from '@remix-validated-form/with-yup'
-import * as Yup from 'yup'
-import { StoreCart, StoreCartResponse } from '@medusajs/types'
+import {
+  V2ActionHandler,
+  handleActionV2,
+} from '@libs/util/handleAction.server';
+import { getVariantBySelectedOptions } from '@libs/util/products';
+import { setCartId } from '@libs/util/server/cookies.server';
 import {
   addToCart,
   deleteLineItem,
-  getOrSetCart,
   retrieveCart,
   updateLineItem,
-} from '@libs/util/server/data/cart.server'
-import { getProductsById } from '@libs/util/server/data/products.server'
-import {
-  getCountryCode,
-  getDefaultRegion,
-} from '@libs/util/server/data/regions.server'
+} from '@libs/util/server/data/cart.server';
+import { getProductsById } from '@libs/util/server/data/products.server';
+import { getSelectedRegion } from '@libs/util/server/data/regions.server';
+import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error';
+import { StoreCart, StoreCartResponse } from '@medusajs/types';
+import type { ActionFunctionArgs, NodeOnDiskFile } from '@remix-run/node';
+import { unstable_data as data } from '@remix-run/node';
+import { withYup } from '@remix-validated-form/with-yup';
+import * as Yup from 'yup';
 
 export const addCartItemValidation = withYup(
   Yup.object().shape({
@@ -27,8 +26,8 @@ export const addCartItemValidation = withYup(
     quantity: Yup.number().required(),
     customer_product_response: Yup.string(),
     customer_file_uploads: Yup.array().of(Yup.mixed()).optional(),
-  }),
-)
+  })
+);
 
 export enum LineItemActions {
   CREATE = 'createItem',
@@ -37,61 +36,50 @@ export enum LineItemActions {
 }
 
 export interface CreateLineItemPayLoad {
-  cartId: string
-  productId: string
-  options: { [key: string]: string }
-  quantity: string
-  customer_product_response: string
-  customer_file_uploads: NodeOnDiskFile[] | []
+  cartId: string;
+  productId: string;
+  options: { [key: string]: string };
+  quantity: string;
+  customer_product_response: string;
+  customer_file_uploads: NodeOnDiskFile[] | [];
 }
 
 export interface UpdateLineItemRequestPayload {
-  cartId: string
-  lineItemId: string
-  quantity: string
+  cartId: string;
+  lineItemId: string;
+  quantity: string;
 }
 
 export interface DeleteLineItemRequestPayload {
-  cartId: string
-  lineItemId: string
+  cartId: string;
+  lineItemId: string;
 }
 
 export interface LineItemRequestResponse extends StoreCartResponse {}
 
 const createItem: V2ActionHandler<StoreCartResponse> = async (
   payload: CreateLineItemPayLoad,
-  { request },
+  { request }
 ) => {
-  const result = await addCartItemValidation.validate(payload)
+  const result = await addCartItemValidation.validate(payload);
 
-  if (result.error) throw new FormValidationError(result.error)
+  if (result.error) throw new FormValidationError(result.error);
 
-  const {
-    productId,
-    options,
-    quantity,
-    customer_product_response,
-    customer_file_uploads,
-  } = payload
+  const { productId, options, quantity } = payload;
 
-  const region = await getDefaultRegion() // TODO: remove hardcoded region
-  const [fistCountry] = region.countries || []
-
-  const countryCode = getCountryCode(fistCountry)
-
-  const currentCart = await getOrSetCart(request, countryCode) // TODO: get region from request
+  const region = await getSelectedRegion(request.headers);
 
   const [product] = await getProductsById({
     ids: [productId],
-    regionId: currentCart.region_id as string,
-  }).catch(() => [])
+    regionId: region.id,
+  }).catch(() => []);
 
   if (!product)
     throw new FormValidationError({
       fieldErrors: { formError: 'Product not found.' },
-    })
+    });
 
-  const variant = getVariantBySelectedOptions(product.variants || [], options)
+  const variant = getVariantBySelectedOptions(product.variants || [], options);
 
   if (!variant)
     throw new FormValidationError({
@@ -99,51 +87,50 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
         formError:
           'Product variant not found. Please select all required options.',
       },
-    })
+    });
 
-  const responseHeaders = new Headers()
+  const responseHeaders = new Headers();
 
   const { cart } = await addToCart(request, {
     variantId: variant.id!,
     quantity: parseInt(quantity, 10),
-    countryCode: countryCode,
-  })
+  });
 
-  await setCartId(responseHeaders, cart.id)
+  await setCartId(responseHeaders, cart.id);
 
-  return data({ cart }, { headers: responseHeaders })
-}
+  return data({ cart }, { headers: responseHeaders });
+};
 
 const updateItem: V2ActionHandler<StoreCartResponse> = async (
   { lineItemId, cartId, quantity }: UpdateLineItemRequestPayload,
-  { request },
+  { request }
 ) => {
   return await updateLineItem(request, {
     lineId: lineItemId,
     quantity: parseInt(quantity, 10),
-  })
-}
+  });
+};
 
 const deleteItem: V2ActionHandler<StoreCartResponse> = async (
   { lineItemId, cartId }: DeleteLineItemRequestPayload,
-  { request },
+  { request }
 ) => {
-  await deleteLineItem(request, lineItemId)
+  await deleteLineItem(request, lineItemId);
 
-  const cart = (await retrieveCart(request)) as StoreCart
+  const cart = (await retrieveCart(request)) as StoreCart;
 
-  return { cart }
-}
+  return { cart };
+};
 
 const actions = {
   createItem,
   updateItem,
   deleteItem,
-}
+};
 
 export async function action(actionArgs: ActionFunctionArgs) {
   return await handleActionV2({
     actionArgs,
     actions,
-  })
+  });
 }
