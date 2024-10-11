@@ -4,7 +4,7 @@ on:
     branches:
       - dev
       - storefront
-      - deploy
+      - gh-deploy
 
 jobs:
   setup:
@@ -28,14 +28,6 @@ jobs:
 
       - name: Build Packages
         run: yarn build
-
-      - name: Find last successful workflow
-        uses: SamhammerAG/last-successful-build-action@v6
-        id: last-successful-deploy
-        with:
-          token: '${{ secrets.GITHUB_TOKEN }}'
-          branch: 'dev'
-          workflow: 'Markethaus Dev Deploy'
 
   deploy-storefront:
     needs: setup
