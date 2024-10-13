@@ -8,6 +8,7 @@ import { StoreProduct } from '@medusajs/types';
 export const loader = async (args: LoaderFunctionArgs) => {
   const { products } = await fetchProducts(args.request, {
     handle: args.params.productHandle,
+    fields: '*categories',
   }).catch((e) => {
     return { products: [] };
   });
