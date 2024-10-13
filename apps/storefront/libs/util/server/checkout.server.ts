@@ -1,14 +1,10 @@
-import { addressToMedusaAddress } from "@libs/utils-to-merge/addresses"
-import { FormValidationError } from "@libs/utils-to-merge/validation/validation-error"
-import { ActionFunctionArgs, json, TypedResponse } from "@remix-run/node"
-import { UpdateAccountDetailsInput } from "~/routes/api.checkout"
-import { validateAddress } from "@libs/utils-to-merge/validation/address-validation"
-import { validationError } from "remix-validated-form"
-import { prefixKeys } from "../prefix-keys"
-import { suggestAddress } from "../address-suggestion"
-import { checkoutAccountDetailsValidator } from "~/components/checkout"
-import { StoreCart, StoreCartAddress } from "@medusajs/types"
-import { updateCart } from "./data/cart.server"
+import { addressToMedusaAddress } from '@libs/utils-to-merge/addresses'
+import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
+import type { ActionFunctionArgs } from '@remix-run/node'
+import type { UpdateAccountDetailsInput } from '~/routes/api.checkout'
+import { checkoutAccountDetailsValidator } from '~/components/checkout'
+import type { StoreCart, StoreCartAddress } from '@medusajs/types'
+import { updateCart } from './data/cart.server'
 
 export const _updateAccountDetails = async (
   data: UpdateAccountDetailsInput,

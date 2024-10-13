@@ -1,9 +1,9 @@
-import { Address } from "@libs/util"
+import type { Address } from '@libs/util';
 
 export const AddressDisplay: React.FC<{
-  title?: string
-  address: Address
-  countryOptions: { value: string; label: string }[]
+  title?: string;
+  address: Address;
+  countryOptions: { value: string; label: string }[];
 }> = ({ title, address, countryOptions }) => (
   <span>
     {title && <dt className="mt-6 text-sm font-bold text-gray-700">{title}</dt>}
@@ -26,13 +26,10 @@ export const AddressDisplay: React.FC<{
       <br />
       {address?.countryCode && (
         <>
-          {
-            countryOptions.find(({ value }) => value === address?.countryCode)
-              ?.label
-          }
+          {countryOptions.find(({ value }) => value === address?.countryCode)?.label}
           <br />
         </>
       )}
     </dd>
   </span>
-)
+);

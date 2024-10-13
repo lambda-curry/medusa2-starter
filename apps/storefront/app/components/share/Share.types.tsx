@@ -1,1 +1,1 @@
-export type ShareItemType = 'product' | 'post' | 'page' | 'vendor';
+export type ShareItemType = 'product' | 'page';

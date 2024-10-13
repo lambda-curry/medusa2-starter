@@ -1,0 +1,63 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.1/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+    "ignore": [".turbo", "yarn.lock"]
+  },
+  "organizeImports": { "enabled": true },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always"
+    }
+  },
+  "linter": {
+    "enabled": false,
+    "rules": {
+      "all": true,
+      "style": {
+        "all": true,
+        "useBlockStatements": "off",
+        "useNamingConvention": "off",
+        "noImplicitBoolean": "off",
+        "noDefaultExport": "off",
+        "noUnusedTemplateLiteral": "off",
+        "useFilenamingConvention": "off",
+        "noNonNullAssertion": "off",
+        "useExplicitLengthCheck": "off"
+      },
+      "complexity": {
+        "all": true,
+        "noForEach": "off",
+        "useLiteralKeys": "off"
+      },
+      "performance": {
+        "all": true,
+        "noAccumulatingSpread": "off"
+      },
+      "suspicious": {
+        "noConsoleLog": "off",
+        "noReactSpecificProps": "off"
+      },
+      "correctness": {
+        "all": true,
+        "noNodejsModules": "off",
+        "noUndeclaredDependencies": "off",
+        "useImportExtensions": "off"
+      }
+    }
+  }
+}
