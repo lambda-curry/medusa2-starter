@@ -128,7 +128,11 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
   const defaultValues: AddToCartFormValues = {
     productId: product.id!,
     quantity: 1,
-    options: {},
+    options: product.options?.reduce((acc, option) => {
+      if (!option.id || !option.values?.length) return acc;
+      acc[option.id] = option.values[0].value;
+      return acc;
+    }, {} as Record<string, string>) || {},
   };
 
   const breadcrumbs = getBreadcrumbs(product);
@@ -139,6 +143,8 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
     [product, controlledOptions],
   );
 
+
+  console.log('defaultValues', defaultValues, selectedOptions);
   const variantMatrix = useMemo(() => selectVariantMatrix(product), [product]);
   const selectedVariant = useMemo(
     () => selectVariantFromMatrixBySelectedOptions(variantMatrix, selectedOptions),
