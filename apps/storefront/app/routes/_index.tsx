@@ -1,19 +1,19 @@
-import { Container } from '@ui-components/common/container'
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node'
-import { getMergedPostMeta } from '@libs/util/posts'
-import HeroSection from '@ui-components/content/sections/HeroSection'
-import { Image } from '@ui-components/common/images/Image'
-import { ListItemsSection } from '@ui-components/content/sections/ListItemsSection'
-import PostSectionProductListCarousel from '@ui-components/content/post-section/PostSectionProductListCarousel'
-import { SideBySideSection } from '@ui-components/content/sections/SideBySideSection'
-import { GridCTASection } from '@ui-components/content/sections/GridCTASection'
-import { ActionList } from '@ui-components/content/ActionList'
+import { Container } from '@ui-components/common/container';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { getMergedPostMeta } from '@libs/util/posts';
+import HeroSection from '@ui-components/content/sections/HeroSection';
+import { Image } from '@ui-components/common/images/Image';
+import { ListItemsSection } from '@ui-components/content/sections/ListItemsSection';
+import PostSectionProductListCarousel from '@ui-components/content/post-section/PostSectionProductListCarousel';
+import { SideBySideSection } from '@ui-components/content/sections/SideBySideSection';
+import { GridCTASection } from '@ui-components/content/sections/GridCTASection';
+import { ActionList } from '@ui-components/content/ActionList';
 
 export const loader = async (args: LoaderFunctionArgs) => {
-  return {}
-}
+  return {};
+};
 
-export const meta: MetaFunction<typeof loader> = getMergedPostMeta
+export const meta: MetaFunction<typeof loader> = getMergedPostMeta;
 
 export default function IndexRoute() {
   return (
@@ -25,9 +25,8 @@ export default function IndexRoute() {
             <h4 className="font-italiana text-2xl">COFFEE & COMMUNITY</h4>
             <h1 className="text-8xl font-aboreto">BARRIO</h1>
             <p className="max-w-prose mx-auto text-lg">
-              Discover our artisan-roasted coffee, crafted with care and
-              delivered to your door. At Barrio, we’re more than a coffee
-              roastery—we’re&nbsp;a&nbsp;neighborhood.
+              Discover our artisan-roasted coffee, crafted with care and delivered to your door. At Barrio, we’re more
+              than a coffee roastery—we’re&nbsp;a&nbsp;neighborhood.
             </p>
           </div>
         }
@@ -45,12 +44,7 @@ export default function IndexRoute() {
 
       <Container className="p-14 pt-60 lg:pt-24 relative flex flex-col items-center lg:flex-row">
         <div className="absolute w-80 left-4 -top-[200px] md:-top-[240px] lg:left-20 lg:w-[420px]">
-          <Image
-            src="/assets/images/header-image-1.png"
-            alt="Barrio background"
-            height={520}
-            width={420}
-          />
+          <Image src="/assets/images/header-image-1.png" alt="Barrio background" height={520} width={420} />
         </div>
 
         <div className="lg:w-full flex flex-col justify-center max-lg:items-center">
@@ -59,9 +53,7 @@ export default function IndexRoute() {
               Building Community
             </h2>
           </div>
-          <p className="font-italiana text-6xl lg:text-7xl mt-6 sm:mt-10 lg:mt-24">
-            one cup at a time
-          </p>
+          <p className="font-italiana text-6xl lg:text-7xl mt-6 sm:mt-10 lg:mt-24">one cup at a time</p>
         </div>
       </Container>
 
@@ -176,12 +168,7 @@ export default function IndexRoute() {
 
       <Container className="flex flex-col-reverse gap-8 items-center lg:items-start lg:flex-row p-14 lg:pt-24 lg:px-24 relative lg:min-h-[354px]">
         <div className="flex justify-center md:justify-end md:absolute md:-top-[30%] w-60 md:w-80 md:right-0 lg:right-20 lg:w-[420px]">
-          <Image
-            src="/assets/images/header-image-2.png"
-            alt="Barrio background"
-            height={520}
-            width={420}
-          />
+          <Image src="/assets/images/header-image-2.png" alt="Barrio background" height={520} width={420} />
         </div>
 
         <div className="w-full flex justify-center md:justify-start text-center md:text-left">
@@ -202,36 +189,29 @@ export default function IndexRoute() {
             <div
               className="bg-cover bg-no-repeat bg-center w-full rounded-3xl h-[410px]"
               style={{
-                backgroundImage: `url(/assets/images/coffee-shop-2.png)`,
+                backgroundImage: 'url(/assets/images/coffee-shop-2.png)',
               }}
             />
           </div>
         }
         right={
           <p className="text-sm h-full flex items-center justify-center">
-            At Barrio, our roasting process is a carefully honed craft,
-            combining traditional techniques with a modern, sustainable
-            approach. Each batch of coffee is roasted in small quantities to
-            ensure precise control over every stage of the process, allowing the
-            unique characteristics of the beans to shine through.
+            At Barrio, our roasting process is a carefully honed craft, combining traditional techniques with a modern,
+            sustainable approach. Each batch of coffee is roasted in small quantities to ensure precise control over
+            every stage of the process, allowing the unique characteristics of the beans to shine through.
             <br />
             <br />
-            We start by selecting high-quality, ethically sourced beans from
-            farmers who share our commitment to sustainability and community.
-            The roasting process begins with a slow, even heat that coaxes out
-            the natural flavors, developing rich aromas and deep, complex
-            profiles. Every bean undergoes a transformation, revealing its
-            distinct notes—whether it's the bright acidity of a light roast, the
-            balanced sweetness of a medium roast, or the bold, rich depth of a
-            dark roast.
+            We start by selecting high-quality, ethically sourced beans from farmers who share our commitment to
+            sustainability and community. The roasting process begins with a slow, even heat that coaxes out the natural
+            flavors, developing rich aromas and deep, complex profiles. Every bean undergoes a transformation, revealing
+            its distinct notes—whether it's the bright acidity of a light roast, the balanced sweetness of a medium
+            roast, or the bold, rich depth of a dark roast.
             <br />
             <br />
-            Our goal is to honor the origin of each coffee, preserving its
-            natural flavors while adding our own touch of expertise. The result?
-            A perfectly roasted coffee that reflects the heart of our
-            community—vibrant, diverse, and full of life. At Barrio, every roast
-            tells a story, and every cup connects you to the hands that nurtured
-            it.
+            Our goal is to honor the origin of each coffee, preserving its natural flavors while adding our own touch of
+            expertise. The result? A perfectly roasted coffee that reflects the heart of our community—vibrant, diverse,
+            and full of life. At Barrio, every roast tells a story, and every cup connects you to the hands that
+            nurtured it.
           </p>
         }
       />
@@ -264,5 +244,5 @@ export default function IndexRoute() {
         }
       />
     </>
-  )
+  );
 }

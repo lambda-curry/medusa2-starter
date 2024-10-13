@@ -1,54 +1,47 @@
-import { ButtonLink } from '@ui-components/common/buttons/ButtonLink'
-import { Container } from '@ui-components/common/container/Container'
-import { Image } from '@ui-components/common/images/Image'
-import { formatPhoneNumber } from '@libs/utils-to-merge/phoneNumber'
-import { formatPrice } from '@libs/util/prices'
-import { LoaderFunctionArgs, redirect } from '@remix-run/node'
-import { Link, useLoaderData } from '@remix-run/react'
-import { retrieveOrder } from '@libs/util/server/data/orders.server'
-import { StoreOrder, StorePaymentCollection } from '@medusajs/types'
+import { ButtonLink } from '@ui-components/common/buttons/ButtonLink';
+import { Container } from '@ui-components/common/container/Container';
+import { Image } from '@ui-components/common/images/Image';
+import { formatPhoneNumber } from '@libs/utils-to-merge/phoneNumber';
+import { formatPrice } from '@libs/util/prices';
+import { LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { Link, useLoaderData } from '@remix-run/react';
+import { retrieveOrder } from '@libs/util/server/data/orders.server';
+import { StoreOrder, StorePaymentCollection } from '@medusajs/types';
 
-export const loader = async ({
-  request,
-}: LoaderFunctionArgs): Promise<{ order: StoreOrder }> => {
-  const url = new URL(request.url)
+export const loader = async ({ request }: LoaderFunctionArgs): Promise<{ order: StoreOrder }> => {
+  const url = new URL(request.url);
 
-  const orderId = url.searchParams.get('order_id') || ''
+  const orderId = url.searchParams.get('order_id') || '';
 
   if (!orderId) {
-    // @ts-ignore
-    throw redirect('/')
+    throw redirect('/');
   }
 
-  const order = await retrieveOrder(request, orderId)
+  const order = await retrieveOrder(request, orderId);
 
-  return { order }
-}
+  return { order };
+};
 
 export default function CheckoutSuccessRoute() {
-  const { order } = useLoaderData<typeof loader>()
-  const discountTotal = order.discount_total || 0
+  const { order } = useLoaderData<typeof loader>();
+  const discountTotal = order.discount_total || 0;
 
   const {
     shipping_address: shippingAddress,
     billing_address: billingAddress,
     shipping_methods: shippingMethods,
-  } = order as StoreOrder
+  } = order as StoreOrder;
 
   return (
     <section className="py-8">
       <Container className="!max-w-3xl">
         <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
           <div className="p-8 sm:p-12 lg:p-16">
-            <h1 className="text-primary-600 text-sm font-bold">
-              Payment successful
-            </h1>
-            <p className="mt-2 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-              Thanks for ordering
-            </p>
+            <h1 className="text-primary-600 text-sm font-bold">Payment successful</h1>
+            <p className="mt-2 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">Thanks for ordering</p>
             <p className="mt-2 text-base text-gray-500">
-              We appreciate your order, we're currently processing it. Hang
-              tight and we'll send you confirmation very soon!
+              We appreciate your order, we're currently processing it. Hang tight and we'll send you confirmation very
+              soon!
             </p>
 
             <ul
@@ -67,18 +60,12 @@ export default function CheckoutSuccessRoute() {
                   <div className="flex flex-auto flex-col space-y-1">
                     <div>
                       <h3 className="text-base text-gray-900">
-                        <Link to={`/products/${item.product_handle}`}>
-                          {item.product_title}
-                        </Link>
+                        <Link to={`/products/${item.product_handle}`}>{item.product_title}</Link>
                       </h3>
-                      <p className="text-sm font-normal text-gray-500">
-                        {item.variant_title}
-                      </p>
+                      <p className="text-sm font-normal text-gray-500">{item.variant_title}</p>
                     </div>
                     <div className="flex flex-1 items-end">
-                      <span className="font-normal backdrop:text-gray-500">
-                        Qty {item.quantity}
-                      </span>
+                      <span className="font-normal backdrop:text-gray-500">Qty {item.quantity}</span>
                     </div>
                   </div>
                   <p className="flex-none font-bold text-gray-900">
@@ -149,22 +136,13 @@ export default function CheckoutSuccessRoute() {
                         {shippingAddress.first_name} {shippingAddress.last_name}
                       </span>
                       <span className="block">{shippingAddress.address_1}</span>
-                      {shippingAddress.address_2 && (
-                        <span className="block">
-                          {shippingAddress.address_2}
-                        </span>
-                      )}
+                      {shippingAddress.address_2 && <span className="block">{shippingAddress.address_2}</span>}
                       <span className="block">
-                        {shippingAddress.city}, {shippingAddress.province}{' '}
-                        {shippingAddress.postal_code}
+                        {shippingAddress.city}, {shippingAddress.province} {shippingAddress.postal_code}
                       </span>
-                      <span className="block uppercase">
-                        {shippingAddress.country_code}
-                      </span>
+                      <span className="block uppercase">{shippingAddress.country_code}</span>
                       {shippingAddress.phone && (
-                        <span className="block">
-                          {formatPhoneNumber(shippingAddress.phone)}
-                        </span>
+                        <span className="block">{formatPhoneNumber(shippingAddress.phone)}</span>
                       )}
                     </address>
                   </dd>
@@ -179,23 +157,12 @@ export default function CheckoutSuccessRoute() {
                         {billingAddress.first_name} {billingAddress.last_name}
                       </span>
                       <span className="block">{billingAddress.address_1}</span>
-                      {billingAddress.address_2 && (
-                        <span className="block">
-                          {billingAddress.address_2}
-                        </span>
-                      )}
+                      {billingAddress.address_2 && <span className="block">{billingAddress.address_2}</span>}
                       <span className="block">
-                        {billingAddress.city}, {billingAddress.province}{' '}
-                        {billingAddress.postal_code}
+                        {billingAddress.city}, {billingAddress.province} {billingAddress.postal_code}
                       </span>
-                      <span className="block uppercase">
-                        {billingAddress.country_code}
-                      </span>
-                      {billingAddress.phone && (
-                        <span className="block">
-                          {formatPhoneNumber(billingAddress.phone)}
-                        </span>
-                      )}
+                      <span className="block uppercase">{billingAddress.country_code}</span>
+                      {billingAddress.phone && <span className="block">{formatPhoneNumber(billingAddress.phone)}</span>}
                     </address>
                   </dd>
                 </div>
@@ -203,28 +170,6 @@ export default function CheckoutSuccessRoute() {
             </dl>
 
             <dl className="mt-12 grid grid-cols-2 gap-x-4 border-t border-gray-200 pt-12 text-sm text-gray-600">
-              {/* {!!paymentMethodDetails && !!paymentMethodDetails.card && (
-                <div>
-                  <dt className="font-bold text-gray-900">Payment method</dt>
-                  <dd className="mt-2 gap-y-2 sm:flex sm:gap-x-4 sm:gap-y-0">
-                    <div className="flex-none">
-                      <CreditCardIcon brand={paymentMethodDetails.card.brand} />
-                      <p className="sr-only">
-                        {paymentMethodDetails.card.brand}
-                      </p>
-                    </div>
-                    <div className="flex-auto">
-                      <p className="text-gray-900">
-                        Ending with {paymentMethodDetails.card.last4}
-                      </p>
-                      <p>
-                        Expires {paymentMethodDetails.card.exp_month} /{' '}
-                        {paymentMethodDetails.card.exp_year}
-                      </p>
-                    </div>
-                  </dd>
-                </div>
-              )} */}
               <div>
                 <dt className="font-bold text-gray-900">
                   Shipping method{(shippingMethods?.length || 0) > 1 ? 's' : ''}
@@ -239,9 +184,7 @@ export default function CheckoutSuccessRoute() {
             </dl>
 
             <div className="mt-16 border-t border-gray-200 pt-6 text-right">
-              <ButtonLink
-                as={(buttonProps) => <Link to="/products" {...buttonProps} />}
-              >
+              <ButtonLink as={(buttonProps) => <Link to="/products" {...buttonProps} />}>
                 Continue Shopping<span aria-hidden="true"> &rarr;</span>
               </ButtonLink>
             </div>
@@ -249,5 +192,5 @@ export default function CheckoutSuccessRoute() {
         </div>
       </Container>
     </section>
-  )
+  );
 }

@@ -1,9 +1,4 @@
-import { useRegion } from '@ui-components/hooks/useRegion';
-import {
-  redirect,
-  type LoaderFunctionArgs,
-  type MetaFunction,
-} from '@remix-run/node';
+import { redirect, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { ProductTemplate } from '~/templates/ProductTemplate';
 import { getMergedProductMeta } from '@libs/util/products';
@@ -13,7 +8,7 @@ import { StoreProduct } from '@medusajs/types';
 export const loader = async (args: LoaderFunctionArgs) => {
   const { products } = await fetchProducts(args.request, {
     handle: args.params.productHandle,
-  }).catch(e => {
+  }).catch((e) => {
     return { products: [] };
   });
 
