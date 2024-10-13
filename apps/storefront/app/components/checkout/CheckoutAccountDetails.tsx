@@ -1,128 +1,96 @@
-import { Actions } from "@ui-components/common/actions/Actions"
-import { Alert } from "@ui-components/common/alert"
-import { Button } from "@ui-components/common/buttons/Button"
-import { ButtonLink } from "@ui-components/common/buttons/ButtonLink"
-import { SubmitButton } from "@ui-components/common/buttons/SubmitButton"
-import { ConfirmPasswordFieldGroup } from "@ui-components/common/field-groups"
-import { Form } from "@ui-components/common/forms/Form"
-import { FormError } from "@ui-components/common/forms/FormError"
-import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
-import { FieldText } from "@ui-components/common/forms/fields/FieldText"
-import { useCart } from "@ui-components/hooks/useCart"
-import { useCheckout } from "@ui-components/hooks/useCheckout"
-import { useCustomer } from "@ui-components/hooks/useCustomer"
-import { useRegions } from "@ui-components/hooks/useRegions"
-import { checkAccountDetailsComplete } from "@libs/util/checkout"
-import { useFetcher } from "@remix-run/react"
-import debounce from "lodash/debounce"
-import { useEffect, useRef, useState } from "react"
-import { useControlField, useFormContext } from "remix-validated-form"
-import {
-  CheckoutAction,
-  UpdateAccountDetailsInput,
-  UpdateContactInfoInput,
-} from "~/routes/api.checkout"
-import { useLogin } from "../../../libs/ui-components/hooks/useLogin"
-import { CheckoutStep } from "../../../libs/ui-components/providers/checkout-provider"
-import { emailAddressValidation } from "../../../libs/util/validation"
-import { CheckoutSectionHeader } from "./CheckoutSectionHeader"
-import HiddenAddressGroup from "./HiddenAddressGroup"
+import { Actions } from '@ui-components/common/actions/Actions';
+import { Button } from '@ui-components/common/buttons/Button';
+import { ButtonLink } from '@ui-components/common/buttons/ButtonLink';
+import { SubmitButton } from '@ui-components/common/buttons/SubmitButton';
+import { Form } from '@ui-components/common/forms/Form';
+import { FormError } from '@ui-components/common/forms/FormError';
+import { FieldGroup } from '@ui-components/common/forms/fields/FieldGroup';
+import { FieldText } from '@ui-components/common/forms/fields/FieldText';
+import { useCart } from '@ui-components/hooks/useCart';
+import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCustomer } from '@ui-components/hooks/useCustomer';
+import { useRegions } from '@ui-components/hooks/useRegions';
+import { checkAccountDetailsComplete } from '@libs/util/checkout';
+import { useFetcher } from '@remix-run/react';
+import debounce from 'lodash/debounce';
+import { useEffect, useRef, useState } from 'react';
+import { useControlField, useFormContext } from 'remix-validated-form';
+import { CheckoutAction, type UpdateAccountDetailsInput, type UpdateContactInfoInput } from '~/routes/api.checkout';
+import { useLogin } from '../../../libs/ui-components/hooks/useLogin';
+import { CheckoutStep } from '../../../libs/ui-components/providers/checkout-provider';
+import { emailAddressValidation } from '../../../libs/util/validation';
+import { CheckoutSectionHeader } from './CheckoutSectionHeader';
+import HiddenAddressGroup from './HiddenAddressGroup';
 import {
   MedusaStripeAddress,
   defaultStripeAddress,
   type StripeAddress,
-} from "./MedusaStripeAddress/MedusaStripeAddress"
-import { AddressDisplay } from "./address/AddressDisplay"
-import {
-  AddressSuggestionModal,
-  AddressSuggestions,
-} from "./address/AddressSuggestionModal"
-import { ShippingAddressRadioGroup } from "./checkout-fields"
+} from './MedusaStripeAddress/MedusaStripeAddress';
+import { AddressDisplay } from './address/AddressDisplay';
 import {
   checkoutAccountDetailsValidator,
   checkoutUpdateContactInfoValidator,
   selectInitialShippingAddressId,
-} from "./checkout-form-helpers"
-import { StoreRegion, StoreRegionCountry } from "@medusajs/types"
-import { emptyAddress } from "@libs/util"
-import { MedusaAddress, medusaAddressToAddress } from "@libs/util"
+} from './checkout-form-helpers';
+import type { StoreRegion, StoreRegionCountry } from '@medusajs/types';
+import { emptyAddress } from '@libs/util';
+import { type MedusaAddress, medusaAddressToAddress } from '@libs/util';
 
-const NEW_SHIPPING_ADDRESS_ID = "new"
+const NEW_SHIPPING_ADDRESS_ID = 'new';
 export const CheckoutAccountDetails = () => {
-  const formRef = useRef<HTMLFormElement>(null)
-  const checkoutContactInfoFormFetcher = useFetcher<{}>()
+  const formRef = useRef<HTMLFormElement>(null);
+  const checkoutContactInfoFormFetcher = useFetcher<{}>();
   const checkoutAccountDetailsFormFetcher = useFetcher<{
-    fieldErrors: any
-    suggestions: AddressSuggestions
-  }>()
-  const form = useFormContext("checkoutAccountDetailsForm")
-  const { cart } = useCart()
-  const { customer } = useCustomer()
-  const { step, setStep, goToNextStep } = useCheckout()
-  const isActiveStep = step === CheckoutStep.ACCOUNT_DETAILS
+    fieldErrors: Record<string, string>;
+  }>();
+  const form = useFormContext('checkoutAccountDetailsForm');
+  const { cart } = useCart();
+  const { customer } = useCustomer();
+  const { step, setStep, goToNextStep } = useCheckout();
+  const isActiveStep = step === CheckoutStep.ACCOUNT_DETAILS;
 
-  if (!cart) return null
+  if (!cart) return null;
 
-  const { regions } = useRegions()
+  const { regions } = useRegions();
   const allowedCountries = (regions ?? []).flatMap(
-    (region: StoreRegion) =>
-      region.countries!.map(
-        (country: StoreRegionCountry) => country.iso_2,
-      ) as string[],
-  )
-  const [newShippingAddress, setNewShippingAddress] = useState<StripeAddress>(
-    defaultStripeAddress(),
-  )
+    (region: StoreRegion) => region.countries!.map((country: StoreRegionCountry) => country.iso_2) as string[],
+  );
+  const [newShippingAddress, setNewShippingAddress] = useState<StripeAddress>(defaultStripeAddress());
 
-  const isComplete = checkAccountDetailsComplete(cart)
-  const isSubmitting = ["submitting", "loading"].includes(
-    checkoutAccountDetailsFormFetcher.state,
-  )
+  const isComplete = checkAccountDetailsComplete(cart);
+  const isSubmitting = ['submitting', 'loading'].includes(checkoutAccountDetailsFormFetcher.state);
 
-  const [addressValidationModalOpen, setAddressValidationModalOpen] =
-    useState(false)
+  const hasErrors = !!checkoutAccountDetailsFormFetcher.data?.fieldErrors;
+  const isLoggedIn = !!customer?.id;
 
-  const hasErrors = !!checkoutAccountDetailsFormFetcher.data?.fieldErrors
-  const hasSuggestions = !!checkoutAccountDetailsFormFetcher.data?.suggestions
-  const isLoggedIn = !!customer?.id
+  const hasShippingAddresses: boolean = !!(customer?.addresses && customer?.addresses.length > 0);
 
-  // const hasShippingAddresses: boolean = !!(
-  //   customer?.addresses && customer?.addresses.length > 0
-  // )
+  const initialShippingAddressId = selectInitialShippingAddressId(cart, customer as any);
+  const [selectedShippingAddressId, setSelectedShippingAddressId] = useControlField(
+    'shippingAddressId',
+    'checkoutAccountDetailsForm',
+  );
 
-  const hasShippingAddresses: boolean = !!(
-    customer?.addresses && customer?.addresses.length > 0
-  )
-
-  const initialShippingAddressId = selectInitialShippingAddressId(
-    cart,
-    customer as any,
-  )
-  const [selectedShippingAddressId, setSelectedShippingAddressId] =
-    useControlField("shippingAddressId", "checkoutAccountDetailsForm")
-
-  const { toggleLoginModal } = useLogin()
+  const { toggleLoginModal } = useLogin();
 
   const countryOptions =
     (cart.region?.countries?.map((country) => ({
       value: country.iso_2,
       label: country.display_name,
-    })) as { value: string; label: string }[]) ?? []
+    })) as { value: string; label: string }[]) ?? [];
 
   const addressWithUserPostalCode = cart.shipping_address
     ? {
         ...cart.shipping_address,
         postal_code: cart.shipping_address.postal_code,
       }
-    : null
+    : null;
 
-  const shippingAddress = medusaAddressToAddress(
-    addressWithUserPostalCode as MedusaAddress,
-  )
+  const shippingAddress = medusaAddressToAddress(addressWithUserPostalCode as MedusaAddress);
 
   const defaultValues = {
     cartId: cart.id,
-    email: customer?.email || cart.email || "",
+    email: customer?.email || cart.email || '',
     customerId: customer?.id,
     allowSuggestions: true,
     shippingAddress: {
@@ -130,107 +98,71 @@ export const CheckoutAccountDetails = () => {
       ...(isLoggedIn ? {} : shippingAddress || {}),
     },
     shippingAddressId: initialShippingAddressId,
-  }
+  };
 
   // on load, submit form with default values if there is only one shipping address
   useEffect(() => {
-    if (
-      !formRef.current ||
-      !customer?.addresses ||
-      customer.addresses.length > 1 ||
-      initialShippingAddressId
-    )
-      return
-    const formData = new FormData(formRef.current)
-    form.reset()
+    if (!formRef.current || !customer?.addresses || customer.addresses.length > 1 || initialShippingAddressId) return;
+    const formData = new FormData(formRef.current);
+    form.reset();
     checkoutAccountDetailsFormFetcher.submit(formData, {
-      method: "post",
-      action: "/api/checkout",
-    })
-  }, [formRef.current])
+      method: 'post',
+      action: '/api/checkout',
+    });
+  }, [formRef.current]);
 
-  useEffect(
-    () => setSelectedShippingAddressId(initialShippingAddressId),
-    [customer?.addresses?.length],
-  )
+  useEffect(() => setSelectedShippingAddressId(initialShippingAddressId), [customer?.addresses?.length]);
 
   useEffect(() => {
-    if (checkoutAccountDetailsFormFetcher.data?.suggestions) {
-      setAddressValidationModalOpen(true)
+    if (isActiveStep && !isSubmitting && !hasErrors && isComplete) {
+      setSelectedShippingAddressId(initialShippingAddressId);
+      form.reset();
+      goToNextStep();
     }
-  }, [checkoutAccountDetailsFormFetcher])
+  }, [isSubmitting, isComplete]);
 
   useEffect(() => {
-    if (
-      isActiveStep &&
-      !isSubmitting &&
-      !hasErrors &&
-      isComplete &&
-      !hasSuggestions
-    ) {
-      setSelectedShippingAddressId(initialShippingAddressId)
-      form.reset()
-      goToNextStep()
-    }
-  }, [isSubmitting, isComplete])
-
-  useEffect(() => {
-    if (isLoggedIn) setSelectedShippingAddressId(initialShippingAddressId)
-  }, [isLoggedIn])
+    if (isLoggedIn) setSelectedShippingAddressId(initialShippingAddressId);
+  }, [isLoggedIn]);
 
   const handleCancel = () => {
-    setSelectedShippingAddressId(initialShippingAddressId)
-    goToNextStep()
-  }
+    setSelectedShippingAddressId(initialShippingAddressId);
+    goToNextStep();
+  };
 
   const handleEmailChange = debounce(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const isEmailValid = await emailAddressValidation.email.isValid(
-        e.target.value,
-      )
-      if (!isEmailValid) return
+      const isEmailValid = await emailAddressValidation.email.isValid(e.target.value);
+      if (!isEmailValid) return;
 
-      checkoutContactInfoFormFetcher.submit(
-        new FormData(e.target.form as HTMLFormElement),
-        {
-          method: "post",
-          action: "/api/checkout",
-        },
-      )
+      checkoutContactInfoFormFetcher.submit(new FormData(e.target.form as HTMLFormElement), {
+        method: 'post',
+        action: '/api/checkout',
+      });
     },
     500,
     { leading: true },
-  )
+  );
 
-  const showCompleted = isComplete && !isActiveStep
+  const showCompleted = isComplete && !isActiveStep;
 
   return (
     <div className="checkout-account-details">
-      <CheckoutSectionHeader
-        completed={showCompleted}
-        setStep={setStep}
-        step={CheckoutStep.ACCOUNT_DETAILS}
-      >
+      <CheckoutSectionHeader completed={showCompleted} setStep={setStep} step={CheckoutStep.ACCOUNT_DETAILS}>
         Account details
       </CheckoutSectionHeader>
 
       {!isActiveStep && isComplete && (
-        <AddressDisplay
-          title="Shipping Address"
-          address={shippingAddress}
-          countryOptions={countryOptions}
-        />
+        <AddressDisplay title="Shipping Address" address={shippingAddress} countryOptions={countryOptions} />
       )}
 
       {isActiveStep && (
         <>
           {customer?.email ? (
-            <p className="mt-2 text-sm">
-              To get started, please select your shipping address.
-            </p>
+            <p className="mt-2 text-sm">To get started, please select your shipping address.</p>
           ) : (
             <p className="mt-2 text-sm">
-              To get started, enter your email address or{" "}
+              To get started, enter your email address or{' '}
               <ButtonLink size="sm" onClick={() => toggleLoginModal()}>
                 log in to your account
               </ButtonLink>
@@ -268,10 +200,7 @@ export const CheckoutAccountDetails = () => {
             </Form>
           )}
 
-          <Form<
-            UpdateAccountDetailsInput,
-            CheckoutAction.UPDATE_ACCOUNT_DETAILS
-          >
+          <Form<UpdateAccountDetailsInput, CheckoutAction.UPDATE_ACCOUNT_DETAILS>
             formRef={formRef}
             id="checkoutAccountDetailsForm"
             method="post"
@@ -284,27 +213,16 @@ export const CheckoutAccountDetails = () => {
           >
             <FieldText type="hidden" name="cartId" />
             <FieldText type="hidden" name="customerId" />
-            <FieldText type="hidden" name="email" value={cart.email ?? ""} />
+            <FieldText type="hidden" name="email" value={cart.email ?? ''} />
             <FieldText type="hidden" name="allowSuggestions" />
 
-            <HiddenAddressGroup
-              address={newShippingAddress.address}
-              prefix="shippingAddress"
-            />
+            <HiddenAddressGroup address={newShippingAddress.address} prefix="shippingAddress" />
 
             {!hasShippingAddresses && (
-              <FieldText
-                type="hidden"
-                name="shippingAddressId"
-                value={NEW_SHIPPING_ADDRESS_ID}
-              />
+              <FieldText type="hidden" name="shippingAddressId" value={NEW_SHIPPING_ADDRESS_ID} />
             )}
 
-            <ShippingAddressRadioGroup customer={customer} />
-
-            {(!isLoggedIn ||
-              selectedShippingAddressId === "new" ||
-              !hasShippingAddresses) && (
+            {(!isLoggedIn || selectedShippingAddressId === 'new' || !hasShippingAddresses) && (
               <MedusaStripeAddress
                 mode="shipping"
                 address={shippingAddress}
@@ -317,13 +235,9 @@ export const CheckoutAccountDetails = () => {
 
             <Actions>
               <SubmitButton
-                disabled={
-                  isSubmitting ||
-                  (!newShippingAddress.completed &&
-                    selectedShippingAddressId === "new")
-                }
+                disabled={isSubmitting || (!newShippingAddress.completed && selectedShippingAddressId === 'new')}
               >
-                {isSubmitting ? "Saving..." : "Save and continue"}
+                {isSubmitting ? 'Saving...' : 'Save and continue'}
               </SubmitButton>
 
               {isComplete && (
@@ -332,15 +246,9 @@ export const CheckoutAccountDetails = () => {
                 </Button>
               )}
             </Actions>
-            <AddressSuggestionModal
-              fetcher={checkoutAccountDetailsFormFetcher}
-              suggestions={checkoutAccountDetailsFormFetcher.data?.suggestions}
-              isOpen={addressValidationModalOpen}
-              onClose={() => setAddressValidationModalOpen(false)}
-            />
           </Form>
         </>
       )}
     </div>
-  )
-}
+  );
+};

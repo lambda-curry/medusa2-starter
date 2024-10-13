@@ -25,8 +25,6 @@ export default function ProductsIndexRoute() {
 
   const { products, count, limit, offset } = data;
 
-  console.log('🚀 ~ ProductsIndexRoute ~ products:', products);
-
   const breadcrumbs = [
     {
       label: (
@@ -40,14 +38,6 @@ export default function ProductsIndexRoute() {
     {
       label: 'All Products',
     },
-    // {
-    //   label: (
-    //     <ProductSortDropdown
-    //       filterOptions={filterOptions as FilterOptions}
-    //       allFilterOptions={allFilterOptions as FilterOptions}
-    //     />
-    //   ),
-    // },
   ];
 
   return (
@@ -57,10 +47,6 @@ export default function ProductsIndexRoute() {
       </div>
 
       <div className="flex flex-col gap-4 sm:flex-row">
-        {/* <ProductPageFilters
-          allFilterOptions={allFilterOptions as FilterOptions}
-          filterOptions={filterOptions as FilterOptions}
-        /> */}
         <div className="flex-1">
           <ProductListWithPagination
             products={products}

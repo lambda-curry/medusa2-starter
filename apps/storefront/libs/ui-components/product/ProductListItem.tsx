@@ -1,15 +1,14 @@
-import type { FC, HTMLAttributes } from 'react';
-import clsx from 'clsx';
-import { ProductThumbnail } from './ProductThumbnail';
-import { ProductWithReviews } from '../../util';
-import { ProductPrice } from './ProductPrice';
-import { ProductBadges } from './ProductBadges';
-import { useRegion } from '../hooks/useRegion';
-import { StoreProduct } from '@medusajs/types';
+import type { FC, HTMLAttributes } from 'react'
+import clsx from 'clsx'
+import { ProductThumbnail } from './ProductThumbnail'
+import { ProductPrice } from './ProductPrice'
+import { ProductBadges } from './ProductBadges'
+import { useRegion } from '../hooks/useRegion'
+import { StoreProduct } from '@medusajs/types'
 
 export interface ProductListItemProps extends HTMLAttributes<HTMLElement> {
-  product: StoreProduct;
-  isTransitioning?: boolean;
+  product: StoreProduct
+  isTransitioning?: boolean
 }
 
 export const ProductListItem: FC<ProductListItemProps> = ({
@@ -40,5 +39,5 @@ export const ProductListItem: FC<ProductListItemProps> = ({
         <ProductPrice product={product} currencyCode={region.currency_code} />
       </p>
     </article>
-  );
-};
+  )
+}

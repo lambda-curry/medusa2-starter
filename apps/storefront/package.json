@@ -107,7 +107,6 @@
     "lodash.omit": "^4.5.0",
     "lodash.pick": "^4.4.0",
     "lru-cache": "^7.14.1",
-    "luxon": "^3.4.4",
     "qs": "^6.11.2",
     "react": "18.3.0-canary-c5b937576-20231219",
     "react-dom": "18.3.0-canary-c5b937576-20231219",

@@ -1,26 +1,18 @@
-import { SiteDetailsRootData } from '@libs/util/medusa/types';
+import type { SiteDetailsRootData } from '@libs/util/medusa/types'
 
 import {
   footerNavigationItems,
   headerNavigationItems,
-} from '@libs/config/site/navigation-items';
-import { siteSettings } from '@libs/config/site/site-settings';
-import { HttpTypes } from '@medusajs/types';
-import { LoaderFunctionArgs, unstable_data } from '@remix-run/node';
-import { sdk } from './client.server';
-import { config } from './config.server';
-import { getSelectedRegionId, setSelectedRegionId } from './cookies.server';
-import {
-  enrichLineItems,
-  getOrCreateCart,
-  retrieveCart,
-} from './data/cart.server';
-import { getCustomer } from './data/customer.server';
-import {
-  getCountryCode,
-  getSelectedRegion,
-  listRegions,
-} from './data/regions.server';
+} from '@libs/config/site/navigation-items'
+import { siteSettings } from '@libs/config/site/site-settings'
+import type { HttpTypes } from '@medusajs/types'
+import { type LoaderFunctionArgs, unstable_data } from '@remix-run/node'
+import { sdk } from './client.server'
+import { config } from './config.server'
+import { getSelectedRegionId, setSelectedRegionId } from './cookies.server'
+import { enrichLineItems, retrieveCart } from './data/cart.server'
+import { getCustomer } from './data/customer.server'
+import { getSelectedRegion, listRegions } from './data/regions.server'
 
 // const searchPromise = (medusa: Medusa) => {
 //   return Promise.all([
@@ -47,32 +39,32 @@ import {
 const fetchHasProducts = async () => {
   return await sdk.store.product
     .list({ limit: 1, offset: 999_999 })
-    .then(res => res.count > 0);
-};
+    .then((res) => res.count > 0)
+}
 
 export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
-  const region = await getSelectedRegion(request.headers);
+  const region = await getSelectedRegion(request.headers)
 
   const [cart, regions, customer, hasPublishedProducts] = await Promise.all([
     retrieveCart(request), // TODO: make region param dynamic?
     listRegions(),
     getCustomer(request),
     fetchHasProducts(),
-  ]);
+  ])
 
-  const headers = new Headers();
-  const currentRegionCookieId = await getSelectedRegionId(headers);
+  const headers = new Headers()
+  const currentRegionCookieId = await getSelectedRegionId(headers)
 
   if (currentRegionCookieId !== region?.id) {
-    await setSelectedRegionId(headers, region?.id!);
+    await setSelectedRegionId(headers, region?.id!)
   }
 
   if (cart?.items?.length) {
-    const enrichedItems = await enrichLineItems(cart?.items, cart?.region_id!);
-    cart.items = enrichedItems as HttpTypes.StoreCartLineItem[];
+    const enrichedItems = await enrichLineItems(cart?.items, cart?.region_id!)
+    cart.items = enrichedItems as HttpTypes.StoreCartLineItem[]
   }
 
-  const fontLinks: string[] = [];
+  const fontLinks: string[] = []
 
   return unstable_data(
     {
@@ -102,8 +94,8 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
       } as SiteDetailsRootData,
       cart: cart,
     },
-    { headers }
-  );
-};
+    { headers },
+  )
+}
 
-export type RootLoader = typeof getRootLoader;
+export type RootLoader = typeof getRootLoader

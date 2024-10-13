@@ -1,33 +1,32 @@
-import { FC, useMemo } from 'react'
-import { Tab } from '@headlessui/react'
-import { StripePayment } from './StripePayment'
-import { ManualPayment } from './ManualPayment/ManualPayment'
-import clsx from 'clsx'
-import { useCheckout } from '@ui-components/hooks/useCheckout'
-import { useCart } from '@ui-components/hooks/useCart'
-import { CheckoutStep } from '@ui-components/providers/checkout-provider'
-import { Button } from '@ui-components/common/buttons/Button'
-import { useRootLoaderData } from '@ui-components/hooks/useRootLoaderData'
-import { CustomPaymentSession } from '@libs/utils-to-merge/types'
-import { useEnv } from '@ui-components/hooks/useEnv'
+import { FC, useMemo } from 'react';
+import { Tab } from '@headlessui/react';
+import { StripePayment } from './StripePayment';
+import { ManualPayment } from './ManualPayment/ManualPayment';
+import clsx from 'clsx';
+import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCart } from '@ui-components/hooks/useCart';
+import { CheckoutStep } from '@ui-components/providers/checkout-provider';
+import { Button } from '@ui-components/common/buttons/Button';
+import { CustomPaymentSession } from '@libs/utils-to-merge/types';
+import { useEnv } from '@ui-components/hooks/useEnv';
 
 export const CheckoutPayment: FC = () => {
-  const { env } = useEnv()
-  const { step, activePaymentSession, paymentProviders } = useCheckout()
-  const { cart } = useCart()
-  const isActiveStep = step === CheckoutStep.PAYMENT
+  const { env } = useEnv();
+  const { step, paymentProviders } = useCheckout();
+  const { cart } = useCart();
+  const isActiveStep = step === CheckoutStep.PAYMENT;
 
-  if (!cart) return null
+  if (!cart) return null;
 
   const hasStripePaymentProvider = useMemo(
     () => paymentProviders?.some((p) => p.id.includes('pp_stripe_stripe')),
     [paymentProviders],
-  )
+  );
 
   const hasManualPaymentProvider = useMemo(
     () => !!paymentProviders?.some((p) => p.id.includes('pp_system_default')),
     [paymentProviders],
-  )
+  );
 
   const paymentOptions = [
     {
@@ -42,12 +41,9 @@ export const CheckoutPayment: FC = () => {
       component: ManualPayment,
       isActive: hasManualPaymentProvider && env.NODE_ENV === 'development',
     },
-  ]
+  ];
 
-  const activePaymentOptions = useMemo(
-    () => paymentOptions.filter((p) => p.isActive),
-    [paymentOptions],
-  )
+  const activePaymentOptions = useMemo(() => paymentOptions.filter((p) => p.isActive), [paymentOptions]);
 
   return (
     <div className="checkout-payment">
@@ -75,20 +71,17 @@ export const CheckoutPayment: FC = () => {
 
           <Tab.Panels>
             {activePaymentOptions.map((paymentOption) => {
-              const PaymentComponent = paymentOption.component
+              const PaymentComponent = paymentOption.component;
 
               return (
                 <Tab.Panel key={paymentOption.id}>
-                  <PaymentComponent
-                    isActiveStep={isActiveStep}
-                    paymentMethods={[] as CustomPaymentSession[]}
-                  />
+                  <PaymentComponent isActiveStep={isActiveStep} paymentMethods={[] as CustomPaymentSession[]} />
                 </Tab.Panel>
-              )
+              );
             })}
           </Tab.Panels>
         </Tab.Group>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,78 +1,70 @@
-import HomeIcon from "@heroicons/react/24/solid/HomeIcon"
-import { useCart } from "@ui-components/hooks/useCart"
-import { useProductPriceDetails } from "@ui-components/hooks/useProductPriceDetails"
-import { useRegion } from "@ui-components/hooks/useRegion"
-import { ProductImageGallery } from "@ui-components/product/ProductImageGallery"
-import { ProductPrice } from "@ui-components/product/ProductPrice"
-import { ProductPriceRange } from "@ui-components/product/ProductPriceRange"
-import {
-  Breadcrumb,
-  Breadcrumbs,
-} from "@ui-components/common/breadcrumbs/Breadcrumbs"
-import { Button } from "@ui-components/common/buttons/Button"
-import { SubmitButton } from "@ui-components/common/buttons/SubmitButton"
-import { Container } from "@ui-components/common/container/Container"
-import { Form } from "@ui-components/common/forms/Form"
-import { FormError } from "@ui-components/common/forms/FormError"
-import { FieldGroup } from "@ui-components/common/forms/fields/FieldGroup"
-import { Grid } from "@ui-components/common/grid/Grid"
-import { GridColumn } from "@ui-components/common/grid/GridColumn"
-import { Share } from "~/components/share"
-import { Link, useFetcher } from "@remix-run/react"
-import { withYup } from "@remix-validated-form/with-yup"
-import truncate from "lodash/truncate"
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react"
-import * as Yup from "yup"
-import { ProductOptionSelectorSelect } from "~/components/products/ProductOptionSelectorSelect"
-import { LineItemActions } from "~/routes/api.cart.line-items"
+import HomeIcon from '@heroicons/react/24/solid/HomeIcon';
+import { useCart } from '@ui-components/hooks/useCart';
+import { useProductPriceDetails } from '@ui-components/hooks/useProductPriceDetails';
+import { useRegion } from '@ui-components/hooks/useRegion';
+import { ProductImageGallery } from '@ui-components/product/ProductImageGallery';
+import { ProductPrice } from '@ui-components/product/ProductPrice';
+import { ProductPriceRange } from '@ui-components/product/ProductPriceRange';
+import { Breadcrumb, Breadcrumbs } from '@ui-components/common/breadcrumbs/Breadcrumbs';
+import { Button } from '@ui-components/common/buttons/Button';
+import { SubmitButton } from '@ui-components/common/buttons/SubmitButton';
+import { Container } from '@ui-components/common/container/Container';
+import { Form } from '@ui-components/common/forms/Form';
+import { FormError } from '@ui-components/common/forms/FormError';
+import { FieldGroup } from '@ui-components/common/forms/fields/FieldGroup';
+import { Grid } from '@ui-components/common/grid/Grid';
+import { GridColumn } from '@ui-components/common/grid/GridColumn';
+import { Share } from '~/components/share';
+import { Link, useFetcher } from '@remix-run/react';
+import { withYup } from '@remix-validated-form/with-yup';
+import truncate from 'lodash/truncate';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import * as Yup from 'yup';
+import { ProductOptionSelectorSelect } from '~/components/products/ProductOptionSelectorSelect';
+import { LineItemActions } from '~/routes/api.cart.line-items';
 import {
   getFilteredOptionValues,
   getOptionValuesWithDiscountLabels,
   selectVariantFromMatrixBySelectedOptions,
   selectVariantMatrix,
-} from "@libs/util/products"
-import { useProductInventory } from "../../libs/ui-components/hooks/useProductInventory"
-import { FieldLabel } from "@ui-components/common/forms/fields/FieldLabel"
-import { formatDate } from "../../libs/util/formatters"
-import { ProductOptionSelectorRadio } from "../components/products/ProductOptionSelectorRadio"
-import { QuantitySelector } from "@ui-components/common/field-groups/QuantitySelector"
-import {
-  StoreProduct,
-  StoreProductOptionValue,
-  StoreProductVariant,
-} from "@medusajs/types"
-import PostSectionProductListCarousel from "@ui-components/content/post-section/PostSectionProductListCarousel"
-import { Validator } from "remix-validated-form"
+} from '@libs/util/products';
+import { useProductInventory } from '../../libs/ui-components/hooks/useProductInventory';
+import { FieldLabel } from '@ui-components/common/forms/fields/FieldLabel';
+import { formatDate } from '../../libs/util/formatters';
+import { ProductOptionSelectorRadio } from '../components/products/ProductOptionSelectorRadio';
+import { QuantitySelector } from '@ui-components/common/field-groups/QuantitySelector';
+import { StoreProduct, StoreProductOptionValue, StoreProductVariant } from '@medusajs/types';
+import PostSectionProductListCarousel from '@ui-components/content/post-section/PostSectionProductListCarousel';
+import { Validator } from 'remix-validated-form';
 
 export interface AddToCartFormValues {
-  productId: string
-  quantity?: number
+  productId: string;
+  quantity?: number;
   options: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
 }
 
-export const getAddToCartValidator = (
-  product: StoreProduct,
-): Validator<AddToCartFormValues> => {
-  const optionsValidation = product.options!.reduce((acc, option) => {
-    if (!option.id) return acc
+export const getAddToCartValidator = (product: StoreProduct): Validator<AddToCartFormValues> => {
+  const optionsValidation = product.options!.reduce(
+    (acc, option) => {
+      if (!option.id) return acc;
 
-    acc[option.id] = Yup.string().required(`${option.title} is required`)
+      acc[option.id] = Yup.string().required(`${option.title} is required`);
 
-    return acc
-  }, {} as { [key: string]: Yup.Schema<string> })
+      return acc;
+    },
+    {} as { [key: string]: Yup.Schema<string> },
+  );
 
   const schemaShape: Record<keyof AddToCartFormValues, Yup.AnySchema> = {
-    productId: Yup.string().required("Product ID is required"),
+    productId: Yup.string().required('Product ID is required'),
     quantity: Yup.number().optional(),
     options: Yup.object().shape(optionsValidation),
-  }
+  };
 
-  return withYup(
-    Yup.object().shape(schemaShape),
-  ) as Validator<AddToCartFormValues>
-}
+  return withYup(Yup.object().shape(schemaShape)) as Validator<AddToCartFormValues>;
+};
 
 const getBreadcrumbs = (product: StoreProduct) => {
   const breadcrumbs: Breadcrumb[] = [
@@ -86,119 +78,88 @@ const getBreadcrumbs = (product: StoreProduct) => {
       url: `/`,
     },
     {
-      label: "All Products",
-      url: "/products",
+      label: 'All Products',
+      url: '/products',
     },
-  ]
+  ];
 
   if (product.collection) {
     breadcrumbs.push({
       label: product.collection.title,
       url: `/collections/${product.collection.handle}`,
-    })
+    });
   }
 
-  return breadcrumbs
-}
+  return breadcrumbs;
+};
 
 export const SaleEndsOn = ({ dateSaleEnds }: { dateSaleEnds: Date | null }) => {
-  if (!dateSaleEnds) return null
+  if (!dateSaleEnds) return null;
 
   // calculate days until sale ends from today (rounded up)
-  const daysUntilSaleEnds = Math.ceil(
-    (dateSaleEnds.getTime() - new Date().getTime()) / (1000 * 3600 * 24),
-  )
+  const daysUntilSaleEnds = Math.ceil((dateSaleEnds.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
 
-  if (daysUntilSaleEnds < 0) return null
-  if (daysUntilSaleEnds <= 1)
-    return <p className="text-sm text-gray-500">Sale ends in today</p>
-  if (daysUntilSaleEnds <= 10)
-    return (
-      <p className="text-sm text-gray-500">
-        Sale ends in {daysUntilSaleEnds} days
-      </p>
-    )
-  if (daysUntilSaleEnds > 10)
-    return (
-      <p className="text-sm text-gray-500">
-        Sale ends on {formatDate(dateSaleEnds)}
-      </p>
-    )
+  if (daysUntilSaleEnds < 0) return null;
+  if (daysUntilSaleEnds <= 1) return <p className="text-sm text-gray-500">Sale ends in today</p>;
+  if (daysUntilSaleEnds <= 10) return <p className="text-sm text-gray-500">Sale ends in {daysUntilSaleEnds} days</p>;
+  if (daysUntilSaleEnds > 10) return <p className="text-sm text-gray-500">Sale ends on {formatDate(dateSaleEnds)}</p>;
 
-  return null
-}
+  return null;
+};
 
 export interface ProductTemplateProps {
-  product: StoreProduct
+  product: StoreProduct;
 }
 
-const variantIsSoldOut: (
-  variant: StoreProductVariant | undefined,
-) => boolean = (variant) => {
-  return !!(variant?.manage_inventory && variant?.inventory_quantity! < 1)
-}
+const variantIsSoldOut: (variant: StoreProductVariant | undefined) => boolean = (variant) => {
+  return !!(variant?.manage_inventory && variant?.inventory_quantity! < 1);
+};
 
 export const ProductTemplate = ({ product }: ProductTemplateProps) => {
-  const formRef = useRef<HTMLFormElement>(null)
-  const addToCartFetcher = useFetcher<any>()
-  const { cart, toggleCartDrawer } = useCart()
-  const { region } = useRegion()
-  const hasErrors =
-    Object.keys(addToCartFetcher.data?.fieldErrors || {}).length > 0
-  const isSubmitting = ["submitting", "loading"].includes(
-    addToCartFetcher.state,
-  )
-  const productPriceDetails = useProductPriceDetails(product)
-  const validator = getAddToCartValidator(product)
+  const formRef = useRef<HTMLFormElement>(null);
+  const addToCartFetcher = useFetcher<any>();
+  const { cart, toggleCartDrawer } = useCart();
+  const { region } = useRegion();
+  const hasErrors = Object.keys(addToCartFetcher.data?.fieldErrors || {}).length > 0;
+  const isSubmitting = ['submitting', 'loading'].includes(addToCartFetcher.state);
+  const productPriceDetails = useProductPriceDetails(product);
+  const validator = getAddToCartValidator(product);
 
   const defaultValues: AddToCartFormValues = {
     productId: product.id!,
     quantity: 1,
     options: {},
-  }
+  };
 
-  const breadcrumbs = getBreadcrumbs(product)
-  const currencyCode = region.currency_code
-  const [controlledOptions, setControlledOptions] = useState<
-    Record<string, string>
-  >(defaultValues.options)
+  const breadcrumbs = getBreadcrumbs(product);
+  const currencyCode = region.currency_code;
+  const [controlledOptions, setControlledOptions] = useState<Record<string, string>>(defaultValues.options);
   const selectedOptions = useMemo(
     () => product.options?.map(({ id }) => controlledOptions[id]),
     [product, controlledOptions],
-  )
+  );
 
-  const variantMatrix = useMemo(() => selectVariantMatrix(product), [product])
+  const variantMatrix = useMemo(() => selectVariantMatrix(product), [product]);
   const selectedVariant = useMemo(
-    () =>
-      selectVariantFromMatrixBySelectedOptions(variantMatrix, selectedOptions),
+    () => selectVariantFromMatrixBySelectedOptions(variantMatrix, selectedOptions),
     [variantMatrix, selectedOptions],
-  )
+  );
 
   const productSelectOptions = useMemo(
     () =>
       product.options?.map((option, index) => {
-        const filteredOptionValues = getFilteredOptionValues(
-          product,
-          controlledOptions,
-          option.id,
-        )
-        const optionValues =
-          option.values as unknown as (StoreProductOptionValue & {
-            disabled?: boolean
-          })[]
+        const filteredOptionValues = getFilteredOptionValues(product, controlledOptions, option.id);
+        const optionValues = option.values as unknown as (StoreProductOptionValue & {
+          disabled?: boolean;
+        })[];
 
         optionValues.forEach((optionValue) => {
-          if (
-            !filteredOptionValues.find(
-              (filteredOptionValue) =>
-                optionValue.value === filteredOptionValue.value,
-            )
-          ) {
-            ;(optionValue as any).disabled = true
+          if (!filteredOptionValues.find((filteredOptionValue) => optionValue.value === filteredOptionValue.value)) {
+            (optionValue as any).disabled = true;
           } else {
-            ;(optionValue as any).disabled = false
+            (optionValue as any).disabled = false;
           }
-        })
+        });
 
         const optionValuesWithLabels = getOptionValuesWithDiscountLabels(
           index,
@@ -206,7 +167,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
           optionValues,
           variantMatrix,
           selectedOptions,
-        )
+        );
         return {
           title: option.title,
           product_id: option.product_id as string,
@@ -215,37 +176,34 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
             value,
             label,
           })),
-        }
+        };
       }),
     [product, controlledOptions],
-  )
+  );
 
-  const productSoldOut = useProductInventory(product).averageInventory === 0
+  const productSoldOut = useProductInventory(product).averageInventory === 0;
 
   const handleOptionChangeBySelect = (e: ChangeEvent<HTMLInputElement>) => {
     setControlledOptions({
       ...controlledOptions,
-      [e.target.name.replace("options.", "")]: e.target.value,
-    })
-  }
+      [e.target.name.replace('options.', '')]: e.target.value,
+    });
+  };
 
   const handleOptionChangeByRadio = (name: string, value: string) => {
     setControlledOptions({
       ...controlledOptions,
       [name]: value,
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     if (!isSubmitting && !hasErrors) {
-      formRef.current?.reset()
+      formRef.current?.reset();
     }
-  }, [isSubmitting, hasErrors])
+  }, [isSubmitting, hasErrors]);
 
-  const soldOut = variantIsSoldOut(selectedVariant) || productSoldOut
-  // const selectedVariantSaleEndDate = selectedVariant
-  //   ? variantSaleEndDate(selectedVariant, currencyCode)
-  //   : null
+  const soldOut = variantIsSoldOut(selectedVariant) || productSoldOut;
 
   return (
     <>
@@ -261,7 +219,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
           defaultValues={defaultValues}
           validator={validator}
           onSubmit={() => {
-            toggleCartDrawer(true)
+            toggleCartDrawer(true);
           }}
         >
           <input type="hidden" name="productId" value={product.id} />
@@ -278,10 +236,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                     <GridColumn className="flex flex-col md:col-span-6 lg:col-span-5">
                       <div className="px-0 sm:px-6 md:p-10 md:pt-0">
                         <div>
-                          <Breadcrumbs
-                            className="mb-6 text-primary"
-                            breadcrumbs={breadcrumbs}
-                          />
+                          <Breadcrumbs className="mb-6 text-primary" breadcrumbs={breadcrumbs} />
 
                           <header className="flex gap-4">
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
@@ -292,23 +247,16 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                               itemType="product"
                               shareData={{
                                 title: product.title,
-                                text: truncate(
-                                  product.description ||
-                                    "Check out this product",
-                                  {
-                                    length: 200,
-                                    separator: " ",
-                                  },
-                                ),
+                                text: truncate(product.description || 'Check out this product', {
+                                  length: 200,
+                                  separator: ' ',
+                                }),
                               }}
                             />
                           </header>
                         </div>
 
-                        <section
-                          aria-labelledby="product-information"
-                          className="mt-4"
-                        >
+                        <section aria-labelledby="product-information" className="mt-4">
                           <h2 id="product-information" className="sr-only">
                             Product information
                           </h2>
@@ -316,97 +264,59 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                           <p className="text-lg text-gray-900 sm:text-xl">
                             {/* TODO: Should show price based on product variant selected and show "compare at" price if there is a discount active */}
                             {selectedVariant ? (
-                              <ProductPrice
-                                product={product}
-                                variant={selectedVariant}
-                                currencyCode={currencyCode}
-                              />
+                              <ProductPrice product={product} variant={selectedVariant} currencyCode={currencyCode} />
                             ) : (
-                              <ProductPriceRange
-                                product={product}
-                                currencyCode={currencyCode}
-                              />
+                              <ProductPriceRange product={product} currencyCode={currencyCode} />
                             )}
                           </p>
                         </section>
 
-                        {productSelectOptions &&
-                          productSelectOptions.length > 5 && (
-                            <section
-                              aria-labelledby="product-options"
-                              className="product-options"
-                            >
-                              <h2 id="product-options" className="sr-only">
-                                Product options
-                              </h2>
+                        {productSelectOptions && productSelectOptions.length > 5 && (
+                          <section aria-labelledby="product-options" className="product-options">
+                            <h2 id="product-options" className="sr-only">
+                              Product options
+                            </h2>
 
-                              <FieldGroup>
-                                {productSelectOptions.map(
-                                  (option, optionIndex) => (
-                                    <ProductOptionSelectorSelect
-                                      key={optionIndex}
-                                      option={option}
-                                      value={controlledOptions[option.id]}
-                                      onChange={handleOptionChangeBySelect}
-                                    />
-                                  ),
-                                )}
-                              </FieldGroup>
-                            </section>
-                          )}
+                            <FieldGroup>
+                              {productSelectOptions.map((option, optionIndex) => (
+                                <ProductOptionSelectorSelect
+                                  key={optionIndex}
+                                  option={option}
+                                  value={controlledOptions[option.id]}
+                                  onChange={handleOptionChangeBySelect}
+                                />
+                              ))}
+                            </FieldGroup>
+                          </section>
+                        )}
 
-                        {productSelectOptions &&
-                          productSelectOptions.length <= 5 && (
-                            <section
-                              aria-labelledby="product-options"
-                              className="product-options my-6 grid gap-4"
-                            >
-                              <h2 id="product-options" className="sr-only">
-                                Product options
-                              </h2>
-                              {productSelectOptions.map(
-                                (option, optionIndex) => (
-                                  <div key={optionIndex}>
-                                    <FieldLabel className="mb-2">
-                                      {option.title}
-                                    </FieldLabel>
-                                    <ProductOptionSelectorRadio
-                                      option={option}
-                                      value={controlledOptions[option.id]}
-                                      onChange={handleOptionChangeByRadio}
-                                    />
-                                  </div>
-                                ),
-                              )}
-                            </section>
-                          )}
+                        {productSelectOptions && productSelectOptions.length <= 5 && (
+                          <section aria-labelledby="product-options" className="product-options my-6 grid gap-4">
+                            <h2 id="product-options" className="sr-only">
+                              Product options
+                            </h2>
+                            {productSelectOptions.map((option, optionIndex) => (
+                              <div key={optionIndex}>
+                                <FieldLabel className="mb-2">{option.title}</FieldLabel>
+                                <ProductOptionSelectorRadio
+                                  option={option}
+                                  value={controlledOptions[option.id]}
+                                  onChange={handleOptionChangeByRadio}
+                                />
+                              </div>
+                            ))}
+                          </section>
+                        )}
 
                         <FormError />
 
                         <div className="my-2 flex flex-col gap-2">
-                          {/* {product.customer_response_prompt && (
-                            <FieldTextarea
-                              name="customer_product_response"
-                              label={product.customer_response_prompt}
-                              placeholder="Enter your response here..."
-                            />
-                          )}
-
-                          {product.customer_file_uploads_enabled && (
-                            <ImageUploadWithPreview
-                              className="mt-4"
-                              name="customer_file_uploads"
-                            />
-                          )} */}
-
                           <div className="flex items-center gap-4 py-2">
-                            {!soldOut && (
-                              <QuantitySelector variant={selectedVariant} />
-                            )}
+                            {!soldOut && <QuantitySelector variant={selectedVariant} />}
                             <div className="flex-1">
                               {!soldOut ? (
                                 <SubmitButton className="!h-12 w-full whitespace-nowrap !text-base !font-bold">
-                                  {isSubmitting ? "Adding..." : "Add to cart"}
+                                  {isSubmitting ? 'Adding...' : 'Add to cart'}
                                 </SubmitButton>
                               ) : (
                                 <SubmitButton
@@ -433,23 +343,18 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                               <h3 className="mb-2">Categories</h3>
 
                               <ol className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                                {product.categories.map(
-                                  (category, categoryIndex) => (
-                                    <li key={categoryIndex}>
-                                      <Button
-                                        as={(buttonProps) => (
-                                          <Link
-                                            to={`/categories/${category.handle}`}
-                                            {...buttonProps}
-                                          />
-                                        )}
-                                        className="!h-auto whitespace-nowrap !rounded !px-2 !py-1 !text-xs !font-bold"
-                                      >
-                                        {category.name}
-                                      </Button>
-                                    </li>
-                                  ),
-                                )}
+                                {product.categories.map((category, categoryIndex) => (
+                                  <li key={categoryIndex}>
+                                    <Button
+                                      as={(buttonProps) => (
+                                        <Link to={`/categories/${category.handle}`} {...buttonProps} />
+                                      )}
+                                      className="!h-auto whitespace-nowrap !rounded !px-2 !py-1 !text-xs !font-bold"
+                                    >
+                                      {category.name}
+                                    </Button>
+                                  </li>
+                                ))}
                               </ol>
                             </nav>
                           )}
@@ -463,10 +368,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                                   <li key={tagIndex}>
                                     <Button
                                       as={(buttonProps) => (
-                                        <Link
-                                          to={`/products/tags/${tag.value}/${tag.id}`}
-                                          {...buttonProps}
-                                        />
+                                        <Link to={`/products/tags/${tag.value}/${tag.id}`} {...buttonProps} />
                                       )}
                                       className="!h-auto whitespace-nowrap !rounded !px-2 !py-1 !text-xs !font-bold bg-accent-900"
                                     >
@@ -485,14 +387,14 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
               </GridColumn>
             </Grid>
           </Container>
-        </Form>{" "}
+        </Form>{' '}
       </section>
       <PostSectionProductListCarousel
         className="!pb-[100px] xl:px-9"
         data={{
-          heading: { value: "You may also like" },
+          heading: { value: 'You may also like' },
         }}
       />
     </>
-  )
-}
+  );
+};

@@ -84,6 +84,17 @@ export interface UpdatePaymentInput {
   noRedirect?: boolean
 }
 
+export interface UpdateExpressCheckoutAddressInput {
+  cartId: string
+  email: string
+  shippingAddress: Address
+}
+
+export interface UpdateExpressCheckoutAddressResponse {
+  cart: StoreCart
+  shippingOptions: StoreCartShippingOption[]
+}
+
 const updateBillingAddress: V2ActionHandler<StoreCartResponse> = async (
   data: UpdateBillingAddressInput,
   { request },

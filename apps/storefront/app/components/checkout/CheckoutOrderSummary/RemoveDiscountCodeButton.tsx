@@ -9,10 +9,7 @@ export interface RemoveDiscountCodeButtonProps {
   promotion: PromotionDTO;
 }
 
-export const RemovePromotionCodeButton: FC<RemoveDiscountCodeButtonProps> = ({
-  cart,
-  promotion,
-}) => {
+export const RemovePromotionCodeButton: FC<RemoveDiscountCodeButtonProps> = ({ cart, promotion }) => {
   const fetcher = useFetcher<{}>();
 
   if (['submitting', 'loading'].includes(fetcher.state)) return null;

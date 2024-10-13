@@ -1,24 +1,20 @@
-import { type FC, Fragment } from "react"
-import clsx from "clsx"
-import { Dialog, Transition } from "@headlessui/react"
-import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon"
-import { useSiteDetails } from "@ui-components/hooks/useSiteDetails"
-import { IconButton } from "@ui-components/common/buttons"
-import { URLAwareNavLink } from "@ui-components/common/link"
+import { type FC, Fragment } from 'react';
+import clsx from 'clsx';
+import { Dialog, Transition } from '@headlessui/react';
+import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
+import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
+import { IconButton } from '@ui-components/common/buttons';
+import { URLAwareNavLink } from '@ui-components/common/link';
 
 export interface HeaderSideNavProps {
-  className?: string
-  open: boolean
-  setOpen: (open: boolean) => void
-  activeSection?: string | null
+  className?: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  activeSection?: string | null;
 }
 
-export const HeaderSideNav: FC<HeaderSideNavProps> = ({
-  open,
-  setOpen,
-  activeSection,
-}) => {
-  const { header_navigation_items } = useSiteDetails()
+export const HeaderSideNav: FC<HeaderSideNavProps> = ({ open, setOpen, activeSection }) => {
+  const { headerNavigationItems } = useSiteDetails();
 
   return (
     <Transition.Root show={!!open} as={Fragment}>
@@ -51,9 +47,7 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
                   <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                       <div className="flex items-center justify-between">
-                        <Dialog.Title className="text-lg font-bold text-gray-900">
-                          Navigation
-                        </Dialog.Title>
+                        <Dialog.Title className="text-lg font-bold text-gray-900">Navigation</Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <IconButton
                             icon={XMarkIcon}
@@ -64,41 +58,31 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
                         </div>
                       </div>
 
-                      {!!header_navigation_items?.length && (
+                      {!!headerNavigationItems?.length && (
                         <div className="flex flex-grow flex-col overflow-y-auto pb-4">
                           <div className="mt-5 flex flex-grow flex-col">
-                            <nav
-                              className="flex-1 space-y-1"
-                              aria-label="Sidebar"
-                            >
-                              {header_navigation_items.map(
-                                ({ id, new_tab, ...navItemProps }) => (
-                                  <URLAwareNavLink
-                                    key={id}
-                                    {...navItemProps}
-                                    newTab={new_tab}
-                                    onClick={() => setOpen(false)}
-                                    className={({ isActive }) =>
-                                      clsx(
-                                        "group flex items-center rounded-md px-4 py-3 text-sm font-normal",
-                                        isActive &&
-                                          (!navItemProps.url.includes("#") ||
-                                            activeSection ===
-                                              navItemProps.url
-                                                .split("#")[1]
-                                                .split("?")[0])
-                                          ? "bg-gray-100 text-gray-900"
-                                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                                      )
-                                    }
-                                    prefetch="intent"
-                                  >
-                                    <span className="flex-1">
-                                      {navItemProps.label}
-                                    </span>
-                                  </URLAwareNavLink>
-                                ),
-                              )}
+                            <nav className="flex-1 space-y-1" aria-label="Sidebar">
+                              {headerNavigationItems.map(({ id, new_tab, ...navItemProps }) => (
+                                <URLAwareNavLink
+                                  key={id}
+                                  {...navItemProps}
+                                  newTab={new_tab}
+                                  onClick={() => setOpen(false)}
+                                  className={({ isActive }) =>
+                                    clsx(
+                                      'group flex items-center rounded-md px-4 py-3 text-sm font-normal',
+                                      isActive &&
+                                        (!navItemProps.url.includes('#') ||
+                                          activeSection === navItemProps.url.split('#')[1].split('?')[0])
+                                        ? 'bg-gray-100 text-gray-900'
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                                    )
+                                  }
+                                  prefetch="intent"
+                                >
+                                  <span className="flex-1">{navItemProps.label}</span>
+                                </URLAwareNavLink>
+                              ))}
                             </nav>
                           </div>
                         </div>
@@ -112,5 +96,5 @@ export const HeaderSideNav: FC<HeaderSideNavProps> = ({
         </div>
       </Dialog>
     </Transition.Root>
-  )
-}
+  );
+};

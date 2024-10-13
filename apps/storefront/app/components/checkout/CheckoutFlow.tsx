@@ -1,32 +1,31 @@
-import { FC, useEffect } from "react"
-import { useCart } from "@ui-components/hooks/useCart"
-import { useCheckout } from "@ui-components/hooks/useCheckout"
-import { useCustomer } from "@ui-components/hooks/useCustomer"
-import { useEnv } from "@ui-components/hooks/useEnv"
-import { Alert } from "@ui-components/common/alert/Alert"
-import { CheckoutAccountDetails } from "./CheckoutAccountDetails"
-import { CheckoutDeliveryMethod } from "./CheckoutDeliveryMethod"
-import { CheckoutPayment } from "./CheckoutPayment"
+import { FC, useEffect } from 'react';
+import { useCart } from '@ui-components/hooks/useCart';
+import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCustomer } from '@ui-components/hooks/useCustomer';
+import { Alert } from '@ui-components/common/alert/Alert';
+import { CheckoutAccountDetails } from './CheckoutAccountDetails';
+import { CheckoutDeliveryMethod } from './CheckoutDeliveryMethod';
+import { CheckoutPayment } from './CheckoutPayment';
 
 export const CheckoutFlow: FC = () => {
-  const { cart } = useCart()
-  const { customer } = useCustomer()
-  const { goToNextStep } = useCheckout()
-  const isLoggedIn = !!customer?.id
+  const { cart } = useCart();
+  const { customer } = useCustomer();
+  const { goToNextStep } = useCheckout();
+  const isLoggedIn = !!customer?.id;
 
-  if (!cart) return
+  if (!cart) return;
 
   useEffect(() => {
-    if (isLoggedIn) goToNextStep()
-    return () => goToNextStep()
-  }, [isLoggedIn])
+    if (isLoggedIn) goToNextStep();
+    return () => goToNextStep();
+  }, [isLoggedIn]);
 
   return (
     <>
       <div className="checkout-flow lg:min-h-[calc(100vh-320px)] lg:pl-8">
         {isLoggedIn && (
           <Alert type="info" className="mb-8">
-            Checking out as:{" "}
+            Checking out as:{' '}
             <strong className="font-bold">
               {customer.first_name} {customer.last_name} ({customer.email})
             </strong>
@@ -42,5 +41,5 @@ export const CheckoutFlow: FC = () => {
         <CheckoutPayment />
       </div>
     </>
-  )
-}
+  );
+};
