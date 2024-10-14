@@ -1,5 +1,6 @@
+import { siteSettings } from '@libs/config/site/site-settings';
 import { redirect } from '@remix-run/node';
 
 export const loader = async () => {
-  return redirect('/assets/markethaus.png', { status: 302 });
+  return redirect(siteSettings.favicon, { status: 302 });
 };

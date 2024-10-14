@@ -25,8 +25,8 @@
 //   PricedProduct as MedusaPricedProduct,
 //   PricedVariant as MedusaPricedVariant,
 // } from "@markethaus/storefront-client"
-import { Image } from "@medusajs/medusa"
-import type { LanguageCode } from "./languages"
+import { Image } from '@medusajs/medusa'
+import type { LanguageCode } from './languages'
 import {
   BaseAddress,
   HttpTypes,
@@ -37,13 +37,13 @@ import {
   StoreProductTag,
   StoreProductType,
   UserDTO,
-} from "@medusajs/types"
+} from '@medusajs/types'
 import {
   PostSectionType,
   ProductCarouselPostSection,
   ProductGridPostSection,
-} from "@libs/utils-to-merge/medusa"
-import { BaseRegionCountry } from "@medusajs/types/dist/http/region/common"
+} from '@libs/utils-to-merge/medusa'
+import { BaseRegionCountry } from '@medusajs/types/dist/http/region/common'
 
 // export type MedusaClientSerialized<T> = T
 // export type PricedProduct = MedusaClientSerialized<MedusaPricedProduct>
@@ -102,8 +102,8 @@ export interface StoreCustomerPaymentMethodsDeleteRes {
 }
 
 export enum NavigationItemLocation {
-  header = "header",
-  footer = "footer",
+  header = 'header',
+  footer = 'footer',
 }
 
 export interface NavigationItem {
@@ -126,21 +126,21 @@ export interface SiteDetailsRootData {
 
 export interface ContentBlockTunes {
   textAlign: {
-    alignment: "left" | "center" | "right"
+    alignment: 'left' | 'center' | 'right'
   }
 }
 
 export enum ContentBlockTypes {
-  header = "header",
-  paragraph = "paragraph",
-  image = "image",
-  nestedList = "nestedList",
-  linkTool = "linkTool",
-  code = "code",
-  quote = "quote",
-  delimiter = "delimiter",
-  table = "table",
-  raw = "raw",
+  header = 'header',
+  paragraph = 'paragraph',
+  image = 'image',
+  nestedList = 'nestedList',
+  linkTool = 'linkTool',
+  code = 'code',
+  quote = 'quote',
+  delimiter = 'delimiter',
+  table = 'table',
+  raw = 'raw',
 }
 
 export interface BaseContentBlock {
@@ -182,7 +182,7 @@ export type NestedListItems = { content: string; items: NestedListItems }[]
 export interface ListContentBlock extends BaseContentBlock {
   type: ContentBlockTypes.nestedList
   data: {
-    style: "ordered" | "unordered"
+    style: 'ordered' | 'unordered'
     items: NestedListItems
   }
 }
@@ -250,21 +250,21 @@ export type ContentBlock =
   | RawContentBlock
 
 export enum PageType {
-  POST = "post",
-  PAGE = "page",
-  PRODUCT = "product",
-  REVISION = "revision",
+  POST = 'post',
+  PAGE = 'page',
+  PRODUCT = 'product',
+  REVISION = 'revision',
 }
 
 export enum PageStatus {
-  DRAFT = "draft",
-  PUBLISHED = "published",
-  ARCHIVED = "archived",
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived',
 }
 
 export enum PageContentMode {
-  BASIC = "basic",
-  ADVANCED = "advanced",
+  BASIC = 'basic',
+  ADVANCED = 'advanced',
 }
 
 export interface PageTag {
@@ -321,28 +321,28 @@ export interface PageTemplate {
 }
 
 export enum PageSectionType {
-  BUTTON_LIST = "button_list",
-  CTA = "cta",
-  HEADER = "header",
-  HERO = "hero",
-  PRODUCT_CAROUSEL = "product_carousel",
-  PRODUCT_GRID = "product_grid",
-  IMAGE_GALLERY = "image_gallery",
-  RAW_HTML = "raw_html",
-  RICH_TEXT = "rich_text",
-  BLOG_LIST = "blog_list",
+  BUTTON_LIST = 'button_list',
+  CTA = 'cta',
+  HEADER = 'header',
+  HERO = 'hero',
+  PRODUCT_CAROUSEL = 'product_carousel',
+  PRODUCT_GRID = 'product_grid',
+  IMAGE_GALLERY = 'image_gallery',
+  RAW_HTML = 'raw_html',
+  RICH_TEXT = 'rich_text',
+  BLOG_LIST = 'blog_list',
 }
 
 export enum PageSectionStatus {
-  DRAFT = "draft",
-  PUBLISHED = "published",
-  ARCHIVED = "archived",
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived',
 }
 
 export enum ButtonStyleVariant {
-  DEFAULT = "default",
-  PRIMARY = "primary",
-  LINK = "link",
+  DEFAULT = 'default',
+  PRIMARY = 'primary',
+  LINK = 'link',
 }
 
 export interface TranslatableField {
@@ -381,60 +381,60 @@ export interface ResponsiveImageField {
 }
 
 export enum ThemeColor {
-  PRIMARY = "primary",
-  ACCENT = "accent",
-  HIGHLIGHT = "highlight",
-  GRAY = "gray",
-  BLACK = "black",
-  WHITE = "white",
+  PRIMARY = 'primary',
+  ACCENT = 'accent',
+  HIGHLIGHT = 'highlight',
+  GRAY = 'gray',
+  BLACK = 'black',
+  WHITE = 'white',
 }
 
 export enum FontWeight {
-  DEFAULT = "default",
-  THIN = "100",
-  EXTRA_LIGHT = "200",
-  LIGHT = "300",
-  NORMAL = "400",
-  MEDIUM = "500",
-  SEMI_BOLD = "600",
-  BOLD = "700",
-  EXTRA_BOLD = "800",
-  BLACK = "900",
+  DEFAULT = 'default',
+  THIN = '100',
+  EXTRA_LIGHT = '200',
+  LIGHT = '300',
+  NORMAL = '400',
+  MEDIUM = '500',
+  SEMI_BOLD = '600',
+  BOLD = '700',
+  EXTRA_BOLD = '800',
+  BLACK = '900',
 }
 
 export enum BackgroundPosition {
-  TOP_LEFT = "top left",
-  TOP = "top",
-  TOP_RIGHT = "top right",
-  LEFT = "left",
-  CENTER = "center",
-  RIGHT = "right",
-  BOTTOM_LEFT = "bottom left",
-  BOTTOM = "bottom",
-  BOTTOM_RIGHT = "bottom right",
+  TOP_LEFT = 'top left',
+  TOP = 'top',
+  TOP_RIGHT = 'top right',
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right',
+  BOTTOM_LEFT = 'bottom left',
+  BOTTOM = 'bottom',
+  BOTTOM_RIGHT = 'bottom right',
 }
 
 export enum BackgroundSize {
-  AUTO = "auto",
-  COVER = "cover",
-  CONTAIN = "contain",
+  AUTO = 'auto',
+  COVER = 'cover',
+  CONTAIN = 'contain',
 }
 
 export enum BackgroundRepeat {
-  NO_REPEAT = "no-repeat",
-  REPEAT = "repeat",
-  REPEAT_X = "repeat-x",
-  REPEAT_Y = "repeat-y",
-  SPACE = "space",
-  ROUND = "round",
+  NO_REPEAT = 'no-repeat',
+  REPEAT = 'repeat',
+  REPEAT_X = 'repeat-x',
+  REPEAT_Y = 'repeat-y',
+  SPACE = 'space',
+  ROUND = 'round',
 }
 
 export enum TextAlign {
-  AUTO = "auto",
-  LEFT = "left",
-  CENTER = "center",
-  RIGHT = "right",
-  JUSTIFY = "justify",
+  AUTO = 'auto',
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right',
+  JUSTIFY = 'justify',
 }
 
 export interface ThumbnailImage {
@@ -443,8 +443,8 @@ export interface ThumbnailImage {
 }
 
 export enum BackgroundType {
-  IMAGE = "image",
-  VIDEO = "video",
+  IMAGE = 'image',
+  VIDEO = 'video',
 }
 
 export interface Video {
@@ -502,12 +502,12 @@ export interface ProductListFilter {
 }
 
 export type ImageGalleryLayout =
-  | "rows"
-  | "columns"
-  | "masonry"
-  | "rows-full-width"
-  | "columns-full-width"
-  | "masonry-full-width"
+  | 'rows'
+  | 'columns'
+  | 'masonry'
+  | 'rows-full-width'
+  | 'columns-full-width'
+  | 'masonry-full-width'
 
 export interface ImageGalleryContent extends BasePageSectionContent {
   gallery?: ImageField[]
@@ -615,8 +615,7 @@ export interface NewsletterSubscriberRes {
 
 export interface SiteSettings {
   description?: string
-  favicon_id?: string
-  favicon?: string
+  favicon: string
   display_font?: Font
   body_font?: Font
   include_site_name_beside_logo?: boolean
@@ -645,4 +644,4 @@ export interface Address {
   country?: string | null // BaseRegionCountry["iso_2"]
 }
 
-export type MedusaAddress = Omit<BaseAddress, "id" | "customer_id">
+export type MedusaAddress = Omit<BaseAddress, 'id' | 'customer_id'>
