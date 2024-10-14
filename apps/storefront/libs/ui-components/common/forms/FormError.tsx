@@ -38,7 +38,7 @@ export const FormError: FC<FormErrorProps> = ({ className, error, onClearClick }
     <Alert
       type="error"
       className={clsx('form__error my-6', className)}
-      action={props => <FormErrorAction onClearClick={onClearClick} {...props} />}
+      action={(props) => <FormErrorAction onClearClick={onClearClick} {...props} />}
     >
       {error || formError}
     </Alert>

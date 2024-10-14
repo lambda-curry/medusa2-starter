@@ -1,19 +1,16 @@
-import { FC, HTMLAttributes } from 'react'
-import { useProductInventory } from '../hooks/useProductInventory'
-import { SoldOutBadge } from '~/components/badges/SoldOutBadge'
-import { StoreProduct } from '@medusajs/types'
+import { FC, HTMLAttributes } from 'react';
+import { useProductInventory } from '../hooks/useProductInventory';
+import { SoldOutBadge } from '~/components/badges/SoldOutBadge';
+import { StoreProduct } from '@medusajs/types';
 
 interface ProductBadgesProps extends HTMLAttributes<HTMLElement> {
-  product: StoreProduct
-  className?: string
+  product: StoreProduct;
+  className?: string;
 }
 
-export const ProductBadges: FC<ProductBadgesProps> = ({
-  product,
-  className,
-}) => {
-  const productInventory = useProductInventory(product)
-  const isSoldOut = productInventory.averageInventory === 0
+export const ProductBadges: FC<ProductBadgesProps> = ({ product, className }) => {
+  const productInventory = useProductInventory(product);
+  const isSoldOut = productInventory.averageInventory === 0;
 
-  return <div className={className}>{isSoldOut && <SoldOutBadge />}</div>
-}
+  return <div className={className}>{isSoldOut && <SoldOutBadge />}</div>;
+};

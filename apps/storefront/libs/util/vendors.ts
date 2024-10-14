@@ -1,8 +1,8 @@
-import type { Cart, Vendor } from "@libs/utils-to-merge/medusa/types"
-import type { MetaFunction } from "@remix-run/node"
-import { getProxySrc } from "@libs/utils-to-merge/img-proxy"
-import { getCommonMeta, getParentMeta, mergeMeta } from "./meta"
-import { getPostMeta } from "./posts"
+import type { Vendor } from '@libs/utils-to-merge/medusa/types'
+import type { MetaFunction } from '@remix-run/node'
+import { getCommonMeta, getParentMeta, mergeMeta } from './meta'
+import { getPostMeta } from './posts'
+import { StoreCart } from '@medusajs/types'
 
 export const getVendorMeta: MetaFunction<any> = ({
   data,
@@ -17,16 +17,16 @@ export const getVendorMeta: MetaFunction<any> = ({
   const description = vendor?.description
   const ogTitle = title
   const ogDescription = description
-  const ogImage = getProxySrc(vendor?.logo?.url)
+  const ogImage = vendor?.logo?.url
   const ogImageAlt = !!ogImage ? `${vendor?.name} logo` : undefined
 
   return [
     { title },
-    { name: "description", content: description },
-    { property: "og:title", content: ogTitle },
-    { property: "og:description", content: ogDescription },
-    { property: "og:image", content: ogImage },
-    { property: "og:image:alt", content: ogImageAlt },
+    { name: 'description', content: description },
+    { property: 'og:title', content: ogTitle },
+    { property: 'og:description', content: ogDescription },
+    { property: 'og:image', content: ogImage },
+    { property: 'og:image:alt', content: ogImageAlt },
   ]
 }
 
@@ -37,7 +37,7 @@ export const getMergedVendorMeta = mergeMeta(
   getPostMeta,
 )
 
-export const getCartShippingProfileIds = (cart: Cart) => {
+export const getCartShippingProfileIds = (cart: StoreCart) => {
   const profileIds = cart.items
     ?.map((item) => {
       return item?.variant?.product?.profile_id

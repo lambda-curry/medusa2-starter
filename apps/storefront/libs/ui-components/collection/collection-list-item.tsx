@@ -1,17 +1,17 @@
 import { Await, Link } from '@remix-run/react';
 import { Suspense, type FC } from 'react';
-import { type ProductCollection, type ProductWithReviews } from '../../util';
 import ProductCarousel from '../product/ProductCarousel';
 import { ProductCarouselSkeleton } from '../product/ProductCarouselSkeleton';
+import { StoreCollection, StoreProduct } from '@medusajs/types';
 
 export interface CollectionListItemContentProps {
-  collection: ProductCollection;
+  collection: StoreCollection;
 }
 
 export interface CollectionListItemProps extends CollectionListItemContentProps {
   className?: string;
-  collection: ProductCollection;
-  deferredProducts: Promise<{ products: ProductWithReviews[] }>;
+  collection: StoreCollection;
+  deferredProducts: Promise<{ products: StoreProduct[] }>;
 }
 
 export const CollectionListItem: FC<CollectionListItemProps> = ({ collection, deferredProducts }) => {

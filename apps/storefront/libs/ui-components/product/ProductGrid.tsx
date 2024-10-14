@@ -2,10 +2,7 @@ import { NavLink, useNavigation } from '@remix-run/react';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import { ProductGridSkeleton } from './ProductGridSkeleton';
-import {
-  ProductListHeader,
-  type ProductListHeaderProps,
-} from './ProductListHeader';
+import { ProductListHeader, type ProductListHeaderProps } from './ProductListHeader';
 import { ProductListItem } from './ProductListItem';
 import { StoreProduct } from '@medusajs/types';
 
@@ -34,19 +31,9 @@ export const ProductGrid: FC<ProductListProps> = ({
       <ProductListHeader heading={heading} actions={actions} />
 
       <div className={className}>
-        {products?.map(product => (
-          <NavLink
-            prefetch="intent"
-            key={product.id}
-            to={`/products/${product.handle}`}
-            unstable_viewTransition
-          >
-            {({ isTransitioning }) => (
-              <ProductListItem
-                isTransitioning={isTransitioning}
-                product={product}
-              />
-            )}
+        {products?.map((product) => (
+          <NavLink prefetch="intent" key={product.id} to={`/products/${product.handle}`} unstable_viewTransition>
+            {({ isTransitioning }) => <ProductListItem isTransitioning={isTransitioning} product={product} />}
           </NavLink>
         ))}
       </div>

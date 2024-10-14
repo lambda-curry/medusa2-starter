@@ -1,14 +1,14 @@
 import type { FC } from 'react';
-import { ProductCollection, ProductWithReviews } from '../../util';
 import type { CollectionListItemProps } from './collection-list-item';
+import { StoreCollection, StoreProduct } from '@medusajs/types';
 
 export const CollectionList: FC<{
   title?: string;
-  collections: ProductCollection[];
+  collections: StoreCollection[];
   deferredProductsByCollection: Record<
     string,
     Promise<{
-      products: ProductWithReviews[];
+      products: StoreProduct[];
     }>
   >;
   renderCollectionListItem: FC<CollectionListItemProps>;
@@ -24,7 +24,7 @@ export const CollectionList: FC<{
 
         <div className="mt-4">
           <div className="relative">
-            {collections.map(collection => {
+            {collections.map((collection) => {
               const deferredProducts = deferredProductsByCollection[collection.handle!];
               return (
                 <CollectionListItem key={collection.id} deferredProducts={deferredProducts} collection={collection} />

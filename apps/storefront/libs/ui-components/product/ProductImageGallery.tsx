@@ -37,7 +37,6 @@ const GalleryImagesRow: FC<{ galleryImages: ProductGalleryImage[] }> = memo(({ g
                   key={image.id}
                   src={image.url}
                   alt={image.alt || 'tab for image gallery'}
-                  proxyOptions={{ context: 'tiny_square' }}
                   className={'h-full w-full object-cover object-center'}
                 />
               </span>
@@ -119,7 +118,6 @@ export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product }) =
                   style={{
                     viewTransitionName: 'product-thumbnail',
                   }}
-                  proxyOptions={{ context: 'large_square' }}
                   src={image.url}
                   alt={image.alt || 'selected image for product'}
                   className="absolute h-full w-full border-b border-b-gray-200 object-contain object-center sm:rounded-md sm:border sm:border-gray-200"

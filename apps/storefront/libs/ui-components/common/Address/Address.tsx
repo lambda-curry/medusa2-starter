@@ -1,12 +1,9 @@
-import { formatPhoneNumber } from "@libs/util"
-import { StoreCartAddress } from "@medusajs/types"
-import { FC } from "react"
-// import { medusaAddressToAddress } from '../../../utils/addresses';
-// import { type MedusaAddress } from '../../../utils/types';
-// import { formatPhoneNumber } from '../../../utils/phoneNumber';
+import { formatPhoneNumber } from '@libs/util';
+import { StoreCartAddress } from '@medusajs/types';
+import { FC } from 'react';
 
 export interface AddressProps {
-  address: StoreCartAddress
+  address: StoreCartAddress;
 }
 
 export const Address: FC<AddressProps> = ({ address }) => {
@@ -20,8 +17,7 @@ export const Address: FC<AddressProps> = ({ address }) => {
           <br />
         </>
       )}
-      {address.city}, {address.province} {address.postal_code}{" "}
-      <span className="uppercase">{address.country_code}</span>
+      {address.city}, {address.province} {address.postal_code} <span className="uppercase">{address.country_code}</span>
       {address.phone && (
         <>
           <br />
@@ -29,5 +25,5 @@ export const Address: FC<AddressProps> = ({ address }) => {
         </>
       )}
     </address>
-  )
-}
+  );
+};

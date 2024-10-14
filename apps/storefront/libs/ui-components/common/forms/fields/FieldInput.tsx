@@ -12,9 +12,9 @@ export const FieldInput: FC<FieldInputProps> = ({ type = '', className, ...props
       'field__input rounded-md shadow-sm outline-none focus-within:ring-1',
       {
         [`field__input--${type}`]: type,
-        'border border-gray-300': type !== 'hidden'
+        'border border-gray-300': type !== 'hidden',
       },
-      className
+      className,
     )}
   />
 );

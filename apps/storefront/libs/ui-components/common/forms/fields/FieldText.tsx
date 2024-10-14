@@ -37,11 +37,11 @@ export const FieldText = forwardRef<HTMLDivElement, FieldTextProps>(
       fieldOptions: {
         validationBehavior: {
           initial: 'onSubmit',
-          whenTouched: 'onSubmit'
+          whenTouched: 'onSubmit',
         },
-        ...props.fieldOptions
+        ...props.fieldOptions,
       },
-      ...props
+      ...props,
     });
 
     return (
@@ -54,9 +54,9 @@ export const FieldText = forwardRef<HTMLDivElement, FieldTextProps>(
             {
               'relative flex items-stretch': prefix || suffix,
               'field__input--with-prefix': prefix,
-              'field__input--with-suffix': suffix
+              'field__input--with-suffix': suffix,
             },
-            fieldTextProps?.className
+            fieldTextProps?.className,
           )}
           {...fieldTextProps}
         >
@@ -70,7 +70,7 @@ export const FieldText = forwardRef<HTMLDivElement, FieldTextProps>(
                 'rounded-l-none': prefix,
                 'rounded-r-none': suffix,
                 'opacity-50': inputProps.disabled,
-                'cursor-not-allowed': inputProps.disabled
+                'cursor-not-allowed': inputProps.disabled,
               })}
             />
           )}
@@ -81,5 +81,5 @@ export const FieldText = forwardRef<HTMLDivElement, FieldTextProps>(
         <FieldError {...errorProps} />
       </FieldWrapper>
     );
-  }
+  },
 );

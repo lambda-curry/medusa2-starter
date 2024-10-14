@@ -2,7 +2,7 @@ import { FC, LabelHTMLAttributes, ReactElement } from 'react';
 import clsx from 'clsx';
 
 export type FieldLabelComponent = (
-  labelProps: Omit<FieldLabelProps, 'labelComponent'>
+  labelProps: Omit<FieldLabelProps, 'labelComponent'>,
 ) => ReactElement<any, any> | null;
 
 export interface FieldLabelProps extends LabelHTMLAttributes<HTMLElement> {

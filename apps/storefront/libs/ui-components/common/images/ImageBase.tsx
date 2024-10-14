@@ -1,46 +1,24 @@
-import { DOMAttributes, useCallback, useState } from "react"
-import {
-  ImageProxyURLOptions,
-  useImageProxySrc,
-} from "@libs/utils-to-merge/img-proxy"
-import { brokenImgSrc } from "./brokenImgSrc"
+import { DOMAttributes, useCallback, useState } from 'react';
+import { brokenImgSrc } from './brokenImgSrc';
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  fallbackSrc?: string[]
-  proxyOptions?: ImageProxyURLOptions
+  fallbackSrc?: string[];
 }
 
-export const ImageBase = ({
-  src,
-  alt,
-  className,
-  fallbackSrc,
-  proxyOptions,
-  ...props
-}: ImageProps) => {
+export const ImageBase = ({ src, alt, className, fallbackSrc, ...props }: ImageProps) => {
   // Keep track of errors so we can try the next fallbackSrc.
-  const [errorCount, setErrorCount] = useState(0)
-  const [currentSrc, setCurrentSrc] = useState(src || brokenImgSrc)
-  const proxySrc = useImageProxySrc(currentSrc, proxyOptions)
+  const [errorCount, setErrorCount] = useState(0);
+  const [currentSrc, setCurrentSrc] = useState(src || brokenImgSrc);
 
-  const handleBrokenImage: DOMAttributes<HTMLImageElement>["onError"] =
-    useCallback(() => {
-      // Allow the fallbackSrc to be an array of URLs to try in order.
-      if (fallbackSrc && errorCount < fallbackSrc.length) {
-        setCurrentSrc(fallbackSrc[errorCount])
-        setErrorCount(errorCount + 1)
-      } else {
-        setCurrentSrc(brokenImgSrc)
-      }
-    }, [fallbackSrc, errorCount, setCurrentSrc, setErrorCount])
+  const handleBrokenImage: DOMAttributes<HTMLImageElement>['onError'] = useCallback(() => {
+    // Allow the fallbackSrc to be an array of URLs to try in order.
+    if (fallbackSrc && errorCount < fallbackSrc.length) {
+      setCurrentSrc(fallbackSrc[errorCount]);
+      setErrorCount(errorCount + 1);
+    } else {
+      setCurrentSrc(brokenImgSrc);
+    }
+  }, [fallbackSrc, errorCount, setCurrentSrc, setErrorCount]);
 
-  return (
-    <img
-      {...props}
-      src={proxySrc}
-      alt={alt}
-      className={className}
-      onError={handleBrokenImage}
-    />
-  )
-}
+  return <img {...props} src={currentSrc} alt={alt} className={className} onError={handleBrokenImage} />;
+};
