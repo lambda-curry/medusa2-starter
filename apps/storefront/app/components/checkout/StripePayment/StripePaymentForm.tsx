@@ -3,13 +3,13 @@ import { SubmitFunction } from '@remix-run/react';
 import { PaymentMethodCreateParams, StripePaymentElement } from '@stripe/stripe-js';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import clsx from 'clsx';
-import { CustomPaymentSession } from '@libs/utils-to-merge/types';
+import type { CustomPaymentSession, Address, MedusaAddress } from '@libs/types';
 import { UpdatePaymentInput } from '~/routes/api.checkout';
 import { CompleteCheckoutForm } from '../CompleteCheckoutForm';
 import { useCart } from '@ui-components/hooks/useCart';
 import { Alert } from '@ui-components/common/alert/Alert';
 import { useCheckout } from '@ui-components/hooks/useCheckout';
-import { Address, MedusaAddress, medusaAddressToAddress } from '@libs/util';
+import { medusaAddressToAddress } from '@libs/util';
 
 export interface StripePaymentFormProps extends PropsWithChildren {
   isActiveStep: boolean;

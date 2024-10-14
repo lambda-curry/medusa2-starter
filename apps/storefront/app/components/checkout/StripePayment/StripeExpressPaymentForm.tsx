@@ -24,7 +24,7 @@ import {
   type UpdatePaymentInput,
 } from '~/routes/api.checkout';
 import { StoreCart, StoreCartShippingOption, StoreOrder } from '@medusajs/types';
-import { Address } from '@libs/util/medusa/index';
+import { Address } from '@libs/types';
 type ExpressCartResponse = {
   cart: StoreCart;
   setupIntent: SetupIntent;

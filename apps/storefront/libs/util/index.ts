@@ -1,5 +1,4 @@
 export * from '@libs/utils-to-merge/addresses'
-export * from '@libs/utils-to-merge/browser'
 export * from './buildObjectFromSearchParams'
 export * from './buildSearchParamsFromObject'
 export * from './carts'

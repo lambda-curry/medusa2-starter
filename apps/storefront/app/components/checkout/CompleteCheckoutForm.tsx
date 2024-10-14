@@ -1,6 +1,6 @@
 import { FC, FormEvent, PropsWithChildren, useEffect, useState } from 'react';
 import { type Fetcher, SubmitFunction, useFetcher, useFetchers } from '@remix-run/react';
-import { type CustomPaymentSession } from '@libs/utils-to-merge/types';
+import { type CustomPaymentSession, type MedusaAddress } from '@libs/types';
 import { convertToFormData } from '@libs/utils-to-merge/forms/objectToFormData';
 import { CheckoutAction, UpdatePaymentInput, UpdateBillingAddressInput } from '~/routes/api.checkout';
 import { useFormContext } from 'remix-validated-form';
@@ -19,7 +19,7 @@ import {
   type StripeAddress,
 } from './MedusaStripeAddress/MedusaStripeAddress';
 import HiddenAddressGroup from './HiddenAddressGroup';
-import { emptyAddress, MedusaAddress, medusaAddressToAddress } from '@libs/util';
+import { emptyAddress, medusaAddressToAddress } from '@libs/util';
 import { useCheckout } from '@ui-components/hooks/useCheckout';
 
 export interface CompleteCheckoutFormProps extends PropsWithChildren {
