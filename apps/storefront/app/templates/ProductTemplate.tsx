@@ -1,6 +1,5 @@
 import HomeIcon from '@heroicons/react/24/solid/HomeIcon';
 import { useCart } from '@ui-components/hooks/useCart';
-import { useProductPriceDetails } from '@ui-components/hooks/useProductPriceDetails';
 import { useRegion } from '@ui-components/hooks/useRegion';
 import { ProductImageGallery } from '@ui-components/product/ProductImageGallery';
 import { ProductPrice } from '@ui-components/product/ProductPrice';
@@ -30,7 +29,6 @@ import {
 } from '@libs/util/products';
 import { useProductInventory } from '../../libs/ui-components/hooks/useProductInventory';
 import { FieldLabel } from '@ui-components/common/forms/fields/FieldLabel';
-import { formatDate } from '../../libs/util/formatters';
 import { ProductOptionSelectorRadio } from '../components/products/ProductOptionSelectorRadio';
 import { QuantitySelector } from '@ui-components/common/field-groups/QuantitySelector';
 import { StoreProduct, StoreProductOptionValue, StoreProductVariant } from '@medusajs/types';
@@ -93,20 +91,6 @@ const getBreadcrumbs = (product: StoreProduct) => {
   return breadcrumbs;
 };
 
-export const SaleEndsOn = ({ dateSaleEnds }: { dateSaleEnds: Date | null }) => {
-  if (!dateSaleEnds) return null;
-
-  // calculate days until sale ends from today (rounded up)
-  const daysUntilSaleEnds = Math.ceil((dateSaleEnds.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-
-  if (daysUntilSaleEnds < 0) return null;
-  if (daysUntilSaleEnds <= 1) return <p className="text-sm text-gray-500">Sale ends in today</p>;
-  if (daysUntilSaleEnds <= 10) return <p className="text-sm text-gray-500">Sale ends in {daysUntilSaleEnds} days</p>;
-  if (daysUntilSaleEnds > 10) return <p className="text-sm text-gray-500">Sale ends on {formatDate(dateSaleEnds)}</p>;
-
-  return null;
-};
-
 export interface ProductTemplateProps {
   product: StoreProduct;
 }
@@ -118,11 +102,10 @@ const variantIsSoldOut: (variant: StoreProductVariant | undefined) => boolean = 
 export const ProductTemplate = ({ product }: ProductTemplateProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const addToCartFetcher = useFetcher<any>();
-  const { cart, toggleCartDrawer } = useCart();
+  const { toggleCartDrawer } = useCart();
   const { region } = useRegion();
   const hasErrors = Object.keys(addToCartFetcher.data?.fieldErrors || {}).length > 0;
   const isSubmitting = ['submitting', 'loading'].includes(addToCartFetcher.state);
-  const productPriceDetails = useProductPriceDetails(product);
   const validator = getAddToCartValidator(product);
 
   const defaultValues: AddToCartFormValues = {
@@ -268,7 +251,6 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                           </h2>
 
                           <p className="text-lg text-gray-900 sm:text-xl">
-                            {/* TODO: Should show price based on product variant selected and show "compare at" price if there is a discount active */}
                             {selectedVariant ? (
                               <ProductPrice product={product} variant={selectedVariant} currencyCode={currencyCode} />
                             ) : (

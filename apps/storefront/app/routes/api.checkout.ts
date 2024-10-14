@@ -8,7 +8,6 @@ import {
   handleActionV2,
   type V2ActionHandler,
 } from '@libs/util/handleAction.server'
-import { destroyCartSession } from '@libs/util/server/cart-session.server'
 import { _updateAccountDetails } from '@libs/util/server/checkout.server'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { redirect, unstable_data } from '@remix-run/node'
@@ -24,7 +23,6 @@ import {
   StoreCartAddress,
   StoreCartResponse,
   StoreCartShippingOption,
-  StoreCreateCustomerAddress,
 } from '@medusajs/types'
 import { Address, MedusaAddress } from '@libs/util'
 import {
