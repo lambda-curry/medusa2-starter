@@ -34,7 +34,16 @@ export const getDefaultRegion = async function () {
 
 export const getSelectedRegion = async (headers: Headers) => {
   const regionId = await getSelectedRegionId(headers);
-  return regionId ? retrieveRegion(regionId) : await getDefaultRegion();
+
+  if (!regionId) {
+    try {
+      return await retrieveRegion(regionId);
+    } catch (e) {
+      console.warn('RegionId is not valid, using default region');
+    }
+  }
+
+  return await getDefaultRegion();
 };
 
 export const getRegion = async (countryCode: string = '') => {
