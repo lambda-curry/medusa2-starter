@@ -1,23 +1,27 @@
 import { buildSearchParamsFromObject } from '@libs/util/buildSearchParamsFromObject';
-import type { ProductListContent, ProductListFilter } from '@libs/util/medusa/types';
+import type {
+  CustomAction,
+  ProductListFilter,
+  TranslatableField,
+  TranslatableRichTextField,
+} from '@libs/util/medusa/types';
 import { useFetcher, useParams } from '@remix-run/react';
 import clsx from 'clsx';
-import { memo, useEffect, useState, type FC, type ReactNode } from 'react';
-import { ProductCategoryTabs } from '../../../product/ProductCategoryTabs';
-import { ProductCollectionTabs } from '../../../product/ProductCollectionTabs';
-import type { ProductListProps } from '../../../product/ProductGrid';
-import { ProductListHeader } from '../../../product/ProductListHeader';
+import { HTMLAttributes, memo, useEffect, useState, type FC } from 'react';
+import { ProductCategoryTabs } from '@ui-components/product/ProductCategoryTabs';
+import { ProductCollectionTabs } from '@ui-components/product/ProductCollectionTabs';
+import { ProductListHeader } from '@ui-components/product/ProductListHeader';
 import { Container } from '@ui-components/common/container/Container';
-import { PostSectionBase, type SectionBaseProps } from './PostSectionBase';
 import { StoreCollection, StoreProduct, StoreProductCategory } from '@medusajs/types';
+import ProductCarousel from '@ui-components/product/ProductCarousel';
 
-export interface SectionProductListProps extends SectionBaseProps<ProductListContent> {
+export interface ProductListProps<TElement extends HTMLElement = HTMLDivElement> extends HTMLAttributes<TElement> {
+  heading?: TranslatableField;
+  text?: TranslatableRichTextField;
+  actions?: CustomAction[];
   className?: string;
-  component: FC<ProductListProps>;
-  fallback: ReactNode;
 }
-
-const SectionProductListBase: FC<SectionProductListProps> = ({ component, ...props }) => {
+const ProductListBase: FC<{}> = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<number | undefined>(undefined);
   const fetcher = useFetcher<{
@@ -36,7 +40,6 @@ const SectionProductListBase: FC<SectionProductListProps> = ({ component, ...pro
   const hasCollectionTabs = !!collection_tabs?.length;
   const hasCategoryTabs = !!category_tabs?.length;
   const hasProducts = isInitialized && !filteredProducts?.length;
-  const ProductListComponent = component;
 
   const fetchData = (filters?: ProductListFilter) => {
     const queryString = buildSearchParamsFromObject({
@@ -56,9 +59,7 @@ const SectionProductListBase: FC<SectionProductListProps> = ({ component, ...pro
       return;
     }
 
-    console.log('SectionProductListBase => fetching products...');
-
-    fetchData(props.data?.filters);
+    fetchData();
   }, []);
 
   const handleTabChange = (index: number, type: 'collection' | 'category') => {
@@ -110,22 +111,22 @@ const SectionProductListBase: FC<SectionProductListProps> = ({ component, ...pro
         </div>
       )}
 
-      {!hasProducts && <ProductListComponent products={filteredProducts} />}
+      {!hasProducts && <ProductCarousel products={filteredProducts} />}
     </>
   );
 };
 
-export const SectionProductList: FC<SectionProductListProps> = memo((props) => {
-  const { heading, text, actions } = props.data || {};
-
+export const ProductList: FC<ProductListProps> = memo(({ className, heading, text, actions, ...props }) => {
   return (
-    <PostSectionBase {...props} className={clsx(`overflow-x-hidden`, props.className)}>
-      <Container>
-        <ProductListHeader heading={heading?.value} text={text} actions={actions} />
-        <SectionProductListBase {...props} />
-      </Container>
-    </PostSectionBase>
+    <section className={clsx(`mkt-section relative overflow-x-hidden`, className)} {...props}>
+      <div className="mkt-section__inner relative z-[2]">
+        <Container>
+          <ProductListHeader heading={heading?.value} text={text} actions={actions} />
+          <ProductListBase {...props} />
+        </Container>
+      </div>
+    </section>
   );
 });
 
-export default SectionProductList;
+export default ProductList;

@@ -1,13 +1,13 @@
 import { Container } from '@ui-components/common/container';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { getMergedPostMeta } from '@libs/util/posts';
-import HeroSection from '@ui-components/content/sections/HeroSection';
+import Hero from '@ui-components/content/sections/Hero';
 import { Image } from '@ui-components/common/images/Image';
-import { ListItemsSection } from '@ui-components/content/sections/ListItemsSection';
-import PostSectionProductListCarousel from '@ui-components/content/post-section/PostSectionProductListCarousel';
-import { SideBySideSection } from '@ui-components/content/sections/SideBySideSection';
-import { GridCTASection } from '@ui-components/content/sections/GridCTASection';
+import { ListItems } from '@ui-components/content/sections/ListItems';
+import { SideBySide } from '@ui-components/content/sections/SideBySide';
+import { GridCTA } from '@ui-components/content/sections/GridCTA';
 import { ActionList } from '@ui-components/content/ActionList';
+import ProductList from '@ui-components/content/sections/ProductList';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return {};
@@ -18,7 +18,7 @@ export const meta: MetaFunction<typeof loader> = getMergedPostMeta;
 export default function IndexRoute() {
   return (
     <>
-      <HeroSection
+      <Hero
         className="h-[800px] !max-w-full -mt-[calc(var(--mkt-header-height)+3rem)] md:-mt-[calc(var(--mkt-header-height-desktop)+2rem)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
         content={
           <div className="text-center w-full space-y-9">
@@ -58,7 +58,7 @@ export default function IndexRoute() {
       </Container>
 
       <Container className="p-14 pt-0">
-        <HeroSection
+        <Hero
           className="h-[594px]"
           backgroundClassName="rounded-3xl"
           image={{
@@ -68,7 +68,7 @@ export default function IndexRoute() {
         />
       </Container>
 
-      <ListItemsSection
+      <ListItems
         itemsClassName="mb-2"
         title="About our products"
         items={[
@@ -108,20 +108,18 @@ export default function IndexRoute() {
         ]}
       />
 
-      <PostSectionProductListCarousel
+      <ProductList
         className="!pb-[100px]"
-        data={{
-          heading: { value: 'Our Blends' },
-          actions: [
-            {
-              label: 'View all',
-              url: '/products',
-            },
-          ],
-        }}
+        heading={{ value: 'Our Blends' }}
+        actions={[
+          {
+            label: 'View all',
+            url: '/products',
+          },
+        ]}
       />
 
-      <HeroSection
+      <Hero
         className="pb-10 min-h-[734px] !max-w-full"
         content={
           <div className="text-center w-full space-y-9 pt-9">
@@ -130,7 +128,7 @@ export default function IndexRoute() {
               Sit back, let us take care&nbsp;of&nbsp;your&nbsp;coffee
             </h1>
 
-            <ListItemsSection
+            <ListItems
               className="text-left w-full text-black justify-between p-0"
               itemsClassName="rounded-3xl bg-highlight-900 p-10 text-sm"
               useFillTitle
@@ -182,7 +180,7 @@ export default function IndexRoute() {
         </div>
       </Container>
 
-      <SideBySideSection
+      <SideBySide
         className="p-14 md:pt-16 lg:pt-24 lg:px-24"
         left={
           <div className="w-full h-full flex items-center justify-center">
@@ -215,7 +213,7 @@ export default function IndexRoute() {
           </p>
         }
       />
-      <GridCTASection
+      <GridCTA
         className="p-14 md:pt-28 lg:pt-24 lg:px-24"
         images={[
           {
