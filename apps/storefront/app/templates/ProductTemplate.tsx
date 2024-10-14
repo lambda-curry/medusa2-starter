@@ -380,7 +380,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
           </Container>
         </Form>{' '}
       </section>
-      <ProductList className="!pb-[100px] xl:px-9" heading={{ value: 'You may also like' }} />
+      <ProductList className="!pb-[100px] xl:px-9" heading="You may also like" />
     </>
   );
 };

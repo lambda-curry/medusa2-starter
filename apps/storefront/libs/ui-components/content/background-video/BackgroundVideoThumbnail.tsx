@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, useEffect } from 'react';
 import { Image } from '@ui-components/common/images/Image';
 import clsx from 'clsx';
 import { useFetcher } from '@remix-run/react';
-import type { Video } from '@libs/util/index';
+import type { Video } from '@libs/types';
 
 export interface BackgroundVideoThumbnailProps extends HTMLAttributes<HTMLDivElement> {
   url: Video['url'];
@@ -49,7 +49,7 @@ export const BackgroundVideoThumbnail: FC<BackgroundVideoThumbnailProps> = ({
       <Image
         aria-hidden={true}
         role="presentation"
-        alt={customThumbnail ? customThumbnail.alt?.value || '' : 'cover for background video'}
+        alt={customThumbnail ? customThumbnail.alt || '' : 'cover for background video'}
         src={src}
         fallbackSrc={fallbackSrc}
         className="mkt-background-video__thumbnail__image h-full w-full object-cover"

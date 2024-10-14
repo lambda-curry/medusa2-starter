@@ -53,21 +53,6 @@ export function getCheapestProductVariant(product: StoreProduct) {
   return sortProductVariantsByPrice(product)[0]
 }
 
-export function getMostExpensiveProductVariant(
-  product: StoreProduct,
-  currencyCode: string,
-) {
-  const variants = sortProductVariantsByPrice(product)
-  return variants[variants.length - 1]
-}
-
-export function getMinimumProductPriceValue(
-  product: StoreProduct,
-  currencyCode: string,
-) {
-  return getVariantFinalPrice(getCheapestProductVariant(product))
-}
-
 export function formatLineItemPrice(
   lineItem: StoreCartLineItem,
   regionCurrency: string,

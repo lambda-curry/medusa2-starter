@@ -1,4 +1,3 @@
-import { BasePageSection } from '@libs/util/medusa/types'
 import {
   HttpTypes,
   StoreCollection,
@@ -6,8 +5,6 @@ import {
 } from '@medusajs/types'
 import { getSelectedRegion } from './data/regions.server'
 import { fetchProducts } from './products.server'
-
-export type MappedDataSections = BasePageSection<any> // TODO: CHECK IF THIS IS STILL REQUIRED
 
 export const getProductListData = async (request: Request) => {
   const region = await getSelectedRegion(request.headers)

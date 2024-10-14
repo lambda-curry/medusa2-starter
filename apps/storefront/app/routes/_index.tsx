@@ -1,6 +1,6 @@
 import { Container } from '@ui-components/common/container';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { getMergedPostMeta } from '@libs/util/posts';
+import { getMergedPageMeta } from '@libs/util/page';
 import Hero from '@ui-components/content/sections/Hero';
 import { Image } from '@ui-components/common/images/Image';
 import { ListItems } from '@ui-components/content/sections/ListItems';
@@ -13,7 +13,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return {};
 };
 
-export const meta: MetaFunction<typeof loader> = getMergedPostMeta;
+export const meta: MetaFunction<typeof loader> = getMergedPageMeta;
 
 export default function IndexRoute() {
   return (
@@ -110,7 +110,7 @@ export default function IndexRoute() {
 
       <ProductList
         className="!pb-[100px]"
-        heading={{ value: 'Our Blends' }}
+        heading="Our Blends"
         actions={[
           {
             label: 'View all',

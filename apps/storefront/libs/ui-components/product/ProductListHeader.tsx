@@ -1,45 +1,37 @@
 import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
-import { CustomAction, TranslatableRichTextField } from '@libs/util/medusa/types';
+import { CustomAction } from '@libs/types';
 import { FC, PropsWithChildren, ReactNode } from 'react';
 import { SectionHeading } from '../content/SectionHeading';
-import { SectionText } from '../content/SectionText';
 import { URLAwareNavLink } from '@ui-components/common/link';
 
 export interface ProductListHeaderProps extends PropsWithChildren {
   className?: string;
   heading?: ReactNode;
-  text?: TranslatableRichTextField;
+  text?: string;
   actions?: CustomAction[];
   customActions?: ReactNode;
 }
 
 export const ProductListHeader: FC<ProductListHeaderProps> = ({ heading, children, text, actions, customActions }) => {
-  if (!(heading || children) && !text?.value?.blocks?.length && !actions?.length && !customActions) return null;
+  if (!(heading || children) && !text && !actions?.length && !customActions) return null;
 
   return (
     <header className="mb-4 flex flex-col items-start gap-2 md:mb-6 md:flex-row md:gap-4 lg:mb-8">
       <div className="w-full flex-1 md:w-auto">
         <div className="inline-grid !max-w-prose gap-6">
           {(heading || children) && <SectionHeading className="font-italiana">{heading || children}</SectionHeading>}
-          {text && <SectionText content={text.value} />}
+          {text && <div>{text}</div>}
         </div>
       </div>
 
       {!!actions?.length && (
         <div className="flex grow-0 items-center gap-2">
           {actions.map(({ label, url }, index) => {
-            const [labelValue, urlValue] = // TODO: REMOVE THIS
-              typeof label === 'string' ? [label, url] : [(label as any)?.value, (url as any)?.value];
-            if (!labelValue) return null;
+            if (!label) return null;
 
             return (
-              <URLAwareNavLink
-                key={index}
-                url={urlValue}
-                prefetch="render"
-                className="flex items-center hover:underline"
-              >
-                {labelValue}
+              <URLAwareNavLink key={index} url={url} prefetch="render" className="flex items-center hover:underline">
+                {label}
                 <ArrowRightIcon className="ml-1.5 h-4" />
               </URLAwareNavLink>
             );

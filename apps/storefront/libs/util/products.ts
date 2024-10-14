@@ -7,7 +7,6 @@ import {
 import type { MetaFunction } from '@remix-run/node'
 import { UIMatch } from '@remix-run/react'
 import { getCommonMeta, getParentMeta, mergeMeta } from './meta'
-import { getPostMeta } from './posts'
 import { RootLoader } from './server/root.server'
 import {
   StoreProduct,
@@ -233,5 +232,4 @@ export const getMergedProductMeta = mergeMeta(
   getParentMeta,
   getCommonMeta,
   getProductMeta,
-  getPostMeta,
 )

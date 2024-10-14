@@ -1,17 +1,17 @@
-import type { Address, MedusaAddress } from "@libs/util/medusa/types"
-import { StoreCreateCustomerAddress } from "@medusajs/types"
+import type { Address, MedusaAddress } from '@libs/types'
+import { StoreCreateCustomerAddress } from '@medusajs/types'
 
 export const emptyAddress: Address = {
-  firstName: "",
-  lastName: "",
-  company: "",
-  address1: "",
-  address2: "",
-  city: "",
-  province: "",
-  postalCode: "",
-  countryCode: "",
-  phone: "",
+  firstName: '',
+  lastName: '',
+  company: '',
+  address1: '',
+  address2: '',
+  city: '',
+  province: '',
+  postalCode: '',
+  countryCode: '',
+  phone: '',
 }
 
 export const medusaAddressToAddress = (
@@ -21,16 +21,16 @@ export const medusaAddressToAddress = (
 
   return {
     ...emptyAddress,
-    firstName: address?.first_name || "",
-    lastName: address?.last_name || "",
-    company: address?.company || "",
-    address1: address?.address_1 || "",
-    address2: address?.address_2 || "",
-    city: address?.city || "",
-    countryCode: address?.country_code || "",
-    phone: address?.phone || "",
-    postalCode: address?.postal_code || "",
-    province: address?.province || "",
+    firstName: address?.first_name || '',
+    lastName: address?.last_name || '',
+    company: address?.company || '',
+    address1: address?.address_1 || '',
+    address2: address?.address_2 || '',
+    city: address?.city || '',
+    countryCode: address?.country_code || '',
+    phone: address?.phone || '',
+    postalCode: address?.postal_code || '',
+    province: address?.province || '',
   }
 }
 
@@ -40,15 +40,15 @@ export const addressPayload = (
   if (!address) return emptyAddress as StoreCreateCustomerAddress
 
   return {
-    first_name: address?.first_name || "",
-    last_name: address?.last_name || "",
-    company: address?.company || "",
-    address_1: address?.address_1 || "",
-    address_2: address?.address_2 || "",
-    city: address?.city || "",
-    country_code: address?.country_code || "",
-    phone: address?.phone || "",
-    postal_code: address?.postal_code || "",
-    province: address?.province || "",
+    first_name: address?.first_name || '',
+    last_name: address?.last_name || '',
+    company: address?.company || '',
+    address_1: address?.address_1 || '',
+    address_2: address?.address_2 || '',
+    city: address?.city || '',
+    country_code: address?.country_code || '',
+    phone: address?.phone || '',
+    postal_code: address?.postal_code || '',
+    province: address?.province || '',
   }
 }

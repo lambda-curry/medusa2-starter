@@ -4,7 +4,7 @@ import { withYup } from '@remix-validated-form/with-yup'
 import * as Yup from 'yup'
 import { validationError } from 'remix-validated-form'
 import { emailAddressValidation } from '@libs/util/validation'
-import { handleActionV2, V2ActionHandler } from '@libs/util/handleAction.server'
+import { handleAction, ActionHandler } from '@libs/util/handleAction.server'
 
 export enum NewsletterSubscriptionAction {
   SUBSCRIBE_EMAIL = 'subscribeEmail',
@@ -16,7 +16,7 @@ export const newsletterSubscriberFormValidator = withYup(
   }),
 )
 
-const subscribeEmail: V2ActionHandler = async (
+const subscribeEmail: ActionHandler = async (
   data: CreateNewsletterSubscriberReq,
   { request },
 ) => {
@@ -41,7 +41,7 @@ const actions = {
 }
 
 export const action = async (actionArgs: ActionFunctionArgs) => {
-  return await handleActionV2({
+  return await handleAction({
     actionArgs,
     actions,
   })

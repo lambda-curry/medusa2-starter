@@ -1,4 +1,4 @@
-import { SiteSettings } from '@libs/util/medusa/types'
+import { SiteSettings } from '@libs/types'
 
 export const siteSettings: SiteSettings = {
   description: '',

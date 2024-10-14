@@ -35,7 +35,7 @@
     "paths": {
       "~/*": ["./app/*"],
       "@ui-components/*": ["./libs/ui-components/*"],
-      "@libs/*": ["./libs/*"]
+      "@libs/*": ["./libs/*"],
     },
     "noEmit": true
   }

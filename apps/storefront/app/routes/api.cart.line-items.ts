@@ -1,6 +1,6 @@
 import {
-  type V2ActionHandler,
-  handleActionV2,
+  type ActionHandler,
+  handleAction,
 } from '@libs/util/handleAction.server'
 import { getVariantBySelectedOptions } from '@libs/util/products'
 import { setCartId } from '@libs/util/server/cookies.server'
@@ -53,7 +53,7 @@ export interface DeleteLineItemRequestPayload {
 
 export interface LineItemRequestResponse extends StoreCartResponse {}
 
-const createItem: V2ActionHandler<StoreCartResponse> = async (
+const createItem: ActionHandler<StoreCartResponse> = async (
   payload: CreateLineItemPayLoad,
   { request },
 ) => {
@@ -97,7 +97,7 @@ const createItem: V2ActionHandler<StoreCartResponse> = async (
   return data({ cart }, { headers: responseHeaders })
 }
 
-const updateItem: V2ActionHandler<StoreCartResponse> = async (
+const updateItem: ActionHandler<StoreCartResponse> = async (
   { lineItemId, cartId, quantity }: UpdateLineItemRequestPayload,
   { request },
 ) => {
@@ -107,7 +107,7 @@ const updateItem: V2ActionHandler<StoreCartResponse> = async (
   })
 }
 
-const deleteItem: V2ActionHandler<StoreCartResponse> = async (
+const deleteItem: ActionHandler<StoreCartResponse> = async (
   { lineItemId, cartId }: DeleteLineItemRequestPayload,
   { request },
 ) => {
@@ -125,7 +125,7 @@ const actions = {
 }
 
 export async function action(actionArgs: ActionFunctionArgs) {
-  return await handleActionV2({
+  return await handleAction({
     actionArgs,
     actions,
   })

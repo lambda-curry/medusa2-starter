@@ -1,7 +1,6 @@
-import { sdk } from "@libs/util/server/client.server"
-import { StoreCartShippingOption } from "@medusajs/types"
+import { sdk } from '@libs/util/server/client.server'
+import { StoreCartShippingOption } from '@medusajs/types'
 
-// Shipping actions
 export const listCartShippingOptions = async (cartId: string) => {
   return sdk.store.fulfillment
     .listCartOptions({ cart_id: cartId })

@@ -1,4 +1,4 @@
-import { SiteSettings } from "@libs/util/medusa/types"
+import { SiteSettings } from '@libs/types';
 import {
   FacebookIcon,
   InstagramIcon,
@@ -8,13 +8,11 @@ import {
   TiktokIcon,
   TwitterIcon,
   YoutubeIcon,
-} from "@ui-components/common/assets/icons"
-import { IconButton } from "@ui-components/common/buttons/IconButton"
-import type { FC } from "react"
+} from '@ui-components/common/assets/icons';
+import { IconButton } from '@ui-components/common/buttons/IconButton';
+import type { FC } from 'react';
 
-export const SocialIcons: FC<{ siteSettings?: SiteSettings }> = ({
-  siteSettings,
-}) => {
+export const SocialIcons: FC<{ siteSettings?: SiteSettings }> = ({ siteSettings }) => {
   const socialLinks = [
     { icon: FacebookIcon, url: siteSettings?.social_facebook },
     { icon: InstagramIcon, url: siteSettings?.social_instagram },
@@ -24,28 +22,21 @@ export const SocialIcons: FC<{ siteSettings?: SiteSettings }> = ({
     { icon: PinterestIcon, url: siteSettings?.social_pinterest },
     { icon: TiktokIcon, url: siteSettings?.social_tiktok },
     { icon: SnapchatIcon, url: siteSettings?.social_snapchat },
-  ].filter((link) => !!link.url)
+  ].filter((link) => !!link.url);
 
-  if (socialLinks.length === 0) return null
+  if (socialLinks.length === 0) return null;
 
   return (
     <div className="xs:grid-cols-8 grid grid-cols-4 gap-2">
       {socialLinks.map(({ icon, url }) => (
         <IconButton
           key={url}
-          as={(props) => (
-            <a
-              href={url}
-              rel="noopener noreferrer"
-              target="_blank"
-              {...props}
-            />
-          )}
+          as={(props) => <a href={url} rel="noopener noreferrer" target="_blank" {...props} />}
           className="text-white hover:text-black"
-          iconProps={{ fill: "currentColor", width: "24" }}
+          iconProps={{ fill: 'currentColor', width: '24' }}
           icon={icon}
         />
       ))}
     </div>
-  )
-}
+  );
+};

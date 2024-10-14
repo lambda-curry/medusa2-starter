@@ -2,7 +2,7 @@ import { FC, HTMLAttributes, Suspense, lazy, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import type { OnProgressProps } from 'react-player/base';
 import { BackgroundVideoThumbnail } from './BackgroundVideoThumbnail';
-import { Video } from '@libs/util/medusa/types';
+import { Video } from '@libs/types';
 import type ReactPlayer from 'react-player';
 import { useHydrated } from 'remix-utils/use-hydrated';
 
