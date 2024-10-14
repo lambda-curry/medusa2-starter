@@ -1,29 +1,20 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useLoaderData,
-  useRouteError,
-} from '@remix-run/react'
-import { useRef } from 'react'
-import { Page } from './components/layout/Page'
-import { RootProviders } from './providers/root-providers'
-import { MetaFunction } from '@remix-run/node'
-import { getCommonMeta, mergeMeta } from '@libs/util/meta'
-import { getRootLoader } from '@libs/util/server/root.server'
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData, useRouteError } from '@remix-run/react';
+import { useRef } from 'react';
+import { Page } from './components/layout/Page';
+import { RootProviders } from './providers/root-providers';
+import { MetaFunction } from '@remix-run/node';
+import { getCommonMeta, mergeMeta } from '@libs/util/meta';
+import { getRootLoader } from '@libs/util/server/root.server';
 
-import '~/styles/global.css'
+import '~/styles/global.css';
 
 export const getRootMeta: MetaFunction = ({ data }) => {
-  const title = 'Barrio Store'
-  const description =
-    'Discover our artisan-roasted coffee, crafted with care and delivered to your door.'
-  const ogTitle = title
-  const ogDescription = description
-  const ogImage = '' // getProxySrc(siteDetails.store.logo?.url)
-  const ogImageAlt = !!ogImage ? `${ogTitle} logo` : undefined
+  const title = 'Barrio Store';
+  const description = 'Discover our artisan-roasted coffee, crafted with care and delivered to your door.';
+  const ogTitle = title;
+  const ogDescription = description;
+  const ogImage = '';
+  const ogImageAlt = !!ogImage ? `${ogTitle} logo` : undefined;
 
   return [
     { title },
@@ -32,21 +23,18 @@ export const getRootMeta: MetaFunction = ({ data }) => {
     { property: 'og:description', content: ogDescription },
     { property: 'og:image', content: ogImage },
     { property: 'og:image:alt', content: ogImageAlt },
-  ]
-}
+  ];
+};
 
-export const meta: MetaFunction<typeof loader> = mergeMeta(
-  getCommonMeta,
-  getRootMeta,
-)
+export const meta: MetaFunction<typeof loader> = mergeMeta(getCommonMeta, getRootMeta);
 
-export const loader = getRootLoader
+export const loader = getRootLoader;
 
 function App() {
-  const headRef = useRef<HTMLHeadElement>(null)
-  const data = useLoaderData<typeof getRootLoader>()
+  const headRef = useRef<HTMLHeadElement>(null);
+  const data = useLoaderData<typeof getRootLoader>();
 
-  const { env, cart, fontLinks, siteDetails } = data
+  const { env, cart, fontLinks, siteDetails } = data;
 
   return (
     <RootProviders>
@@ -60,59 +48,17 @@ function App() {
           ))}
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="anonymous"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Italiana&display=swap"
-            rel="stylesheet"
-          />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet" />
 
-          <link
-            rel="preconnect"
-            href="https://fonts.googleapis.com"
-            crossOrigin="anonymous"
-          />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="anonymous"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&display=swap"
-            rel="stylesheet"
-          />
+          <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&display=swap" rel="stylesheet" />
 
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="anonymous"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap"
-            rel="stylesheet"
-          />
+          <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap" rel="stylesheet" />
 
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="anonymous"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Aboreto&display=swap"
-            rel="stylesheet"
-          />
+          <link href="https://fonts.googleapis.com/css2?family=Aboreto&display=swap" rel="stylesheet" />
           <Links />
-          {siteDetails.settings.description && (
-            <meta
-              name="description"
-              content={siteDetails.settings.description}
-            />
-          )}
+          {siteDetails.settings.description && <meta name="description" content={siteDetails.settings.description} />}
         </head>
         <body className="min-h-screen">
           <Page>
@@ -128,15 +74,15 @@ function App() {
         </body>
       </html>
     </RootProviders>
-  )
+  );
 }
 
-export default App
+export default App;
 
 export function ErrorBoundary() {
-  const error = useRouteError()
+  const error = useRouteError();
 
-  console.error('error boundary error', error)
+  console.error('error boundary error', error);
 
   return (
     <html>
@@ -149,5 +95,5 @@ export function ErrorBoundary() {
         <Scripts />
       </body>
     </html>
-  )
+  );
 }

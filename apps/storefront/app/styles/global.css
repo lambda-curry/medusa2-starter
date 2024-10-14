@@ -53,7 +53,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url(https://fonts.gstatic.com/s/sen/v1/6xK-dSZaM9iE.ttf)
+    src: url(https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap)
       format('truetype');
   }
   @font-face {
@@ -61,7 +61,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url(https://fonts.gstatic.com/s/italiana/v12/xn7iYH8xwmSyTvOlIVYsqA.ttf)
+    src: url(https://fonts.googleapis.com/css2?family=Italiana&display=swap)
       format('truetype');
   }
   @font-face {
@@ -69,7 +69,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url(https://fonts.gstatic.com/s/ballet/v1/xn7iYH8xwmSyTvOlIVYsqA.ttf)
+    src: url(https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&display=swap)
       format('truetype');
   }
 
@@ -77,26 +77,9 @@
     font-family: 'Aboreto';
     font-weight: 400;
     font-style: normal;
-    src: url(https://fonts.gstatic.com/s/aboreto/v1/6ae-4KC6UTEYKXyw680000.ttf)
+    src: url(https://fonts.googleapis.com/css2?family=Aboreto&display=swap)
       format('truetype');
   }
-
-  /* @font-face {
-    font-family: "Grandstander";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(https://fonts.gstatic.com/s/grandstander/v17/ga6fawtA-GpSsTWrnNHPCSIMZhhKpFjyNZIQD1--D3g.ttf)
-      format("truetype");
-  }
-  @font-face {
-    font-family: "Montserrat Alternates";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(https://fonts.gstatic.com/s/montserratalternates/v17/mFTvWacfw6zH4dthXcyms1lPpC8I_b0juU0J7A.ttf)
-      format("truetype");
-  } */
 
   h1,
   h2,
