@@ -13,7 +13,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({ classN
     className={clsx(
       'focus:ring-primary-500 focus:border-primary-500 block w-full rounded-md border-0 border-gray-300 px-3 py-3 text-sm shadow-sm outline-none focus:ring-0',
       { 'border-red-600': !!error },
-      className
+      className,
     )}
   />
 ));

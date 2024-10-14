@@ -10,14 +10,10 @@ export interface ProductPriceProps {
   currencyCode: string;
 }
 
-export const ProductPrice: FC<ProductPriceProps> = ({
-  product,
-  currencyCode,
-  ...props
-}) => {
+export const ProductPrice: FC<ProductPriceProps> = ({ product, currencyCode, ...props }) => {
   const variant = useMemo(
     () => props.variant || getCheapestProductVariant(product),
-    [props.variant, product, currencyCode]
+    [props.variant, product, currencyCode],
   );
 
   if (!variant) return null;

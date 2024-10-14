@@ -1,18 +1,9 @@
-import StripeBadge from "@ui-components/common/assets/markethaus/StripeBadge.png"
+import StripeBadge from '@ui-components/common/assets/StripeBadge.png';
 
 export interface StripeSecurityImageProps {
-  className?: string
+  className?: string;
 }
 
-export const StripeSecurityImage = ({
-  className,
-}: StripeSecurityImageProps) => {
-  return (
-    <img
-      className={className}
-      width={320}
-      src={StripeBadge}
-      alt="stripe security badge"
-    />
-  )
-}
+export const StripeSecurityImage = ({ className }: StripeSecurityImageProps) => {
+  return <img className={className} width={320} src={StripeBadge} alt="stripe security badge" />;
+};

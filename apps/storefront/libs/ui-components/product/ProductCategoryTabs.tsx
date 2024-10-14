@@ -1,11 +1,11 @@
 import { Tab } from '@headlessui/react';
-import { ProductCategory } from '@libs/util/medusa';
+import { StoreProductCategory } from '@medusajs/types';
 import { Fragment, type FC } from 'react';
 import { TabButton } from '~/components/tabs/TabButton';
 import { TabList } from '~/components/tabs/TabList';
 
 export interface ProductCategoryTabsProps {
-  categories: ProductCategory[];
+  categories: StoreProductCategory[];
   selectedIndex?: number;
   onChange?: (index: number) => void;
 }
@@ -18,7 +18,7 @@ export const ProductCategoryTabs: FC<ProductCategoryTabsProps> = ({ categories, 
       <TabList>
         <Tab as={Fragment}>{({ selected }) => <TabButton selected={selected}>All</TabButton>}</Tab>
 
-        {categories.map(category => (
+        {categories.map((category) => (
           <Tab key={category.id} as={Fragment}>
             {({ selected }) => <TabButton selected={selected}>{category.name}</TabButton>}
           </Tab>

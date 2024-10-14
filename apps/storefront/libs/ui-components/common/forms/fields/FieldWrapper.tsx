@@ -15,11 +15,11 @@ export const FieldWrapper = forwardRef<HTMLDivElement, FieldWrapperProps>(
         'field col-span-12',
         {
           [`field--${type}`]: type,
-          'field--has-error': !!error
+          'field--has-error': !!error,
         },
-        className
+        className,
       )}
       {...props}
     />
-  )
+  ),
 );

@@ -14,7 +14,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       className={clsx(
         'focus:ring-primary-500 focus:border-primary-500 block h-12 w-full cursor-pointer rounded-md border border-gray-300 pl-3 pr-10 text-sm shadow-sm outline-none focus:ring-1',
         { 'border-red-600': error },
-        className
+        className,
       )}
     >
       {options &&
@@ -26,5 +26,5 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
       {children}
     </select>
-  )
+  ),
 );

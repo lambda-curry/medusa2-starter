@@ -1,11 +1,10 @@
-import omit from "lodash/omit"
-import kebabCase from "lodash/kebabCase"
-import { BasePageSection, type BaseStyles } from "@libs/util/medusa/types"
-import { imageProxyURL } from "@libs/utils-to-merge/img-proxy"
-import Color from "color"
+import omit from 'lodash/omit'
+import kebabCase from 'lodash/kebabCase'
+import { BasePageSection, type BaseStyles } from '@libs/util/medusa/types'
+import Color from 'color'
 
 const formatColorValue = (color: string) => {
-  return color.startsWith("#") ? Color(color).rgb().array().join(" ") : color
+  return color.startsWith('#') ? Color(color).rgb().array().join(' ') : color
 }
 
 /**
@@ -19,25 +18,25 @@ const formatColorValue = (color: string) => {
  */
 function prefixCSS(parentSelector: string, css: string): string {
   // Remove white space from each line of the css and remove new lines
-  css = css.replace(/\s+/g, " ").replace(/\n/g, "")
+  css = css.replace(/\s+/g, ' ').replace(/\n/g, '')
 
   // Remove all @ rules and their contents
-  css = css.replace(/@[^{]+{(?:[^{}]*{[^{}]*}[^{}]*|[^{}]*)*}/g, "")
+  css = css.replace(/@[^{]+{(?:[^{}]*{[^{}]*}[^{}]*|[^{}]*)*}/g, '')
 
   // Prefix each CSS rule with the parent selector and replace & with parent selector
   css = css.replace(
     /(^|}|,)\s*([^{,]+)\s*{/g,
     (_match: string, before: string, selectors: string): string => {
       const prefixedSelectors = selectors
-        .split(",")
+        .split(',')
         .map((selector) => {
-          if (selector.includes("&")) {
+          if (selector.includes('&')) {
             return selector.replace(/&/g, parentSelector).trim()
           } else {
             return `${parentSelector} ${selector.trim()}`
           }
         })
-        .join(", ")
+        .join(', ')
 
       return `${before} ${prefixedSelectors} {`
     },
@@ -56,41 +55,40 @@ const generateCSSVariables = (styles: BaseStyles, prefix: string) =>
     const backgroundType = styles.background_type
 
     switch (property) {
-      case "color":
+      case 'color':
         if (value) {
           acc = `${acc}${variableName}:${formatColorValue(value)};`
         }
         break
 
-      case "background-image":
+      case 'background-image':
         // Only add the CSS variables for image properties if the background type is set to "image".
         // This is to prevent the background image from being overridden when the type "image" is not selected but values are already set.
-        if (backgroundType === "image" && value.url) {
-          const proxyUrl = imageProxyURL(value.url, { context: "post_header" })
-          acc = `${acc}${variableName}:url(${proxyUrl});`
+        if (backgroundType === 'image' && value.url) {
+          acc = `${acc}${variableName}:url(${value.url});`
         }
         break
 
-      case "background-color":
+      case 'background-color':
         if (value) {
           acc = `${acc}${variableName}:${formatColorValue(value)};`
         }
         break
 
-      case "background-position":
-      case "background-size":
-      case "background-repeat":
+      case 'background-position':
+      case 'background-size':
+      case 'background-repeat':
         // Only add the CSS variables for image properties if the background type is set to "image".
         // This is to prevent the background image from being overridden when the type "image" is not selected but values are already set.
-        if (backgroundType === "image" && value) {
+        if (backgroundType === 'image' && value) {
           acc = `${acc}${variableName}:${value};`
         }
         break
 
-      case "background-video":
+      case 'background-video':
         break
 
-      case "background-overlay":
+      case 'background-overlay':
         if (value.color) {
           acc = `${acc}${variableName}-color:${formatColorValue(value.color)};`
         }
@@ -101,8 +99,8 @@ const generateCSSVariables = (styles: BaseStyles, prefix: string) =>
           acc = `${acc}${variableName}-blend-mode:${value.blend_mode};`
         break
 
-      case "padding":
-      case "margin":
+      case 'padding':
+      case 'margin':
         if (value.top) acc = `${acc}${variableName}-top:${value.top}rem;`
         if (value.right) acc = `${acc}${variableName}-right:${value.right}rem;`
         if (value.bottom)
@@ -116,19 +114,19 @@ const generateCSSVariables = (styles: BaseStyles, prefix: string) =>
     }
 
     return acc
-  }, "")
+  }, '')
 
 export const generateSectionStyles = (
   section: BasePageSection,
 ): { styles: string } => {
   const selector = `[data-post-section-id=${section.id}]`
   const defaultStyles = generateCSSVariables(
-    omit(section.styles?.default || {}, "custom_css"),
-    "default",
+    omit(section.styles?.default || {}, 'custom_css'),
+    'default',
   )
   const mobileStyles = generateCSSVariables(
-    omit(section.styles?.mobile || {}, "custom_css"),
-    "mobile",
+    omit(section.styles?.mobile || {}, 'custom_css'),
+    'mobile',
   )
   const defaultCustomCSS = section.styles?.default?.custom_css
   const mobileCustomCSS = section.styles?.mobile?.custom_css
@@ -138,14 +136,14 @@ export const generateSectionStyles = (
       ${defaultStyles}
     }
 
-    ${defaultCustomCSS ? prefixCSS(selector, defaultCustomCSS) : ""}
+    ${defaultCustomCSS ? prefixCSS(selector, defaultCustomCSS) : ''}
 
     @media (max-width: 639px) {
       ${selector} {
         ${mobileStyles}
       }
 
-      ${mobileCustomCSS ? prefixCSS(selector, mobileCustomCSS) : ""}
+      ${mobileCustomCSS ? prefixCSS(selector, mobileCustomCSS) : ''}
     }
   `.trim()
 

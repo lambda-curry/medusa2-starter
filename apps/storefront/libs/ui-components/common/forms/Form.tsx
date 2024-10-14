@@ -40,8 +40,8 @@ export function Form<DataType extends object, Subaction extends string | undefin
     },
     250,
     {
-      trailing: true
-    }
+      trailing: true,
+    },
   );
 
   return (

@@ -19,11 +19,11 @@ export const FieldSelect = forwardRef<HTMLDivElement, FieldSelectProps>(
       fieldOptions: {
         validationBehavior: {
           initial: 'onSubmit',
-          whenTouched: 'onSubmit'
+          whenTouched: 'onSubmit',
         },
-        ...props.fieldOptions
+        ...props.fieldOptions,
       },
-      ...props
+      ...props,
     });
 
     return (
@@ -32,7 +32,7 @@ export const FieldSelect = forwardRef<HTMLDivElement, FieldSelectProps>(
 
         <FieldInput
           className={clsx({
-            'relative flex items-center': prefix
+            'relative flex items-center': prefix,
           })}
         >
           {prefix && <span className="absolute left-4">{prefix}</span>}
@@ -47,5 +47,5 @@ export const FieldSelect = forwardRef<HTMLDivElement, FieldSelectProps>(
         <FieldError {...errorProps} />
       </FieldWrapper>
     );
-  }
+  },
 );

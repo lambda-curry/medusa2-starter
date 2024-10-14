@@ -1,2 +1,2 @@
-export * from './AddressFieldGroup';
-export * from './ConfirmPasswordFieldGroup';
+export * from './AddressFieldGroup'
+export * from './ConfirmPasswordFieldGroup'

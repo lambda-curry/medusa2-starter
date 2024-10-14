@@ -1,58 +1,38 @@
-import { FC, ImgHTMLAttributes } from "react"
-import clsx from "clsx"
-import {
-  ImageProxyURLOptions,
-  useImageProxySrc,
-} from "@libs/utils-to-merge/img-proxy"
-import { ImageBase } from "./ImageBase"
+import { FC, ImgHTMLAttributes } from 'react';
+import clsx from 'clsx';
+import { ImageBase } from './ImageBase';
 
 export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
-  src?: string
+  src?: string;
   sources?: {
-    src: string
-    media?: string
-    proxyOptions?: ImageProxyURLOptions
-  }[]
-  alt?: string
-  fallbackSrc?: string[]
-  proxyOptions?: ImageProxyURLOptions
+    src: string;
+    media?: string;
+  }[];
+  alt?: string;
+  fallbackSrc?: string[];
 }
 
 export const Source = ({
   src,
   media,
-  proxyOptions,
 }: {
-  src: string
-  media?: string
-  proxyOptions?: ImageProxyURLOptions
+  src: string;
+  media?: string;
 }) => {
-  const proxySrc = useImageProxySrc(src, proxyOptions)
-  return <source media={media} srcSet={proxySrc} />
-}
+  return <source media={media} src={src} />;
+};
 
 export const Image: FC<ImageProps> = ({ src, sources, className, ...rest }) => {
-  if (!src && !sources?.length) return null
+  if (!src && !sources?.length) return null;
 
-  const defaultSrc = src || (sources && sources[sources.length - 1].src)
+  const defaultSrc = src || (sources && sources[sources.length - 1].src);
 
   return (
     <picture>
-      {sources?.map(({ src, media, proxyOptions }) =>
-        src && src !== defaultSrc ? (
-          <Source
-            key={src}
-            src={src}
-            media={media}
-            proxyOptions={proxyOptions}
-          />
-        ) : null,
+      {sources?.map(({ src, media }) =>
+        src && src !== defaultSrc ? <Source key={src} src={src} media={media} /> : null,
       )}
-      <ImageBase
-        className={clsx(`mkt-image`, className)}
-        src={defaultSrc}
-        {...rest}
-      />
+      <ImageBase className={clsx(`mkt-image`, className)} src={defaultSrc} {...rest} />
     </picture>
-  )
-}
+  );
+};

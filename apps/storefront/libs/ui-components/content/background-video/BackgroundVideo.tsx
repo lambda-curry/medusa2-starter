@@ -42,7 +42,7 @@ export const BackgroundVideo: FC<BackgroundVideoProps> = ({ url, thumbnail, clas
         key={url}
         className={clsx(
           `mkt-background-video pointer-events-none absolute left-0 top-0 h-full w-full overflow-hidden`,
-          className
+          className,
         )}
       >
         <BackgroundVideoThumbnail
@@ -50,7 +50,7 @@ export const BackgroundVideo: FC<BackgroundVideoProps> = ({ url, thumbnail, clas
           thumbnail={thumbnail}
           className={clsx('transition-opacity duration-500', {
             'opacity-100': !isPlaying,
-            'opacity-0': isPlaying
+            'opacity-0': isPlaying,
           })}
         />
       </div>
@@ -64,7 +64,7 @@ export const BackgroundVideo: FC<BackgroundVideoProps> = ({ url, thumbnail, clas
       key={url}
       className={clsx(
         `mkt-background-video pointer-events-none absolute left-0 top-0 h-full w-full overflow-hidden`,
-        className
+        className,
       )}
     >
       <BackgroundVideoThumbnail
@@ -72,7 +72,7 @@ export const BackgroundVideo: FC<BackgroundVideoProps> = ({ url, thumbnail, clas
         thumbnail={thumbnail}
         className={clsx('transition-opacity duration-500', {
           'opacity-100': !isPlaying,
-          'opacity-0': isPlaying
+          'opacity-0': isPlaying,
         })}
       />
       <Suspense fallback={<BackgroundVideoThumbnail url={url} thumbnail={thumbnail} />}>

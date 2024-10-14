@@ -11,7 +11,7 @@ export const BackgroundVideoPlayer: FC<BackgroundVideoPlayerProps> = memo(({ url
   <div
     className={clsx(
       'mkt-background-video__player z-1 [&_iframe]:absolute [&_iframe]:left-1/2 [&_iframe]:top-1/2 [&_iframe]:aspect-video [&_iframe]:!h-auto [&_iframe]:min-h-[calc(100%+112px)] [&_iframe]:!w-auto [&_iframe]:min-w-full [&_iframe]:-translate-x-1/2 [&_iframe]:-translate-y-1/2',
-      className
+      className,
     )}
   >
     <Suspense>
@@ -34,8 +34,8 @@ export const BackgroundVideoPlayer: FC<BackgroundVideoPlayerProps> = memo(({ url
               enablejsapi: 1,
               modestbranding: 1,
               fs: 0,
-              rel: 0
-            }
+              rel: 0,
+            },
           },
           vimeo: {
             playerOptions: {
@@ -44,9 +44,9 @@ export const BackgroundVideoPlayer: FC<BackgroundVideoPlayerProps> = memo(({ url
               muted: 1,
               loop: 1,
               controls: 0,
-              playsinline: 1
-            }
-          }
+              playsinline: 1,
+            },
+          },
         }}
       />
     </Suspense>

@@ -14,7 +14,7 @@ export const InputCheckbox = forwardRef<HTMLInputElement, InputCheckboxProps>(({
     className={clsx(
       'text-primary-600 focus:ring-primary-500 block h-5 w-5 rounded border border-gray-300',
       { 'border-red-600': !!error },
-      className
+      className,
     )}
   />
 ));

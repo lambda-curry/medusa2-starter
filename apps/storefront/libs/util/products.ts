@@ -3,19 +3,18 @@ import {
   getCheapestProductVariant,
   getVariantFinalPrice,
   getVariantPrices,
-} from "@libs/util/prices"
-import type { MetaFunction } from "@remix-run/node"
-import { UIMatch } from "@remix-run/react"
-import { getProxySrc } from "@libs/utils-to-merge/img-proxy"
-import { getCommonMeta, getParentMeta, mergeMeta } from "./meta"
-import { getPostMeta } from "./posts"
-import { RootLoader } from "./server/root.server"
+} from '@libs/util/prices'
+import type { MetaFunction } from '@remix-run/node'
+import { UIMatch } from '@remix-run/react'
+import { getCommonMeta, getParentMeta, mergeMeta } from './meta'
+import { getPostMeta } from './posts'
+import { RootLoader } from './server/root.server'
 import {
   StoreProduct,
   StoreProductOption,
   StoreProductOptionValue,
   StoreProductVariant,
-} from "@medusajs/types"
+} from '@medusajs/types'
 
 export const getVariantBySelectedOptions = (
   variants: StoreProductVariant[],
@@ -30,7 +29,7 @@ export const selectVariantFromMatrixBySelectedOptions = (
   selectedOptions?: string[],
 ) => {
   if (!selectedOptions) return
-  const serialized = selectedOptions.join("|")
+  const serialized = selectedOptions.join('|')
   return matrix[serialized]
 }
 
@@ -95,7 +94,7 @@ export const selectVariantMatrix = (product: StoreProduct): VariantMatrix => {
 
   // Populate the priceMatrix with variants for each combination
   allCombinations.forEach((combination) => {
-    const serialized = combination.join("|")
+    const serialized = combination.join('|')
     const correspondingVariant = variants.find((variant) => {
       return variant.options?.every((o) => combination.includes(o.value))
     })
@@ -118,7 +117,7 @@ export function getFilteredOptionValues(
 
   // Filter out unselected (empty string) options
   const filteredSelectedOptions = Object.entries(otherSelectedOptions).filter(
-    ([_, value]) => value !== "",
+    ([_, value]) => value !== '',
   )
 
   // Check if no other options are selected
@@ -209,20 +208,20 @@ export const getProductMeta: MetaFunction = ({ data, matches }) => {
   const description = product.description
   const ogTitle = title
   const ogDescription = description
-  const ogImage = getProxySrc(product.thumbnail || product.images?.[0]?.url)
+  const ogImage = product.thumbnail || product.images?.[0]?.url
   const ogImageAlt = !!ogImage ? `${title} product thumbnail` : undefined
 
   return [
     { title },
-    { name: "description", content: description },
-    { property: "og:title", content: ogTitle },
-    { property: "og:description", content: ogDescription },
-    { property: "og:image", content: ogImage },
-    { property: "og:image:alt", content: ogImageAlt },
-    { property: "og:type", content: "product" },
-    { property: "product:price:currency", content: region.currency_code },
+    { name: 'description', content: description },
+    { property: 'og:title', content: ogTitle },
+    { property: 'og:description', content: ogDescription },
+    { property: 'og:image', content: ogImage },
+    { property: 'og:image:alt', content: ogImageAlt },
+    { property: 'og:type', content: 'product' },
+    { property: 'product:price:currency', content: region.currency_code },
     {
-      property: "product:price:amount",
+      property: 'product:price:amount',
       content: formatPrice(getVariantFinalPrice(defaultVariant), {
         currency: region.currency_code,
       }),

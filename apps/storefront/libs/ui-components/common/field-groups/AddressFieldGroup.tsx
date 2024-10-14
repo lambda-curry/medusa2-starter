@@ -1,20 +1,16 @@
-import { FieldGroup } from "../forms/fields/FieldGroup"
-import { FieldSelect } from "../forms/fields/FieldSelect"
-import { FieldText } from "../forms/fields/FieldText"
-import { ChangeEvent, FC } from "react"
+import { FieldGroup } from '../forms/fields/FieldGroup';
+import { FieldSelect } from '../forms/fields/FieldSelect';
+import { FieldText } from '../forms/fields/FieldText';
+import { ChangeEvent, FC } from 'react';
 
 export interface AddressFieldGroupProps {
-  prefix?: "shipping_address" | "billing_address"
-  countryOptions: { value: string; label: string }[]
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+  prefix?: 'shipping_address' | 'billing_address';
+  countryOptions: { value: string; label: string }[];
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const AddressFieldGroup: FC<AddressFieldGroupProps> = ({
-  prefix,
-  countryOptions,
-  onChange,
-}) => {
-  const fieldPrefix = prefix ? `${prefix}.` : ""
+export const AddressFieldGroup: FC<AddressFieldGroupProps> = ({ prefix, countryOptions, onChange }) => {
+  const fieldPrefix = prefix ? `${prefix}.` : '';
 
   return (
     <FieldGroup>
@@ -32,7 +28,7 @@ export const AddressFieldGroup: FC<AddressFieldGroupProps> = ({
         className="sm:col-span-6"
         onChange={onChange}
       />
-      {prefix === "billing_address" && (
+      {prefix === 'billing_address' && (
         <FieldText
           name={`${fieldPrefix}company`}
           placeholder="Company"
@@ -81,13 +77,7 @@ export const AddressFieldGroup: FC<AddressFieldGroupProps> = ({
         className="sm:col-span-6"
         onChange={onChange}
       />
-      <FieldText
-        name={`${fieldPrefix}phone`}
-        placeholder="Phone"
-        type="tel"
-        autoComplete="tel"
-        onChange={onChange}
-      />
+      <FieldText name={`${fieldPrefix}phone`} placeholder="Phone" type="tel" autoComplete="tel" onChange={onChange} />
     </FieldGroup>
-  )
-}
+  );
+};

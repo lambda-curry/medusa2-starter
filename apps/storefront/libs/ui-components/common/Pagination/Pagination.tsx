@@ -57,7 +57,7 @@ const PaginationItem: FC<PaginationItemProps> = ({ className, currentPage, page,
       className={clsx(
         className,
         'relative inline-flex items-center border px-4 py-2 text-sm font-bold',
-        isCurrent ? currentClasses : defaultClasses
+        isCurrent ? currentClasses : defaultClasses,
       )}
       aria-current={isCurrent ? 'page' : 'false'}
       to={props.href}
@@ -80,12 +80,12 @@ const PaginationButton: FC<PaginationArrowButtonProps> = ({
   className: _className,
   isDisabled,
   href,
-  children
+  children,
 }) => {
   const className = clsx(
     _className,
     { 'pointer-events-none cursor-not-allowed opacity-50': isDisabled },
-    'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm font-bold text-gray-500 hover:bg-gray-50 sm:px-4'
+    'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm font-bold text-gray-500 hover:bg-gray-50 sm:px-4',
   );
 
   if (isDisabled)
@@ -115,11 +115,11 @@ export const Pagination: FC<PaginationProps> = ({
   paginationConfig,
   getNextProps,
   getPaginationItemProps,
-  getPreviousProps
+  getPreviousProps,
 }) => {
   const { totalPages, startIndex, endIndex, setPage } = usePagination({
     totalItems: paginationConfig.count,
-    initialPageSize: paginationConfig.limit
+    initialPageSize: paginationConfig.limit,
   });
 
   const currentPage = Math.floor(paginationConfig.offset / paginationConfig.limit) + 1;
@@ -164,7 +164,7 @@ export const Pagination: FC<PaginationProps> = ({
               </>
             )}
 
-            {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map(page => (
+            {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((page) => (
               <PaginationItem key={page} page={page} currentPage={currentPage} {...getPaginationItemProps({ page })} />
             ))}
 

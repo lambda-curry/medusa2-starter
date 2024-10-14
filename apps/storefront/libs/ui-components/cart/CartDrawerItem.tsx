@@ -1,24 +1,20 @@
-import { formatLineItemPrice } from '@libs/util/prices'
-import clsx from 'clsx'
-import type { FC } from 'react'
-import { useRemoveCartItem } from '../hooks/useRemoveCartItem'
-import { Button } from '@ui-components/common/buttons/Button'
-import { Image } from '@ui-components/common/images/Image'
-import { StoreCartLineItem } from '@medusajs/types'
+import { formatLineItemPrice } from '@libs/util/prices';
+import clsx from 'clsx';
+import type { FC } from 'react';
+import { useRemoveCartItem } from '../hooks/useRemoveCartItem';
+import { Button } from '@ui-components/common/buttons/Button';
+import { Image } from '@ui-components/common/images/Image';
+import { StoreCartLineItem } from '@medusajs/types';
 
 export interface CartDrawerItemProps {
-  item: StoreCartLineItem
-  currencyCode: string
-  isRemoving?: boolean
+  item: StoreCartLineItem;
+  currencyCode: string;
+  isRemoving?: boolean;
 }
 
-export const CartDrawerItem: FC<CartDrawerItemProps> = ({
-  item,
-  currencyCode,
-  isRemoving,
-}) => {
-  const removeCartItem = useRemoveCartItem()
-  const handleRemoveFromCart = () => removeCartItem.submit(item)
+export const CartDrawerItem: FC<CartDrawerItemProps> = ({ item, currencyCode, isRemoving }) => {
+  const removeCartItem = useRemoveCartItem();
+  const handleRemoveFromCart = () => removeCartItem.submit(item);
 
   return (
     <li
@@ -31,7 +27,6 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
         <Image
           src={item.variant?.product?.thumbnail || ''}
           alt={item.product_title || 'product thumbnail'}
-          proxyOptions={{ context: 'tiny_square' }}
           className="h-full w-full object-cover object-center"
         />
       </div>
@@ -40,19 +35,10 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
         <div>
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="text-base font-bold text-gray-900">
-                {item.product_title}
-              </h3>
-              <p className="mt-0.5 text-sm text-gray-500">
-                {item.variant_title}
-              </p>
+              <h3 className="text-base font-bold text-gray-900">{item.product_title}</h3>
+              <p className="mt-0.5 text-sm text-gray-500">{item.variant_title}</p>
             </div>
-            <Button
-              variant="link"
-              onClick={handleRemoveFromCart}
-              disabled={isRemoving}
-              className="text-sm"
-            >
+            <Button variant="link" onClick={handleRemoveFromCart} disabled={isRemoving} className="text-sm">
               {isRemoving ? 'Removing' : 'Remove'}
             </Button>
           </div>
@@ -67,5 +53,5 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({
         </div>
       </div>
     </li>
-  )
-}
+  );
+};
