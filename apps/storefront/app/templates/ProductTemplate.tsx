@@ -32,8 +32,8 @@ import { FieldLabel } from '@ui-components/common/forms/fields/FieldLabel';
 import { ProductOptionSelectorRadio } from '../components/products/ProductOptionSelectorRadio';
 import { QuantitySelector } from '@ui-components/common/field-groups/QuantitySelector';
 import { StoreProduct, StoreProductOptionValue, StoreProductVariant } from '@medusajs/types';
-import PostSectionProductListCarousel from '@ui-components/content/post-section/PostSectionProductListCarousel';
 import { Validator } from 'remix-validated-form';
+import ProductList from '@ui-components/content/sections/ProductList';
 
 export interface AddToCartFormValues {
   productId: string;
@@ -111,11 +111,15 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
   const defaultValues: AddToCartFormValues = {
     productId: product.id!,
     quantity: 1,
-    options: product.options?.reduce((acc, option) => {
-      if (!option.id || !option.values?.length) return acc;
-      acc[option.id] = option.values[0].value;
-      return acc;
-    }, {} as Record<string, string>) || {},
+    options:
+      product.options?.reduce(
+        (acc, option) => {
+          if (!option.id || !option.values?.length) return acc;
+          acc[option.id] = option.values[0].value;
+          return acc;
+        },
+        {} as Record<string, string>,
+      ) || {},
   };
 
   const breadcrumbs = getBreadcrumbs(product);
@@ -125,7 +129,6 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
     () => product.options?.map(({ id }) => controlledOptions[id]),
     [product, controlledOptions],
   );
-
 
   console.log('defaultValues', defaultValues, selectedOptions);
   const variantMatrix = useMemo(() => selectVariantMatrix(product), [product]);
@@ -377,12 +380,7 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
           </Container>
         </Form>{' '}
       </section>
-      <PostSectionProductListCarousel
-        className="!pb-[100px] xl:px-9"
-        data={{
-          heading: { value: 'You may also like' },
-        }}
-      />
+      <ProductList className="!pb-[100px] xl:px-9" heading={{ value: 'You may also like' }} />
     </>
   );
 };

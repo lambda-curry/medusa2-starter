@@ -1,7 +1,0 @@
-export * from './PostSection'
-export * from './PostSectionButtonList'
-export * from './PostSectionCTA'
-export * from './PostSectionHeader'
-export * from './PostSectionHero'
-export * from './PostSectionImageGallery'
-export * from './PostSectionRichText'
