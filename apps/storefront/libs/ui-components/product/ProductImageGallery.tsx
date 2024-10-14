@@ -1,88 +1,81 @@
-import { FC, memo, useState } from "react"
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
-import clsx from "clsx"
-import { Image } from "@ui-components/common/images/Image"
-import { useScrollArrows } from "@libs/utils-to-merge/hooks/useScrollArrows"
-import { ScrollArrowButtons } from "@ui-components/common/buttons/ScrollArrowButtons"
-import { LightboxGallery } from "@ui-components/common/images/LightboxGallery"
-import { MagnifyingGlassPlusIcon } from "@heroicons/react/24/outline"
-import { Product } from '@medusajs/medusa'
+import { FC, memo, useState } from 'react';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
+import clsx from 'clsx';
+import { Image } from '@ui-components/common/images/Image';
+import { useScrollArrows } from '@libs/utils-to-merge/hooks/useScrollArrows';
+import { ScrollArrowButtons } from '@ui-components/common/buttons/ScrollArrowButtons';
+import { LightboxGallery } from '@ui-components/common/images/LightboxGallery';
+import { MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
+import { StoreProduct } from '@medusajs/types';
 
 export interface ProductGalleryImage {
-  id: string
-  url: string
-  alt?: string
-  name?: string
+  id: string;
+  url: string;
+  alt?: string;
+  name?: string;
 }
 
 export interface ProductImageGalleryProps {
-  product: Product
+  product: StoreProduct;
 }
 
-const GalleryImagesRow: FC<{ galleryImages: ProductGalleryImage[] }> = memo(
-  ({ galleryImages }) => {
-    return (
-      <>
-        {galleryImages.map((image, imageIndex) => (
-          <Tab
-            key={image.id}
-            className={
-              "relative mb-0 mr-2 inline-block h-16 w-16 cursor-pointer snap-start whitespace-nowrap rounded-md bg-white text-sm font-bold uppercase text-gray-900 last:mb-0 last:mr-0 hover:bg-gray-50 focus:outline-none focus:ring-0 lg:mb-2 lg:mr-0 lg:whitespace-normal"
-            }
-          >
-            {({ selected }) => (
-              <>
-                <span className="sr-only">{image.name}</span>
-                <span className="absolute inset-0 overflow-hidden rounded-md">
-                  <Image
-                    key={image.id}
-                    src={image.url}
-                    alt={image.alt || "tab for image gallery"}
-                    proxyOptions={{ context: "tiny_square" }}
-                    className={"h-full w-full object-cover object-center"}
-                  />
-                </span>
-                <span
-                  className={clsx(
-                    "pointer-events-none absolute inset-0 rounded-md border border-gray-200",
-                    {
-                      "!border-primary-500 border-2": selected,
-                    },
-                  )}
-                  aria-hidden="true"
+const GalleryImagesRow: FC<{ galleryImages: ProductGalleryImage[] }> = memo(({ galleryImages }) => {
+  return (
+    <>
+      {galleryImages.map((image, imageIndex) => (
+        <Tab
+          key={image.id}
+          className={
+            'relative mb-0 mr-2 inline-block h-16 w-16 cursor-pointer snap-start whitespace-nowrap rounded-md bg-white text-sm font-bold uppercase text-gray-900 last:mb-0 last:mr-0 hover:bg-gray-50 focus:outline-none focus:ring-0 lg:mb-2 lg:mr-0 lg:whitespace-normal'
+          }
+        >
+          {({ selected }) => (
+            <>
+              <span className="sr-only">{image.name}</span>
+              <span className="absolute inset-0 overflow-hidden rounded-md">
+                <Image
+                  key={image.id}
+                  src={image.url}
+                  alt={image.alt || 'tab for image gallery'}
+                  proxyOptions={{ context: 'tiny_square' }}
+                  className={'h-full w-full object-cover object-center'}
                 />
-              </>
-            )}
-          </Tab>
-        ))}
-      </>
-    )
-  },
-)
+              </span>
+              <span
+                className={clsx('pointer-events-none absolute inset-0 rounded-md border border-gray-200', {
+                  '!border-primary-500 border-2': selected,
+                })}
+                aria-hidden="true"
+              />
+            </>
+          )}
+        </Tab>
+      ))}
+    </>
+  );
+});
 
-export const ProductImageGallery: FC<ProductImageGalleryProps> = ({
-  product,
-}) => {
-  const { images = [], thumbnail } = product
-  const [lightboxIndex, setLightboxIndex] = useState(-1)
+export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product }) => {
+  const { images: productImages = [], thumbnail } = product;
+  const images = productImages ?? [];
+  const [lightboxIndex, setLightboxIndex] = useState(-1);
 
-  const { scrollableDivRef, showStartArrow, showEndArrow, handleArrowClick } =
-    useScrollArrows({
-      buffer: 50,
-      resetOnDepChange: [product],
-    })
+  const { scrollableDivRef, showStartArrow, showEndArrow, handleArrowClick } = useScrollArrows({
+    buffer: 50,
+    resetOnDepChange: [product],
+  });
 
   const gallery: ProductGalleryImage[] =
-    images.length < 1 && thumbnail
+    images?.length < 1 && thumbnail
       ? [
-        {
-          id: "thumbnail",
-          name: `Thumbnail for ${product.title}`,
-          url: thumbnail,
-          alt: product.description || product.title,
-        },
-      ]
-      : (images as ProductGalleryImage[])
+          {
+            id: 'thumbnail',
+            name: `Thumbnail for ${product.title}`,
+            url: thumbnail,
+            alt: product.description || product.title,
+          },
+        ]
+      : (images as ProductGalleryImage[]);
 
   return (
     <TabGroup as="div" className="flex flex-col-reverse gap-4 lg:flex-row">
@@ -124,11 +117,11 @@ export const ProductImageGallery: FC<ProductImageGalleryProps> = ({
                 <Image
                   key={image.id}
                   style={{
-                    viewTransitionName: "product-thumbnail",
+                    viewTransitionName: 'product-thumbnail',
                   }}
-                  proxyOptions={{ context: "large_square" }}
+                  proxyOptions={{ context: 'large_square' }}
                   src={image.url}
-                  alt={image.alt || "selected image for product"}
+                  alt={image.alt || 'selected image for product'}
                   className="absolute h-full w-full border-b border-b-gray-200 object-contain object-center sm:rounded-md sm:border sm:border-gray-200"
                 />
                 <div className="absolute right-2 top-2 flex items-center justify-center rounded-xl bg-gray-800 p-2 opacity-0 transition-all hover:!opacity-75 active:!opacity-95 group-hover:opacity-50">
@@ -146,11 +139,11 @@ export const ProductImageGallery: FC<ProductImageGalleryProps> = ({
       <LightboxGallery
         images={gallery.map((image) => ({
           src: image.url,
-          alt: image.alt || "Product image",
+          alt: image.alt || 'Product image',
         }))}
         lightBoxIndex={lightboxIndex}
         setLightBoxIndex={setLightboxIndex}
       />
     </TabGroup>
-  )
-}
+  );
+};
