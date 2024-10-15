@@ -1,3 +1,4 @@
+import { medusaError } from '@libs/util/medusaError'
 import { sdk } from '@libs/util/server/client.server'
 import { HttpTypes } from '@medusajs/types'
 
@@ -22,4 +23,5 @@ export const getCollectionByHandle = async function (
   return sdk.store.collection
     .list({ handle })
     .then(({ collections }) => collections[0])
+    .catch(medusaError)
 }
