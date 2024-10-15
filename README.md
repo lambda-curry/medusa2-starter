@@ -100,6 +100,24 @@ This will start both the Medusa backend and the Remix storefront in development 
   yarn dev
   ```
 
+
+## Resetting the Database
+1. Navigate to the `apps/medusa` folder:
+
+   ```
+   cd apps/medusa
+   ```
+2. Run the following command to reset the database:
+
+   ```
+   yarn medusa:reset
+   ```
+
+   > This will reset the database and seed it the initial data`
+
+
+3. Follow the steps from 7 to 10 in the Local Development Setup section.
+
 ## Useful Links
 
 - [Medusa Documentation](https://docs.medusajs.com/)
