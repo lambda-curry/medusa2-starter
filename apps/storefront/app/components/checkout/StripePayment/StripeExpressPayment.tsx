@@ -4,7 +4,7 @@ import { StripeElementsOptionsMode } from '@stripe/stripe-js';
 import { StripeElementsProvider } from './StripeElementsProvider';
 import { getCartShippingProfileIds } from '@libs/util/vendors';
 import { StoreCart } from '@medusajs/types';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCheckout } from '@app/hooks/useCheckout';
 
 interface StripeExpressCheckoutProps {
   cart: StoreCart;

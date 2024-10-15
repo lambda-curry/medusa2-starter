@@ -1,9 +1,9 @@
-import { useCart } from '@ui-components/hooks/useCart';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
-import { CheckoutStep } from '@ui-components/providers/checkout-provider';
-import { Alert } from '@ui-components/common/alert/Alert';
-import { Form } from '@ui-components/common/forms/Form';
-import { FormError } from '@ui-components/common/forms/FormError';
+import { useCart } from '@app/hooks/useCart';
+import { useCheckout } from '@app/hooks/useCheckout';
+import { CheckoutStep } from '@app/providers/checkout-provider';
+import { Alert } from '@app/components/common/alert/Alert';
+import { Form } from '@app/components/common/forms/Form';
+import { FormError } from '@app/components/common/forms/FormError';
 import {
   checkAccountDetailsComplete,
   checkDeliveryMethodComplete,
@@ -13,7 +13,7 @@ import { formatPrice } from '@libs/util/prices';
 import { Fetcher, useFetcher, useFetchers } from '@remix-run/react';
 import { FC, Fragment, useEffect, useMemo, useRef } from 'react';
 import { useField } from 'remix-validated-form';
-import { AddShippingMethodInput, CheckoutAction } from '~/routes/api.checkout';
+import { AddShippingMethodInput, CheckoutAction } from '@app/routes/api.checkout';
 import { CheckoutSectionHeader } from './CheckoutSectionHeader';
 import { ShippingOptionsRadioGroup } from './checkout-fields/ShippingOptionsRadioGroup/ShippingOptionsRadioGroup';
 import { getCheckoutAddShippingMethodValidator } from './checkout-form-helpers';

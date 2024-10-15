@@ -1,5 +1,5 @@
-import { useCart } from '@ui-components/hooks/useCart';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCart } from '@app/hooks/useCart';
+import { useCheckout } from '@app/hooks/useCheckout';
 import { FC, ReactNode } from 'react';
 import { CheckoutOrderSummaryItems } from './CheckoutOrderSummaryItems';
 import { CheckoutOrderSummaryTotals } from './CheckoutOrderSummaryTotals';

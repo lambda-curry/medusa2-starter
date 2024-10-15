@@ -1,7 +1,7 @@
-import { Alert } from '@ui-components/common/alert';
+import { Alert } from '@app/components/common/alert';
 import { convertToFormData } from '@libs/util/forms/objectToFormData';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCart } from '@app/hooks/useCart';
+import { useCheckout } from '@app/hooks/useCheckout';
 import { useRevalidator } from '@remix-run/react';
 import { ExpressCheckoutElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import {
@@ -22,7 +22,7 @@ import {
   UpdateExpressCheckoutAddressInput,
   UpdateExpressCheckoutAddressResponse,
   type UpdatePaymentInput,
-} from '~/routes/api.checkout';
+} from '@app/routes/api.checkout';
 import { StoreCart, StoreCartShippingOption, StoreOrder } from '@medusajs/types';
 import { Address } from '@libs/types';
 type ExpressCartResponse = {

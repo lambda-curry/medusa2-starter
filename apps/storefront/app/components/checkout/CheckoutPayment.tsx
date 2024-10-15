@@ -3,12 +3,12 @@ import { Tab } from '@headlessui/react';
 import { StripePayment } from './StripePayment';
 import { ManualPayment } from './ManualPayment/ManualPayment';
 import clsx from 'clsx';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
-import { useCart } from '@ui-components/hooks/useCart';
-import { CheckoutStep } from '@ui-components/providers/checkout-provider';
-import { Button } from '@ui-components/common/buttons/Button';
+import { useCheckout } from '@app/hooks/useCheckout';
+import { useCart } from '@app/hooks/useCart';
+import { CheckoutStep } from '@app/providers/checkout-provider';
+import { Button } from '@app/components/common/buttons/Button';
 import { CustomPaymentSession } from '@libs/types';
-import { useEnv } from '@ui-components/hooks/useEnv';
+import { useEnv } from '@app/hooks/useEnv';
 
 export const CheckoutPayment: FC = () => {
   const { env } = useEnv();

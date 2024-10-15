@@ -1,10 +1,10 @@
 import HomeIcon from '@heroicons/react/24/solid/HomeIcon';
 import { LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { ProductListWithPagination } from '~/components/products/ProductListWithPagination';
+import { ProductListWithPagination } from '@app/components/product/ProductListWithPagination';
 import { sdk } from '@libs/util/server/client.server';
-import { Container } from '@ui-components/common/container';
-import { Breadcrumbs } from '@ui-components/common/breadcrumbs';
+import { Container } from '@app/components/common/container';
+import { Breadcrumbs } from '@app/components/common/breadcrumbs';
 import { getSelectedRegion } from '@libs/util/server/data/regions.server';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

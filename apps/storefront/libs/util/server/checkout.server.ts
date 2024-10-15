@@ -1,8 +1,8 @@
 import { addressToMedusaAddress } from '@libs/util/addresses'
 import { FormValidationError } from '@libs/util/validation/validation-error'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import type { UpdateAccountDetailsInput } from '~/routes/api.checkout'
-import { checkoutAccountDetailsValidator } from '~/components/checkout'
+import type { UpdateAccountDetailsInput } from '@app/routes/api.checkout'
+import { checkoutAccountDetailsValidator } from '@app/components/checkout'
 import type { StoreCart, StoreCartAddress } from '@medusajs/types'
 import { updateCart } from './data/cart.server'
 

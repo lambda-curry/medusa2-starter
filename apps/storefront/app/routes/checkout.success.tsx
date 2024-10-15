@@ -1,6 +1,6 @@
-import { ButtonLink } from '@ui-components/common/buttons/ButtonLink';
-import { Container } from '@ui-components/common/container/Container';
-import { Image } from '@ui-components/common/images/Image';
+import { ButtonLink } from '@app/components/common/buttons/ButtonLink';
+import { Container } from '@app/components/common/container/Container';
+import { Image } from '@app/components/common/images/Image';
 import { formatPhoneNumber } from '@libs/util/phoneNumber';
 import { formatPrice } from '@libs/util/prices';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';

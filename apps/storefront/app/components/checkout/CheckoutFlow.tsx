@@ -1,8 +1,8 @@
 import { FC, useEffect } from 'react';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
-import { useCustomer } from '@ui-components/hooks/useCustomer';
-import { Alert } from '@ui-components/common/alert/Alert';
+import { useCart } from '@app/hooks/useCart';
+import { useCheckout } from '@app/hooks/useCheckout';
+import { useCustomer } from '@app/hooks/useCustomer';
+import { Alert } from '@app/components/common/alert/Alert';
 import { CheckoutAccountDetails } from './CheckoutAccountDetails';
 import { CheckoutDeliveryMethod } from './CheckoutDeliveryMethod';
 import { CheckoutPayment } from './CheckoutPayment';

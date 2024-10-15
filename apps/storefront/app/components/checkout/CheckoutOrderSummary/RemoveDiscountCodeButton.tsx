@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useFetcher } from '@remix-run/react';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { PromotionDTO, StoreCart } from '@medusajs/types';
-// import { CartDiscountAction } from "~/routes/api.cart.discounts"
+// import { CartDiscountAction } from "@app/routes/api.cart.discounts"
 
 export interface RemoveDiscountCodeButtonProps {
   cart: StoreCart;

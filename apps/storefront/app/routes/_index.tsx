@@ -1,13 +1,13 @@
-import { Container } from '@ui-components/common/container';
+import { Container } from '@app/components/common/container';
 import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { getMergedPageMeta } from '@libs/util/page';
-import Hero from '@ui-components/content/sections/Hero';
-import { Image } from '@ui-components/common/images/Image';
-import { ListItems } from '@ui-components/content/sections/ListItems';
-import { SideBySide } from '@ui-components/content/sections/SideBySide';
-import { GridCTA } from '@ui-components/content/sections/GridCTA';
-import { ActionList } from '@ui-components/content/ActionList';
-import ProductList from '@ui-components/content/sections/ProductList';
+import Hero from '@app/components/sections/Hero';
+import { Image } from '@app/components/common/images/Image';
+import { ListItems } from '@app/components/sections/ListItems';
+import { SideBySide } from '@app/components/sections/SideBySide';
+import { GridCTA } from '@app/components/sections/GridCTA';
+import { ActionList } from '@app/components/common/actions-list/ActionList';
+import ProductList from '@app/components/sections/ProductList';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return {};

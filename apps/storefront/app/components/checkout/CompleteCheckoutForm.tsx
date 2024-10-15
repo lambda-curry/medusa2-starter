@@ -2,16 +2,16 @@ import { FC, FormEvent, PropsWithChildren, useEffect, useState } from 'react';
 import { type Fetcher, SubmitFunction, useFetcher, useFetchers } from '@remix-run/react';
 import { type CustomPaymentSession, type MedusaAddress } from '@libs/types';
 import { convertToFormData } from '@libs/util/forms/objectToFormData';
-import { CheckoutAction, UpdatePaymentInput, UpdateBillingAddressInput } from '~/routes/api.checkout';
+import { CheckoutAction, UpdatePaymentInput, UpdateBillingAddressInput } from '@app/routes/api.checkout';
 import { useFormContext } from 'remix-validated-form';
 import { CheckoutOrderSummary, checkoutPaymentValidator } from '.';
 import isEqual from 'lodash/isEqual';
-import { useCart } from '@ui-components/hooks/useCart';
-import { SubmitButton } from '@ui-components/common/buttons/SubmitButton';
-import { Form } from '@ui-components/common/forms/Form';
-import { FieldGroup } from '@ui-components/common/forms/fields/FieldGroup';
-import { FieldCheckbox } from '@ui-components/common/forms/fields/FieldCheckbox';
-import { FormError } from '@ui-components/common/forms/FormError';
+import { useCart } from '@app/hooks/useCart';
+import { SubmitButton } from '@app/components/common/buttons/SubmitButton';
+import { Form } from '@app/components/common/forms/Form';
+import { FieldGroup } from '@app/components/common/forms/fields/FieldGroup';
+import { FieldCheckbox } from '@app/components/common/forms/fields/FieldCheckbox';
+import { FormError } from '@app/components/common/forms/FormError';
 import { AddressDisplay } from './address/AddressDisplay';
 import {
   MedusaStripeAddress,
@@ -20,7 +20,7 @@ import {
 } from './MedusaStripeAddress/MedusaStripeAddress';
 import HiddenAddressGroup from './HiddenAddressGroup';
 import { emptyAddress, medusaAddressToAddress } from '@libs/util';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCheckout } from '@app/hooks/useCheckout';
 
 export interface CompleteCheckoutFormProps extends PropsWithChildren {
   id: string;

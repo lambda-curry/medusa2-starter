@@ -1,15 +1,15 @@
 import ShoppingBagIcon from '@heroicons/react/24/outline/ShoppingBagIcon';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useRootLoaderData } from '@ui-components/hooks/useRootLoaderData';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
-import { IconButton } from '@ui-components/common/buttons';
-import { Container } from '@ui-components/common/container/Container';
-import { URLAwareNavLink } from '@ui-components/common/link';
+import { useCart } from '@app/hooks/useCart';
+import { useRootLoaderData } from '@app/hooks/useRootLoaderData';
+import { useSiteDetails } from '@app/hooks/useSiteDetails';
+import { IconButton } from '@app/components/common/buttons';
+import { Container } from '@app/components/common/container/Container';
+import { URLAwareNavLink } from '@app/components/common/link';
 import clsx from 'clsx';
 import { type FC, useState } from 'react';
 import { HeaderSideNav } from './HeaderSideNav';
 import { useActiveSection } from './useActiveSection';
-import { LogoStoreName } from '~/components/LogoStoreName/LogoStoreName';
+import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 
 export type HeaderProps = {};

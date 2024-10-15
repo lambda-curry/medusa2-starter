@@ -1,38 +1,29 @@
-import { FC, PropsWithChildren, useMemo } from 'react'
-import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js'
-import { Elements } from '@stripe/react-stripe-js'
-import { useEnv } from '@ui-components/hooks/useEnv'
-import { useCart } from '@ui-components/hooks/useCart'
+import { FC, PropsWithChildren, useMemo } from 'react';
+import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { useEnv } from '@app/hooks/useEnv';
+import { useCart } from '@app/hooks/useCart';
 
 export interface StripeElementsProviderProps extends PropsWithChildren {
-  options?: StripeElementsOptions
+  options?: StripeElementsOptions;
 }
 
-export const StripeElementsProvider: FC<StripeElementsProviderProps> = ({
-  options,
-  children,
-}) => {
-  const { env } = useEnv()
-  const { cart } = useCart()
+export const StripeElementsProvider: FC<StripeElementsProviderProps> = ({ options, children }) => {
+  const { env } = useEnv();
+  const { cart } = useCart();
 
-  const stripePromise = useMemo(
-    () => (env.STRIPE_PUBLIC_KEY ? loadStripe(env.STRIPE_PUBLIC_KEY) : null),
-    [],
-  )
+  const stripePromise = useMemo(() => (env.STRIPE_PUBLIC_KEY ? loadStripe(env.STRIPE_PUBLIC_KEY) : null), []);
 
   const stripeSession = useMemo(
-    () =>
-      cart?.payment_collection?.payment_sessions?.find(
-        (s) => s.provider_id === 'pp_stripe_stripe',
-      ),
+    () => cart?.payment_collection?.payment_sessions?.find((s) => s.provider_id === 'pp_stripe_stripe'),
     [cart?.payment_collection?.payment_sessions],
   ) as unknown as {
-    data: { client_secret: string }
-  }
+    data: { client_secret: string };
+  };
 
-  const clientSecret = stripeSession?.data?.client_secret as string
+  const clientSecret = stripeSession?.data?.client_secret as string;
 
-  if (!stripeSession || !stripePromise) return null
+  if (!stripeSession || !stripePromise) return null;
 
   return (
     <Elements
@@ -46,5 +37,5 @@ export const StripeElementsProvider: FC<StripeElementsProviderProps> = ({
     >
       {children}
     </Elements>
-  )
-}
+  );
+};

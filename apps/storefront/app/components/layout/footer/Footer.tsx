@@ -1,17 +1,17 @@
 import { convertToFormData } from '@libs/util/forms/objectToFormData';
 import { useFetcher } from '@remix-run/react';
-import { Container } from '@ui-components/common/container/Container';
-import { Select } from '@ui-components/common/forms/inputs/Select';
-import { URLAwareNavLink } from '@ui-components/common/link/URLAwareNavLink';
-import { useRegion } from '@ui-components/hooks/useRegion';
-import { useRegions } from '@ui-components/hooks/useRegions';
-import { useRootLoaderData } from '@ui-components/hooks/useRootLoaderData';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
+import { Container } from '@app/components/common/container/Container';
+import { Select } from '@app/components/common/forms/inputs/Select';
+import { URLAwareNavLink } from '@app/components/common/link/URLAwareNavLink';
+import { useRegion } from '@app/hooks/useRegion';
+import { useRegions } from '@app/hooks/useRegions';
+import { useRootLoaderData } from '@app/hooks/useRootLoaderData';
+import { useSiteDetails } from '@app/hooks/useSiteDetails';
 import clsx from 'clsx';
 import { useMemo } from 'react';
-import { LogoStoreName } from '~/components/LogoStoreName/LogoStoreName';
-import { NewsletterSubscription } from '~/components/newsletter/Newsletter';
-import { RegionActions } from '~/routes/api.region';
+import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
+import { NewsletterSubscription } from '@app/components/newsletter/Newsletter';
+import { RegionActions } from '@app/routes/api.region';
 import { StripeSecurityImage } from '../../images/StripeSecurityImage';
 import { SocialIcons } from './SocialIcons';
 

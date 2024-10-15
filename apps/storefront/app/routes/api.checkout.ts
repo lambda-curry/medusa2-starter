@@ -14,7 +14,7 @@ import {
   checkoutUpdateBillingAddressValidator,
   checkoutUpdateContactInfoValidator,
   getCheckoutAddShippingMethodValidator,
-} from '~/components/checkout'
+} from '@app/components/checkout'
 import {
   StoreCart,
   StoreCartAddress,

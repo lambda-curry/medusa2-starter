@@ -1,6 +1,6 @@
 import { redirect, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { ProductTemplate } from '~/templates/ProductTemplate';
+import { ProductTemplate } from '@app/templates/ProductTemplate';
 import { getMergedProductMeta } from '@libs/util/products';
 import { fetchProducts } from '@libs/util/server/products.server';
 import { StoreProduct } from '@medusajs/types';

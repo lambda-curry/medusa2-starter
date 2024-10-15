@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useControlField, useField } from 'remix-validated-form';
 import { RadioGroup } from '@headlessui/react';
 import { ShippingOptionsRadioGroupOption } from './ShippingOptionsRadioGroupOption';
-import { FieldError } from '@ui-components/common/forms/fields/FieldError';
+import { FieldError } from '@app/components/common/forms/fields/FieldError';
 import { Fetcher, useFetchers } from '@remix-run/react';
 import clsx from 'clsx';
 import { StoreCartShippingOption, StoreRegion } from '@medusajs/types';

@@ -1,4 +1,4 @@
-import StripeBadge from '@ui-components/common/assets/StripeBadge.png';
+import StripeBadge from '@app/components/common/assets/StripeBadge.png';
 
 export interface StripeSecurityImageProps {
   className?: string;

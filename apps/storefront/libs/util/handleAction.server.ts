@@ -2,7 +2,7 @@ import {
   unstable_parseMultipartFormData,
   type ActionFunctionArgs,
 } from '@remix-run/node'
-import { uploadHandler } from '~/image-upload.server'
+import { uploadHandler } from '@app/image-upload.server'
 import { FormValidationError } from '@libs/util/validation/validation-error'
 import { handleValidationError } from '@libs/util/validation/validation-response'
 import { formDataToObject } from '@libs/util/forms/formDataToObject'

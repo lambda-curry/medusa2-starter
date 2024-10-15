@@ -4,11 +4,11 @@ import { PaymentMethodCreateParams, StripePaymentElement } from '@stripe/stripe-
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import clsx from 'clsx';
 import type { CustomPaymentSession, Address, MedusaAddress } from '@libs/types';
-import { UpdatePaymentInput } from '~/routes/api.checkout';
+import { UpdatePaymentInput } from '@app/routes/api.checkout';
 import { CompleteCheckoutForm } from '../CompleteCheckoutForm';
-import { useCart } from '@ui-components/hooks/useCart';
-import { Alert } from '@ui-components/common/alert/Alert';
-import { useCheckout } from '@ui-components/hooks/useCheckout';
+import { useCart } from '@app/hooks/useCart';
+import { Alert } from '@app/components/common/alert/Alert';
+import { useCheckout } from '@app/hooks/useCheckout';
 import { medusaAddressToAddress } from '@libs/util';
 
 export interface StripePaymentFormProps extends PropsWithChildren {
