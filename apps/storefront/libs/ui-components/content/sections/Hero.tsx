@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import type { CustomAction, ImageField } from '@libs/util/medusa/types';
+import type { CustomAction, ImageField } from '@libs/types';
 import { ActionList } from '../ActionList';
 import { Container } from '@ui-components/common/container/Container';
 import type { FC, ReactNode } from 'react';

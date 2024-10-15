@@ -1,7 +1,4 @@
-import {
-  NavigationCollection,
-  NavigationItemLocation,
-} from '@libs/util/medusa/types';
+import { NavigationCollection, NavigationItemLocation } from '@libs/types'
 
 export const headerNavigationItems: NavigationCollection = [
   {
@@ -36,10 +33,11 @@ export const headerNavigationItems: NavigationCollection = [
     location: NavigationItemLocation.header,
     new_tab: false,
   },
-];
+]
 
 export const footerNavigationItems: NavigationCollection = [
   {
+    id: 1,
     label: 'Our Beans',
     url: '/products',
     location: NavigationItemLocation.footer,
@@ -47,6 +45,7 @@ export const footerNavigationItems: NavigationCollection = [
     new_tab: false,
   },
   {
+    id: 2,
     label: 'Light Roasts',
     url: '/collections/light-roasts',
     location: NavigationItemLocation.footer,
@@ -54,6 +53,7 @@ export const footerNavigationItems: NavigationCollection = [
     new_tab: false,
   },
   {
+    id: 3,
     label: 'Medium Roasts',
     url: '/collections/medium-roasts',
     location: NavigationItemLocation.footer,
@@ -61,10 +61,11 @@ export const footerNavigationItems: NavigationCollection = [
     new_tab: false,
   },
   {
+    id: 4,
     label: 'Dark Roasts',
     url: '/collections/dark-roasts',
     location: NavigationItemLocation.footer,
     sort_order: 1,
     new_tab: false,
   },
-];
+]

@@ -1,10 +1,10 @@
-import { FC, PropsWithChildren } from 'react'
-import { CustomPaymentSession } from '@libs/utils-to-merge/types'
-import { CompleteCheckoutForm } from '../CompleteCheckoutForm'
+import { FC, PropsWithChildren } from 'react';
+import { CustomPaymentSession } from '@libs/types';
+import { CompleteCheckoutForm } from '../CompleteCheckoutForm';
 
 export interface ManualPaymentProps extends PropsWithChildren {
-  isActiveStep: boolean
-  paymentMethods: CustomPaymentSession[]
+  isActiveStep: boolean;
+  paymentMethods: CustomPaymentSession[];
 }
 
 export const ManualPayment: FC<ManualPaymentProps> = (props) => (
@@ -15,4 +15,4 @@ export const ManualPayment: FC<ManualPaymentProps> = (props) => (
     className="mt-4"
     {...props}
   />
-)
+);

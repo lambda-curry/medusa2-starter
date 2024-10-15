@@ -1,4 +1,4 @@
-import type { NavigationItem } from '@libs/util/medusa/types'
+import type { NavigationItem } from '@libs/types'
 import { useEffect, useState } from 'react'
 
 export const useActiveSection = (navItems: NavigationItem[]) => {

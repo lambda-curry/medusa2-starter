@@ -1,10 +1,5 @@
 import { buildSearchParamsFromObject } from '@libs/util/buildSearchParamsFromObject';
-import type {
-  CustomAction,
-  ProductListFilter,
-  TranslatableField,
-  TranslatableRichTextField,
-} from '@libs/util/medusa/types';
+import type { CustomAction, ProductListFilter } from '@libs/types';
 import { useFetcher, useParams } from '@remix-run/react';
 import clsx from 'clsx';
 import { HTMLAttributes, memo, useEffect, useState, type FC } from 'react';
@@ -16,8 +11,8 @@ import { StoreCollection, StoreProduct, StoreProductCategory } from '@medusajs/t
 import ProductCarousel from '@ui-components/product/ProductCarousel';
 
 export interface ProductListProps<TElement extends HTMLElement = HTMLDivElement> extends HTMLAttributes<TElement> {
-  heading?: TranslatableField;
-  text?: TranslatableRichTextField;
+  heading?: string;
+  text?: string;
   actions?: CustomAction[];
   className?: string;
 }
@@ -121,7 +116,7 @@ export const ProductList: FC<ProductListProps> = memo(({ className, heading, tex
     <section className={clsx(`mkt-section relative overflow-x-hidden`, className)} {...props}>
       <div className="mkt-section__inner relative z-[2]">
         <Container>
-          <ProductListHeader heading={heading?.value} text={text} actions={actions} />
+          <ProductListHeader heading={heading} text={text} actions={actions} />
           <ProductListBase {...props} />
         </Container>
       </div>

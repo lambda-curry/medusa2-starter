@@ -5,8 +5,8 @@ import {
 import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
 import type { ValidationErrorData } from '@libs/utils-to-merge/validation/validation-response'
 import {
-  handleActionV2,
-  type V2ActionHandler,
+  handleAction,
+  type ActionHandler,
 } from '@libs/util/handleAction.server'
 import { _updateAccountDetails } from '@libs/util/server/checkout.server'
 import type { ActionFunctionArgs } from '@remix-run/node'
@@ -24,7 +24,7 @@ import {
   StoreCartResponse,
   StoreCartShippingOption,
 } from '@medusajs/types'
-import { Address, MedusaAddress } from '@libs/util'
+import { Address, MedusaAddress } from '@libs/types'
 import {
   initiatePaymentSession,
   placeOrder,
@@ -93,7 +93,7 @@ export interface UpdateExpressCheckoutAddressResponse {
   shippingOptions: StoreCartShippingOption[]
 }
 
-const updateBillingAddress: V2ActionHandler<StoreCartResponse> = async (
+const updateBillingAddress: ActionHandler<StoreCartResponse> = async (
   data: UpdateBillingAddressInput,
   { request },
 ) => {
@@ -112,7 +112,7 @@ const updateBillingAddress: V2ActionHandler<StoreCartResponse> = async (
   return { cart }
 }
 
-const updateContactInfo: V2ActionHandler<
+const updateContactInfo: ActionHandler<
   StoreCartResponse | ValidationErrorData
 > = async (
   data: UpdateContactInfoInput,
@@ -129,7 +129,7 @@ const updateContactInfo: V2ActionHandler<
   return { cart }
 }
 
-const updateAccountDetails: V2ActionHandler<StoreCartResponse> = async (
+const updateAccountDetails: ActionHandler<StoreCartResponse> = async (
   data: UpdateAccountDetailsInput,
   actionArgs,
 ) => {
@@ -138,7 +138,7 @@ const updateAccountDetails: V2ActionHandler<StoreCartResponse> = async (
   return unstable_data({ cart }, { headers })
 }
 
-const addShippingMethods: V2ActionHandler<StoreCartResponse> = async (
+const addShippingMethods: ActionHandler<StoreCartResponse> = async (
   data: AddShippingMethodInput,
   { request },
 ) => {
@@ -173,7 +173,7 @@ const addShippingMethods: V2ActionHandler<StoreCartResponse> = async (
   return { cart }
 }
 
-const addDiscountCode: V2ActionHandler<StoreCartResponse> = async (
+const addDiscountCode: ActionHandler<StoreCartResponse> = async (
   data: { cartId: string; code: string },
   { request },
 ) => {
@@ -201,7 +201,7 @@ const addDiscountCode: V2ActionHandler<StoreCartResponse> = async (
   }
 }
 
-const completeCheckout: V2ActionHandler<unknown> = async (
+const completeCheckout: ActionHandler<unknown> = async (
   { noRedirect = false, ...data }: UpdatePaymentInput,
   actionArgs,
 ) => {
@@ -302,5 +302,5 @@ const actions = {
 }
 
 export async function action(actionArgs: ActionFunctionArgs) {
-  return await handleActionV2({ actionArgs, actions })
+  return await handleAction({ actionArgs, actions })
 }

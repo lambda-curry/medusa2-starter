@@ -34,7 +34,9 @@ import {
 } from './checkout-form-helpers';
 import type { StoreRegion, StoreRegionCountry } from '@medusajs/types';
 import { emptyAddress } from '@libs/util';
-import { type MedusaAddress, medusaAddressToAddress } from '@libs/util';
+
+import type { MedusaAddress } from '@libs/types';
+import { medusaAddressToAddress } from '@libs/util';
 
 const NEW_SHIPPING_ADDRESS_ID = 'new';
 export const CheckoutAccountDetails = () => {

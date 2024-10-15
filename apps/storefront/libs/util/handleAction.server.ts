@@ -1,84 +1,49 @@
 import {
   unstable_parseMultipartFormData,
   type ActionFunctionArgs,
-} from "@remix-run/node"
-import { uploadHandler } from "~/image-upload.server"
-import { FormValidationError } from "@libs/utils-to-merge/validation/validation-error"
-import { handleValidationError } from "@libs/utils-to-merge/validation/validation-response"
-import { formDataToObject } from "@libs/utils-to-merge/forms/formDataToObject"
-import { Medusa } from "./server/client.server"
-import { DataWithResponseInit } from "@remix-run/router/utils"
-import { json } from "@remix-run/react"
+} from '@remix-run/node'
+import { uploadHandler } from '~/image-upload.server'
+import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
+import { handleValidationError } from '@libs/utils-to-merge/validation/validation-response'
+import { formDataToObject } from '@libs/utils-to-merge/forms/formDataToObject'
+import { DataWithResponseInit } from '@remix-run/router/utils'
+import { json } from '@remix-run/react'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ActionHandler<T = unknown> = (
-  payload: any,
-  client: Medusa,
-  request: ActionFunctionArgs["request"],
-) => Promise<T>
-
-export type V2ActionHandler<T = unknown> = (
   payload: any,
   data: ActionFunctionArgs,
 ) => Promise<T | DataWithResponseInit<T>>
 
-export type V2ActionHandlers<T = unknown> = Record<string, V2ActionHandler<T>>
-
 export type ActionHandlers<T = unknown> = Record<string, ActionHandler<T>>
 
-export interface HandleActionProps<T = unknown> {
-  request: ActionFunctionArgs["request"]
-  actions: ActionHandlers<T>
-}
-
-// export async function handleAction<T>({ request, actions }: HandleActionProps<T>) {
-//   const medusa = await createMedusaClient({ request });
-
-//   const isMultiPart = request.headers.get('content-type')?.toLowerCase().includes('multipart/form-data');
-
-//   const formData = isMultiPart
-//     ? await unstable_parseMultipartFormData(request, uploadHandler)
-//     : await request.formData();
-
-//   const { subaction, ...data } = formDataToObject<keyof ActionHandlers<T>>(formData);
-
-//   const actionHandlers = actions;
-
-//   const action = actionHandlers[subaction as keyof ActionHandlers<T>];
-
-//   if (!action) throw new Error(`Action handler not found for "${subaction}" action.`);
-
-//   return await action(data, medusa, request);
-// }
-
-export async function handleActionV2<T>({
+export async function handleAction<T>({
   actionArgs,
   actions,
 }: {
   actionArgs: ActionFunctionArgs
-  actions: V2ActionHandlers<T>
+  actions: ActionHandlers<T>
 }) {
   const { request } = actionArgs
 
-  const contentType = request.headers.get("content-type")?.toLowerCase()
+  const contentType = request.headers.get('content-type')?.toLowerCase()
 
-  const shouldReturnJson = request.headers.get("accept") === "application/json"
+  const shouldReturnJson = request.headers.get('accept') === 'application/json'
 
   let rawData: any = undefined
 
-  if (contentType?.includes("application/json")) rawData = await request.json()
-  else if (contentType?.includes("multipart/form-data"))
+  if (contentType?.includes('application/json')) rawData = await request.json()
+  else if (contentType?.includes('multipart/form-data'))
     rawData = await unstable_parseMultipartFormData(request, uploadHandler)
-  else if (contentType?.includes("x-www-form-urlencoded"))
+  else if (contentType?.includes('x-www-form-urlencoded'))
     rawData = await request.formData()
 
-  const { subaction, ...data } = formDataToObject<keyof V2ActionHandlers<T>>(
+  const { subaction, ...data } = formDataToObject<keyof ActionHandlers<T>>(
     rawData ?? {},
   )
 
   const actionHandlers = actions
 
-  const action = actionHandlers[subaction as keyof V2ActionHandlers<T>]
+  const action = actionHandlers[subaction as keyof ActionHandlers<T>]
 
   if (!action)
     throw new Error(`Action handler not found for "${subaction}" action.`)
@@ -87,8 +52,8 @@ export async function handleActionV2<T>({
     const result = await action(data, actionArgs)
 
     if (
-      typeof result === "object" &&
-      (result as DataWithResponseInit<T>).type === "DataWithResponseInit" &&
+      typeof result === 'object' &&
+      (result as DataWithResponseInit<T>).type === 'DataWithResponseInit' &&
       shouldReturnJson
     ) {
       let typedResult = result as DataWithResponseInit<T>
@@ -108,7 +73,7 @@ export async function handleActionV2<T>({
         repopulateFields: error.repopulateFields,
       })
     if (error instanceof Response) throw error
-    console.error("Error in action handler:", error)
+    console.error('Error in action handler:', error)
     throw error
   }
 }
