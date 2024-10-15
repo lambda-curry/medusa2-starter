@@ -2,9 +2,9 @@ import { type FC, Fragment } from 'react';
 import clsx from 'clsx';
 import { Dialog, Transition } from '@headlessui/react';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
-import { IconButton } from '@ui-components/common/buttons';
-import { URLAwareNavLink } from '@ui-components/common/link';
+import { useSiteDetails } from '@app/hooks/useSiteDetails';
+import { IconButton } from '@app/components/common/buttons';
+import { URLAwareNavLink } from '@app/components/common/link';
 
 export interface HeaderSideNavProps {
   className?: string;

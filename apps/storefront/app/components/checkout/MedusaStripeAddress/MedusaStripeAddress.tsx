@@ -1,10 +1,10 @@
 import { AddressElement, Elements } from '@stripe/react-stripe-js';
 import { type AddressMode, loadStripe } from '@stripe/stripe-js';
 import { useMemo, type Dispatch, type FC, type SetStateAction } from 'react';
-import { useEnv } from '@ui-components/hooks/useEnv';
-import { useRegion } from '@ui-components/hooks/useRegion';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
+import { useEnv } from '@app/hooks/useEnv';
+import { useRegion } from '@app/hooks/useRegion';
+import { useCart } from '@app/hooks/useCart';
+import { useSiteDetails } from '@app/hooks/useSiteDetails';
 import { BaseCartAddress } from '@medusajs/types/dist/http/cart/common';
 import { Address } from '@libs/util';
 

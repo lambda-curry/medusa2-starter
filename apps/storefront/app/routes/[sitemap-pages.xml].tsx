@@ -1,7 +1,4 @@
-import {
-  SitemapUrl,
-  buildSitemapUrlSetXML,
-} from '@libs/utils-to-merge/xml/sitemap-builder';
+import { SitemapUrl, buildSitemapUrlSetXML } from '@libs/util/xml/sitemap-builder';
 import { LoaderFunctionArgs } from '@remix-run/node';
 
 const pages = ['/', '/products'];
@@ -9,7 +6,7 @@ const pages = ['/', '/products'];
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const host = request.headers.get('host');
   const baseUrl = `https://${host}`;
-  const urls: SitemapUrl[] = pages.map(handle => ({
+  const urls: SitemapUrl[] = pages.map((handle) => ({
     loc: `${baseUrl}/${handle}`,
     priority: 0.8,
     changefreq: 'daily',

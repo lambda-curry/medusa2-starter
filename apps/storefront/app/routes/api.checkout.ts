@@ -1,9 +1,6 @@
-import {
-  addressPayload,
-  addressToMedusaAddress,
-} from '@libs/utils-to-merge/addresses'
-import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
-import type { ValidationErrorData } from '@libs/utils-to-merge/validation/validation-response'
+import { addressPayload, addressToMedusaAddress } from '@libs/util/addresses'
+import { FormValidationError } from '@libs/util/validation/validation-error'
+import type { ValidationErrorData } from '@libs/util/validation/validation-response'
 import {
   handleAction,
   type ActionHandler,
@@ -17,7 +14,7 @@ import {
   checkoutUpdateBillingAddressValidator,
   checkoutUpdateContactInfoValidator,
   getCheckoutAddShippingMethodValidator,
-} from '~/components/checkout'
+} from '@app/components/checkout'
 import {
   StoreCart,
   StoreCartAddress,

@@ -1,10 +1,13 @@
 import { type FC, useEffect, useRef } from 'react';
-import { Form } from '@ui-components/common/forms/Form';
-import { Alert } from '@ui-components/common/alert';
+import { Form } from '@app/components/common/forms/Form';
+import { Alert } from '@app/components/common/alert';
 import { type FetcherWithComponents, useFetcher } from '@remix-run/react';
-import { SubmitButton } from '@ui-components/common/buttons';
-import { NewsletterSubscriptionAction, newsletterSubscriberFormValidator } from '~/routes/api.newsletter-subscriptions';
-import { FieldText } from '@ui-components/common/forms/fields/FieldText';
+import { SubmitButton } from '@app/components/common/buttons';
+import {
+  NewsletterSubscriptionAction,
+  newsletterSubscriberFormValidator,
+} from '@app/routes/api.newsletter-subscriptions';
+import { FieldText } from '@app/components/common/forms/fields/FieldText';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 

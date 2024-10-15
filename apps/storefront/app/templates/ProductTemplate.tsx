@@ -1,39 +1,39 @@
 import HomeIcon from '@heroicons/react/24/solid/HomeIcon';
-import { useCart } from '@ui-components/hooks/useCart';
-import { useRegion } from '@ui-components/hooks/useRegion';
-import { ProductImageGallery } from '@ui-components/product/ProductImageGallery';
-import { ProductPrice } from '@ui-components/product/ProductPrice';
-import { ProductPriceRange } from '@ui-components/product/ProductPriceRange';
-import { Breadcrumb, Breadcrumbs } from '@ui-components/common/breadcrumbs/Breadcrumbs';
-import { Button } from '@ui-components/common/buttons/Button';
-import { SubmitButton } from '@ui-components/common/buttons/SubmitButton';
-import { Container } from '@ui-components/common/container/Container';
-import { Form } from '@ui-components/common/forms/Form';
-import { FormError } from '@ui-components/common/forms/FormError';
-import { FieldGroup } from '@ui-components/common/forms/fields/FieldGroup';
-import { Grid } from '@ui-components/common/grid/Grid';
-import { GridColumn } from '@ui-components/common/grid/GridColumn';
-import { Share } from '~/components/share';
+import { useCart } from '@app/hooks/useCart';
+import { useRegion } from '@app/hooks/useRegion';
+import { ProductImageGallery } from '@app/components/product/ProductImageGallery';
+import { ProductPrice } from '@app/components/product/ProductPrice';
+import { ProductPriceRange } from '@app/components/product/ProductPriceRange';
+import { Breadcrumb, Breadcrumbs } from '@app/components/common/breadcrumbs/Breadcrumbs';
+import { Button } from '@app/components/common/buttons/Button';
+import { SubmitButton } from '@app/components/common/buttons/SubmitButton';
+import { Container } from '@app/components/common/container/Container';
+import { Form } from '@app/components/common/forms/Form';
+import { FormError } from '@app/components/common/forms/FormError';
+import { FieldGroup } from '@app/components/common/forms/fields/FieldGroup';
+import { Grid } from '@app/components/common/grid/Grid';
+import { GridColumn } from '@app/components/common/grid/GridColumn';
+import { Share } from '@app/components/share';
 import { Link, useFetcher } from '@remix-run/react';
 import { withYup } from '@remix-validated-form/with-yup';
 import truncate from 'lodash/truncate';
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import * as Yup from 'yup';
-import { ProductOptionSelectorSelect } from '~/components/products/ProductOptionSelectorSelect';
-import { LineItemActions } from '~/routes/api.cart.line-items';
+import { ProductOptionSelectorSelect } from '@app/components/product/ProductOptionSelectorSelect';
+import { LineItemActions } from '@app/routes/api.cart.line-items';
 import {
   getFilteredOptionValues,
   getOptionValuesWithDiscountLabels,
   selectVariantFromMatrixBySelectedOptions,
   selectVariantMatrix,
 } from '@libs/util/products';
-import { useProductInventory } from '../../libs/ui-components/hooks/useProductInventory';
-import { FieldLabel } from '@ui-components/common/forms/fields/FieldLabel';
-import { ProductOptionSelectorRadio } from '../components/products/ProductOptionSelectorRadio';
-import { QuantitySelector } from '@ui-components/common/field-groups/QuantitySelector';
+import { useProductInventory } from '@app/hooks/useProductInventory';
+import { FieldLabel } from '@app/components/common/forms/fields/FieldLabel';
+import { ProductOptionSelectorRadio } from '@app/components/product/ProductOptionSelectorRadio';
+import { QuantitySelector } from '@app/components/common/field-groups/QuantitySelector';
 import { StoreProduct, StoreProductOptionValue, StoreProductVariant } from '@medusajs/types';
 import { Validator } from 'remix-validated-form';
-import ProductList from '@ui-components/content/sections/ProductList';
+import ProductList from '@app/components/sections/ProductList';
 
 export interface AddToCartFormValues {
   productId: string;

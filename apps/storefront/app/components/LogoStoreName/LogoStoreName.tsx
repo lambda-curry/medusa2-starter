@@ -1,8 +1,8 @@
 import type { FC, PropsWithChildren } from 'react';
 import { Link } from '@remix-run/react';
 import clsx from 'clsx';
-import { useSiteDetails } from '@ui-components/hooks/useSiteDetails';
-import { Image } from '@ui-components/common/images/Image';
+import { useSiteDetails } from '@app/hooks/useSiteDetails';
+import { Image } from '@app/components/common/images/Image';
 
 const LogoHeader: FC<PropsWithChildren & { primary: boolean | undefined; className: string }> = ({
   primary,

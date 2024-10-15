@@ -8,8 +8,8 @@ import {
   TiktokIcon,
   TwitterIcon,
   YoutubeIcon,
-} from '@ui-components/common/assets/icons';
-import { IconButton } from '@ui-components/common/buttons/IconButton';
+} from '@app/components/common/assets/icons';
+import { IconButton } from '@app/components/common/buttons/IconButton';
 import type { FC } from 'react';
 
 export const SocialIcons: FC<{ siteSettings?: SiteSettings }> = ({ siteSettings }) => {

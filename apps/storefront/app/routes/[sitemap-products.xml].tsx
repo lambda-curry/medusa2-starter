@@ -1,8 +1,5 @@
 import { sdk } from '@libs/util/server/client.server';
-import {
-  buildSitemapUrlSetXML,
-  SitemapUrl,
-} from '@libs/utils-to-merge/xml/sitemap-builder';
+import { buildSitemapUrlSetXML, SitemapUrl } from '@libs/util/xml/sitemap-builder';
 import { LoaderFunctionArgs } from '@remix-run/node';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

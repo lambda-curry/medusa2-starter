@@ -1,34 +1,29 @@
-import { Button } from '@ui-components/common/buttons/Button'
-import { Image } from '@ui-components/common/images/Image'
-import { LineItemQuantitySelect } from '@ui-components/cart/line-items/LineItemQuantitySelect'
-import { useCart } from '@ui-components/hooks/useCart'
-import { useRemoveCartItem } from '@ui-components/hooks/useRemoveCartItem'
-import { formatPrice } from '@libs/util/prices'
-import { Link } from '@remix-run/react'
-import { FC } from 'react'
-import { StoreCart, StoreCartLineItem } from '@medusajs/types'
+import { Button } from '@app/components/common/buttons/Button';
+import { Image } from '@app/components/common/images/Image';
+import { LineItemQuantitySelect } from '@app/components/cart/line-items/LineItemQuantitySelect';
+import { useCart } from '@app/hooks/useCart';
+import { useRemoveCartItem } from '@app/hooks/useRemoveCartItem';
+import { formatPrice } from '@libs/util/prices';
+import { Link } from '@remix-run/react';
+import { FC } from 'react';
+import { StoreCart, StoreCartLineItem } from '@medusajs/types';
 
 export interface CheckoutOrderSummaryItemsProps {
-  cart: StoreCart
-  name: string
+  cart: StoreCart;
+  name: string;
 }
 
 export interface CheckoutOrderSummaryItemProps {
-  item: StoreCartLineItem
-  name: string
+  item: StoreCartLineItem;
+  name: string;
 }
 
-export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
-  item,
-  name,
-}) => {
-  const { cart } = useCart()
-  const removeCartItem = useRemoveCartItem()
-  const isRemovingFromCart = ['loading', 'submitting'].includes(
-    removeCartItem.state,
-  )
+export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ item, name }) => {
+  const { cart } = useCart();
+  const removeCartItem = useRemoveCartItem();
+  const isRemovingFromCart = ['loading', 'submitting'].includes(removeCartItem.state);
 
-  if (!cart) return null
+  if (!cart) return null;
 
   return (
     <li className="flex px-4 py-6 sm:px-6">
@@ -44,10 +39,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
         <div className="flex">
           <div className="min-w-0 flex-1">
             <h4 className="text-base">
-              <Link
-                to={`/products/${item.product_handle}`}
-                className="font-bold text-gray-700 hover:text-gray-800"
-              >
+              <Link to={`/products/${item.product_handle}`} className="font-bold text-gray-700 hover:text-gray-800">
                 {item.product_title}
               </Link>
             </h4>
@@ -81,16 +73,13 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({
         </div>
       </div>
     </li>
-  )
-}
+  );
+};
 
-export const CheckoutOrderSummaryItems: FC<CheckoutOrderSummaryItemsProps> = ({
-  cart,
-  name,
-}) => (
+export const CheckoutOrderSummaryItems: FC<CheckoutOrderSummaryItemsProps> = ({ cart, name }) => (
   <ul role="list" className="divide-y divide-gray-200">
     {cart.items?.map((item) => (
       <CheckoutOrderSummaryItem key={item.id} item={item} name={name} />
     ))}
   </ul>
-)
+);

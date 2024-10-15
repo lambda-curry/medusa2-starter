@@ -1,4 +1,4 @@
-import { SitemapUrl } from '@libs/utils-to-merge/xml/sitemap-builder';
+import { SitemapUrl } from '@libs/util/xml/sitemap-builder';
 import { LoaderFunctionArgs } from '@remix-run/node';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

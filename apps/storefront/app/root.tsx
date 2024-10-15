@@ -6,7 +6,7 @@ import { MetaFunction } from '@remix-run/node';
 import { getCommonMeta, mergeMeta } from '@libs/util/meta';
 import { getRootLoader } from '@libs/util/server/root.server';
 
-import '~/styles/global.css';
+import '@app/styles/global.css';
 
 export const getRootMeta: MetaFunction = ({ data }) => {
   const title = 'Barrio Store';

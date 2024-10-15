@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react';
 import clsx from 'clsx';
 import { Header } from './header/Header';
 import { Footer } from './footer/Footer';
-import { CartDrawer } from '@ui-components/cart/CartDrawer';
+import { CartDrawer } from '@app/components/cart/CartDrawer';
 export interface PageProps {
   className?: string;
   children: ReactNode;
