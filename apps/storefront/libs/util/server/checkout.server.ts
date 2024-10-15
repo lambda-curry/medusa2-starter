@@ -1,5 +1,5 @@
-import { addressToMedusaAddress } from '@libs/utils-to-merge/addresses'
-import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
+import { addressToMedusaAddress } from '@libs/util/addresses'
+import { FormValidationError } from '@libs/util/validation/validation-error'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import type { UpdateAccountDetailsInput } from '~/routes/api.checkout'
 import { checkoutAccountDetailsValidator } from '~/components/checkout'

@@ -1,5 +1,5 @@
 import { createReducer } from '@libs/util/createReducer';
-import type { ContextValue } from '@libs/utils-to-merge/types';
+import type { ContextValue } from '@libs/util/types';
 import merge from 'lodash/merge';
 import type { FC, PropsWithChildren } from 'react';
 import { createContext, useReducer } from 'react';

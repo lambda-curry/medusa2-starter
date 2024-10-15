@@ -1,7 +1,7 @@
 import { NavLink } from '@remix-run/react';
 import clsx from 'clsx';
 import { memo, type FC } from 'react';
-import { useScrollArrows } from '@libs/utils-to-merge/hooks/useScrollArrows';
+import { useScrollArrows } from '@ui-components/hooks/useScrollArrows';
 import { ScrollArrowButtons } from '@ui-components/common/buttons/ScrollArrowButtons';
 import { ProductCarouselSkeleton } from './ProductCarouselSkeleton';
 import type { ProductListItemProps } from './ProductListItem';

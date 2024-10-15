@@ -1,61 +1,14 @@
-import type { MetaArgs, MetaDescriptor, MetaFunction } from "@remix-run/node"
-import { UIMatch } from "@remix-run/react"
-import { MetaMatch } from "@remix-run/react/dist/routeModules"
-import truncate from "lodash/truncate"
-import type { RootLoader } from "./server/root.server"
-
-const applyMetaTemplates = (
-  { matches }: MetaArgs<unknown, {}>,
-  mergedMeta: MetaDescriptor[],
-) => {
-  return mergedMeta
-
-  const rootMatch = matches[0] as UIMatch<RootLoader>
-  // const siteDetails = rootMatch.data?.siteDetails;
-
-  // return mergedMeta.map(meta => {
-  //   if ('title' in meta) {
-  //     if (meta.title === siteDetails?.store.name) {
-  //       return {
-  //         title: `${meta.title}`
-  //       };
-  //     }
-  //     return {
-  //       title: `${meta.title} | ${siteDetails?.store.name}`
-  //     };
-  //   }
-
-  //   if ('name' in meta && meta.name === 'description') {
-  //     return {
-  //       name: 'description',
-  //       content: truncate(`${meta.content}`, { length: 200, separator: ' ' })
-  //     };
-  //   }
-
-  //   if ('property' in meta && meta.property === 'og:title') {
-  //     return {
-  //       property: 'og:title',
-  //       content: `${meta.content} | ${siteDetails?.store.name}`
-  //     };
-  //   }
-
-  //   if ('property' in meta && meta.property === 'og:description') {
-  //     return {
-  //       property: 'og:description',
-  //       content: truncate(`${meta.content}`, { length: 200, separator: ' ' })
-  //     };
-  //   }
-
-  //   return meta;
-  // });
-}
+import type { MetaDescriptor, MetaFunction } from '@remix-run/node'
+import { UIMatch } from '@remix-run/react'
+import { MetaMatch } from '@remix-run/react/dist/routeModules'
+import type { RootLoader } from './server/root.server'
 
 const filterEmptyMeta = (meta: MetaDescriptor[]) =>
   meta.filter(
     (meta) =>
-      ("title" in meta && !!meta.title) ||
-      ("name" in meta && !!meta.content) ||
-      ("property" in meta && !!meta.content),
+      ('title' in meta && !!meta.title) ||
+      ('name' in meta && !!meta.content) ||
+      ('property' in meta && !!meta.content),
   )
 
 const mergeMetaArrays = (
@@ -70,10 +23,10 @@ const mergeMetaArrays = (
     // Find the matching index
     const index = mergedMeta.findIndex(
       (meta) =>
-        ("title" in meta && "title" in override) ||
-        ("name" in meta && "name" in override && meta.name === override.name) ||
-        ("property" in meta &&
-          "property" in override &&
+        ('title' in meta && 'title' in override) ||
+        ('name' in meta && 'name' in override && meta.name === override.name) ||
+        ('property' in meta &&
+          'property' in override &&
           meta.property === override.property),
     )
 
@@ -97,13 +50,10 @@ const mergeMetaArrays = (
 export const mergeMeta =
   (...overrideFuncs: MetaFunction[]): MetaFunction =>
   (arg) =>
-    applyMetaTemplates(
-      arg,
-      overrideFuncs.reduce(
-        (acc: MetaDescriptor[], override: MetaFunction) =>
-          mergeMetaArrays(acc, override(arg)),
-        [] as MetaDescriptor[],
-      ),
+    overrideFuncs.reduce(
+      (acc: MetaDescriptor[], override: MetaFunction) =>
+        mergeMetaArrays(acc, override(arg)),
+      [] as MetaDescriptor[],
     )
 
 /**
@@ -129,14 +79,14 @@ export const getCommonMeta: MetaFunction = ({ matches }) => {
   const canonicalUrl = `${siteDetails.settings.storefront_url}${currentMatch.pathname}`
 
   return [
-    { charset: "utf-8" },
+    { charset: 'utf-8' },
     {
-      name: "viewport",
+      name: 'viewport',
       content:
-        "width=device-width, initial-scale=1.0, height=device-height, user-scalable=0",
+        'width=device-width, initial-scale=1.0, height=device-height, user-scalable=0',
     },
-    { property: "og:url", content: canonicalUrl },
-    { property: "og:type", content: "website" },
-    { property: "og:site_name", content: siteDetails.store.name },
+    { property: 'og:url', content: canonicalUrl },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: siteDetails.store.name },
   ]
 }

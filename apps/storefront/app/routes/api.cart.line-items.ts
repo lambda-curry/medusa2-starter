@@ -12,7 +12,7 @@ import {
 } from '@libs/util/server/data/cart.server'
 import { getProductsById } from '@libs/util/server/data/products.server'
 import { getSelectedRegion } from '@libs/util/server/data/regions.server'
-import { FormValidationError } from '@libs/utils-to-merge/validation/validation-error'
+import { FormValidationError } from '@libs/util/validation/validation-error'
 import { StoreCart, StoreCartResponse } from '@medusajs/types'
 import type { ActionFunctionArgs } from '@remix-run/node'
 import { unstable_data as data } from '@remix-run/node'
