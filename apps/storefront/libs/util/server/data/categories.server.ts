@@ -8,7 +8,9 @@ export const listCategories = async function () {
 }
 
 export const getCategoryByHandle = async function (categoryHandle: string[]) {
-  return sdk.store.category.list({
-    handle: categoryHandle,
-  } as StoreProductCategoryParams)
+  return sdk.store.category
+    .list({
+      handle: categoryHandle,
+    } as StoreProductCategoryParams)
+    .then(({ product_categories }) => product_categories[0])
 }
