@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Pagination, PaginationConfig } from './Pagination';
-import { isBrowser } from '@libs/util';
+import { isBrowser } from '@libs/util/is-browser';
 
 function getPaginationLink({
   context,
@@ -15,19 +15,13 @@ function getPaginationLink({
   section?: string;
   difference?: number;
 }) {
-  const windowSearch = isBrowser() ? window.location.search : '';
-  const contextSplit = isBrowser()
-    ? context.split('?')[1] || '' + windowSearch
-    : context.split('?')[1];
+  const windowSearch = isBrowser ? window.location.search : '';
+  const contextSplit = isBrowser ? context.split('?')[1] || '' + windowSearch : context.split('?')[1];
   const contextSearchParams = new URLSearchParams(contextSplit);
   const newPage = page + difference;
 
   if (newPage > 0) contextSearchParams.set(`${prefix}page`, newPage.toString());
-  return `/${context
-    .split('?')[0]
-    .replace('?', '')}?${contextSearchParams.toString()}${
-    section ? `#${section}` : ''
-  }`;
+  return `/${context.split('?')[0].replace('?', '')}?${contextSearchParams.toString()}${section ? `#${section}` : ''}`;
 }
 
 export const PaginationWithContext: FC<{
