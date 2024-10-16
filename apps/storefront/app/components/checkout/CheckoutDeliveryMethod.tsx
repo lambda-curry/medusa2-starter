@@ -1,4 +1,3 @@
-import { useCart } from '@app/hooks/useCart';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { CheckoutStep } from '@app/providers/checkout-provider';
 import { Alert } from '@app/components/common/alert/Alert';
@@ -42,8 +41,7 @@ const getDefaultValues = (cart: StoreCart, shippingOptionsByProfile: { [key: str
 
 export const CheckoutDeliveryMethod: FC = () => {
   const fetcher = useFetcher<{ fieldErrors: any }>();
-  const { cart } = useCart();
-  const { step, shippingOptions, setStep, goToNextStep } = useCheckout();
+  const { step, shippingOptions, setStep, goToNextStep, cart } = useCheckout();
   const isActiveStep = step === CheckoutStep.PAYMENT;
   const isSubmitting = ['submitting', 'loading'].includes(fetcher.state);
   if (!cart) return null;
@@ -69,7 +67,7 @@ export const CheckoutDeliveryMethod: FC = () => {
   );
 
   useEffect(() => {
-    if (!formRef.current) return;
+    if (!formRef.current || cart.shipping_methods?.length) return;
 
     formRef.current.reset();
     const formData = new FormData(formRef.current);
@@ -82,7 +80,7 @@ export const CheckoutDeliveryMethod: FC = () => {
     });
 
     fetcher.submit(formData, { action: '/api/checkout', method: 'post' });
-  }, [formRef.current, lineItemFetchersLoading]);
+  }, [formRef.current, lineItemFetchersLoading, cart.shipping_methods?.length]);
 
   useEffect(() => {
     if (isActiveStep && !isSubmitting && !hasErrors && isComplete) goToNextStep();

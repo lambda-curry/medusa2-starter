@@ -3,7 +3,7 @@ import debounce from 'lodash/debounce';
 
 const updateArrowsVisibility = ({
   scrollableDiv,
-  buffer
+  buffer,
 }: {
   scrollableDiv: HTMLDivElement | null;
   buffer: number;
@@ -23,7 +23,7 @@ const updateArrowsVisibility = ({
 
 export const useScrollArrows = ({
   buffer = 5,
-  resetOnDepChange = []
+  resetOnDepChange = [],
 }: {
   buffer?: number;
   resetOnDepChange?: any[];
@@ -34,9 +34,9 @@ export const useScrollArrows = ({
     () =>
       updateArrowsVisibility({
         scrollableDiv: scrollableDivRef.current,
-        buffer
+        buffer,
       }),
-    [scrollableDivRef.current, buffer]
+    [scrollableDivRef.current, buffer],
   );
 
   const [showStartArrow, setShowStartArrow] = useState(initialArrowsVisibility.showStartArrow);
@@ -46,7 +46,7 @@ export const useScrollArrows = ({
     const handleScroll = debounce(() => {
       const { showStartArrow, showEndArrow } = updateArrowsVisibility({
         scrollableDiv: scrollableDivRef.current,
-        buffer
+        buffer,
       });
       setShowStartArrow(showStartArrow);
       setShowEndArrow(showEndArrow);
@@ -55,7 +55,7 @@ export const useScrollArrows = ({
     const handleResize = debounce(() => {
       const { showStartArrow, showEndArrow } = updateArrowsVisibility({
         scrollableDiv: scrollableDivRef.current,
-        buffer
+        buffer,
       });
       setShowStartArrow(showStartArrow);
       setShowEndArrow(showEndArrow);
@@ -84,7 +84,7 @@ export const useScrollArrows = ({
 
     const { showStartArrow, showEndArrow } = updateArrowsVisibility({
       scrollableDiv: scrollableDivRef.current,
-      buffer
+      buffer,
     });
     setShowStartArrow(showStartArrow);
     setShowEndArrow(showEndArrow);

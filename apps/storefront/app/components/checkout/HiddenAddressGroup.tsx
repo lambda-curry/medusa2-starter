@@ -1,31 +1,28 @@
-import { Address } from "@libs/util"
+import { Address } from '@libs/types';
 
 interface HiddenAddressGroupProps {
-  address: Address
-  prefix: "shippingAddress" | "billingAddress"
+  address: Address;
+  prefix: 'shippingAddress' | 'billingAddress';
 }
 
-const HiddenAddressGroup: React.FC<HiddenAddressGroupProps> = ({
-  address,
-  prefix,
-}) => {
+const HiddenAddressGroup: React.FC<HiddenAddressGroupProps> = ({ address, prefix }) => {
   return (
     <>
       {Object.keys(address).map((key: string) => {
-        const castedKey = key as keyof Address
-        if (address[castedKey] == null) return
+        const castedKey = key as keyof Address;
+        if (address[castedKey] == null) return;
 
         return (
           <input
             type="hidden"
-            key={castedKey}
+            key={castedKey as string}
             name={`${prefix}.${key}`}
-            value={(address[castedKey] as string) ?? ""}
+            value={(address[castedKey] as string) ?? ''}
           />
-        )
+        );
       })}
     </>
-  )
-}
+  );
+};
 
-export default HiddenAddressGroup
+export default HiddenAddressGroup;

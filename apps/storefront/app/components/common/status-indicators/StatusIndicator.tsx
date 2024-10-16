@@ -18,7 +18,7 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     'bg-yellow-500': variant === 'warning',
     'bg-violet-600': variant === 'primary',
     'bg-emerald-400': variant === 'active',
-    'bg-gray-400': variant === 'default'
+    'bg-gray-400': variant === 'default',
   });
   return (
     <div className={clsx('flex items-center text-xs', className)} {...props}>

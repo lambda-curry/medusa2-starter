@@ -1,4 +1,3 @@
-import { useCart } from '@app/hooks/useCart';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { FC, ReactNode } from 'react';
 import { CheckoutOrderSummaryItems } from './CheckoutOrderSummaryItems';
@@ -11,8 +10,7 @@ export interface CheckoutOrderSummaryProps {
 }
 
 export const CheckoutOrderSummary: FC<CheckoutOrderSummaryProps> = ({ submitButton, name }) => {
-  const { cart } = useCart();
-  const { shippingOptions } = useCheckout();
+  const { shippingOptions, cart } = useCheckout();
 
   if (!cart) return null;
 

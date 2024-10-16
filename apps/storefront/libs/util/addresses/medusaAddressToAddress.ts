@@ -1,5 +1,5 @@
-import type { Address, MedusaAddress } from '@libs/types'
-import { StoreCreateCustomerAddress } from '@medusajs/types'
+import type { Address, MedusaAddress } from '@libs/types';
+import { StoreCreateCustomerAddress } from '@medusajs/types';
 
 export const emptyAddress: Address = {
   firstName: '',
@@ -12,12 +12,10 @@ export const emptyAddress: Address = {
   postalCode: '',
   countryCode: '',
   phone: '',
-}
+};
 
-export const medusaAddressToAddress = (
-  address?: MedusaAddress | null,
-): Address => {
-  if (!address) return emptyAddress
+export const medusaAddressToAddress = (address?: MedusaAddress | null): Address => {
+  if (!address) return emptyAddress;
 
   return {
     ...emptyAddress,
@@ -31,13 +29,11 @@ export const medusaAddressToAddress = (
     phone: address?.phone || '',
     postalCode: address?.postal_code || '',
     province: address?.province || '',
-  }
-}
+  };
+};
 
-export const addressPayload = (
-  address?: MedusaAddress | null,
-): StoreCreateCustomerAddress => {
-  if (!address) return emptyAddress as StoreCreateCustomerAddress
+export const addressPayload = (address?: MedusaAddress | null): StoreCreateCustomerAddress => {
+  if (!address) return emptyAddress as StoreCreateCustomerAddress;
 
   return {
     first_name: address?.first_name || '',
@@ -50,5 +46,5 @@ export const addressPayload = (
     phone: address?.phone || '',
     postal_code: address?.postal_code || '',
     province: address?.province || '',
-  }
-}
+  };
+};

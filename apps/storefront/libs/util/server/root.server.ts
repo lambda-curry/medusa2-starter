@@ -1,50 +1,46 @@
-import type { SiteDetailsRootData } from '@libs/types'
+import type { SiteDetailsRootData } from '@libs/types';
 
-import {
-  footerNavigationItems,
-  headerNavigationItems,
-} from '@libs/config/site/navigation-items'
-import { siteSettings } from '@libs/config/site/site-settings'
-import type { HttpTypes } from '@medusajs/types'
-import { type LoaderFunctionArgs, unstable_data } from '@remix-run/node'
-import { config } from './config.server'
-import { getSelectedRegionId, setSelectedRegionId } from './cookies.server'
-import { enrichLineItems, retrieveCart } from './data/cart.server'
-import { getCustomer } from './data/customer.server'
-import { getSelectedRegion, listRegions } from './data/regions.server'
-import { fetchProducts } from './products.server'
+import { footerNavigationItems, headerNavigationItems } from '@libs/config/site/navigation-items';
+import { siteSettings } from '@libs/config/site/site-settings';
+import type { HttpTypes } from '@medusajs/types';
+import { type LoaderFunctionArgs, data as remixData } from '@remix-run/node';
+import { config } from './config.server';
+import { getSelectedRegionId, setSelectedRegionId } from './cookies.server';
+import { enrichLineItems, retrieveCart } from './data/cart.server';
+import { getCustomer } from './data/customer.server';
+import { getSelectedRegion, listRegions } from './data/regions.server';
+import { fetchProducts } from './products.server';
+import { RemixLoaderResponse } from 'types/remix';
 
 const fetchHasProducts = async (request: Request) => {
-  return await fetchProducts(request, { limit: 1, offset: 999_999 }).then(
-    (res) => res.count > 0,
-  )
-}
+  return await fetchProducts(request, { limit: 1, offset: 999_999 }).then((res) => res.count > 0);
+};
 
 export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
-  const region = await getSelectedRegion(request.headers)
+  const region = await getSelectedRegion(request.headers);
 
   const [cart, regions, customer, hasPublishedProducts] = await Promise.all([
     retrieveCart(request),
     listRegions(),
     getCustomer(request),
     fetchHasProducts(request),
-  ])
+  ]);
 
-  const headers = new Headers()
-  const currentRegionCookieId = await getSelectedRegionId(headers)
+  const headers = new Headers();
+  const currentRegionCookieId = await getSelectedRegionId(headers);
 
   if (currentRegionCookieId !== region?.id) {
-    await setSelectedRegionId(headers, region?.id!)
+    await setSelectedRegionId(headers, region?.id!);
   }
 
   if (cart?.items?.length) {
-    const enrichedItems = await enrichLineItems(cart?.items, cart?.region_id!)
-    cart.items = enrichedItems as HttpTypes.StoreCartLineItem[]
+    const enrichedItems = await enrichLineItems(cart?.items, cart?.region_id!);
+    cart.items = enrichedItems as HttpTypes.StoreCartLineItem[];
   }
 
-  const fontLinks: string[] = []
+  const fontLinks: string[] = [];
 
-  return unstable_data(
+  return remixData(
     {
       hasPublishedProducts,
       fontLinks,
@@ -72,7 +68,9 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
       cart: cart,
     },
     { headers },
-  )
-}
+  );
+};
 
-export type RootLoader = typeof getRootLoader
+export type RootLoader = typeof getRootLoader;
+
+export type RootLoaderResonse = RemixLoaderResponse<typeof getRootLoader>['data'];

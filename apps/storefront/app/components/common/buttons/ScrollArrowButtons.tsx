@@ -17,7 +17,7 @@ export const ScrollArrowButtons: FC<ScrollArrowButtonsProps> = ({
   orientation = 'horizontal',
   showStartArrow,
   showEndArrow,
-  handleArrowClick
+  handleArrowClick,
 }) => {
   return (
     <div
@@ -25,9 +25,9 @@ export const ScrollArrowButtons: FC<ScrollArrowButtonsProps> = ({
         'scroll-arrow-buttons pointer-events-none absolute flex justify-between',
         {
           '-left-5 top-1/2 w-[calc(100%+2.3rem)]': orientation === 'horizontal',
-          '-top-5 left-1/2 h-[calc(100%+2.3rem)] flex-col': orientation === 'vertical'
+          '-top-5 left-1/2 h-[calc(100%+2.3rem)] flex-col': orientation === 'vertical',
         },
-        className
+        className,
       )}
     >
       <IconButton
@@ -37,8 +37,8 @@ export const ScrollArrowButtons: FC<ScrollArrowButtonsProps> = ({
           'text-primary bg-primary-200 hover:bg-primary-400 hover:text-primary-800 focus:text-primary-800 z-10 opacity-0 transition-opacity',
           {
             'pointer-events-auto opacity-100': showStartArrow,
-            'rotate-90 transform': orientation === 'vertical'
-          }
+            'rotate-90 transform': orientation === 'vertical',
+          },
         )}
         icon={ArrowLeftIcon}
       />
@@ -49,8 +49,8 @@ export const ScrollArrowButtons: FC<ScrollArrowButtonsProps> = ({
           'text-primary bg-primary-200 hover:bg-primary-400 hover:text-primary-800 focus:text-primary-800 z-10 opacity-0 transition-opacity',
           {
             'pointer-events-auto opacity-100': showEndArrow,
-            'rotate-90 transform': orientation === 'vertical'
-          }
+            'rotate-90 transform': orientation === 'vertical',
+          },
         )}
         icon={ArrowRightIcon}
       />

@@ -34,7 +34,7 @@ export const useCombinedFieldProps = <T>(props: FieldProps<T>) => {
     name,
     className,
     error: fieldError,
-    ...restProps
+    ...restProps,
   };
 
   const combinedInputProps: T & {
@@ -52,9 +52,9 @@ export const useCombinedFieldProps = <T>(props: FieldProps<T>) => {
       placeholder,
       autoComplete,
       defaultValue,
-      ...inputProps
+      ...inputProps,
     }),
-    error: fieldError
+    error: fieldError,
   };
 
   const combinedLabelProps: FieldLabelProps = {
@@ -63,12 +63,12 @@ export const useCombinedFieldProps = <T>(props: FieldProps<T>) => {
     labelComponent,
     error: fieldError,
     optional,
-    ...labelProps
+    ...labelProps,
   };
 
   const combinedErrorProps: FieldErrorProps = {
     error: fieldError,
-    errorComponent
+    errorComponent,
   };
 
   return {
@@ -76,6 +76,6 @@ export const useCombinedFieldProps = <T>(props: FieldProps<T>) => {
     inputProps: combinedInputProps,
     labelProps: combinedLabelProps,
     errorProps: combinedErrorProps,
-    wrapperProps: combinedWrapperProps
+    wrapperProps: combinedWrapperProps,
   };
 };

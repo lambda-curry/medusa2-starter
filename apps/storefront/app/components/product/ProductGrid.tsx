@@ -32,7 +32,7 @@ export const ProductGrid: FC<ProductListProps> = ({
 
       <div className={className}>
         {products?.map((product) => (
-          <NavLink prefetch="intent" key={product.id} to={`/products/${product.handle}`} unstable_viewTransition>
+          <NavLink prefetch="intent" key={product.id} to={`/products/${product.handle}`} viewTransition>
             {({ isTransitioning }) => <ProductListItem isTransitioning={isTransitioning} product={product} />}
           </NavLink>
         ))}

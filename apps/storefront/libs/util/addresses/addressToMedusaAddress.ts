@@ -1,7 +1,7 @@
-import { Address, MedusaAddress } from '@libs/types'
+import { Address, MedusaAddress } from '@libs/types';
 
 export const addressToMedusaAddress = (address: Address): MedusaAddress => {
-  if (!address) return {} as MedusaAddress
+  if (!address) return {} as MedusaAddress;
 
   return {
     first_name: address.firstName,
@@ -14,5 +14,5 @@ export const addressToMedusaAddress = (address: Address): MedusaAddress => {
     phone: address.phone || '',
     postal_code: address.postalCode,
     province: address.province,
-  } as MedusaAddress
-}
+  } as MedusaAddress;
+};

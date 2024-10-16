@@ -1,10 +1,8 @@
 import { checkAccountDetailsComplete, checkContactInfoComplete } from '@libs/util/checkout';
 import { createReducer } from '@libs/util/createReducer';
 import { createContext, FC, PropsWithChildren, useMemo, useReducer } from 'react';
-import { useCart } from '@app/hooks/useCart';
 import { useCustomer } from '@app/hooks/useCustomer';
-import { useEnv } from '@app/hooks/useEnv';
-import { StoreCartShippingOption, StorePaymentProvider } from '@medusajs/types';
+import { StoreCart, StoreCartShippingOption, StorePaymentProvider } from '@medusajs/types';
 import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
 import { ContextValue } from '../../types';
 
@@ -16,6 +14,7 @@ export enum CheckoutStep {
 }
 
 export interface CheckoutState {
+  cart: StoreCart | null;
   step: CheckoutStep;
   shippingOptions: StoreCartShippingOption[];
   paymentProviders: StorePaymentProvider[];
@@ -31,6 +30,7 @@ export type CheckoutContextValue = ContextValue<CheckoutState, CheckoutAction>;
 
 export interface CheckoutProviderProps extends PropsWithChildren {
   data: {
+    cart: StoreCart | null;
     shippingOptions: StoreCartShippingOption[];
     paymentProviders: StorePaymentProvider[];
     activePaymentSession: BasePaymentSession | null;
@@ -38,7 +38,7 @@ export interface CheckoutProviderProps extends PropsWithChildren {
 }
 
 export const useNextStep = (state: Omit<CheckoutState, 'step'>): CheckoutStep => {
-  const { cart } = useCart();
+  const { cart } = state;
   const { customer } = useCustomer();
   const isLoggedIn = !!customer?.id;
 
@@ -67,11 +67,11 @@ export const reducer = createReducer<CheckoutState, CheckoutAction>({
 });
 
 export const CheckoutProvider: FC<CheckoutProviderProps> = ({ data, ...props }) => {
-  const { env } = useEnv();
   const initialStep = useNextStep({ ...data });
 
   const initialState = {
     step: initialStep,
+    cart: null,
     shippingOptions: [],
     paymentProviders: [],
     activePaymentSession: null,

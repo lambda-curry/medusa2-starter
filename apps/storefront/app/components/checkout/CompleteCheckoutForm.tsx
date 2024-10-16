@@ -6,7 +6,6 @@ import { CheckoutAction, UpdatePaymentInput, UpdateBillingAddressInput } from '@
 import { useFormContext } from 'remix-validated-form';
 import { CheckoutOrderSummary, checkoutPaymentValidator } from '.';
 import isEqual from 'lodash/isEqual';
-import { useCart } from '@app/hooks/useCart';
 import { SubmitButton } from '@app/components/common/buttons/SubmitButton';
 import { Form } from '@app/components/common/forms/Form';
 import { FieldGroup } from '@app/components/common/forms/fields/FieldGroup';
@@ -47,8 +46,7 @@ export const CompleteCheckoutForm: FC<CompleteCheckoutFormProps> = ({
   providerId,
   className,
 }) => {
-  const { cart } = useCart();
-  const { activePaymentSession } = useCheckout();
+  const { activePaymentSession, cart } = useCheckout();
   const fetchers = useFetchers() as (Fetcher & { formAction: string })[];
   const checkoutFetchers = fetchers.filter(
     (f) => f.formAction && (f.formAction === '/api/checkout' || f.formAction === '/api/cart/line-items'),

@@ -3,10 +3,10 @@ import { type AddressMode, loadStripe } from '@stripe/stripe-js';
 import { useMemo, type Dispatch, type FC, type SetStateAction } from 'react';
 import { useEnv } from '@app/hooks/useEnv';
 import { useRegion } from '@app/hooks/useRegion';
-import { useCart } from '@app/hooks/useCart';
 import { useSiteDetails } from '@app/hooks/useSiteDetails';
 import { BaseCartAddress } from '@medusajs/types/dist/http/cart/common';
-import { Address } from '@libs/util';
+import { useCheckout } from '@app/hooks/useCheckout';
+import { Address } from '@libs/types';
 
 export interface StripeAddress {
   address: Address;
@@ -44,7 +44,7 @@ export const MedusaStripeAddress: FC<MedusaStripeAddressProps> = ({
   setAddress,
 }) => {
   const { env } = useEnv();
-  const { cart } = useCart();
+  const { cart } = useCheckout();
   const { region } = useRegion();
   const { settings } = useSiteDetails();
 
@@ -64,7 +64,6 @@ export const MedusaStripeAddress: FC<MedusaStripeAddressProps> = ({
           currency: region.currency_code,
           appearance: {
             variables: {
-              fontFamily: settings.body_font?.family,
               borderRadius: '6px',
               spacingUnit: '4.601px',
               fontSizeBase: '16px',

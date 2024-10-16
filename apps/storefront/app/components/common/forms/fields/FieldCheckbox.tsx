@@ -15,11 +15,11 @@ export const FieldCheckbox = forwardRef<HTMLDivElement, FieldCheckboxProps>(({ i
     fieldOptions: {
       validationBehavior: {
         initial: 'onSubmit',
-        whenTouched: 'onSubmit'
+        whenTouched: 'onSubmit',
       },
-      ...props.fieldOptions
+      ...props.fieldOptions,
     },
-    ...props
+    ...props,
   });
 
   return (

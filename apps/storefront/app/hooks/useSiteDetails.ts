@@ -1,7 +1,7 @@
-import { useRootLoaderData } from "./useRootLoaderData"
+import { useRootLoaderData } from './useRootLoaderData';
 
 export const useSiteDetails = () => {
-  const data = useRootLoaderData()
+  const data = useRootLoaderData();
 
-  return data.siteDetails || {}
-}
+  return data.siteDetails || {};
+};

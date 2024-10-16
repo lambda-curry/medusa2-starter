@@ -3,7 +3,6 @@ import { useFetcher } from '@remix-run/react';
 import { CheckoutAction, UpdateContactInfoInput } from '@app/routes/api.checkout';
 import { checkoutUpdateContactInfoValidator } from './checkout-form-helpers';
 import { checkContactInfoComplete } from '@libs/util/checkout';
-import { useCart } from '@app/hooks/useCart';
 import { useCustomer } from '@app/hooks/useCustomer';
 import { useLogin } from '@app/hooks/useLogin';
 import { useCheckout } from '@app/hooks/useCheckout';
@@ -22,10 +21,9 @@ import { ActionFunctionArgs } from '@remix-run/node';
 export const CheckoutContactInfo: FC = () => {
   const firstInputRef = useRef<HTMLInputElement>(null);
   const fetcher = useFetcher<(args: ActionFunctionArgs) => { fieldErrors?: any }>();
-  const { cart } = useCart();
   const { customer } = useCustomer();
   const { toggleLoginModal } = useLogin();
-  const { step, setStep, goToNextStep } = useCheckout();
+  const { step, setStep, goToNextStep, cart } = useCheckout();
   const isActiveStep = step === CheckoutStep.CONTACT_INFO;
 
   if (!cart) return null;

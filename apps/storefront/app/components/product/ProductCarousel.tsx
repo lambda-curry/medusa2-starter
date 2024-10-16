@@ -23,7 +23,7 @@ export const ProductRow: FC<{ products: StoreProduct[] }> = memo(({ products }) 
           // Note: not sure if there is a better way to handle the width of these items, but these match closely to our grid layout
           className="xs:w-[47.5%] xs:snap-start mr-6 inline-block w-[100%] snap-center last:mr-0 sm:mr-6 sm:snap-start md:w-[31.2%] xl:mr-8 xl:w-[23%]"
         >
-          <NavLink prefetch="intent" to={`/products/${product.handle}`} unstable_viewTransition>
+          <NavLink prefetch="intent" to={`/products/${product.handle}`} viewTransition>
             {({ isTransitioning }) => <ProductListItem isTransitioning={isTransitioning} product={product} />}
           </NavLink>
         </div>

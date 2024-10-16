@@ -53,7 +53,7 @@ const PaginationItem: FC<PaginationItemProps> = ({ className, currentPage, page,
 
   return (
     <Link
-      unstable_viewTransition
+      viewTransition
       className={clsx(
         className,
         'relative inline-flex items-center border px-4 py-2 text-sm font-bold',
@@ -97,7 +97,7 @@ const PaginationButton: FC<PaginationArrowButtonProps> = ({
 
   return (
     <Link
-      unstable_viewTransition
+      viewTransition
       aria-disabled={isDisabled}
       onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
         if (isDisabled) event.preventDefault();

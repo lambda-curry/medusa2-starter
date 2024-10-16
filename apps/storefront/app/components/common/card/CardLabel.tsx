@@ -9,7 +9,7 @@ export const CardLabel: FC<PropsWithChildren<CardLabelProps>> = ({ className, ..
   <span
     className={clsx(
       'card__label rounded-full bg-gray-100 px-2 py-1 text-xs font-medium uppercase tracking-wider text-gray-500 no-underline',
-      className
+      className,
     )}
     {...props}
   />

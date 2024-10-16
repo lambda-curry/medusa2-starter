@@ -5,7 +5,7 @@ export const HasSaleBadge = ({ className, endingSoon }: { className?: string; en
     <div
       className={clsx(
         'inline-flex items-center rounded-md border border-green-200 bg-green-100 px-1.5 py-0.5 text-xs font-bold text-green-800',
-        className
+        className,
       )}
     >
       {endingSoon ? <>Sale ends soon!</> : <>On sale!</>}

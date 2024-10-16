@@ -42,7 +42,7 @@ export const CheckoutOrderSummaryTotals: FC<CheckoutOrderSummaryTotalsProps> = (
       <CheckoutOrderSummaryDiscountCode cart={cart} />
 
       <dl className="flex flex-col gap-2">
-        <CheckoutOrderSummaryTotalsItem label="Subtotal" amount={cart.subtotal} region={cart.region!} />
+        <CheckoutOrderSummaryTotalsItem label="Subtotal" amount={cart.item_subtotal} region={cart.region!} />
         {discountTotal > 0 && (
           <CheckoutOrderSummaryTotalsItem label="Discount" amount={-discountTotal} region={cart.region!} />
         )}

@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, useMemo } from 'react';
 import { loadStripe, StripeElementsOptions } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { useEnv } from '@app/hooks/useEnv';
-import { useCart } from '@app/hooks/useCart';
+import { useCheckout } from '@app/hooks/useCheckout';
 
 export interface StripeElementsProviderProps extends PropsWithChildren {
   options?: StripeElementsOptions;
@@ -10,7 +10,7 @@ export interface StripeElementsProviderProps extends PropsWithChildren {
 
 export const StripeElementsProvider: FC<StripeElementsProviderProps> = ({ options, children }) => {
   const { env } = useEnv();
-  const { cart } = useCart();
+  const { cart } = useCheckout();
 
   const stripePromise = useMemo(() => (env.STRIPE_PUBLIC_KEY ? loadStripe(env.STRIPE_PUBLIC_KEY) : null), []);
 
@@ -23,7 +23,7 @@ export const StripeElementsProvider: FC<StripeElementsProviderProps> = ({ option
 
   const clientSecret = stripeSession?.data?.client_secret as string;
 
-  if (!stripeSession || !stripePromise) return null;
+  if (!stripeSession || !stripePromise || !clientSecret) return null;
 
   return (
     <Elements

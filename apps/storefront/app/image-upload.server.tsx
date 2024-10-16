@@ -6,11 +6,11 @@ export const standardFileUploadHandler = unstable_composeUploadHandlers(
     avoidFileConflicts: true,
     directory: '/tmp',
     file: ({ filename }) => filename,
-    maxPartSize: 15_000_000
+    maxPartSize: 15_000_000,
   }),
-  unstable_createMemoryUploadHandler()
+  unstable_createMemoryUploadHandler(),
 );
 
-export const uploadHandler: UploadHandler = async part => {
+export const uploadHandler: UploadHandler = async (part) => {
   return standardFileUploadHandler(part);
 };

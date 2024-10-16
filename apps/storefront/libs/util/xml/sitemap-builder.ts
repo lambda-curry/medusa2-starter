@@ -7,7 +7,7 @@ export interface SitemapUrl {
 
 export const buildSitemapUrlSetXML = (urls: SitemapUrl[]) =>
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    ${urls.map(url => buildSiteMapUrlXML(url)).join('\n')}
+    ${urls.map((url) => buildSiteMapUrlXML(url)).join('\n')}
     </urlset>
 `;
 

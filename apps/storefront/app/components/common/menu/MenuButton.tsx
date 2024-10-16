@@ -3,4 +3,4 @@ import { Menu as HeadlessMenu, type MenuButtonProps as HeadlessMenuButtonProps }
 
 export type MenuButtonProps = HeadlessMenuButtonProps<ElementType>;
 
-export const MenuButton: FC<PropsWithChildren> = props => <HeadlessMenu.Button as="div" {...props} />;
+export const MenuButton: FC<PropsWithChildren> = (props) => <HeadlessMenu.Button as="div" {...props} />;

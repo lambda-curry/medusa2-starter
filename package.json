@@ -6,8 +6,8 @@
     "start": "turbo start",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "medusa:setup": "turbo run medusa:setup --filter=medusa"
+    "medusa:setup": "turbo run medusa:setup --filter=medusa",
+    "format": "turbo run format"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.3",

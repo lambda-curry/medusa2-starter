@@ -11,7 +11,7 @@ export const IconButton: FC<IconButtonProps> = ({ icon: Icon, className, iconPro
   <ButtonBase
     className={clsx(
       'icon-button inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-none text-gray-500 placeholder:bg-transparent hover:bg-gray-100 hover:text-gray-700 focus:text-gray-700',
-      className
+      className,
     )}
     {...props}
   >

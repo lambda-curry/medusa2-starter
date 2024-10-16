@@ -1,12 +1,12 @@
 import { Button } from '@app/components/common/buttons/Button';
 import { Image } from '@app/components/common/images/Image';
 import { LineItemQuantitySelect } from '@app/components/cart/line-items/LineItemQuantitySelect';
-import { useCart } from '@app/hooks/useCart';
 import { useRemoveCartItem } from '@app/hooks/useRemoveCartItem';
 import { formatPrice } from '@libs/util/prices';
 import { Link } from '@remix-run/react';
 import { FC } from 'react';
 import { StoreCart, StoreCartLineItem } from '@medusajs/types';
+import { useCheckout } from '@app/hooks/useCheckout';
 
 export interface CheckoutOrderSummaryItemsProps {
   cart: StoreCart;
@@ -19,8 +19,9 @@ export interface CheckoutOrderSummaryItemProps {
 }
 
 export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ item, name }) => {
-  const { cart } = useCart();
+  const { cart } = useCheckout();
   const removeCartItem = useRemoveCartItem();
+  const handleRemoveFromCart = () => removeCartItem.submit(item);
   const isRemovingFromCart = ['loading', 'submitting'].includes(removeCartItem.state);
 
   if (!cart) return null;
@@ -47,12 +48,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ it
           </div>
 
           <div className="ml-4 flow-root flex-shrink-0">
-            <Button
-              variant="link"
-              onClick={() => removeCartItem.submit(item)}
-              disabled={isRemovingFromCart}
-              className="text-sm"
-            >
+            <Button variant="link" onClick={handleRemoveFromCart} disabled={isRemovingFromCart} className="text-sm">
               {isRemovingFromCart ? 'Removing' : 'Remove'}
             </Button>
           </div>
@@ -60,7 +56,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ it
 
         <div className="flex flex-1 items-end justify-between pt-2">
           <div className="mr-4">
-            <LineItemQuantitySelect formId={`quantity-${name}`} item={item} />
+            <LineItemQuantitySelect formId={`quantity-${name}-${item.id}`} item={item} />
           </div>
 
           <p className="mt-1 text-lg">

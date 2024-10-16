@@ -1,4 +1,4 @@
-import type { Address } from '@libs/util';
+import type { Address } from '@libs/types';
 
 export const AddressDisplay: React.FC<{
   title?: string;

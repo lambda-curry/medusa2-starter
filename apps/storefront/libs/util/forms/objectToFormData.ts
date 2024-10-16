@@ -13,7 +13,7 @@ export const convertToFormData = (data: any, formData: FormData = new FormData()
       convertToFormData(
         value,
         formData,
-        !parentKey ? key : data[key] instanceof File ? parentKey : `${parentKey}[${key}]`
+        !parentKey ? key : data[key] instanceof File ? parentKey : `${parentKey}[${key}]`,
       );
     });
     return formData;

@@ -4,7 +4,7 @@ export const buildSearchParamsFromObject = (search: Record<string, any>, prefix 
     .map(([key, value]) =>
       typeof value === 'object'
         ? buildSearchParamsFromObject(value, key, Array.isArray(value))
-        : `${prefix ? `${prefix}[${isArray ? '' : key}]` : `${key}`}=${value}`
+        : `${prefix ? `${prefix}[${isArray ? '' : key}]` : `${key}`}=${value}`,
     )
     .join('&');
 };

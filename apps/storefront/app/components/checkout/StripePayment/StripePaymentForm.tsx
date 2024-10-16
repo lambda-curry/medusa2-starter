@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import type { CustomPaymentSession, Address, MedusaAddress } from '@libs/types';
 import { UpdatePaymentInput } from '@app/routes/api.checkout';
 import { CompleteCheckoutForm } from '../CompleteCheckoutForm';
-import { useCart } from '@app/hooks/useCart';
 import { Alert } from '@app/components/common/alert/Alert';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { medusaAddressToAddress } from '@libs/util';
@@ -21,8 +20,7 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({ isActiveStep, pa
   const [stripeError, setStripeError] = useState<string | undefined>();
   const stripe = useStripe();
   const elements = useElements();
-  const { cart } = useCart();
-  const { activePaymentSession } = useCheckout();
+  const { activePaymentSession, cart } = useCheckout();
   const stripePaymentMethods = useMemo(
     () => paymentMethods?.filter((pm) => pm.provider_id === 'pp_stripe_stripe'),
     [paymentMethods],
