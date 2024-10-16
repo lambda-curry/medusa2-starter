@@ -64,7 +64,7 @@ export function formatLineItemPrice(
 }
 
 export function formatCartSubtotal(cart: StoreCart) {
-  return formatPrice(cart.subtotal || 0, {
+  return formatPrice(cart.item_subtotal || 0, {
     currency: cart.region?.currency_code,
   })
 }

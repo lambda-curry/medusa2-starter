@@ -81,7 +81,7 @@ export default function CheckoutSuccessRoute() {
               <div className="flex justify-between">
                 <dt>Subtotal</dt>
                 <dd className="text-gray-900">
-                  {formatPrice(order.subtotal, {
+                  {formatPrice(order.item_subtotal, {
                     currency: order.currency_code,
                   })}
                 </dd>
