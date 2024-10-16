@@ -73,7 +73,6 @@ export const addToCart = withAuthHeaders(
     },
   ) => {
     const { variantId, quantity } = data
-    console.log('🚀 ~ addToCart ~ (input) data:', data)
 
     if (!variantId) {
       throw new Error('Missing variant ID when adding to cart')

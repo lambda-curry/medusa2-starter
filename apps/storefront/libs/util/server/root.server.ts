@@ -6,13 +6,14 @@ import {
 } from '@libs/config/site/navigation-items'
 import { siteSettings } from '@libs/config/site/site-settings'
 import type { HttpTypes } from '@medusajs/types'
-import { type LoaderFunctionArgs, unstable_data } from '@remix-run/node'
+import { type LoaderFunctionArgs, data as remixData } from '@remix-run/node'
 import { config } from './config.server'
 import { getSelectedRegionId, setSelectedRegionId } from './cookies.server'
 import { enrichLineItems, retrieveCart } from './data/cart.server'
 import { getCustomer } from './data/customer.server'
 import { getSelectedRegion, listRegions } from './data/regions.server'
 import { fetchProducts } from './products.server'
+import { RemixLoaderResponse } from 'types/remix'
 
 const fetchHasProducts = async (request: Request) => {
   return await fetchProducts(request, { limit: 1, offset: 999_999 }).then(
@@ -44,7 +45,7 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
 
   const fontLinks: string[] = []
 
-  return unstable_data(
+  return remixData(
     {
       hasPublishedProducts,
       fontLinks,
@@ -76,3 +77,7 @@ export const getRootLoader = async ({ request }: LoaderFunctionArgs) => {
 }
 
 export type RootLoader = typeof getRootLoader
+
+export type RootLoaderResonse = RemixLoaderResponse<
+  typeof getRootLoader
+>['data']

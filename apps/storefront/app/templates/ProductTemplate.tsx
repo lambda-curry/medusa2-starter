@@ -130,7 +130,6 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
     [product, controlledOptions],
   );
 
-  console.log('defaultValues', defaultValues, selectedOptions);
   const variantMatrix = useMemo(() => selectVariantMatrix(product), [product]);
   const selectedVariant = useMemo(
     () => selectVariantFromMatrixBySelectedOptions(variantMatrix, selectedOptions),

@@ -7,6 +7,7 @@ import { getCommonMeta, mergeMeta } from '@libs/util/meta';
 import { getRootLoader } from '@libs/util/server/root.server';
 
 import '@app/styles/global.css';
+import { useRootLoaderData } from './hooks/useRootLoaderData';
 
 export const getRootMeta: MetaFunction = ({ data }) => {
   const title = 'Barrio Store';
@@ -32,9 +33,9 @@ export const loader = getRootLoader;
 
 function App() {
   const headRef = useRef<HTMLHeadElement>(null);
-  const data = useLoaderData<typeof getRootLoader>();
+  const data = useRootLoaderData();
 
-  const { env, cart, fontLinks, siteDetails } = data;
+  const { env = {}, siteDetails } = data || {};
 
   return (
     <RootProviders>
@@ -42,10 +43,6 @@ function App() {
         <head ref={headRef}>
           <meta charSet="UTF-8" />
           <Meta />
-
-          {fontLinks.map((fontLink) => (
-            <link key={fontLink} rel="stylesheet" href={fontLink} />
-          ))}
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -58,7 +55,7 @@ function App() {
 
           <link href="https://fonts.googleapis.com/css2?family=Aboreto&display=swap" rel="stylesheet" />
           <Links />
-          {siteDetails.settings.description && <meta name="description" content={siteDetails.settings.description} />}
+          {siteDetails?.settings?.description && <meta name="description" content={siteDetails.settings.description} />}
         </head>
         <body className="min-h-screen">
           <Page>

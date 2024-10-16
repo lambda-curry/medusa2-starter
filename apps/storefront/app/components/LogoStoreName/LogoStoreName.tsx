@@ -17,7 +17,7 @@ export const LogoStoreName: FC<{ primary?: boolean; className?: string }> = ({ p
 
   return (
     <Link
-      unstable_viewTransition
+      viewTransition
       to="/"
       prefetch="intent"
       className={clsx('logo-header flex flex-nowrap items-center justify-center gap-x-2 gap-y-2 sm:gap-x-4', className)}

@@ -7,7 +7,7 @@ import {
 import type { MetaFunction } from '@remix-run/node'
 import { UIMatch } from '@remix-run/react'
 import { getCommonMeta, getParentMeta, mergeMeta } from './meta'
-import { RootLoader } from './server/root.server'
+import { RootLoaderResonse } from './server/root.server'
 import {
   StoreProduct,
   StoreProductOption,
@@ -196,8 +196,8 @@ export const getOptionValuesWithDiscountLabels = (
 }
 
 export const getProductMeta: MetaFunction = ({ data, matches }) => {
-  const rootMatch = matches[0] as UIMatch<RootLoader>
-  const region = rootMatch.data.region
+  const rootMatch = matches[0] as UIMatch<RootLoaderResonse>
+  const region = rootMatch.data?.region
   const product = (data as any).product as StoreProduct
   const defaultVariant = getCheapestProductVariant(product)
 

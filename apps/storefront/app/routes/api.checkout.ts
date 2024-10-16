@@ -7,7 +7,7 @@ import {
 } from '@libs/util/handleAction.server'
 import { _updateAccountDetails } from '@libs/util/server/checkout.server'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { redirect, unstable_data } from '@remix-run/node'
+import { redirect, data as remixData } from '@remix-run/node'
 import {
   checkoutAddDiscountCodeValidator,
   checkoutPaymentValidator,
@@ -132,7 +132,7 @@ const updateAccountDetails: ActionHandler<StoreCartResponse> = async (
 ) => {
   const { cart, headers } = await _updateAccountDetails(data, actionArgs)
 
-  return unstable_data({ cart }, { headers })
+  return remixData({ cart }, { headers })
 }
 
 const addShippingMethods: ActionHandler<StoreCartResponse> = async (

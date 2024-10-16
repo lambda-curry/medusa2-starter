@@ -32,7 +32,7 @@ export const URLAwareNavLink: FC<
 
   return (
     <NavLink
-      unstable_viewTransition
+      viewTransition
       className={className}
       to={url}
       prefetch={prefetch}

@@ -1,12 +1,12 @@
 import { buildObjectFromSearchParams } from '@libs/util/buildObjectFromSearchParams'
 import { getProductListData } from '@libs/util/server/page.server'
-import { LoaderFunctionArgs, unstable_data as data } from '@remix-run/node'
+import { LoaderFunctionArgs, data as remixData } from '@remix-run/node'
 
 const productList = async ({
   request,
 }: Pick<LoaderFunctionArgs, 'request'>) => {
   const result = await getProductListData(request)
-  return data(result, {})
+  return remixData(result, {})
 }
 
 const loaders = {

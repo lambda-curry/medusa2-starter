@@ -5,7 +5,7 @@ import {
 } from '@libs/util/server/cookies.server'
 import { updateCart } from '@libs/util/server/data/cart.server'
 import { retrieveRegion } from '@libs/util/server/data/regions.server'
-import { ActionFunctionArgs, unstable_data } from '@remix-run/node'
+import { ActionFunctionArgs, data as remixData } from '@remix-run/node'
 import { withYup } from '@remix-validated-form/with-yup'
 import { validationError } from 'remix-validated-form'
 import * as Yup from 'yup'
@@ -40,9 +40,9 @@ const changeRegion: ActionHandler = async (
 
     if (cartId) await updateCart(request, { region_id: regionId })
 
-    return unstable_data({ success: true }, { headers })
+    return remixData({ success: true }, { headers })
   } catch (error: any) {
-    return unstable_data(error.response.data, {
+    return remixData(error.response.data, {
       status: error.response.status,
     })
   }

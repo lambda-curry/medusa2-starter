@@ -15,7 +15,7 @@ import { getSelectedRegion } from '@libs/util/server/data/regions.server'
 import { FormValidationError } from '@libs/util/validation/validation-error'
 import { StoreCart, StoreCartResponse } from '@medusajs/types'
 import type { ActionFunctionArgs } from '@remix-run/node'
-import { unstable_data as data } from '@remix-run/node'
+import { data as remixData } from '@remix-run/node'
 import { withYup } from '@remix-validated-form/with-yup'
 import * as Yup from 'yup'
 
@@ -94,7 +94,7 @@ const createItem: ActionHandler<StoreCartResponse> = async (
 
   await setCartId(responseHeaders, cart.id)
 
-  return data({ cart }, { headers: responseHeaders })
+  return remixData({ cart }, { headers: responseHeaders })
 }
 
 const updateItem: ActionHandler<StoreCartResponse> = async (
