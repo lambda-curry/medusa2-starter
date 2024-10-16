@@ -1,6 +1,6 @@
-import { loadEnv } from './env'
+import { loadEnv } from './env';
 
-loadEnv()
+loadEnv();
 
 export const config = {
   NODE_ENV: process.env.NODE_ENV,
@@ -13,4 +13,4 @@ export const config = {
   EVENT_LOGGING: process.env.EVENT_LOGGING,
   AUTH_COOKIE_NAME: process.env.AUTH_COOKIE_NAME ?? '_medusa_jwt',
   MEDUSA_PUBLISHABLE_KEY: process.env.MEDUSA_PUBLISHABLE_KEY,
-}
+};

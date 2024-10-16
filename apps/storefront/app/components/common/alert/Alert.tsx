@@ -15,7 +15,7 @@ const alertClassNameMap = {
     title: 'text-gray-800',
     content: 'text-gray-700',
     action:
-      'focus:ring-offset-2 bg-gray-50 text-gray-500 hover:bg-gray-100 focus:ring-offset-gray-50 focus:ring-gray-600'
+      'focus:ring-offset-2 bg-gray-50 text-gray-500 hover:bg-gray-100 focus:ring-offset-gray-50 focus:ring-gray-600',
   },
   success: {
     wrapper: 'bg-green-50',
@@ -23,14 +23,14 @@ const alertClassNameMap = {
     title: 'text-green-800',
     content: 'text-green-700',
     action:
-      'focus:ring-offset-2 bg-green-50 text-green-500 hover:bg-green-100 focus:ring-offset-green-50 focus:ring-green-600'
+      'focus:ring-offset-2 bg-green-50 text-green-500 hover:bg-green-100 focus:ring-offset-green-50 focus:ring-green-600',
   },
   error: {
     wrapper: 'bg-red-50',
     icon: 'text-red-400',
     title: 'text-red-800',
     content: 'text-red-700',
-    action: 'focus:ring-offset-2 bg-red-50 text-red-500 hover:bg-red-100 focus:ring-offset-red-50 focus:ring-red-600'
+    action: 'focus:ring-offset-2 bg-red-50 text-red-500 hover:bg-red-100 focus:ring-offset-red-50 focus:ring-red-600',
   },
   warning: {
     wrapper: 'bg-amber-50',
@@ -38,7 +38,7 @@ const alertClassNameMap = {
     title: 'text-amber-800',
     content: 'text-amber-700',
     action:
-      'focus:ring-offset-2 bg-amber-50 text-amber-500 hover:bg-amber-100 focus:ring-offset-amber-50 focus:ring-amber-600'
+      'focus:ring-offset-2 bg-amber-50 text-amber-500 hover:bg-amber-100 focus:ring-offset-amber-50 focus:ring-amber-600',
   },
   info: {
     wrapper: 'bg-blue-50',
@@ -46,8 +46,8 @@ const alertClassNameMap = {
     title: 'text-blue-800',
     content: 'text-blue-700',
     action:
-      'focus:ring-offset-2 bg-green-50 text-green-500 hover:bg-green-100 focus:ring-offset-green-50 focus:ring-green-600'
-  }
+      'focus:ring-offset-2 bg-green-50 text-green-500 hover:bg-green-100 focus:ring-offset-green-50 focus:ring-green-600',
+  },
 };
 
 export interface AlertProps extends HTMLAttributes<HTMLDivElement> {
@@ -63,7 +63,7 @@ export const Alert: FC<AlertProps> = ({ type, title, action, children, className
     success: CheckCircleIcon,
     error: XCircleIcon,
     warning: ExclamationTriangleIcon,
-    info: InformationCircleIcon
+    info: InformationCircleIcon,
   };
 
   const Icon = iconMap[type];
@@ -90,7 +90,7 @@ export const Alert: FC<AlertProps> = ({ type, title, action, children, className
               <Action
                 className={clsx(
                   'inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2',
-                  alertClassNameMap[type].action
+                  alertClassNameMap[type].action,
                 )}
               />
             </div>

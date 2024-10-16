@@ -1,11 +1,11 @@
-export type FormatPhoneNumberMask = 'default' | 'dots' | 'dashes' | 'uri'
+export type FormatPhoneNumberMask = 'default' | 'dots' | 'dashes' | 'uri';
 
-export type FormatPhoneNumberCountryCode = 'US'
+export type FormatPhoneNumberCountryCode = 'US';
 
 export interface FormatPhoneNumberOptions {
-  format: FormatPhoneNumberMask
-  countryCode: FormatPhoneNumberCountryCode
-  customMask?: string
+  format: FormatPhoneNumberMask;
+  countryCode: FormatPhoneNumberCountryCode;
+  customMask?: string;
 }
 
 /**
@@ -17,9 +17,6 @@ export interface FormatPhoneNumberOptions {
  * @param options object
  * @return string
  */
-export const formatPhoneNumber = (
-  phoneNumber: string,
-  options?: Partial<FormatPhoneNumberOptions>,
-) => {
-  return phoneNumber
-}
+export const formatPhoneNumber = (phoneNumber: string, options?: Partial<FormatPhoneNumberOptions>) => {
+  return phoneNumber;
+};

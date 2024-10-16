@@ -1,4 +1,4 @@
-import { NavigationCollection, NavigationItemLocation } from '@libs/types'
+import { NavigationCollection, NavigationItemLocation } from '@libs/types';
 
 export const headerNavigationItems: NavigationCollection = [
   {
@@ -33,7 +33,7 @@ export const headerNavigationItems: NavigationCollection = [
     location: NavigationItemLocation.header,
     new_tab: false,
   },
-]
+];
 
 export const footerNavigationItems: NavigationCollection = [
   {
@@ -68,4 +68,4 @@ export const footerNavigationItems: NavigationCollection = [
     sort_order: 1,
     new_tab: false,
   },
-]
+];

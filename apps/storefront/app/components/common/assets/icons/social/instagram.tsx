@@ -1,16 +1,7 @@
-import type { HTMLAttributes } from 'react'
+import type { HTMLAttributes } from 'react';
 
-export default ({
-  color = 'currentColor',
-  ...props
-}: HTMLAttributes<HTMLOrSVGElement>) => (
-  <svg
-    width="23"
-    height="23"
-    viewBox="0 0 23 23"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export default ({ color = 'currentColor', ...props }: HTMLAttributes<HTMLOrSVGElement>) => (
+  <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
     <title>Instagram</title>
     <g clipPath="url(#clip0_96_358)">
       <path
@@ -28,13 +19,8 @@ export default ({
     </g>
     <defs>
       <clipPath id="clip0_96_358">
-        <rect
-          width="21.8182"
-          height="21.8182"
-          fill={color}
-          transform="translate(0.45459 0.5979)"
-        />
+        <rect width="21.8182" height="21.8182" fill={color} transform="translate(0.45459 0.5979)" />
       </clipPath>
     </defs>
   </svg>
-)
+);

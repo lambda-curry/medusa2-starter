@@ -1,6 +1,6 @@
-const colors = require('tailwindcss/colors')
-const defaultTheme = require('tailwindcss/defaultTheme')
-const path = require('path')
+const colors = require('tailwindcss/colors');
+const defaultTheme = require('tailwindcss/defaultTheme');
+const path = require('path');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -100,4 +100,4 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/container-queries'),
   ],
-}
+};

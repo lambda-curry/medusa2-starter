@@ -16,7 +16,7 @@ export interface CreateReducerConfig<S, A> {
 
 export const createReducer = <S, A extends ReducerAction>({
   actionHandlers,
-  middleware
+  middleware,
 }: CreateReducerConfig<S, A>) => {
   return (state: S, action: A) => {
     const actionHandler = actionHandlers[action.name];

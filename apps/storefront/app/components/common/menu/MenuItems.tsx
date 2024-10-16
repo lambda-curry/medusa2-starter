@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import {
   MenuItem as HeadlessMenuItem,
   type MenuItemsProps as HeadlessMenuItemsProps,
-  Transition
+  Transition,
 } from '@headlessui/react';
 import clsx from 'clsx';
 
@@ -49,9 +49,9 @@ export const MenuItems: FC<PropsWithChildren<MenuItemsProps>> = ({ position, cla
           'position-left-bottom': position === 'left-bottom',
           'position-right': position === 'right',
           'position-right-top': position === 'right-top',
-          'position-right-bottom': position === 'right-bottom'
+          'position-right-bottom': position === 'right-bottom',
         },
-        className
+        className,
       )}
       {...props}
     />

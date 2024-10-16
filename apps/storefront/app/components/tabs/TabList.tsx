@@ -10,7 +10,7 @@ export const TabList: FC<PropsWithChildren<TabListProps>> = ({ className, ...pro
   <HeadlessTabList
     className={clsx(
       'bg-primary-50 mb-2 inline-flex w-auto max-w-full snap-x gap-0.5 overflow-auto rounded-full px-2 py-1.5',
-      className
+      className,
     )}
     {...props}
   />

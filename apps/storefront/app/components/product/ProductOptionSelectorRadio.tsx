@@ -19,14 +19,14 @@ export const ProductOptionSelectorRadio: FC<ProductOptionSelectorProps> = ({ opt
   };
 
   const filteredValues: { value: string; label?: string; disabled?: boolean }[] = option.values.filter(
-    (productOptionValue, index, self) => self.findIndex(item => item.value === productOptionValue.value) === index
+    (productOptionValue, index, self) => self.findIndex((item) => item.value === productOptionValue.value) === index,
   );
 
   return (
     <RadioGroup
       name={`options.${option.id}`}
       value={value}
-      onChange={changedValue => handleChange(option.id, changedValue)}
+      onChange={(changedValue) => handleChange(option.id, changedValue)}
     >
       <div className="grid grid-cols-1 gap-2">
         {filteredValues.map((optionValue, valueIndex) => (
@@ -39,7 +39,7 @@ export const ProductOptionSelectorRadio: FC<ProductOptionSelectorProps> = ({ opt
                 'group border-gray-300',
                 checked ? 'ring-primary-500 ring-1' : '',
                 'active:ring-primary-500 relative col-span-1 flex h-full cursor-pointer flex-col justify-between rounded-lg border bg-white px-4 py-2 font-bold shadow-sm hover:bg-gray-100 focus:outline-none active:ring-2',
-                disabled ? 'opacity-50' : ''
+                disabled ? 'opacity-50' : '',
               )
             }
           >

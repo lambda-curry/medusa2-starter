@@ -5,7 +5,7 @@ import {
   ForwardRefRenderFunction,
   ForwardedRef,
   HTMLAttributes,
-  forwardRef
+  forwardRef,
 } from 'react';
 
 export type ButtonRef = HTMLButtonElement & HTMLAnchorElement;
@@ -23,7 +23,7 @@ export type ButtonBaseProps = (ButtonHTMLAttributes<any> &
 
 const ButtonBaseInner: ForwardRefRenderFunction<ButtonRef, ButtonBaseProps> = (
   { as: T = 'button', className, disabled, ...props },
-  ref
+  ref,
 ) => {
   const type = T === 'button' ? 'button' : undefined;
 
@@ -35,7 +35,7 @@ const ButtonBaseInner: ForwardRefRenderFunction<ButtonRef, ButtonBaseProps> = (
       className={clsx(
         'button focus:ring-primary-300 inline-flex items-center justify-center gap-1 focus:outline-none focus:ring-2',
         { 'cursor-not-allowed opacity-50': disabled },
-        className
+        className,
       )}
       {...props}
     />

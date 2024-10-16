@@ -1,2 +1,2 @@
-export * from './TabButton'
-export * from './TabList'
+export * from './TabButton';
+export * from './TabList';

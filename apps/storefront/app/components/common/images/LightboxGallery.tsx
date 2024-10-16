@@ -23,12 +23,12 @@ interface LightboxProps {
 }
 
 export const LightboxGallery: FC<LightboxProps> = ({ images, lightBoxIndex, setLightBoxIndex }) => {
-  const photos = images.map(image => ({
+  const photos = images.map((image) => ({
     src: image.src,
     alt: image.alt || '',
     description: image.alt,
     width: image.width || 500,
-    height: image.height || 500
+    height: image.height || 500,
   }));
 
   const lightboxPlugins = [Fullscreen, Zoom, Thumbnails, Captions];
@@ -41,10 +41,10 @@ export const LightboxGallery: FC<LightboxProps> = ({ images, lightBoxIndex, setL
       close={() => setLightBoxIndex(-1)}
       plugins={lightboxPlugins}
       zoom={{
-        maxZoomPixelRatio: 4
+        maxZoomPixelRatio: 4,
       }}
       captions={{
-        descriptionTextAlign: 'center'
+        descriptionTextAlign: 'center',
       }}
       render={{
         slide: ({ slide }) => (
@@ -53,11 +53,11 @@ export const LightboxGallery: FC<LightboxProps> = ({ images, lightBoxIndex, setL
             alt={slide.alt}
             style={{
               maxWidth: '100%',
-              maxHeight: '100%'
+              maxHeight: '100%',
             }}
           />
         ),
-        thumbnail: ({ slide }) => <ImageBase src={slide.src} alt={slide.alt} />
+        thumbnail: ({ slide }) => <ImageBase src={slide.src} alt={slide.alt} />,
       }}
     />
   );

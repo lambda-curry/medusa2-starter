@@ -1,1 +1,1 @@
-export * from './calculateEstimatedShipping'
+export * from './calculateEstimatedShipping';

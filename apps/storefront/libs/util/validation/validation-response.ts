@@ -1,11 +1,11 @@
-import { data as remixData } from '@remix-run/node'
-import { json } from '@remix-run/react'
-import { ValidatorError } from 'remix-validated-form'
+import { data as remixData } from '@remix-run/node';
+import { json } from '@remix-run/react';
+import { ValidatorError } from 'remix-validated-form';
 
 export interface ValidationErrorData {
-  fieldErrors: Record<string, string>
-  repopulateFields?: unknown
-  formId?: string
+  fieldErrors: Record<string, string>;
+  repopulateFields?: unknown;
+  formId?: string;
 }
 
 export const handleValidationError = ({
@@ -13,17 +13,17 @@ export const handleValidationError = ({
   error,
   repopulateFields,
 }: {
-  shouldReturnJson?: boolean
-  error: ValidatorError
-  repopulateFields?: unknown
+  shouldReturnJson?: boolean;
+  error: ValidatorError;
+  repopulateFields?: unknown;
 }) => {
   const payload = {
     fieldErrors: error.fieldErrors,
     repopulateFields,
     formId: error.formId,
-  }
+  };
 
-  if (shouldReturnJson) return json(payload, { status: 422 })
+  if (shouldReturnJson) return json(payload, { status: 422 });
 
-  return remixData(payload, { status: 422 })
-}
+  return remixData(payload, { status: 422 });
+};

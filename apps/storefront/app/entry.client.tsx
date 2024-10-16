@@ -15,7 +15,7 @@ if (window?.ENV?.SENTRY_DSN)
   Sentry.init({
     dsn: window?.ENV?.SENTRY_DSN,
     environment: window?.ENV?.SENTRY_ENVIRONMENT,
-    integrations: []
+    integrations: [],
   });
 
 const hydrate = () =>
@@ -24,7 +24,7 @@ const hydrate = () =>
       document,
       <StrictMode>
         <RemixBrowser />
-      </StrictMode>
+      </StrictMode>,
     );
   });
 

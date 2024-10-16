@@ -19,9 +19,9 @@ export const MenuItem: FC<MenuItemProps> = ({ item, ...props }) => (
       item({
         className: clsx('group flex gap-2 w-full items-center rounded-md p-2 text-sm', {
           'bg-primary-50 text-primary-700': menuItemProps.active,
-          'text-gray-900': !menuItemProps.active
+          'text-gray-900': !menuItemProps.active,
         }),
-        ...menuItemProps
+        ...menuItemProps,
       })
     }
   </HeadlessMenuItem>
