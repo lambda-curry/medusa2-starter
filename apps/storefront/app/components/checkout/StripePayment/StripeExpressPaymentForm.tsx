@@ -1,6 +1,5 @@
 import { Alert } from '@app/components/common/alert';
 import { convertToFormData } from '@libs/util/forms/objectToFormData';
-import { useCart } from '@app/hooks/useCart';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { useRevalidator } from '@remix-run/react';
 import { ExpressCheckoutElement, useElements, useStripe } from '@stripe/react-stripe-js';
@@ -63,7 +62,7 @@ export const StripeExpressCheckoutForm: FC = () => {
 
   const stripe = useStripe();
   const elements = useElements();
-  const { cart: initialCart } = useCart();
+  const { cart: initialCart } = useCheckout();
   const [cart, setCart] = useState<StoreCart>(initialCart as StoreCart);
 
   const [canMakePaymentStatus, setCanMakePaymentStatus] = useState<'first_load' | 'available' | 'unavailable'>(

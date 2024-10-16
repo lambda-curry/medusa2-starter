@@ -1,5 +1,4 @@
 import { FC, useEffect } from 'react';
-import { useCart } from '@app/hooks/useCart';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { useCustomer } from '@app/hooks/useCustomer';
 import { Alert } from '@app/components/common/alert/Alert';
@@ -8,9 +7,8 @@ import { CheckoutDeliveryMethod } from './CheckoutDeliveryMethod';
 import { CheckoutPayment } from './CheckoutPayment';
 
 export const CheckoutFlow: FC = () => {
-  const { cart } = useCart();
   const { customer } = useCustomer();
-  const { goToNextStep } = useCheckout();
+  const { goToNextStep, cart } = useCheckout();
   const isLoggedIn = !!customer?.id;
 
   if (!cart) return;

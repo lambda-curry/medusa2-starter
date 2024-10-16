@@ -1,12 +1,12 @@
 import { Button } from '@app/components/common/buttons/Button';
 import { Image } from '@app/components/common/images/Image';
 import { LineItemQuantitySelect } from '@app/components/cart/line-items/LineItemQuantitySelect';
-import { useCart } from '@app/hooks/useCart';
 import { useRemoveCartItem } from '@app/hooks/useRemoveCartItem';
 import { formatPrice } from '@libs/util/prices';
 import { Link } from '@remix-run/react';
 import { FC } from 'react';
 import { StoreCart, StoreCartLineItem } from '@medusajs/types';
+import { useCheckout } from '@app/hooks/useCheckout';
 
 export interface CheckoutOrderSummaryItemsProps {
   cart: StoreCart;
@@ -19,7 +19,7 @@ export interface CheckoutOrderSummaryItemProps {
 }
 
 export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ item, name }) => {
-  const { cart } = useCart();
+  const { cart } = useCheckout();
   const removeCartItem = useRemoveCartItem();
   const handleRemoveFromCart = () => removeCartItem.submit(item);
   const isRemovingFromCart = ['loading', 'submitting'].includes(removeCartItem.state);

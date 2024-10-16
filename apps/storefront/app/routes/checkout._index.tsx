@@ -1,6 +1,5 @@
 import ShoppingCartIcon from '@heroicons/react/24/outline/ShoppingCartIcon';
 import { Button } from '@app/components/common/buttons/Button';
-import { useCart } from '@app/hooks/useCart';
 import { CheckoutProvider } from '@app/providers/checkout-provider';
 import { sdk } from '@libs/util/server/client.server';
 import { getCartId, removeCartId } from '@libs/util/server/cookies.server';
@@ -83,6 +82,7 @@ const ensureCartPaymentSessions = async (request: Request, cart: StoreCart) => {
 export const loader = async ({
   request,
 }: LoaderFunctionArgs): Promise<{
+  cart: StoreCart | null;
   shippingOptions: StoreCartShippingOption[];
   paymentProviders: StorePaymentProvider[];
   activePaymentSession: BasePaymentSession | null;
@@ -91,6 +91,7 @@ export const loader = async ({
 
   if (!cartId) {
     return {
+      cart: null,
       shippingOptions: [],
       paymentProviders: [],
       activePaymentSession: null,
@@ -118,7 +119,10 @@ export const loader = async ({
     await ensureCartPaymentSessions(request, cart),
   ]);
 
+  const updatedCart = await retrieveCart(request);
+
   return {
+    cart: updatedCart,
     shippingOptions,
     paymentProviders: paymentProviders,
     activePaymentSession: activePaymentSession as BasePaymentSession,
@@ -126,9 +130,7 @@ export const loader = async ({
 };
 
 export default function CheckoutIndexRoute() {
-  const { shippingOptions, paymentProviders, activePaymentSession } = useLoaderData<typeof loader>();
-
-  const { cart } = useCart();
+  const { shippingOptions, paymentProviders, activePaymentSession, cart } = useLoaderData<typeof loader>();
 
   if (!cart || !cart.items?.length)
     return (
@@ -147,6 +149,7 @@ export default function CheckoutIndexRoute() {
   return (
     <CheckoutProvider
       data={{
+        cart: cart as StoreCart | null,
         activePaymentSession: activePaymentSession,
         shippingOptions: shippingOptions,
         paymentProviders: paymentProviders,

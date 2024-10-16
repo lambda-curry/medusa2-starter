@@ -6,7 +6,6 @@ import { Form } from '@app/components/common/forms/Form';
 import { FormError } from '@app/components/common/forms/FormError';
 import { FieldGroup } from '@app/components/common/forms/fields/FieldGroup';
 import { FieldText } from '@app/components/common/forms/fields/FieldText';
-import { useCart } from '@app/hooks/useCart';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { useCustomer } from '@app/hooks/useCustomer';
 import { useRegions } from '@app/hooks/useRegions';
@@ -46,9 +45,8 @@ export const CheckoutAccountDetails = () => {
     fieldErrors: Record<string, string>;
   }>();
   const form = useFormContext('checkoutAccountDetailsForm');
-  const { cart } = useCart();
   const { customer } = useCustomer();
-  const { step, setStep, goToNextStep } = useCheckout();
+  const { step, setStep, goToNextStep, cart } = useCheckout();
   const isActiveStep = step === CheckoutStep.ACCOUNT_DETAILS;
 
   if (!cart) return null;

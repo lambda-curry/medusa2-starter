@@ -4,7 +4,6 @@ import { StripePayment } from './StripePayment';
 import { ManualPayment } from './ManualPayment/ManualPayment';
 import clsx from 'clsx';
 import { useCheckout } from '@app/hooks/useCheckout';
-import { useCart } from '@app/hooks/useCart';
 import { CheckoutStep } from '@app/providers/checkout-provider';
 import { Button } from '@app/components/common/buttons/Button';
 import { CustomPaymentSession } from '@libs/types';
@@ -12,8 +11,7 @@ import { useEnv } from '@app/hooks/useEnv';
 
 export const CheckoutPayment: FC = () => {
   const { env } = useEnv();
-  const { step, paymentProviders } = useCheckout();
-  const { cart } = useCart();
+  const { step, paymentProviders, cart } = useCheckout();
   const isActiveStep = step === CheckoutStep.PAYMENT;
 
   if (!cart) return null;
