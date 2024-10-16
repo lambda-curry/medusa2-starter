@@ -64,7 +64,6 @@ export const MedusaStripeAddress: FC<MedusaStripeAddressProps> = ({
           currency: region.currency_code,
           appearance: {
             variables: {
-              fontFamily: settings.body_font?.family,
               borderRadius: '6px',
               spacingUnit: '4.601px',
               fontSizeBase: '16px',
