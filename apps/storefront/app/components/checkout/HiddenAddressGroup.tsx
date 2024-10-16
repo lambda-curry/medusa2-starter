@@ -1,4 +1,4 @@
-import { Address } from '@libs/util';
+import { Address } from '@libs/types';
 
 interface HiddenAddressGroupProps {
   address: Address;
@@ -13,7 +13,12 @@ const HiddenAddressGroup: React.FC<HiddenAddressGroupProps> = ({ address, prefix
         if (address[castedKey] == null) return;
 
         return (
-          <input type="hidden" key={castedKey} name={`${prefix}.${key}`} value={(address[castedKey] as string) ?? ''} />
+          <input
+            type="hidden"
+            key={castedKey as string}
+            name={`${prefix}.${key}`}
+            value={(address[castedKey] as string) ?? ''}
+          />
         );
       })}
     </>

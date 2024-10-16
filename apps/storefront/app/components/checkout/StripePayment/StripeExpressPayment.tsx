@@ -2,7 +2,6 @@ import { type FC } from 'react';
 import { StripeExpressCheckoutForm } from './StripeExpressPaymentForm';
 import { StripeElementsOptionsMode } from '@stripe/stripe-js';
 import { StripeElementsProvider } from './StripeElementsProvider';
-import { getCartShippingProfileIds } from '@libs/util/vendors';
 import { StoreCart } from '@medusajs/types';
 import { useCheckout } from '@app/hooks/useCheckout';
 
@@ -11,13 +10,8 @@ interface StripeExpressCheckoutProps {
 }
 
 export const StripeExpressCheckout: FC<StripeExpressCheckoutProps> = ({ cart }) => {
-  const cartProfileIds = getCartShippingProfileIds(cart);
   const { activePaymentSession } = useCheckout();
   // TODO: extract the stripe payment session
-
-  if (cartProfileIds.length > 1) {
-    return null;
-  }
 
   const cartSetupFutureUsage = activePaymentSession?.data?.setup_future_usage as
     | 'off_session'

@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
 import { Button } from '@app/components/common/buttons/Button';
 import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
-import { CheckoutStep } from '../../../libs/ui-components/providers/checkout-provider';
+import { CheckoutStep } from '@app/providers/checkout-provider';
 
 export const CheckoutSectionHeader: FC<
   PropsWithChildren<{

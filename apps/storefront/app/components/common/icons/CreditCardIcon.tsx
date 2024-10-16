@@ -10,7 +10,7 @@ import {
   UnionPayIcon,
   VisaIcon,
 } from '../assets/icons';
-import { type CreditCardBrand } from '@libs/util/types';
+import { type CreditCardBrand } from '@libs/types';
 
 export interface CreditCardIconProps extends HTMLAttributes<HTMLSpanElement> {
   brand: CreditCardBrand;

@@ -1,4 +1,4 @@
-import { CreateNewsletterSubscriberReq } from '@libs/util/medusa';
+import { CreateNewsletterSubscriberReq } from '@libs/types';
 import { ActionFunctionArgs, json } from '@remix-run/node';
 import { withYup } from '@remix-validated-form/with-yup';
 import * as Yup from 'yup';
