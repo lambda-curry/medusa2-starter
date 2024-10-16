@@ -4,7 +4,7 @@ import { useCart } from '@app/hooks/useCart';
 import { CheckoutProvider } from '@app/providers/checkout-provider';
 import { sdk } from '@libs/util/server/client.server';
 import { getCartId, removeCartId } from '@libs/util/server/cookies.server';
-import { initiatePaymentSession, retrieveCart } from '@libs/util/server/data/cart.server';
+import { initiatePaymentSession, retrieveCart, setShippingMethod } from '@libs/util/server/data/cart.server';
 import { listCartPaymentProviders } from '@libs/util/server/data/payment.server';
 import { CartDTO, StoreCart, StoreCartShippingOption, StorePaymentProvider } from '@medusajs/types';
 import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
@@ -27,6 +27,36 @@ const fetchShippingOptions = async (cartId: string) => {
   } catch (e) {
     console.error(e);
     return [];
+  }
+};
+
+const findCheapestShippingOption = (shippingOptions: StoreCartShippingOption[]) => {
+  return shippingOptions.reduce((cheapest, current) => {
+    return cheapest.amount <= current.amount ? cheapest : current;
+  });
+};
+
+const ensureSelectedCartShippingMethod = async (request: Request, cart: StoreCart) => {
+  const shippingOptions = await fetchShippingOptions(cart.id);
+
+  const selectedShippingMethod = cart.shipping_methods?.[0];
+
+  const selectedShippingOption =
+    selectedShippingMethod && shippingOptions.find((option) => option.id === selectedShippingMethod.shipping_option_id);
+
+  if (
+    !selectedShippingMethod || // No shipping method has been selected
+    !selectedShippingOption // The selected shipping method is no longer available
+  ) {
+    const cheapestShippingOption = findCheapestShippingOption(shippingOptions);
+
+    if (cheapestShippingOption) {
+      await setShippingMethod(request, { cartId: cart.id, shippingOptionId: cheapestShippingOption.id });
+    }
+
+    return;
+  } else if (selectedShippingMethod.amount !== selectedShippingOption.amount) {
+    await setShippingMethod(request, { cartId: cart.id, shippingOptionId: selectedShippingOption.id });
   }
 };
 
@@ -79,6 +109,8 @@ export const loader = async ({
 
     throw redirect(`/`, { headers });
   }
+
+  await ensureSelectedCartShippingMethod(request, cart);
 
   const [shippingOptions, paymentProviders, activePaymentSession] = await Promise.all([
     await fetchShippingOptions(cartId),

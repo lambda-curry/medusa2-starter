@@ -69,22 +69,6 @@ export const CheckoutDeliveryMethod: FC = () => {
   );
 
   useEffect(() => {
-    if (!formRef.current) return;
-
-    formRef.current.reset();
-    const formData = new FormData(formRef.current);
-
-    Object.entries(shippingOptionsByProfile).map(([profileId, shippingOptions], shippingOptionProfileIndex) => {
-      formData.set(
-        `shippingOptionIds[${shippingOptionProfileIndex}]`,
-        defaultValues.shippingOptionIds[shippingOptionProfileIndex],
-      );
-    });
-
-    fetcher.submit(formData, { action: '/api/checkout', method: 'post' });
-  }, [formRef.current, lineItemFetchersLoading]);
-
-  useEffect(() => {
     if (isActiveStep && !isSubmitting && !hasErrors && isComplete) goToNextStep();
   }, [isSubmitting, isComplete]);
 
