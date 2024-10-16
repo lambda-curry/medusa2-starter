@@ -16,7 +16,8 @@
     "start:dev": "dotenv -e .env -- remix-serve ./build/server/index.js",
     "start": "remix-serve ./build/server/index.js",
     "remix-serve": "remix-serve",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "biome format --write ."
   },
   "repository": {
     "type": "git",
