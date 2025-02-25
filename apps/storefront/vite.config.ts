@@ -17,7 +17,7 @@ export default defineConfig({
     },
   },
   ssr: {
-    noExternal: ['@medusajs/js-sdk'],
+    noExternal: ['@medusajs/js-sdk', '@lambdacurry/medusa-plugins-sdk'],
   },
   plugins: [
     remixDevTools(),

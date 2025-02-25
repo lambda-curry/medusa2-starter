@@ -72,13 +72,15 @@
     "typescript": "^5.6.2",
     "vite": "5.4.14",
     "vite-imagetools": "^7.0.5",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "yalc": "^1.0.0-pre.53"
   },
   "dependencies": {
     "@epic-web/cachified": "^5.2.0",
     "@googlemaps/addressvalidation": "^1.0.2",
     "@headlessui/react": "^2.1.9",
     "@heroicons/react": "^2.0.18",
+    "@lambdacurry/medusa-plugins-sdk": "0.0.4",
     "@loadable/component": "^5.15.3",
     "@medusajs/js-sdk": "2.4.0",
     "@medusajs/types": "2.4.0",
@@ -100,6 +102,7 @@
     "color": "^4.2.3",
     "common-tags": "^1.8.2",
     "dotenv": "^16.4.5",
+    "form-data": "^4.0.2",
     "imask": "^6.4.2",
     "isbot": "^3.6.5",
     "js-base64": "^3.7.2",

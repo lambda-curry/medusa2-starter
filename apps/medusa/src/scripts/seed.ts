@@ -380,6 +380,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
         tags: productTagsResult,
         categories: categoryResult,
         sales_channels: [{ id: defaultSalesChannel[0].id }],
+        shipping_profile_id: shippingProfile.id,
       }),
     },
   });

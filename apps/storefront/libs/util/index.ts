@@ -9,3 +9,4 @@ export * from './phoneNumber';
 export * from './prices';
 export * from './validation';
 export * from './is-browser';
+export * from './formatters';

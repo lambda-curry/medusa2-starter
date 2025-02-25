@@ -33,7 +33,8 @@ import { ProductOptionSelectorRadio } from '@app/components/product/ProductOptio
 import { QuantitySelector } from '@app/components/common/field-groups/QuantitySelector';
 import { StoreProduct, StoreProductOptionValue, StoreProductVariant } from '@medusajs/types';
 import { Validator } from 'remix-validated-form';
-import ProductList from '@app/components/sections/ProductList';
+import { StoreProductReview, StoreProductReviewStats } from '@lambdacurry/medusa-plugins-sdk';
+import { ProductReviewStars } from '@app/components/reviews/ProductReviewStars';
 
 export interface AddToCartFormValues {
   productId: string;
@@ -91,15 +92,31 @@ const getBreadcrumbs = (product: StoreProduct) => {
   return breadcrumbs;
 };
 
+const ProductReviews = ({
+  productReviews,
+  productReviewStats,
+}: { productReviews: StoreProductReview[]; productReviewStats: StoreProductReviewStats }) => {
+  if (!productReviews?.length) return null;
+
+  return (
+    <div>
+      {' '}
+      {productReviewStats.average_rating} Stars ({productReviews.length} Reviews)
+    </div>
+  );
+};
+
 export interface ProductTemplateProps {
   product: StoreProduct;
+  reviewsCount: number;
+  reviewStats: StoreProductReviewStats;
 }
 
 const variantIsSoldOut: (variant: StoreProductVariant | undefined) => boolean = (variant) => {
   return !!(variant?.manage_inventory && variant?.inventory_quantity! < 1);
 };
 
-export const ProductTemplate = ({ product }: ProductTemplateProps) => {
+export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductTemplateProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const addToCartFetcher = useFetcher<any>();
   const { toggleCartDrawer } = useCart();
@@ -247,12 +264,14 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
                           </header>
                         </div>
 
+                        <ProductReviewStars reviewsCount={reviewsCount} reviewStats={reviewStats} />
+
                         <section aria-labelledby="product-information" className="mt-4">
                           <h2 id="product-information" className="sr-only">
                             Product information
                           </h2>
 
-                          <p className="text-lg text-gray-900 sm:text-xl">
+                          <p className="text-lg text-gray-900 sm:text-xl flex gap-3">
                             {selectedVariant ? (
                               <ProductPrice product={product} variant={selectedVariant} currencyCode={currencyCode} />
                             ) : (
@@ -374,7 +393,6 @@ export const ProductTemplate = ({ product }: ProductTemplateProps) => {
           </Container>
         </Form>{' '}
       </section>
-      <ProductList className="!pb-[100px] xl:px-9" heading="You may also like" />
     </>
   );
 };

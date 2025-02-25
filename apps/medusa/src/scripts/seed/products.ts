@@ -73,11 +73,13 @@ export const seedProducts = ({
   tags,
   sales_channels,
   categories,
+  shipping_profile_id,
 }: {
   collections: ProductCollectionDTO[];
   tags: ProductTagDTO[];
   categories: { id: string; name: string }[];
   sales_channels: { id: string }[];
+  shipping_profile_id: string;
 }): CreateProductWorkflowInputDTO[] => [
   {
     title: 'Barrio Blend - Medium Roast',
@@ -89,6 +91,7 @@ export const seedProducts = ({
     tag_ids: tags.filter((t) => ['Best Seller', 'Latin America', 'Africa'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Barrio-Blend.jpg',
     collection_id: collections.find(({ title }) => title === 'Medium Roasts')?.id,
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Barrio-Blend.jpg',
@@ -113,6 +116,7 @@ export const seedProducts = ({
     category_ids: categories.filter(({ name }) => name === 'Blends').map(({ id }) => id),
     tag_ids: tags.filter((t) => ['Brazil'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Midnight-Dark-Roast.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Midnight-Dark-Roast.jpg',
@@ -137,6 +141,7 @@ export const seedProducts = ({
     category_ids: categories.filter(({ name }) => name === 'Single Origin').map(({ id }) => id),
     tag_ids: tags.filter((t) => ['Best Seller', 'Ethiopia'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Sunrise-Single.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Sunrise-Single.jpg',
@@ -161,6 +166,7 @@ export const seedProducts = ({
     status: ProductStatus.PUBLISHED,
     tag_ids: tags.filter((t) => ['Colombia'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Barrio-Decaf.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Barrio-Decaf.jpg',
@@ -185,6 +191,7 @@ export const seedProducts = ({
     status: ProductStatus.PUBLISHED,
     tag_ids: tags.filter((t) => ['Colombia'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Coconut-Mocha.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Coconut-Mocha.jpg',
@@ -210,6 +217,7 @@ export const seedProducts = ({
     status: ProductStatus.PUBLISHED,
     tag_ids: tags.filter((t) => ['Guatemala'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Chili-Choco.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Chili-Choco.jpg',
@@ -235,6 +243,7 @@ export const seedProducts = ({
     status: ProductStatus.PUBLISHED,
     tag_ids: tags.filter((t) => ['Yemen'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Cardamom-Spice.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Cardamom-Spice.jpg',
@@ -260,6 +269,7 @@ export const seedProducts = ({
     status: ProductStatus.PUBLISHED,
     tag_ids: tags.filter((t) => ['Peru'].includes(t.value)).map((t) => t.id),
     thumbnail: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Twilight-Peak.jpg',
+    shipping_profile_id,
     images: [
       {
         url: 'https://lambdacurrysites.s3.us-east-1.amazonaws.com/barrio/Twilight-Peak.jpg',
