@@ -336,7 +336,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                 <div className="md:py-6">
                   <Grid className="!gap-0">
                     <GridColumn className="mb-8 md:col-span-6 lg:col-span-7 xl:pr-16 xl:pl-9">
-                      <ProductImageGallery product={product} />
+                      <ProductImageGallery key={product.id} product={product} />
                     </GridColumn>
 
                     <GridColumn className="flex flex-col md:col-span-6 lg:col-span-5">

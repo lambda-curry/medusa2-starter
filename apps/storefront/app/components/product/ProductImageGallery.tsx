@@ -120,7 +120,7 @@ export const ProductImageGallery: FC<ProductImageGalleryProps> = ({ product }) =
                   }}
                   src={image.url}
                   alt={image.alt || 'selected image for product'}
-                  className="absolute h-full w-full border-b border-b-gray-200 object-contain object-center sm:rounded-md sm:border sm:border-gray-200"
+                  className="absolute h-full w-full border-b border-b-gray-200 object-cover object-center sm:rounded-md sm:border sm:border-gray-200"
                 />
                 <div className="absolute right-2 top-2 flex items-center justify-center rounded-xl bg-gray-800 p-2 opacity-0 transition-all hover:!opacity-75 active:!opacity-95 group-hover:opacity-50">
                   <MagnifyingGlassPlusIcon className="h-6 w-6 text-white" />
