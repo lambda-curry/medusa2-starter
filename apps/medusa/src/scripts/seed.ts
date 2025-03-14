@@ -1,9 +1,13 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import { createProductReviewResponsesWorkflow } from '@lambdacurry/medusa-product-reviews/workflows/create-product-review-responses';
+import { createProductReviewsWorkflow } from '@lambdacurry/medusa-product-reviews/workflows/create-product-reviews';
 import {
   createApiKeysWorkflow,
   createOrderWorkflow,
   createProductCategoriesWorkflow,
-  createProductsWorkflow,
   createProductTagsWorkflow,
+  createProductsWorkflow,
   createRegionsWorkflow,
   createSalesChannelsWorkflow,
   createShippingOptionsWorkflow,
@@ -14,7 +18,10 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
 } from '@medusajs/core-flows';
+import type { IPaymentModuleService } from '@medusajs/framework/types';
 import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
+import { createCollectionsWorkflow } from '@medusajs/medusa/core-flows';
+import { Link } from '@medusajs/modules-sdk';
 import type { Logger, MedusaContainer } from '@medusajs/types';
 import type {
   ExecArgs,
@@ -23,15 +30,7 @@ import type {
   IStoreModuleService,
 } from '@medusajs/types';
 import { seedProducts } from './seed/products';
-import type { IPaymentModuleService } from '@medusajs/framework/types';
-import { createCollectionsWorkflow } from '@medusajs/medusa/core-flows';
-import { Link } from '@medusajs/modules-sdk';
-import { createProductReviewsWorkflow } from '@lambdacurry/medusa-product-reviews/workflows/create-product-reviews';
-import { createProductReviewResponsesWorkflow } from '@lambdacurry/medusa-product-reviews/workflows/create-product-review-responses';
 import { generateReviewResponse, reviewContents, texasCustomers } from './seed/reviews';
-import * as fs from 'fs';
-import * as path from 'path';
-import { type ApiKeyTypeEnum } from '../../.medusa/types/query-entry-points';
 
 export default async function seedDemoData({ container }: { container: MedusaContainer }) {
   const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER);
