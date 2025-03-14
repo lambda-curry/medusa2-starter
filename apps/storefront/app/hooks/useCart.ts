@@ -2,34 +2,133 @@ import { useFetchers } from '@remix-run/react';
 import { useRootLoaderData } from './useRootLoaderData';
 import { useStorefront } from './useStorefront';
 import { StoreCart } from '@medusajs/types';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
+/**
+ * Enhanced useCart hook that combines cart data management and drawer state logic
+ * Following Remix patterns for state management
+ * @returns Cart data, state, and methods for managing the cart drawer
+ */
 export const useCart = () => {
   const { state, actions } = useStorefront();
   const data = useRootLoaderData();
   const fetchers = useFetchers();
-  const cartFetchers = fetchers.filter((f) => f.data?.cart);
-  const removingLineItemFetchers = fetchers.filter(
-    (f) => f.formData?.get('subaction') === 'deleteItem' && f.formData?.get('lineItemId'),
+
+  // Simplified cart drawer state
+  const [isRemovingLastItem, setIsRemovingLastItem] = useState(false);
+
+  // Refs for timers and state tracking
+  const timerRef = useRef<number | null>(null);
+  const prevItemCountRef = useRef<number>(0);
+
+  // Track cart-related fetchers
+  const cartFetchers = {
+    // Find any fetcher that's removing items from cart
+    removing: fetchers.find(
+      (f) =>
+        (f.state === 'submitting' || f.state === 'loading') &&
+        f.formData?.get('subaction') === 'deleteItem' &&
+        f.formData?.get('lineItemId'),
+    ),
+
+    // Find any fetcher that's adding items to cart
+    adding: fetchers.filter(
+      (f) =>
+        (f.state === 'submitting' || f.state === 'loading') &&
+        (f.formData?.get('action') === 'add-to-cart' ||
+          f.formData?.has('variantId') ||
+          (f.formAction?.includes('/api/cart/line-items') && f.formData?.get('subaction') === 'create')),
+    ),
+  };
+
+  // Get cart data
+  const cart = data?.cart as StoreCart | undefined;
+  const lineItems = cart?.items || [];
+  const itemCount = lineItems.length;
+
+  // Derived states from Remix fetchers
+  const isAddingItem = cartFetchers.adding.length > 0;
+  const isRemovingItemId = cartFetchers.removing?.formData?.get('lineItemId') as string | undefined;
+
+  // Check if we're removing the last item
+  const isLastItemBeingRemoved =
+    isRemovingItemId &&
+    ((itemCount === 1 && isRemovingItemId === lineItems[0]?.id) ||
+      (itemCount === 0 && prevItemCountRef.current === 1 && cartFetchers.removing));
+
+  // Helper to clear any existing timer
+  const clearTimer = useCallback(() => {
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  // Toggle cart drawer with enhanced behavior
+  const toggleCartDrawer = useCallback(
+    (open: boolean) => {
+      // Only update if the state is actually changing
+      if (open !== !!state.cart.open) {
+        actions.toggleCartDrawer(open);
+
+        if (!open) {
+          setIsRemovingLastItem(false);
+        }
+      }
+    },
+    [actions, state.cart.open],
   );
 
-  let cart = data?.cart as StoreCart | undefined;
+  // Effect: Handle cart state transitions
+  useEffect(() => {
+    clearTimer();
 
-  let isAddingItem = false;
-  let isRemovingItemId;
-  const cartFetcher = cartFetchers[cartFetchers.length - 1];
-  const removingLineItemFetcher = removingLineItemFetchers[removingLineItemFetchers.length - 1];
+    const cartDrawerOpen = !!state.cart.open;
 
-  if (cartFetcher && cartFetcher.formMethod === 'POST' && ['loading', 'submitting'].includes(cartFetcher.state))
-    isAddingItem = true;
+    // Track if we're removing the last item
+    if (isLastItemBeingRemoved && !isRemovingLastItem) {
+      setIsRemovingLastItem(true);
+    }
 
-  if (removingLineItemFetcher && ['loading', 'submitting'].includes(removingLineItemFetcher.state))
-    isRemovingItemId = removingLineItemFetcher.formData?.get('lineItemId');
+    // Keep track of previous item count
+    prevItemCountRef.current = itemCount;
+
+    // Handle cart emptying and last item removal
+    if (cartDrawerOpen && isLastItemBeingRemoved) {
+      // If removing last item, close drawer after delay
+      timerRef.current = window.setTimeout(() => {
+        actions.toggleCartDrawer(false);
+      }, 1500);
+    }
+
+    return clearTimer;
+  }, [state.cart.open, itemCount, isLastItemBeingRemoved, isRemovingLastItem, actions, clearTimer]);
+
+  // Reset the removing last item state when the cart is closed or when items are added
+  useEffect(() => {
+    if (!state.cart.open || isAddingItem) {
+      setIsRemovingLastItem(false);
+    }
+  }, [state.cart.open, isAddingItem]);
+
+  // Clean up on unmount
+  useEffect(() => {
+    return clearTimer;
+  }, [clearTimer]);
+
+  // Derived UI states
+  const showEmptyCartMessage = !isAddingItem && itemCount === 0;
+
+  // Ensure cartDrawerOpen is always a boolean
+  const cartDrawerOpen = state.cart.open === true;
 
   return {
     cart,
     isAddingItem,
     isRemovingItemId,
-    cartDrawerOpen: state.cart.open,
-    toggleCartDrawer: actions.toggleCartDrawer,
+    isRemovingLastItem,
+    cartDrawerOpen,
+    toggleCartDrawer,
+    showEmptyCartMessage,
   };
 };

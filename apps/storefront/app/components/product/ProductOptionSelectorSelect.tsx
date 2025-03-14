@@ -36,8 +36,8 @@ export const ProductOptionSelectorSelect: FC<ProductOptionSelectorProps> = ({
 
   // Sort values by price (low to high)
   const sortedValues = [...filteredValues].sort((a, b) => {
-    const aPrice = a.minPrice || a.exactPrice || 0;
-    const bPrice = b.minPrice || b.exactPrice || 0;
+    const aPrice = a.minPrice ?? a.exactPrice ?? 0;
+    const bPrice = b.minPrice ?? b.exactPrice ?? 0;
     return aPrice - bPrice;
   });
 

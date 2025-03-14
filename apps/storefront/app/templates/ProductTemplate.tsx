@@ -17,7 +17,7 @@ import { Share } from '@app/components/share';
 import { Link, useFetcher } from '@remix-run/react';
 import { withYup } from '@remix-validated-form/with-yup';
 import truncate from 'lodash/truncate';
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, useCallback } from 'react';
 import * as Yup from 'yup';
 import { ProductOptionSelectorSelect } from '@app/components/product/ProductOptionSelectorSelect';
 import { LineItemActions } from '@app/routes/api.cart.line-items';
@@ -124,7 +124,13 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
   const { toggleCartDrawer } = useCart();
   const { region } = useRegion();
   const hasErrors = Object.keys(addToCartFetcher.data?.fieldErrors || {}).length > 0;
-  const isSubmitting = ['submitting', 'loading'].includes(addToCartFetcher.state);
+
+  // Detect form submission as early as possible
+  const isFormSubmitting = addToCartFetcher.formAction?.includes('/api/cart/line-items');
+
+  // Combine both states to detect adding items as early as possible
+  const isAddingToCart = isFormSubmitting || ['submitting', 'loading'].includes(addToCartFetcher.state);
+
   const validator = getAddToCartValidator(product);
 
   const defaultValues = {
@@ -223,12 +229,20 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
 
   const productSoldOut = useProductInventory(product).averageInventory === 0;
 
-  const handleOptionChangeBySelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const changedOptionId = e.target.name.replace('options.', '');
-    const newValue = e.target.value;
-
+  /**
+   * Updates controlled options based on a changed option and resets subsequent options
+   * @param currentOptions - Current controlled options
+   * @param changedOptionId - ID of the option that changed
+   * @param newValue - New value for the changed option
+   * @returns Updated options object
+   */
+  const updateControlledOptions = (
+    currentOptions: Record<string, string>,
+    changedOptionId: string,
+    newValue: string,
+  ): Record<string, string> => {
     // Create new options object with the changed option
-    const newOptions = { ...controlledOptions };
+    const newOptions = { ...currentOptions };
     newOptions[changedOptionId] = newValue;
 
     // Get all option IDs in order
@@ -259,50 +273,54 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
       });
     }
 
+    return newOptions;
+  };
+
+  const handleOptionChangeBySelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const changedOptionId = e.target.name.replace('options.', '');
+    const newValue = e.target.value;
+    const newOptions = updateControlledOptions(controlledOptions, changedOptionId, newValue);
     setControlledOptions(newOptions);
   };
 
   const handleOptionChangeByRadio = (name: string, value: string) => {
-    // Create new options object with the changed option
-    const newOptions = { ...controlledOptions };
-    newOptions[name] = value;
-
-    // Get all option IDs in order
-    const allOptionIds = product.options?.map((option) => option.id) || [];
-
-    // Find the index of the changed option
-    const changedOptionIndex = allOptionIds.indexOf(name);
-
-    // Get all options that come after the changed one
-    const subsequentOptionIds = changedOptionIndex >= 0 ? allOptionIds.slice(changedOptionIndex + 1) : [];
-
-    // Reset all subsequent options to their first available value
-    if (subsequentOptionIds.length > 0) {
-      // For each subsequent option, find available values based on current selections
-      subsequentOptionIds.forEach((optionId) => {
-        if (!optionId) return;
-
-        // Get filtered option values for this option
-        const filteredValues = getFilteredOptionValues(product, newOptions, optionId);
-
-        if (filteredValues.length > 0) {
-          // Set to first available value
-          newOptions[optionId] = filteredValues[0].value;
-        } else {
-          // No valid options, set to empty
-          newOptions[optionId] = '';
-        }
-      });
-    }
-
+    const newOptions = updateControlledOptions(controlledOptions, name, value);
     setControlledOptions(newOptions);
   };
 
   useEffect(() => {
-    if (!isSubmitting && !hasErrors) {
-      formRef.current?.reset();
+    if (!isAddingToCart && !hasErrors) {
+      // Only reset the form fields, not the controlled options
+      if (formRef.current) {
+        // Reset the form to clear validation states
+        formRef.current.reset();
+
+        // Re-set the quantity field to 1
+        const quantityInput = formRef.current.querySelector('input[name="quantity"]') as HTMLInputElement;
+        if (quantityInput) {
+          quantityInput.value = '1';
+        }
+
+        // Keep the hidden productId field
+        const productIdInput = formRef.current.querySelector('input[name="productId"]') as HTMLInputElement;
+        if (productIdInput) {
+          productIdInput.value = product.id!;
+        }
+      }
     }
-  }, [isSubmitting, hasErrors]);
+  }, [isAddingToCart, hasErrors, product.id]);
+
+  useEffect(() => {
+    // Initialize controlledOptions with defaultValues.options only on initial load
+    if (Object.keys(controlledOptions).length === 0) {
+      setControlledOptions(defaultValues.options);
+    }
+  }, [defaultValues.options, controlledOptions]);
+
+  useEffect(() => {
+    // Initialize controlledOptions with defaultValues.options
+    setControlledOptions(defaultValues.options);
+  }, [defaultValues.options]);
 
   useEffect(() => {
     // Initialize controlledOptions with defaultValues.options
@@ -310,6 +328,12 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
   }, [defaultValues.options]);
 
   const soldOut = variantIsSoldOut(selectedVariant) || productSoldOut;
+
+  // Use useCallback for the form submission handler
+  const handleAddToCart = useCallback(() => {
+    // Open cart drawer
+    toggleCartDrawer(true);
+  }, [toggleCartDrawer]);
 
   return (
     <>
@@ -324,9 +348,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
           subaction={LineItemActions.CREATE}
           defaultValues={defaultValues}
           validator={validator}
-          onSubmit={() => {
-            toggleCartDrawer(true);
-          }}
+          onSubmit={handleAddToCart}
         >
           <input type="hidden" name="productId" value={product.id} />
 
@@ -425,7 +447,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                             <div className="flex-1">
                               {!soldOut ? (
                                 <SubmitButton className="!h-12 w-full whitespace-nowrap !text-base !font-bold">
-                                  {isSubmitting ? 'Adding...' : 'Add to cart'}
+                                  {isAddingToCart ? 'Adding...' : 'Add to cart'}
                                 </SubmitButton>
                               ) : (
                                 <SubmitButton
@@ -491,7 +513,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
               </GridColumn>
             </Grid>
           </Container>
-        </Form>{' '}
+        </Form>
       </section>
     </>
   );
