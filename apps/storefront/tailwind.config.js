@@ -18,6 +18,8 @@ module.exports = {
         display: ['var(--font-display)'],
         body: ['var(--font-body)'],
         sans: ['var(--font-body)'],
+        inter: ['Inter'],
+        montserrat: ['Montserrat'],
         ballet: ['Ballet'],
         italiana: ['Italiana'],
         sen: ['Sen'],

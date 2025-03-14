@@ -12,7 +12,19 @@ export const Hero: FC<{
   className?: string;
   backgroundClassName?: string;
   actionsClassName?: string;
-}> = ({ title, content, actions, image, className, backgroundClassName, actionsClassName }) => {
+  overlayOpacity?: string;
+  overlayColor?: string;
+}> = ({
+  title,
+  content,
+  actions,
+  image,
+  className,
+  backgroundClassName,
+  actionsClassName,
+  overlayOpacity = '0.7',
+  overlayColor = 'rgba(0, 0, 0, 0.75)',
+}) => {
   return (
     <>
       {image?.url && <link rel="preload" href={image?.url} as="image" />}
@@ -26,7 +38,14 @@ export const Hero: FC<{
             backgroundImage: `url(${image?.url})`,
           }}
         />
-        <div className="overflow-hidden z-10 w-full text-white">
+        <div
+          className={clsx('absolute inset-0 z-[1]', backgroundClassName)}
+          style={{
+            background: `linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, ${overlayColor} 100%)`,
+            opacity: overlayOpacity,
+          }}
+        />
+        <div className="overflow-hidden z-10 w-full text-white relative">
           <div className="inline-grid gap-6 w-full">
             {title && <div className="break-words">{title}</div>}
             {typeof content === 'string' ? <div className="text-lg w-full">{content}</div> : content}

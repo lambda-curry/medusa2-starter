@@ -20,48 +20,57 @@ export default function IndexRoute() {
     <>
       <Hero
         className="h-[800px] !max-w-full -mt-[calc(var(--mkt-header-height)+3rem)] md:-mt-[calc(var(--mkt-header-height-desktop)+2rem)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
+        overlayOpacity="0.85"
+        overlayColor="rgba(3, 105, 161, 0.7)"
         content={
           <div className="text-center w-full space-y-9">
-            <h4 className="font-italiana text-2xl">COFFEE & COMMUNITY</h4>
-            <h1 className="text-8xl font-aboreto">BARRIO</h1>
-            <p className="max-w-prose mx-auto text-lg">
-              Discover our artisan-roasted coffee, crafted with care and delivered to your door. At Barrio, we’re more
-              than a coffee roastery—we’re&nbsp;a&nbsp;neighborhood.
+            <h4 className="font-montserrat text-2xl">PROFESSIONAL DEVELOPMENT</h4>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-inter font-bold">360 TRAINING</h1>
+            <p className="max-w-prose mx-auto text-lg font-montserrat">
+              Discover our expertly designed training courses, crafted by industry professionals and delivered with
+              flexibility. At 360 Training, we're more than a learning platform—we're your partner in professional
+              growth.
             </p>
           </div>
         }
         actions={[
           {
-            label: 'Discover Our Blends',
-            url: '/categories/blends',
+            label: 'Explore Our Courses',
+            url: '/categories/courses',
           },
         ]}
         image={{
-          url: '/assets/images/barrio-banner.png',
-          alt: 'Barrio background',
+          url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=60',
+          alt: '360 Training background',
         }}
       />
 
-      <Container className="p-14 md:pt-1 lg:pt-24 relative flex flex-col-reverse items-center lg:flex-row">
-        <div className="md:absolute w-80 md:left-4 md:-top-[240px] lg:left-20 lg:w-[420px]">
-          <Image
-            src="/assets/images/header-image-1.png"
-            loading="lazy"
-            alt="Barrio background"
-            height={520}
-            width={420}
-          />
-        </div>
-
-        <div className="md:w-full flex flex-col justify-center max-md:items-center">
-          <div className="w-full flex text-center md:text-left">
-            <h2 className="mx-auto md:ml-[32%] lg:ml-[37%] xl:ml-[30%] lg:mr-auto text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-ballet mt-12">
-              Building Community
-            </h2>
+      <Container className="py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div className="w-full max-w-md mx-auto md:max-w-none">
+            <div className="rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=60"
+                loading="lazy"
+                alt="Student learning"
+                height={520}
+                width={520}
+                className="object-cover w-full h-full"
+              />
+            </div>
           </div>
-          <p className="font-italiana text-6xl lg:text-7xl xl:text-8xl mt-6 lg:mt-8 xl:mt-10 max-sm:text-center">
-            one cup at a time
-          </p>
+
+          <div className="flex flex-col justify-center text-center md:text-left">
+            <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-montserrat">Building Careers</h2>
+            <p className="font-inter text-2xl sm:text-3xl lg:text-4xl mt-2 text-primary-500 font-medium">
+              one skill at a time
+            </p>
+            <p className="mt-6 text-lg text-gray-600 font-montserrat">
+              Our professional development programs are designed to help you acquire the skills you need to advance your
+              career. With expert-led courses and flexible learning options, we make it easy to grow professionally at
+              your own pace.
+            </p>
+          </div>
         </div>
       </Container>
 
@@ -69,46 +78,78 @@ export default function IndexRoute() {
         <Hero
           className="h-[594px]"
           backgroundClassName="rounded-3xl"
+          overlayOpacity="0.8"
+          overlayColor="rgba(15, 118, 110, 0.6)"
           image={{
-            url: '/assets/images/banner-coffee-shop.png',
-            alt: 'Barrio background',
+            url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format&fit=crop&q=60',
+            alt: 'Training classroom',
           }}
         />
       </Container>
 
+      <Container className="py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center relative">
+          <div className="order-2 md:order-1 text-center md:text-left">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-inter font-bold flex flex-wrap justify-center md:justify-start items-baseline gap-x-3 gap-y-2 z-10 relative">
+              <span className="whitespace-normal md:whitespace-nowrap">The Art of Learning</span>
+              <span className="font-montserrat text-primary-500 font-medium text-[0.7em] inline-block">
+                at 360 Training
+              </span>
+              <span className="whitespace-normal md:whitespace-nowrap">Skills for Success</span>
+            </h2>
+            <p className="mt-6 text-lg text-gray-600 font-montserrat">
+              Our approach to learning combines proven methodologies with innovative techniques, creating an environment
+              where skills development becomes second nature.
+            </p>
+          </div>
+
+          <div className="order-1 md:order-2 w-full max-w-md mx-auto md:max-w-none mb-8 md:mb-0">
+            <div className="rounded-lg overflow-hidden shadow-xl z-0">
+              <Image
+                src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=800&auto=format&fit=crop&q=60"
+                alt="Professional development"
+                height={520}
+                width={520}
+                className="object-cover w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+      </Container>
+
       <ListItems
         itemsClassName="mb-2"
-        title="About our products"
+        title="About our courses"
         items={[
           {
-            title: 'Responsibly Sourced',
+            title: 'Expert Instructors',
             description:
-              'We believe good coffee happens when great people come together to build longterm relationships.',
+              'We believe great learning happens when expert instructors share their knowledge through engaging, practical lessons.',
             image: {
               src: '/assets/images/benefit-1.png',
-              alt: 'Responsibly Sourced',
+              alt: 'Expert Instructors',
               width: 60,
               height: 60,
             },
           },
           {
-            title: 'Meticulously Roasted',
+            title: 'Industry-Relevant Content',
             description:
-              'Our custom roast profiles are designed to elevate the natural beauty of our coffees - from sparkling acidity to brown sugar sweetness.',
+              'Our courses are designed to address real-world challenges with current best practices and techniques that you can apply immediately in your workplace.',
             image: {
               src: '/assets/images/benefit-2.png',
-              alt: 'Meticulously Roasted',
+              alt: 'Industry-Relevant Content',
               width: 60,
               height: 60,
             },
           },
           {
-            title: 'Giving Back',
+            title: 'Flexible Learning',
             description:
-              'Every time you buy a bag of our coffee, we donate a portion of our proceeds to our non-profit partners.',
+              'Learn at your own pace with our flexible course formats, designed to fit into your busy schedule and meet your specific learning needs.',
             image: {
               src: '/assets/images/benefit-3.png',
-              alt: 'Giving Back',
+              alt: 'Flexible Learning',
               width: 60,
               height: 60,
             },
@@ -118,7 +159,7 @@ export default function IndexRoute() {
 
       <ProductList
         className="!pb-[100px]"
-        heading="Our Blends"
+        heading="Featured Courses"
         actions={[
           {
             label: 'View all',
@@ -129,32 +170,34 @@ export default function IndexRoute() {
 
       <Hero
         className="pb-10 min-h-[734px] !max-w-full"
+        overlayOpacity="0.85"
+        overlayColor="rgba(3, 105, 161, 0.7)"
         content={
           <div className="text-center w-full space-y-9 pt-9">
-            <h4 className="font-italiana text-2xl">SUBSCRIBE & SAVE</h4>
-            <h1 className="text-4xl lg:text-7xl font-italiana">
-              Sit back, let us take care&nbsp;of&nbsp;your&nbsp;coffee
+            <h4 className="font-montserrat text-2xl">LEARN & GROW</h4>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-inter font-bold">
+              Continuous learning for&nbsp;your&nbsp;career&nbsp;growth
             </h1>
 
             <ListItems
               className="text-left w-full text-black justify-between p-0"
-              itemsClassName="rounded-3xl bg-highlight-900 p-10 text-sm"
+              itemsClassName="rounded-3xl bg-highlight-900 p-10 text-sm text-white"
               useFillTitle
               items={[
                 {
-                  title: 'Choose your coffee',
+                  title: 'Choose your learning path',
                   description:
-                    'From single origin to our house blend, or even surprise offerings for the more adventurous, we have the coffee tofit your taste.',
+                    'From specialized technical skills to leadership development, or even custom learning paths for your specific career goals, we have the courses to fit your needs.',
                 },
                 {
-                  title: 'Choose a frequency',
+                  title: 'Set your learning schedule',
                   description:
-                    'Receive 12 oz of our whole bean coffee weekly, every 2 weeks, every 3 weeks, or monthly—whatever frequency meets your needs.',
+                    'Access new courses monthly, quarterly, or at whatever frequency meets your professional development timeline and learning capacity.',
                 },
                 {
-                  title: 'enjoy :)',
+                  title: 'Grow your career',
                   description:
-                    'You’ve chosen your coffee and how often you want it delivered—all that’s left to do is sit back and relax while we do all the work.',
+                    "You've chosen your path and how often you want to learn—all that's left is to apply your new skills and watch your career opportunities expand.",
                 },
               ]}
             />
@@ -162,31 +205,15 @@ export default function IndexRoute() {
         }
         actions={[
           {
-            label: 'Get your coffee',
+            label: 'Start learning today',
             url: '/products',
           },
         ]}
         image={{
-          url: '/assets/images/barrio-banner.png',
-          alt: 'Barrio background',
+          url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=60',
+          alt: '360 Training background',
         }}
       />
-
-      <Container className="flex flex-col-reverse gap-8 items-center md:items-start p-6 lg:pt-24 xl:pt-16 lg:px-24 relative lg:min-h-[354px] min-h-[276px]">
-        <div className="flex justify-center md:justify-end md:absolute md:-top-[30%] w-60 md:w-80 md:right-0 lg:right-20 lg:w-[420px]">
-          <Image src="/assets/images/header-image-2.png" alt="Barrio background" height={520} width={420} />
-        </div>
-
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-italiana md:ml-0 md:mr-[288px] lg:mr-[392px]">
-          <span className="whitespace-nowrap">The Art of Roasting</span>
-          <br />
-          <span className="font-ballet text-[200%] whitespace-nowrap inline-block mt-6 mb-4 sm:mt-2 sm:-mb-4">
-            at Barrio
-          </span>
-          <br />
-          <span className="whitespace-nowrap">Crafting with Care</span>
-        </h2>
-      </Container>
 
       <SideBySide
         className="p-14 md:pt-12 lg:px-24"
@@ -195,29 +222,30 @@ export default function IndexRoute() {
             <div
               className="bg-cover bg-no-repeat bg-center w-full rounded-3xl h-[410px]"
               style={{
-                backgroundImage: 'url(/assets/images/coffee-shop-2.png)',
+                backgroundImage:
+                  'url(https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop&q=60)',
               }}
             />
           </div>
         }
         right={
           <p className="text-sm h-full flex items-center justify-center">
-            At Barrio, our roasting process is a carefully honed craft, combining traditional techniques with a modern,
-            sustainable approach. Each batch of coffee is roasted in small quantities to ensure precise control over
-            every stage of the process, allowing the unique characteristics of the beans to shine through.
+            At 360 Training, our educational approach is a carefully crafted process, combining proven teaching
+            methodologies with innovative learning technologies. Each course is developed with meticulous attention to
+            detail, ensuring that learners gain practical, applicable skills they can use immediately.
             <br />
             <br />
-            We start by selecting high-quality, ethically sourced beans from farmers who share our commitment to
-            sustainability and community. The roasting process begins with a slow, even heat that coaxes out the natural
-            flavors, developing rich aromas and deep, complex profiles. Every bean undergoes a transformation, revealing
-            its distinct notes—whether it's the bright acidity of a light roast, the balanced sweetness of a medium
-            roast, or the bold, rich depth of a dark roast.
+            We start by identifying the most in-demand skills and knowledge areas across industries. Our curriculum
+            development begins with input from industry experts who understand the real-world challenges professionals
+            face. The learning experience is designed to be engaging and effective, developing both theoretical
+            understanding and practical application.
             <br />
             <br />
-            Our goal is to honor the origin of each coffee, preserving its natural flavors while adding our own touch of
-            expertise. The result? A perfectly roasted coffee that reflects the heart of our community—vibrant, diverse,
-            and full of life. At Barrio, every roast tells a story, and every cup connects you to the hands that
-            nurtured it.
+            Our goal is to honor the unique learning style of each student, preserving the integrity of the material
+            while making it accessible and relevant. The result? A perfectly balanced educational experience that
+            reflects our commitment to excellence—comprehensive, practical, and transformative. At 360 Training, every
+            course tells a story of professional growth, and every certification connects you to new career
+            opportunities.
           </p>
         }
       />
@@ -225,23 +253,25 @@ export default function IndexRoute() {
         className="p-14 md:pt-28 lg:pt-24 lg:px-24"
         images={[
           {
-            src: '/assets/images/grid-cta-1.png',
-            alt: 'Barrio background',
+            src: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&auto=format&fit=crop&q=60',
+            alt: 'Professional networking',
           },
           {
-            src: '/assets/images/grid-cta-2.png',
-            alt: 'Barrio background',
+            src: 'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?w=800&auto=format&fit=crop&q=60',
+            alt: 'Career development',
           },
         ]}
         content={
-          <div className="space-y-8 flex flex-col justify-center items-center">
-            <h4 className="text-xl font-italiana">FIND YOUR COMMUNITY</h4>
-            <h3 className="text-7xl  font-aboreto">BARRIO</h3>
-            <p className="text-xl">Ship, Share & Connect Over Coffee</p>
+          <div className="space-y-8 flex flex-col justify-center items-center bg-primary-700 bg-opacity-90 p-8 rounded-lg">
+            <h4 className="text-xl font-montserrat text-white">ADVANCE YOUR CAREER</h4>
+            <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-inter font-bold text-white">
+              360 TRAINING
+            </h3>
+            <p className="text-xl text-white">Learn, Apply & Grow Professionally</p>
             <ActionList
               actions={[
                 {
-                  label: 'Subscribe for Events',
+                  label: 'Join Our Community',
                   url: '#',
                 },
               ]}

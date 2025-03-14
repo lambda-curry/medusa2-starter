@@ -18,7 +18,7 @@ interface ListItemsSectionProps {
 
 const Item = ({ title, description, image, className, useFillTitle }: ListItemsSectionProps['items'][number]) => {
   return (
-    <div className={clsx('flex flex-col gap-5 text-sm font-sen', className)}>
+    <div className={clsx('flex flex-col gap-5 text-sm font-montserrat h-full', className)}>
       {image && <Image {...image} />}
       {title && (
         <div className="flex gap-2 items-center">
@@ -36,12 +36,12 @@ export const ListItems = ({ title, items = [], className, itemsClassName, useFil
     <Container className={clsx('p-14 pt-0 lg:px-16', className)}>
       {title && (
         <>
-          <h3 className="text-xl font-italiana">{title}</h3>
+          <h3 className="text-xl font-inter">{title}</h3>
           <div className="w-full mt-1 mb-8 border-t border-primary" />
         </>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6 lg:gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-16">
         {items?.map((item) => (
           <Item key={item.title} className={itemsClassName} useFillTitle={useFillTitle} {...item} />
         ))}

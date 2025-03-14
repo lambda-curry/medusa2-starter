@@ -72,14 +72,17 @@ function App() {
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet" />
 
-          <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet"
+          />
           <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&display=swap" rel="stylesheet" />
-
+          <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet" />
           <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap" rel="stylesheet" />
-
           <link href="https://fonts.googleapis.com/css2?family=Aboreto&display=swap" rel="stylesheet" />
+
           <Links />
           {siteDetails?.settings?.description && <meta name="description" content={siteDetails.settings.description} />}
         </head>

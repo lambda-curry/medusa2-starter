@@ -25,7 +25,7 @@ export const Header: FC<HeaderProps> = () => {
   if (!headerNavigationItems) return <>Loading...</>;
 
   return (
-    <header className="sticky top-0 z-40 mkt-header text-white bg-[#3F432C] opacity-75 backdrop-blur">
+    <header className="sticky top-0 z-40 mkt-header text-white bg-primary-700 opacity-90 backdrop-blur">
       <nav aria-label="Top">
         <div className="bg-transparent">
           <div className="">
@@ -40,10 +40,10 @@ export const Header: FC<HeaderProps> = () => {
                         <div className="relative">
                           <ShoppingBagIcon
                             {...iconProps}
-                            className={clsx(iconProps.className, 'hover:!bg-primary-50 focus:!bg-primary-50')}
+                            className={clsx(iconProps.className, 'hover:!bg-primary-600 focus:!bg-primary-600')}
                           />
                           {cart.items && cart.items.length > 0 && (
-                            <span className="bg-primary-500 absolute -top-1 left-full -ml-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-xs font-bold text-white">
+                            <span className="bg-accent-500 absolute -top-1 left-full -ml-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-xs font-bold text-white">
                               <span>
                                 {cart.items.reduce((acc, item) => acc + item.quantity, 0)}{' '}
                                 <span className="sr-only">items in cart, view bag</span>
@@ -75,9 +75,9 @@ export const Header: FC<HeaderProps> = () => {
                           {...navItemProps}
                           newTab={new_tab}
                           className={({ isActive }) =>
-                            clsx('my-4 flex items-center whitespace-nowrap text-base font-normal', {
-                              'hover:underline': !isActive,
-                              'border-b-primary-200 border-b-2':
+                            clsx('my-4 flex items-center whitespace-nowrap text-base font-medium', {
+                              'hover:text-accent-200': !isActive,
+                              'border-b-accent-300 border-b-2 text-white':
                                 isActive &&
                                 (!navItemProps.url.includes('#') ||
                                   activeSection === navItemProps.url.split('#')[1].split('?')[0]),
@@ -96,15 +96,15 @@ export const Header: FC<HeaderProps> = () => {
                       {!!cart && hasProducts && (
                         <IconButton
                           aria-label="open shopping cart"
-                          className="text-white hidden sm:mr-0.5 sm:inline-flex focus-within:!bg-primary-50"
+                          className="text-white hidden sm:mr-0.5 sm:inline-flex focus-within:!bg-primary-600"
                           icon={(iconProps) => (
                             <div className="relative">
                               <ShoppingBagIcon
                                 {...iconProps}
-                                className={clsx(iconProps.className, 'hover:!bg-primary-50')}
+                                className={clsx(iconProps.className, 'hover:!bg-primary-600')}
                               />
                               {cart.items && cart.items.length > 0 && (
-                                <span className="bg-primary-500 absolute -top-1 left-full -ml-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-xs font-bold text-white">
+                                <span className="bg-accent-500 absolute -top-1 left-full -ml-2 flex h-4 min-w-[1rem] items-center justify-center rounded-full px-1 text-xs font-bold text-white">
                                   <span>
                                     {cart.items.reduce((acc, item) => acc + item.quantity, 0)}{' '}
                                     <span className="sr-only">items in cart, view bag</span>
@@ -120,7 +120,7 @@ export const Header: FC<HeaderProps> = () => {
                         <IconButton
                           aria-label="open navigation menu"
                           onClick={() => setSideNavOpen(true)}
-                          className="hover:!bg-primary-50 focus:!bg-primary-50 sm:inline-flex text-white md:hidden"
+                          className="hover:!bg-primary-600 focus:!bg-primary-600 sm:inline-flex text-white md:hidden"
                           icon={Bars3Icon}
                         />
                       )}

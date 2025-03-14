@@ -83,6 +83,8 @@ export const buildBaseTrainingProductData = ({
             Duration: duration,
             Level: level,
           },
+          manage_inventory: false,
+          allow_backorder: true,
         });
       }
     }

@@ -20,7 +20,7 @@ export const ProductListHeader: FC<ProductListHeaderProps> = ({ heading, childre
       <div className="w-full flex-1 md:w-auto">
         <div className="inline-grid !max-w-prose gap-6">
           {(heading || children) && (
-            <SectionHeading className="font-italiana font-normal tracking-wider">{heading || children}</SectionHeading>
+            <SectionHeading className="font-inter font-normal tracking-wider">{heading || children}</SectionHeading>
           )}
           {text && <div>{text}</div>}
         </div>
