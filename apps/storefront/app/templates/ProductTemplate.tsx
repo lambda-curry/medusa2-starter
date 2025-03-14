@@ -344,7 +344,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                         <div>
                           <Breadcrumbs className="mb-6 text-primary" breadcrumbs={breadcrumbs} />
 
-                          <header className="flex gap-4">
+                          <header className="flex gap-4 mb-2">
                             <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl sm:tracking-tight">
                               {product.title}
                             </h1>
