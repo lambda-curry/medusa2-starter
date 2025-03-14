@@ -19,8 +19,9 @@ import '@app/styles/global.css';
 import { useRootLoaderData } from './hooks/useRootLoaderData';
 
 export const getRootMeta: MetaFunction = ({ data }) => {
-  const title = 'Barrio Store';
-  const description = 'Discover our artisan-roasted coffee, crafted with care and delivered to your door.';
+  const title = '360 Training';
+  const description =
+    'Elevate your skills with 360 Training - comprehensive online courses and certifications for professional development and career advancement.';
   const ogTitle = title;
   const ogDescription = description;
   const ogImage = '';

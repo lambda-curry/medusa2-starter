@@ -60,7 +60,7 @@ export const ProductReviewList: FC<ProductReviewListProps> = ({ productReviews }
                 {review.response && review.response.content && (
                   <div className="mt-4 rounded-md bg-gray-50 p-4">
                     <div className="flex items-center">
-                      <h4 className="text-sm font-medium text-gray-900">Barrio's Response</h4>
+                      <h4 className="text-sm font-medium text-gray-900">360 Training's Response</h4>
                       {review.response.created_at && (
                         <time
                           className="ml-2 text-xs italic text-gray-500"
