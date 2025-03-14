@@ -33,12 +33,12 @@
   },
   "dependencies": {
     "@lambdacurry/medusa-product-reviews": "0.0.6",
-    "@medusajs/admin-sdk": "2.5.0",
-    "@medusajs/cli": "2.5.0",
-    "@medusajs/framework": "2.5.0",
-    "@medusajs/js-sdk": "2.5.0",
-    "@medusajs/medusa": "2.5.0",
-    "@medusajs/types": "2.5.0",
+    "@medusajs/admin-sdk": "2.6.0",
+    "@medusajs/cli": "2.6.0",
+    "@medusajs/framework": "2.6.0",
+    "@medusajs/js-sdk": "2.6.0",
+    "@medusajs/medusa": "2.6.0",
+    "@medusajs/types": "2.6.0",
     "@mikro-orm/core": "6.4.3",
     "@mikro-orm/knex": "6.4.3",
     "@mikro-orm/migrations": "6.4.3",
@@ -47,7 +47,7 @@
     "pg": "^8.13.0"
   },
   "devDependencies": {
-    "@medusajs/test-utils": "2.5.0",
+    "@medusajs/test-utils": "2.6.0",
     "@mikro-orm/cli": "6.4.3",
     "@mikro-orm/core": "6.4.3",
     "@mikro-orm/migrations": "6.4.3",

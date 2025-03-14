@@ -2,8 +2,8 @@ import {
   createApiKeysWorkflow,
   createOrderWorkflow,
   createProductCategoriesWorkflow,
-  createProductTagsWorkflow,
   createProductsWorkflow,
+  createProductTagsWorkflow,
   createRegionsWorkflow,
   createSalesChannelsWorkflow,
   createShippingOptionsWorkflow,
@@ -14,9 +14,8 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
 } from '@medusajs/core-flows';
-import type { IPaymentModuleService } from '@medusajs/framework/types';
 import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
-import { createCollectionsWorkflow } from '@medusajs/medusa/core-flows';
+import type { Logger, MedusaContainer } from '@medusajs/types';
 import type {
   ExecArgs,
   IFulfillmentModuleService,
@@ -24,13 +23,19 @@ import type {
   IStoreModuleService,
 } from '@medusajs/types';
 import { seedProducts } from './seed/products';
+import type { IPaymentModuleService } from '@medusajs/framework/types';
+import { createCollectionsWorkflow } from '@medusajs/medusa/core-flows';
+import { Link } from '@medusajs/modules-sdk';
 import { createProductReviewsWorkflow } from '@lambdacurry/medusa-product-reviews/workflows/create-product-reviews';
-import { generateReviewResponse, reviewContents, texasCustomers } from './seed/reviews';
 import { createProductReviewResponsesWorkflow } from '@lambdacurry/medusa-product-reviews/workflows/create-product-review-responses';
+import { generateReviewResponse, reviewContents, texasCustomers } from './seed/reviews';
+import * as fs from 'fs';
+import * as path from 'path';
+import { type ApiKeyTypeEnum } from '../../.medusa/types/query-entry-points';
 
-export default async function seedDemoData({ container }: ExecArgs) {
-  const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
-  const remoteLink = container.resolve(ContainerRegistrationKeys.LINK);
+export default async function seedDemoData({ container }: { container: MedusaContainer }) {
+  const logger: Logger = container.resolve(ContainerRegistrationKeys.LOGGER);
+  const link = container.resolve<Link>(ContainerRegistrationKeys.LINK);
   const fulfillmentModuleService: IFulfillmentModuleService = container.resolve(Modules.FULFILLMENT);
   const salesChannelModuleService: ISalesChannelModuleService = container.resolve(Modules.SALES_CHANNEL);
   const storeModuleService: IStoreModuleService = container.resolve(Modules.STORE);
@@ -114,27 +119,27 @@ export default async function seedDemoData({ container }: ExecArgs) {
   logger.info('Finished seeding tax regions.');
 
   logger.info('Seeding stock location data...');
-
   const { result: stockLocationResult } = await createStockLocationsWorkflow(container).run({
     input: {
       locations: [
         {
-          name: 'South Lamar Location',
+          name: 'US Warehouse',
           address: {
-            city: 'Austin',
+            address_1: '123 Main St',
+            address_2: '',
+            city: 'New York',
             country_code: 'US',
-            province: 'TX',
-            address_1: '1200 S Lamar Blvd',
-            postal_code: '78704',
+            postal_code: '10001',
+            province: 'NY',
           },
         },
       ],
     },
   });
-  // const europeanStockLocation = stockLocationResult[0];
   const americanStockLocation = stockLocationResult[0];
 
-  await remoteLink.create([
+  // Link the stock location to the fulfillment provider using Link directly
+  await link.create([
     {
       [Modules.STOCK_LOCATION]: {
         stock_location_id: americanStockLocation.id,
@@ -184,7 +189,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
     ],
   });
 
-  await remoteLink.create({
+  await link.create({
     [Modules.STOCK_LOCATION]: {
       stock_location_id: americanStockLocation.id,
     },
@@ -303,6 +308,7 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info('Finished seeding fulfillment data.');
 
+  // Link sales channel to stock location
   await linkSalesChannelsToStockLocationWorkflow(container).run({
     input: {
       id: americanStockLocation.id,
@@ -333,19 +339,21 @@ export default async function seedDemoData({ container }: ExecArgs) {
     },
   });
 
-  logger.info('Finished seeding publishable API key data.');
-
   logger.info('Seeding product data...');
 
   const { result: categoryResult } = await createProductCategoriesWorkflow(container).run({
     input: {
       product_categories: [
         {
-          name: 'Blends',
+          name: 'Business',
           is_active: true,
         },
         {
-          name: 'Single Origin',
+          name: 'Technical Skills',
+          is_active: true,
+        },
+        {
+          name: 'Leadership',
           is_active: true,
         },
       ],
@@ -356,22 +364,22 @@ export default async function seedDemoData({ container }: ExecArgs) {
     input: {
       product_tags: [
         {
-          value: 'Ethiopia',
+          value: 'Beginner',
         },
         {
-          value: 'Colombia',
+          value: 'Intermediate',
         },
         {
-          value: 'Best Sellers',
+          value: 'Advanced',
         },
         {
-          value: 'Brazil',
+          value: 'Featured',
         },
         {
-          value: 'Africa',
+          value: 'Popular',
         },
         {
-          value: 'Latin America',
+          value: 'New',
         },
       ],
     },
@@ -406,41 +414,53 @@ export default async function seedDemoData({ container }: ExecArgs) {
     // Create multiple orders for each product with different customers
     const orders = [];
     for (const customer of selectedCustomers) {
-      const { result: order } = await createOrderWorkflow(container).run({
-        input: {
-          email: customer.email,
-          shipping_address: {
-            first_name: customer.first_name,
-            last_name: customer.last_name,
-            phone: customer.phone,
-            city: customer.city,
-            country_code: 'US',
-            province: 'TX',
-            address_1: customer.address_1,
-            postal_code: customer.postal_code,
+      try {
+        const { result: order } = await createOrderWorkflow(container).run({
+          input: {
+            email: customer.email,
+            shipping_address: {
+              first_name: customer.first_name,
+              last_name: customer.last_name,
+              phone: customer.phone,
+              city: customer.city,
+              country_code: 'US',
+              province: 'TX',
+              address_1: customer.address_1,
+              postal_code: customer.postal_code,
+            },
+            items: [
+              {
+                variant_id: firstVariant.id,
+                product_id: product.id,
+                quantity: 1,
+                title: product.title,
+                thumbnail: product.thumbnail ?? undefined,
+                unit_price: 18.0,
+              },
+            ],
+            transactions: [
+              {
+                amount: 18.0,
+                currency_code: 'usd',
+              },
+            ],
+            region_id: usRegion.id,
+            sales_channel_id: defaultSalesChannel[0].id,
           },
-          items: [
-            {
-              variant_id: firstVariant.id,
-              product_id: product.id,
-              quantity: 1,
-              title: product.title,
-              thumbnail: product.thumbnail ?? undefined,
-              unit_price: 18.0,
-            },
-          ],
-          transactions: [
-            {
-              amount: 18.0,
-              currency_code: 'usd',
-            },
-          ],
-          region_id: usRegion.id,
-          sales_channel_id: defaultSalesChannel[0].id,
-        },
-      });
+        });
 
-      orders.push(order);
+        orders.push(order);
+      } catch (error: any) {
+        logger.error(`Error creating order: ${error.message}`);
+        // Continue with next customer
+        continue;
+      }
+    }
+
+    // Only proceed with reviews if we have orders
+    if (orders.length === 0) {
+      logger.info(`Skipping reviews for product ${product.title} as no orders were created`);
+      continue;
     }
 
     // Create product reviews for each order
@@ -481,4 +501,36 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info('Finished seeding product data.');
   logger.info(`PUBLISHABLE API KEY: ${publishableApiKey.token}`);
+
+  // Check if we're in a local environment (not production)
+  const isLocalEnvironment = process.env.NODE_ENV !== 'production';
+
+  if (isLocalEnvironment) {
+    // Path to the storefront .env file
+    const envFilePath = path.resolve(__dirname, '../../../../apps/storefront/.env');
+
+    // Check if the file exists
+    if (fs.existsSync(envFilePath)) {
+      // Read the current .env file
+      let envContent = fs.readFileSync(envFilePath, 'utf8');
+
+      // Replace the MEDUSA_PUBLISHABLE_KEY line or add it if it doesn't exist
+      const keyRegex = /^MEDUSA_PUBLISHABLE_KEY=.*$/m;
+      const newKeyLine = `MEDUSA_PUBLISHABLE_KEY='${publishableApiKey.token}'`;
+
+      if (keyRegex.test(envContent)) {
+        // Replace existing key
+        envContent = envContent.replace(keyRegex, newKeyLine);
+      } else {
+        // Add key if it doesn't exist
+        envContent += `\n${newKeyLine}`;
+      }
+
+      // Write the updated content back to the file
+      fs.writeFileSync(envFilePath, envContent);
+      logger.info(`Updated storefront .env file with publishable key: ${publishableApiKey.token}`);
+    } else {
+      logger.warn(`Storefront .env file not found at ${envFilePath}`);
+    }
+  }
 }
