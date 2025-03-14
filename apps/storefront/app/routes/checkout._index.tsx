@@ -36,26 +36,16 @@ const findCheapestShippingOption = (shippingOptions: StoreCartShippingOption[]) 
 };
 
 const ensureSelectedCartShippingMethod = async (request: Request, cart: StoreCart) => {
-  const shippingOptions = await fetchShippingOptions(cart.id);
-
   const selectedShippingMethod = cart.shipping_methods?.[0];
 
-  const selectedShippingOption =
-    selectedShippingMethod && shippingOptions.find((option) => option.id === selectedShippingMethod.shipping_option_id);
+  if (selectedShippingMethod) return;
 
-  if (
-    !selectedShippingMethod || // No shipping method has been selected
-    !selectedShippingOption // The selected shipping method is no longer available
-  ) {
-    const cheapestShippingOption = findCheapestShippingOption(shippingOptions);
+  const shippingOptions = await fetchShippingOptions(cart.id);
 
-    if (cheapestShippingOption) {
-      await setShippingMethod(request, { cartId: cart.id, shippingOptionId: cheapestShippingOption.id });
-    }
+  const cheapestShippingOption = findCheapestShippingOption(shippingOptions);
 
-    return;
-  } else if (selectedShippingMethod.amount !== selectedShippingOption.amount) {
-    await setShippingMethod(request, { cartId: cart.id, shippingOptionId: selectedShippingOption.id });
+  if (cheapestShippingOption) {
+    await setShippingMethod(request, { cartId: cart.id, shippingOptionId: cheapestShippingOption.id });
   }
 };
 
@@ -64,9 +54,10 @@ const ensureCartPaymentSessions = async (request: Request, cart: StoreCart) => {
 
   let activeSession = cart.payment_collection?.payment_sessions?.find((session) => session.status === 'pending');
 
-  const paymentProviders = await listCartPaymentProviders(cart.region_id!);
+  if (!activeSession) {
+    const paymentProviders = await listCartPaymentProviders(cart.region_id!);
+    if (!paymentProviders.length) return activeSession;
 
-  if (!activeSession && paymentProviders.length) {
     const provider = paymentProviders.find((p) => p.id !== SYSTEM_PROVIDER_ID) || paymentProviders[0];
 
     const { payment_collection } = await initiatePaymentSession(request, cart, {

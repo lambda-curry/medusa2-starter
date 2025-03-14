@@ -22,6 +22,10 @@ export const retrieveCart = withAuthHeaders(async (request, authHeaders) => {
     });
 });
 
+export const createCart = withAuthHeaders(async (request, authHeaders, data: HttpTypes.StoreCreateCart) => {
+  return await sdk.store.cart.create({ ...data }, {}, authHeaders);
+});
+
 export const getOrCreateCart = withAuthHeaders(async (request, authHeaders) => {
   let cart = await retrieveCart(request);
 
@@ -67,23 +71,25 @@ export const addToCart = withAuthHeaders(
       throw new Error('Missing variant ID when adding to cart');
     }
 
-    const cart = await getOrCreateCart(request);
+    const cartId = await getCartId(request.headers);
 
-    if (!cart) {
-      throw new Error('Error retrieving or creating cart');
-    }
-
-    return await sdk.store.cart
-      .createLineItem(
-        cart.id,
+    if (cartId) {
+      return await sdk.store.cart.createLineItem(
+        cartId,
         {
           variant_id: variantId,
           quantity,
         },
         {},
         authHeaders,
-      )
-      .catch(medusaError);
+      );
+    }
+
+    const region = await getSelectedRegion(request.headers);
+
+    const cart = await createCart(request, { region_id: region.id, items: [{ variant_id: variantId, quantity }] });
+
+    return cart;
   },
 );
 
