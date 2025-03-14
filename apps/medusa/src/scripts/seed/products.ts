@@ -153,6 +153,7 @@ export const seedProducts = ({
       levels: ['Intermediate', 'Advanced'],
       prices: {
         '8 hours / Intermediate': { usd: 149, cad: 149 },
+        '16 hours / Intermediate': { usd: 249, cad: 249 },
         '16 hours / Advanced': { usd: 299, cad: 299 },
         '24 hours / Advanced': { usd: 449, cad: 449 },
       },

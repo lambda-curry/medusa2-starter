@@ -20,7 +20,6 @@ export const ProductOptionSelectorSelect: FC<ProductOptionSelectorProps> = ({ op
   const filteredValues: {
     value: string;
     label?: string;
-    disabled?: boolean;
   }[] = option.values.filter(
     (productOptionValue, index, self) => self.findIndex((item) => item.value === productOptionValue.value) === index,
   );
@@ -29,12 +28,7 @@ export const ProductOptionSelectorSelect: FC<ProductOptionSelectorProps> = ({ op
     <FieldSelect
       name={`options.${option.id}`}
       label={option.title}
-      options={[
-        { label: 'Select one', value: '' },
-        ...filteredValues.map(({ value, label, disabled }) =>
-          disabled ? { label: `${label} (not available)`, value, disabled } : { label, value },
-        ),
-      ]}
+      options={[{ label: 'Select one', value: '' }, ...filteredValues.map(({ value, label }) => ({ label, value }))]}
       onChange={handleChange}
       inputProps={{ value }}
     />
