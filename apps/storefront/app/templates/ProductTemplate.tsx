@@ -179,7 +179,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
       product.options?.map((option, index) => {
         // For the first option (Duration), always show all values
         if (index === 0) {
-          const optionValuesWithLabels = getOptionValuesWithDiscountLabels(
+          const optionValuesWithPrices = getOptionValuesWithDiscountLabels(
             index,
             currencyCode,
             option.values || [],
@@ -191,10 +191,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
             title: option.title,
             product_id: option.product_id as string,
             id: option.id,
-            values: optionValuesWithLabels.map(({ value, label }) => ({
-              value,
-              label,
-            })),
+            values: optionValuesWithPrices,
           };
         }
 
@@ -206,7 +203,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
           filteredOptionValues.some((filteredValue) => filteredValue.value === optionValue.value),
         ) as StoreProductOptionValue[];
 
-        const optionValuesWithLabels = getOptionValuesWithDiscountLabels(
+        const optionValuesWithPrices = getOptionValuesWithDiscountLabels(
           index,
           currencyCode,
           availableOptionValues || [],
@@ -218,10 +215,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
           title: option.title,
           product_id: option.product_id as string,
           id: option.id,
-          values: optionValuesWithLabels.map(({ value, label }) => ({
-            value,
-            label,
-          })),
+          values: optionValuesWithPrices,
         };
       }),
     [product, controlledOptions, currencyCode, variantMatrix, selectedOptions],
@@ -397,6 +391,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                                   option={option}
                                   value={controlledOptions[option.id]}
                                   onChange={handleOptionChangeBySelect}
+                                  currencyCode={currencyCode}
                                 />
                               ))}
                             </FieldGroup>
@@ -415,6 +410,7 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                                   option={option}
                                   value={controlledOptions[option.id]}
                                   onChange={handleOptionChangeByRadio}
+                                  currencyCode={currencyCode}
                                 />
                               </div>
                             ))}

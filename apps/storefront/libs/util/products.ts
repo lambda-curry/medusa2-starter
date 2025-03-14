@@ -159,9 +159,9 @@ export function getFilteredOptionValues(
 }
 
 /**
- * Generates labels for option values that include price information
- * For non-final options, shows price ranges when applicable
- * For final options, shows exact prices for the selected combination
+ * Generates price information for option values
+ * For non-final options, includes price ranges when applicable
+ * For final options, includes exact prices for the selected combination
  */
 export const getOptionValuesWithDiscountLabels = (
   productOptionIndex: number,
@@ -169,7 +169,12 @@ export const getOptionValuesWithDiscountLabels = (
   optionValues: StoreProductOptionValue[],
   variantMatrix: VariantMatrix,
   selectedOptions?: string[],
-): (StoreProductOptionValue & { label: string })[] => {
+): (StoreProductOptionValue & {
+  minPrice?: number;
+  maxPrice?: number;
+  exactPrice?: number;
+  discountPercentage?: number;
+})[] => {
   // Determine if this is the last option in the sequence
   const isLastOption = selectedOptions && productOptionIndex === selectedOptions.length - 1;
   const optionId = optionValues[0]?.option_id;
@@ -188,20 +193,22 @@ export const getOptionValuesWithDiscountLabels = (
         const prices = allVariantsWithThisOption.map((variant) => getVariantFinalPrice(variant));
         const uniquePrices = [...new Set(prices)].sort((a, b) => a - b);
 
-        // If there are multiple unique prices, show a range
+        // If there are multiple unique prices, return a range
         if (uniquePrices.length > 1) {
           const minPrice = uniquePrices[0];
           const maxPrice = uniquePrices[uniquePrices.length - 1];
 
           return {
             ...optionValue,
-            label: `${optionValue.value} - ${formatPrice(minPrice, { currency: currencyCode })} to ${formatPrice(maxPrice, { currency: currencyCode })}`,
+            minPrice,
+            maxPrice,
           };
         } else {
-          // If there's only one price, show it
+          // If there's only one price, return it as both min and max
           return {
             ...optionValue,
-            label: `${optionValue.value} - ${formatPrice(uniquePrices[0], { currency: currencyCode })}`,
+            minPrice: uniquePrices[0],
+            maxPrice: uniquePrices[0],
           };
         }
       }
@@ -220,29 +227,20 @@ export const getOptionValuesWithDiscountLabels = (
       currentOptionWithSelectOptions,
     );
 
-    // If we have an exact variant match, show its price
+    // If we have an exact variant match, return its price
     if (variantForCurrentOption) {
-      const price = formatPrice(getVariantFinalPrice(variantForCurrentOption), {
-        currency: currencyCode,
-      });
-
+      const finalPrice = getVariantFinalPrice(variantForCurrentOption);
       const discount = selectDiscountFromVariant(variantForCurrentOption);
-      let label = `${optionValue.value} - ${price}`;
-
-      // Add discount information if available
-      if (discount?.percentageOff) {
-        const discountOff = Math.round(discount.percentageOff);
-        label += ` (${discountOff}% off)`;
-      }
 
       return {
         ...optionValue,
-        label,
+        exactPrice: finalPrice,
+        discountPercentage: discount?.percentageOff ? Math.round(discount.percentageOff) : undefined,
       };
     }
 
     // Fallback if no variants found
-    return { ...optionValue, label: optionValue.value };
+    return { ...optionValue };
   });
 };
 

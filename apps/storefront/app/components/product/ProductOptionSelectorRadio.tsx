@@ -2,54 +2,47 @@ import { Label, Radio, RadioGroup } from '@headlessui/react';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import type { FC } from 'react';
+import { formatPrice } from '@libs/util/prices';
 
 export interface ProductOptionSelectorProps {
   option: {
     title: string;
     id: string;
-    values: { value: string; label: string; disabled?: boolean }[];
+    values: {
+      value: string;
+      minPrice?: number;
+      maxPrice?: number;
+      exactPrice?: number;
+      discountPercentage?: number;
+      disabled?: boolean;
+    }[];
   };
   onChange?: (name: string, value: string) => void;
   value?: string;
+  currencyCode: string;
 }
 
-export const ProductOptionSelectorRadio: FC<ProductOptionSelectorProps> = ({ option, onChange, value }) => {
+export const ProductOptionSelectorRadio: FC<ProductOptionSelectorProps> = ({
+  option,
+  onChange,
+  value,
+  currencyCode,
+}) => {
   const handleChange = (name: string, value: string) => {
     if (onChange) onChange(name, value);
   };
 
-  const filteredValues: { value: string; label?: string; disabled?: boolean }[] = option.values.filter(
-    (productOptionValue, index, self) => self.findIndex((item) => item.value === productOptionValue.value) === index,
+  // Filter unique values
+  const uniqueValues = option.values.filter(
+    (optionValue, index, self) => self.findIndex((item) => item.value === optionValue.value) === index,
   );
 
-  // Helper function to separate option value from price and format price info
-  const formatOptionLabel = (label: string) => {
-    // Check if the label contains a price (indicated by a dash followed by currency)
-    if (label.includes(' - ')) {
-      const [optionValue, priceInfo] = label.split(' - ');
-
-      // Format price range (if it contains "to")
-      if (priceInfo.includes(' to ')) {
-        return {
-          optionValue,
-          priceInfo: priceInfo.replace(' to ', ' – '), // Use en dash for range
-        };
-      }
-
-      // Handle discount case
-      if (priceInfo.includes('(') && priceInfo.includes('% off)')) {
-        const [price, discount] = priceInfo.split(' (');
-        return {
-          optionValue,
-          price,
-          discount: discount.replace(')', ''),
-        };
-      }
-
-      return { optionValue, price: priceInfo };
-    }
-    return { optionValue: label, price: null };
-  };
+  // Sort values by price (low to high)
+  const sortedValues = [...uniqueValues].sort((a, b) => {
+    const aPrice = a.minPrice || a.exactPrice || 0;
+    const bPrice = b.minPrice || b.exactPrice || 0;
+    return aPrice - bPrice;
+  });
 
   return (
     <RadioGroup
@@ -58,8 +51,28 @@ export const ProductOptionSelectorRadio: FC<ProductOptionSelectorProps> = ({ opt
       onChange={(changedValue) => handleChange(option.id, changedValue)}
     >
       <div className="grid grid-cols-1 gap-2">
-        {filteredValues.map((optionValue, valueIndex) => {
-          const { optionValue: displayValue, price, priceInfo, discount } = formatOptionLabel(optionValue.label || '');
+        {sortedValues.map((optionValue, valueIndex) => {
+          // Format the price display
+          let priceDisplay = '';
+          let discountDisplay = '';
+
+          if (optionValue.minPrice !== undefined && optionValue.maxPrice !== undefined) {
+            if (optionValue.minPrice === optionValue.maxPrice) {
+              // Single price
+              priceDisplay = formatPrice(optionValue.minPrice, { currency: currencyCode });
+            } else {
+              // Price range
+              priceDisplay = `${formatPrice(optionValue.minPrice, { currency: currencyCode })} – ${formatPrice(optionValue.maxPrice, { currency: currencyCode })}`;
+            }
+          } else if (optionValue.exactPrice !== undefined) {
+            // Exact price
+            priceDisplay = formatPrice(optionValue.exactPrice, { currency: currencyCode });
+
+            // Format discount if available
+            if (optionValue.discountPercentage) {
+              discountDisplay = `${optionValue.discountPercentage}% off`;
+            }
+          }
 
           return (
             <Radio
@@ -77,26 +90,26 @@ export const ProductOptionSelectorRadio: FC<ProductOptionSelectorProps> = ({ opt
             >
               {({ checked }) => (
                 <Label as="div" className="flex items-center w-full">
-                  {/* Check icon on the left */}
-                  <div className="flex-shrink-0 w-5 mr-2">
-                    {checked && <CheckCircleIcon className="text-primary-600 h-5 w-5" aria-hidden="true" />}
-                  </div>
-
-                  {/* Option value in the middle */}
+                  {/* Option value on the left */}
                   <div className="flex-grow">
                     <span className={clsx('text-base', checked ? 'text-primary-800' : 'text-gray-900')}>
-                      {displayValue}
+                      {optionValue.value}
                     </span>
                     {optionValue.disabled && <span className="text-xs text-gray-500 ml-2">(not available)</span>}
                   </div>
 
-                  {/* Price information on the right */}
-                  {(price || priceInfo) && (
-                    <div className="flex-shrink-0 text-right ml-1">
-                      <span className="text-sm font-normal text-gray-500">{price || priceInfo}</span>
-                      {discount && <span className="ml-1 text-xs font-medium text-green-600">{discount}</span>}
-                    </div>
-                  )}
+                  {/* Price information and check icon on the right */}
+                  <div className="flex items-center">
+                    {priceDisplay && (
+                      <div className="text-right">
+                        <span className="text-sm font-normal text-gray-500">{priceDisplay}</span>
+                        {discountDisplay && (
+                          <span className="ml-1 text-xs font-medium text-green-600">({discountDisplay})</span>
+                        )}
+                      </div>
+                    )}
+                    {checked && <CheckCircleIcon className="text-primary-600 h-5 w-5 ml-2" aria-hidden="true" />}
+                  </div>
                 </Label>
               )}
             </Radio>
