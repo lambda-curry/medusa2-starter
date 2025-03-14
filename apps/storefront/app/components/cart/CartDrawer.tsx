@@ -73,22 +73,27 @@ const CartDrawerContent: FC<{
   showEmptyCartMessage: boolean;
   isRemovingLastItem: boolean;
   currencyCode: string;
-}> = ({ items, isRemovingItemId, isAddingItem, showEmptyCartMessage, isRemovingLastItem, currencyCode }) => (
-  <div className="mt-8">
-    <div className="flow-root">
-      {/* Show empty cart message when cart is empty and not loading */}
-      {(showEmptyCartMessage || isRemovingLastItem) && <CartDrawerEmpty />}
+}> = ({ items, isRemovingItemId, isAddingItem, showEmptyCartMessage, isRemovingLastItem, currencyCode }) => {
+  // Ensure we're correctly determining when to show items vs empty message
+  const hasItems = items.length > 0;
 
-      {/* Show items when there are items in the cart */}
-      {items.length > 0 && !isRemovingLastItem && (
-        <CartDrawerItems items={items} isRemovingItemId={isRemovingItemId} currencyCode={currencyCode} />
-      )}
+  return (
+    <div className="mt-8">
+      <div className="flow-root">
+        {/* Show items when there are items in the cart and we're not removing the last item */}
+        {hasItems && !isRemovingLastItem && (
+          <CartDrawerItems items={items} isRemovingItemId={isRemovingItemId} currencyCode={currencyCode} />
+        )}
 
-      {/* Show loading item when adding items but not when removing the last item */}
-      {isAddingItem && !isRemovingLastItem && <CartDrawerLoading />}
+        {/* Show loading item when adding items */}
+        {isAddingItem && <CartDrawerLoading />}
+
+        {/* Only show empty cart message when cart is truly empty and not loading */}
+        {(!hasItems || isRemovingLastItem) && !isAddingItem && <CartDrawerEmpty />}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Cart Drawer Footer Component
 const CartDrawerFooter: FC<{
@@ -167,6 +172,17 @@ export const CartDrawer: FC = () => {
 
   const lineItems = cart?.items ?? [];
   const lineItemsTotal = lineItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  // Debug log to help identify issues
+  useEffect(() => {
+    console.log({
+      lineItems,
+      lineItemsTotal,
+      isRemovingLastItem,
+      showEmptyCartMessage,
+      cartDrawerOpen,
+    });
+  }, [lineItems, lineItemsTotal, isRemovingLastItem, showEmptyCartMessage, cartDrawerOpen]);
 
   const handleCheckoutClick = useCallback(() => {
     navigate('/checkout');

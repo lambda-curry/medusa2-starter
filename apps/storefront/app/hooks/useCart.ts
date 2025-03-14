@@ -50,7 +50,7 @@ export const useCart = () => {
   const isAddingItem = cartFetchers.adding.length > 0;
   const isRemovingItemId = cartFetchers.removing?.formData?.get('lineItemId') as string | undefined;
 
-  // Check if we're removing the last item
+  // Check if we're removing the last item - improved logic
   const isLastItemBeingRemoved =
     isRemovingItemId &&
     ((itemCount === 1 && isRemovingItemId === lineItems[0]?.id) ||
@@ -88,21 +88,34 @@ export const useCart = () => {
     // Track if we're removing the last item
     if (isLastItemBeingRemoved && !isRemovingLastItem) {
       setIsRemovingLastItem(true);
+
+      // When removing the last item, set a timer to close the drawer
+      if (cartDrawerOpen) {
+        timerRef.current = window.setTimeout(() => {
+          actions.toggleCartDrawer(false);
+          setIsRemovingLastItem(false);
+        }, 1500);
+      }
     }
 
     // Keep track of previous item count
     prevItemCountRef.current = itemCount;
 
-    // Handle cart emptying and last item removal
-    if (cartDrawerOpen && isLastItemBeingRemoved) {
-      // If removing last item, close drawer after delay
+    return clearTimer;
+  }, [state.cart.open, itemCount, isLastItemBeingRemoved, isRemovingLastItem, actions, clearTimer]);
+
+  // Effect: Close drawer when cart becomes empty (not during removal animation)
+  useEffect(() => {
+    // If cart is empty and drawer is open and we're not in the middle of removing the last item
+    if (itemCount === 0 && state.cart.open && !isRemovingLastItem && !isLastItemBeingRemoved && !isAddingItem) {
+      // Close the drawer after a short delay to allow for any animations
       timerRef.current = window.setTimeout(() => {
         actions.toggleCartDrawer(false);
-      }, 1500);
+      }, 300);
     }
 
     return clearTimer;
-  }, [state.cart.open, itemCount, isLastItemBeingRemoved, isRemovingLastItem, actions, clearTimer]);
+  }, [itemCount, state.cart.open, isRemovingLastItem, isLastItemBeingRemoved, isAddingItem, actions, clearTimer]);
 
   // Reset the removing last item state when the cart is closed or when items are added
   useEffect(() => {
@@ -116,8 +129,8 @@ export const useCart = () => {
     return clearTimer;
   }, [clearTimer]);
 
-  // Derived UI states
-  const showEmptyCartMessage = !isAddingItem && itemCount === 0;
+  // Derived UI states - improved logic to prevent false empty states
+  const showEmptyCartMessage = !isAddingItem && itemCount === 0 && !isRemovingLastItem;
 
   // Ensure cartDrawerOpen is always a boolean
   const cartDrawerOpen = state.cart.open === true;
