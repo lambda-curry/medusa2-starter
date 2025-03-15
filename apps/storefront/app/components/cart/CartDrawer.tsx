@@ -75,21 +75,19 @@ const CartDrawerContent: FC<{
   currencyCode: string;
 }> = ({ items, isRemovingItemId, isAddingItem, showEmptyCartMessage, isRemovingLastItem, currencyCode }) => {
   // Ensure we're correctly determining when to show items vs empty message
-  const hasItems = items.length > 0;
+  const hasItems = items && items.length > 0;
 
   return (
     <div className="mt-8">
       <div className="flow-root">
-        {/* Show items when there are items in the cart and we're not removing the last item */}
-        {hasItems && !isRemovingLastItem && (
-          <CartDrawerItems items={items} isRemovingItemId={isRemovingItemId} currencyCode={currencyCode} />
-        )}
+        {/* Show items when there are items in the cart */}
+        {hasItems && <CartDrawerItems items={items} isRemovingItemId={isRemovingItemId} currencyCode={currencyCode} />}
 
         {/* Show loading item when adding items */}
         {isAddingItem && <CartDrawerLoading />}
 
         {/* Only show empty cart message when cart is truly empty and not loading */}
-        {(!hasItems || isRemovingLastItem) && !isAddingItem && <CartDrawerEmpty />}
+        {!hasItems && !isAddingItem && <CartDrawerEmpty />}
       </div>
     </div>
   );
@@ -120,7 +118,7 @@ const CartDrawerFooter: FC<{
     <div className="mt-6">
       <Button
         variant="primary"
-        disabled={itemCount === 0 || isRemovingLastItem}
+        disabled={itemCount === 0}
         onClick={onCheckout}
         className="h-12 w-full !text-base font-bold"
       >

@@ -104,19 +104,6 @@ export const useCart = () => {
     return clearTimer;
   }, [state.cart.open, itemCount, isLastItemBeingRemoved, isRemovingLastItem, actions, clearTimer]);
 
-  // Effect: Close drawer when cart becomes empty (not during removal animation)
-  useEffect(() => {
-    // If cart is empty and drawer is open and we're not in the middle of removing the last item
-    if (itemCount === 0 && state.cart.open && !isRemovingLastItem && !isLastItemBeingRemoved && !isAddingItem) {
-      // Close the drawer after a short delay to allow for any animations
-      timerRef.current = window.setTimeout(() => {
-        actions.toggleCartDrawer(false);
-      }, 300);
-    }
-
-    return clearTimer;
-  }, [itemCount, state.cart.open, isRemovingLastItem, isLastItemBeingRemoved, isAddingItem, actions, clearTimer]);
-
   // Reset the removing last item state when the cart is closed or when items are added
   useEffect(() => {
     if (!state.cart.open || isAddingItem) {
