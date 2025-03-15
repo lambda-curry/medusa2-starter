@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback, useState, useEffect } from 'react';
+import { FC, useCallback, useState, useEffect } from 'react';
 import { Dialog, DialogPanel, DialogTitle, DialogBackdrop } from '@headlessui/react';
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon';
 import { formatCartSubtotal, formatPrice } from '@libs/util/prices';
@@ -9,6 +9,7 @@ import { Button } from '@app/components/common/buttons/Button';
 import { useNavigate, useFetchers } from '@remix-run/react';
 import { useRegion } from '@app/hooks/useRegion';
 import { CartDrawerItem } from './CartDrawerItem';
+import clsx from 'clsx';
 
 // Cart Drawer Header Component
 const CartDrawerHeader: FC<{ itemCount: number; onClose: () => void }> = ({ itemCount, onClose }) => (
@@ -31,8 +32,8 @@ const CartDrawerHeader: FC<{ itemCount: number; onClose: () => void }> = ({ item
 const CartDrawerEmpty: FC = () => <p className="text-center text-sm text-gray-500">Looks like your cart is empty!</p>;
 
 // Cart Drawer Loading Component
-const CartDrawerLoading: FC = () => (
-  <li className="py-6 list-none">
+const CartDrawerLoading: FC<{ className?: string }> = ({ className }) => (
+  <li className={clsx('list-none', className)}>
     <div className="flex animate-pulse space-x-4">
       <div className="h-24 w-24 rounded-md bg-slate-300" />
       <div className="flex h-24 w-full flex-1 flex-col space-y-3 py-1">
@@ -84,7 +85,7 @@ const CartDrawerContent: FC<{
         {hasItems && <CartDrawerItems items={items} isRemovingItemId={isRemovingItemId} currencyCode={currencyCode} />}
 
         {/* Show loading item when adding items */}
-        {isAddingItem && <CartDrawerLoading />}
+        {isAddingItem && <CartDrawerLoading className={clsx(hasItems ? 'pt-10' : 'py-0')} />}
 
         {/* Only show empty cart message when cart is truly empty and not loading */}
         {!hasItems && !isAddingItem && <CartDrawerEmpty />}
