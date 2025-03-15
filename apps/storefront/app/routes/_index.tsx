@@ -77,7 +77,7 @@ export default function IndexRoute() {
       <Container className="p-14 pt-0">
         <Hero
           className="h-[594px]"
-          backgroundClassName="rounded-3xl"
+          backgroundClassName="rounded-lg"
           overlayOpacity="0.8"
           overlayColor="rgba(15, 118, 110, 0.6)"
           image={{
@@ -181,7 +181,7 @@ export default function IndexRoute() {
 
             <ListItems
               className="text-left w-full text-black justify-between p-0"
-              itemsClassName="rounded-3xl bg-highlight-900 p-10 text-sm text-white"
+              itemsClassName="rounded-lg bg-highlight-900 p-10 text-sm text-white"
               useFillTitle
               items={[
                 {
@@ -218,9 +218,9 @@ export default function IndexRoute() {
       <SideBySide
         className="p-14 md:pt-12 lg:px-24"
         left={
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-start justify-center">
             <div
-              className="bg-cover bg-no-repeat bg-center w-full rounded-3xl h-[410px]"
+              className="bg-cover bg-no-repeat bg-center w-full rounded-lg h-[410px]"
               style={{
                 backgroundImage:
                   'url(https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop&q=60)',

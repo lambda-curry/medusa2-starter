@@ -21,7 +21,7 @@ const SideColumn = ({ images }: { images: ImageProps[] }) => {
       {images.map((image, index) => (
         <div
           key={index}
-          className="flex-1 w-full h-full bg-[#9F7F51] bg-cover bg-no-repeat bg-center"
+          className="flex-1 w-full h-full bg-[#9F7F51] bg-cover bg-no-repeat bg-center rounded-lg"
           {...(image ? { style: { backgroundImage: `url(${image.src})` } } : {})}
         />
       ))}
