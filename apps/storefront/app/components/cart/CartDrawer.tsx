@@ -96,14 +96,13 @@ const CartDrawerContent: FC<{
 
 // Cart Drawer Footer Component
 const CartDrawerFooter: FC<{
+  navigatingToCheckout: boolean;
   cart: any;
   currencyCode: string;
   itemCount: number;
-  isAddingItem: boolean;
-  isRemovingLastItem: boolean;
   onCheckout: () => void;
   onClose: () => void;
-}> = ({ cart, currencyCode, itemCount, isAddingItem, isRemovingLastItem, onCheckout, onClose }) => (
+}> = ({ cart, currencyCode, itemCount, navigatingToCheckout, onCheckout, onClose }) => (
   <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
     <div className="flex justify-between text-base font-bold text-gray-900">
       <p>Subtotal</p>
@@ -119,11 +118,11 @@ const CartDrawerFooter: FC<{
     <div className="mt-6">
       <Button
         variant="primary"
-        disabled={itemCount === 0}
+        disabled={itemCount === 0 || navigatingToCheckout}
         onClick={onCheckout}
         className="h-12 w-full !text-base font-bold"
       >
-        Checkout
+        {navigatingToCheckout ? 'Preparing checkout...' : 'Checkout'}
       </Button>
     </div>
     <div className="mt-4 flex justify-center text-center text-sm text-gray-500">
@@ -153,6 +152,7 @@ export const CartDrawer: FC = () => {
   } = useCart();
   const { region } = useRegion();
   const allFetchers = useFetchers();
+  const [navigatingToCheckout, setNavigatingToCheckout] = useState(false);
 
   // Track if any cart-related fetchers are active
   const isCartLoading = allFetchers.some(
@@ -172,20 +172,13 @@ export const CartDrawer: FC = () => {
   const lineItems = cart?.items ?? [];
   const lineItemsTotal = lineItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Debug log to help identify issues
-  useEffect(() => {
-    console.log({
-      lineItems,
-      lineItemsTotal,
-      isRemovingLastItem,
-      showEmptyCartMessage,
-      cartDrawerOpen,
-    });
-  }, [lineItems, lineItemsTotal, isRemovingLastItem, showEmptyCartMessage, cartDrawerOpen]);
-
   const handleCheckoutClick = useCallback(() => {
+    setNavigatingToCheckout(true);
     navigate('/checkout');
-    toggleCartDrawer(false);
+    setTimeout(() => {
+      toggleCartDrawer(false);
+      setNavigatingToCheckout(false);
+    }, 750);
   }, [navigate, toggleCartDrawer]);
 
   const handleClose = useCallback(() => {
@@ -225,11 +218,10 @@ export const CartDrawer: FC = () => {
 
                 {/* Footer */}
                 <CartDrawerFooter
+                  navigatingToCheckout={navigatingToCheckout}
                   cart={cart}
                   currencyCode={region.currency_code}
                   itemCount={lineItemsTotal}
-                  isAddingItem={isAddingItem || isCartLoading}
-                  isRemovingLastItem={isRemovingLastItem}
                   onCheckout={handleCheckoutClick}
                   onClose={handleClose}
                 />
