@@ -1,0 +1,58 @@
+{
+  "name": "@lambdacurry/page-builder-sdk",
+  "version": "0.0.6-beta.3",
+  "description": "SDK for Medusa plugins",
+  "author": "Lambda Curry (https://lambdacurry.dev)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lambda-curry/medusa-plugins"
+  },
+  "homepage": "https://github.com/lambda-curry/medusa-plugins/tree/main/packages/plugins-sdk",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "types": "./dist/esm/index.d.ts"
+  },
+  "keywords": [
+    "medusa",
+    "plugin",
+    "sdk",
+    "medusa-plugins-sdk",
+    "medusa-v2",
+    "lambdacurry"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.json && tsc -p tsconfig.esm.json",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "prepublishOnly": "yarn build",
+    "dev:publish": "yalc publish"
+  },
+  "devDependencies": {
+    "@lambdacurry/page-builder-types": "workspace:*",
+    "@medusajs/types": "2.8.2",
+    "prettier": "^3.2.5",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.0.2",
+    "typescript": "^5.7.2",
+    "yalc": "^1.0.0-pre.53"
+  },
+  "dependencies": {
+    "@medusajs/js-sdk": "^2.8.2",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
+    "form-data": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

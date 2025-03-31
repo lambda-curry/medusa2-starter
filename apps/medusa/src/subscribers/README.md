@@ -9,7 +9,7 @@ For example, create the file `src/subscribers/product-created.ts` with the follo
 ```ts
 import {
   type SubscriberConfig,
-} from "@medusajs/medusa"
+} from "@medusajs/framework"
 
 // subscriber function
 export default async function productCreateHandler() {
@@ -38,9 +38,7 @@ A subscriber receives an object having the following properties:
 import type {
   SubscriberArgs,
   SubscriberConfig,
-} from "@medusajs/medusa"
-import { IProductModuleService } from "@medusajs/types"
-import { ModuleRegistrationName } from "@medusajs/utils"
+} from "@medusajs/framework"
 
 export default async function productCreateHandler({
   event: { data },
