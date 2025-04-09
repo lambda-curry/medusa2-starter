@@ -1,0 +1,27 @@
+{
+  "name": "@markethaus/sdk",
+  "version": "0.0.1",
+  "packageManager": "yarn@4.6.0",
+  "main": "./dist/cjs/sdk.js",
+  "module": "./dist/esm/sdk.js",
+  "types": "./dist/esm/sdk.d.ts",
+  "exports": {
+    "import": "./dist/esm/sdk.js",
+    "require": "./dist/cjs/sdk.js",
+    "types": "./dist/esm/sdk.d.ts"
+  },
+  "dependencies": {
+    "@markethaus/types": "0.0.1",
+    "@medusajs/js-sdk": "2.5.0",
+    "@medusajs/types": "2.5.0"
+  },
+  "devDependencies": {
+    "rimraf": "5.0.10",
+    "typescript": "5.7.2"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.json && tsc -p tsconfig.esm.json",
+    "test": "jest --passWithNoTests --runInBand --bail --forceExit",
+    "watch": "tsc --build --watch"
+  }
+}

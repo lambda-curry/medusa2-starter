@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "esnext"
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx"
   },
   "include": ["."],
   "exclude": ["**/*.spec.js"]

@@ -1,0 +1,11 @@
+{
+  "name": "@markethaus/types",
+  "version": "0.0.1",
+  "packageManager": "yarn@4.6.0",
+  "dependencies": {
+    "@medusajs/types": "2.5.0"
+  },
+  "exports": {
+    ".": "./src/index.d.ts"
+  }
+}

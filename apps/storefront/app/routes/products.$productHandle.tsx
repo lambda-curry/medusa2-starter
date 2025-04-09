@@ -30,8 +30,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
       fields:
         'id,rating,content,name,images.url,created_at,updated_at,response.content,response.created_at,response.id',
       order: 'created_at',
-      status: ['approved'],
-      // can use status: (pending, approved, flagged)[] to get reviews by status // default is approved
       offset: reviewsOffset,
       limit: reviewsLimit,
     }),

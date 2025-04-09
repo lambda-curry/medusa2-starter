@@ -1,0 +1,191 @@
+.\@container\/chat {
+  container-type: inline-size;
+  container-name: chat;
+}
+
+@container chat (min-width: 24rem) {
+  .\@sm\/chat\:max-w-\[80\%\] {
+    max-width: 80%;
+  }
+}
+
+
+
+/* Base markdown content styles */
+.markdown-content {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: rgb(17, 24, 39); /* text-gray-900 */
+
+  .dark & {
+    color: rgb(229, 231, 235); /* text-gray-200 */
+  }
+
+  /* Headings */
+  h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.25;
+    color: rgb(17, 24, 39); /* text-gray-900 */
+
+    .dark & {
+      color: rgb(243, 244, 246); /* text-gray-100 */
+    }
+  }
+
+  h1 {
+    font-size: 1.875rem;
+    margin: 2rem 0 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    margin: 1.25rem 0 0.75rem;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    margin: 1rem 0 0.5rem;
+  }
+
+  /* Paragraphs and spacing */
+  p {
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  /* Lists */
+  ul, ol {
+    margin: 0 0 1rem 1rem;
+    padding-left: 1rem;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+  }
+
+  /* Links */
+  a {
+    color: rgb(37, 99, 235); /* blue-600 */
+    text-decoration: underline;
+
+    &:hover {
+      color: rgb(30, 64, 175); /* blue-800 */
+    }
+
+    .dark & {
+      color: rgb(96, 165, 250); /* blue-400 */
+
+      &:hover {
+        color: rgb(147, 197, 253); /* blue-300 */
+      }
+    }
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: 4px solid rgb(209, 213, 219); /* gray-300 */
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+    color: rgb(107, 114, 128); /* text-gray-500 */
+
+    .dark & {
+      border-left-color: rgb(75, 85, 99); /* gray-600 */
+      color: rgb(156, 163, 175); /* text-gray-400 */
+    }
+  }
+
+  /* Code blocks and inline code */
+  pre {
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    padding: 1rem;
+    background-color: rgb(243, 244, 246); /* gray-100 */
+    border: 1px solid rgb(229, 231, 235); /* gray-200 */
+
+    .dark & {
+      background-color: rgb(31, 41, 55); /* gray-800 */
+      border-color: rgb(55, 65, 81); /* gray-700 */
+    }
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    padding: 0.2rem 0.4rem;
+    background-color: rgb(243, 244, 246); /* gray-100 */
+    border-radius: 0.25rem;
+    width: fit-content;
+    max-width: 100%;
+
+    .dark & {
+      background-color: rgb(31, 41, 55); /* gray-800 */
+    }
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+
+  th, td {
+    border: 1px solid rgb(209, 213, 219); /* gray-300 */
+    padding: 0.5rem 1rem;
+
+    .dark & {
+      border-color: rgb(75, 85, 99); /* gray-600 */
+    }
+  }
+
+  th {
+    background-color: rgb(243, 244, 246); /* gray-100 */
+    font-weight: 600;
+
+    .dark & {
+      background-color: rgb(31, 41, 55); /* gray-800 */
+    }
+  }
+
+  /* Horizontal rule */
+  hr {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 1px solid rgb(209, 213, 219); /* gray-300 */
+
+    .dark & {
+      border-top-color: rgb(75, 85, 99); /* gray-600 */
+    }
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+  }
+
+  /* Task lists */
+  input[type="checkbox"] {
+    margin-right: 0.5rem;
+  }
+}

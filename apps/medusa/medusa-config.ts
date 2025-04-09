@@ -76,6 +76,12 @@ module.exports = defineConfig({
     cacheModule,
     eventBusModule,
     workflowEngineModule,
+    {
+      resolve: './src/api/modules/product-review',
+    },
+    {
+      resolve: './src/api/mcp',
+    },
   ],
   admin: {
     backendUrl: process.env.ADMIN_BACKEND_URL,
