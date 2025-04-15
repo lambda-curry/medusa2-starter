@@ -17,7 +17,7 @@
 </h4>
 
 <p align="center">
-  Building blocks for digital commerce
+  Building blocks for digital commerce, they are great!
 </p>
 <p align="center">
   <a href="https://github.com/medusajs/medusa/blob/master/CONTRIBUTING.md">
@@ -34,7 +34,7 @@
 
 ## Compatibility
 
-This starter is compatible with versions >= 1.8.0 of `@medusajs/medusa`. 
+This starter is compatible with versions >= 1.8.0 of `@medusajs/medusa`.
 
 ## Getting Started
 
