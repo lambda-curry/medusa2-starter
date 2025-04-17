@@ -39,6 +39,9 @@ const workflowEngineModule = IS_TEST
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    databaseDriverOptions: {
+      ssl: DATABASE_SSL_DISABLED ? { rejectUnauthorized: false } : false,
+    },
     redisUrl: REDIS_URL,
     redisPrefix: process.env.REDIS_PREFIX,
     http: {
