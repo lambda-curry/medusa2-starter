@@ -5,6 +5,7 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 const REDIS_URL = process.env.REDIS_URL;
 const STRIPE_API_KEY = process.env.STRIPE_API_KEY;
 const IS_TEST = process.env.NODE_ENV === 'test';
+const DATABASE_SSL_DISABLED = process.env.DATABASE_SSL_DISABLED === 'true';
 
 const cacheModule = IS_TEST
   ? { resolve: '@medusajs/medusa/cache-inmemory' }
@@ -38,11 +39,8 @@ const workflowEngineModule = IS_TEST
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    databaseDriverOptions: {
-      ssl: false,
-    },
+    databaseDriverOptions: DATABASE_SSL_DISABLED ? undefined : { connection: { ssl: { rejectUnauthorized: false } } },
     redisUrl: REDIS_URL,
-
     redisPrefix: process.env.REDIS_PREFIX,
     http: {
       storeCors: process.env.STORE_CORS || '',
