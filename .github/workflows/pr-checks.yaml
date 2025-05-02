@@ -51,9 +51,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Type-check
-        if: ${{ needs.detect-changes.outputs.e2e == 'true' }}
         run: yarn typecheck
 
       - name: Build
         run: yarn build
-      
