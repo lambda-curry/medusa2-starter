@@ -33,7 +33,6 @@ jobs:
           fetch-depth: 0
 
       - name: Cache turbo build setup
-        if: env.skip == 'false'
         uses: WarpBuilds/cache@v1
         with:
           path: .turbo
