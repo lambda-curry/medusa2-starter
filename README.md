@@ -1,13 +1,13 @@
 <h1 align="center">
-  <a href="https://barrio.lambdacurry.dev"><img src="https://barrio.lambdacurry.dev/favicon.svg" alt="Medusa 2 Starter with Remix Storefront" width="80" height="80"></a>
+  <a href="https://barrio.lambdacurry.dev"><img src="https://barrio.lambdacurry.dev/favicon.svg" alt="Medusa 2 Starter with React Router 7 Storefront" width="80" height="80"></a>
   <br>
   <br>
-  Medusa 2 Starter with Remix Storefront
+  Medusa 2 Starter with React Router 7 Storefront
   <br>
 </h1>
 
 
-This is an official Turborepo monorepo integrating a Medusa2 backend with a Remix frontend. Showcasing a Coffee Roast themed dynamic storefront, it features Stripe payment integration, scalability with unlimited products and categories, and a developer-friendly setup using TypeScript and Biome. Ideal for rapidly building dynamic, scalable e-commerce stores.
+This is an official Turborepo monorepo integrating a Medusa2 backend with a React Router 7 frontend. Showcasing a Coffee Roast themed dynamic storefront, it features Stripe payment integration, scalability with unlimited products and categories, and a developer-friendly setup using TypeScript and Biome. Ideal for rapidly building dynamic, scalable e-commerce stores.
 
 https://github.com/user-attachments/assets/3c10d2f5-91b8-405c-a47c-c8ae8a4be575
 
@@ -30,7 +30,7 @@ Before you begin, ensure you have the following installed:
 
 - ✅ Node.js 20+
 - ✅ Yarn 4.5.0
-- ✅ Remix
+- ✅ React Router 7
 - ✅ Docker and Docker Compose
 
 
@@ -38,7 +38,7 @@ Before you begin, ensure you have the following installed:
 
 ### Key Features
 
-- **Dynamic Storefront**: Leverages Medusa2's robust headless commerce capabilities and Remix's fast, data-driven UI for modern e-commerce experiences.
+- **Dynamic Storefront**: Leverages Medusa2's robust headless commerce capabilities and React Router 7's fast, data-driven UI for modern e-commerce experiences.
 - **Advanced Payment Integration**: Out-of-the-box support for Stripe enables secure and reliable transaction processing.
 - **Scalability**: Supports unlimited products, collections, categories, and tags, accommodating businesses as they expand their inventory.
 - **Developer Experience**: Built with TypeScript and Biome, enhancing code quality, consistency, and maintainability.
@@ -61,7 +61,7 @@ You can view a live demo of the project [here](https://barrio.lambdacurry.dev/).
    ```
 
 ## Local Development Setup
-1. Generate `.env` files for both the Medusa backend and the Remix storefront.
+1. Generate `.env` files for both the Medusa backend and the React Router 7 storefront.
    ```
    yarn run generate-env
    ```
@@ -83,7 +83,7 @@ You can view a live demo of the project [here](https://barrio.lambdacurry.dev/).
    yarn dev
    ```
 
-   > This will start both the Medusa backend and the Remix storefront in development mode.
+   > This will start both the Medusa backend and the React Router 7 storefront in development mode.
 
 5. Create a Publishable API Key for your storefront:
 
@@ -130,7 +130,7 @@ To enable Express Checkout in the Medusa Storefront, follow these steps:
 ## Useful Links
 
 - [Medusa Documentation](https://docs.medusajs.com/)
-- [Remix Documentation](https://remix.run/docs/en/main)
+- [React Router 7 Documentation](https://reactrouter.com/en/main)
 - [Turborepo Documentation](https://turbo.build/repo/docs)
  - [Stripe Express Checkout](https://docs.stripe.com/elements/express-checkout-element)
 
