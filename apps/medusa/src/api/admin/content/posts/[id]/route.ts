@@ -2,6 +2,7 @@ import type { AuthenticatedMedusaRequest, MedusaResponse } from '@medusajs/frame
 import { updatePostWorkflow } from '../../../../../workflows/update-post';
 import { deletePostWorkflow } from '../../../../../workflows/delete-post';
 import type { AdminPageBuilderUpdatePostBody } from '@lambdacurry/page-builder-types';
+import { MedusaError } from '@medusajs/framework/utils';
 
 export const PUT = async (req: AuthenticatedMedusaRequest<AdminPageBuilderUpdatePostBody>, res: MedusaResponse) => {
   const id = req.params.id;
@@ -14,6 +15,22 @@ export const PUT = async (req: AuthenticatedMedusaRequest<AdminPageBuilderUpdate
   });
 
   res.status(200).json({ post: result });
+};
+
+export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const query = req.scope.resolve('query');
+
+  const { data: posts } = await query.graph({
+    entity: 'post',
+    fields: req.queryConfig?.fields || ['*'],
+    filters: { id: req.params.id },
+  });
+
+  const post = posts[0];
+
+  res.status(200).json({
+    post: post,
+  });
 };
 
 export const DELETE = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
