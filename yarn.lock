@@ -3582,7 +3582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lambdacurry/page-builder-sdk@workspace:packages/page-builder-sdk":
+"@lambdacurry/page-builder-sdk@npm:0.0.1, @lambdacurry/page-builder-sdk@workspace:packages/page-builder-sdk":
   version: 0.0.0-use.local
   resolution: "@lambdacurry/page-builder-sdk@workspace:packages/page-builder-sdk"
   dependencies:
@@ -21784,6 +21784,7 @@ __metadata:
   resolution: "medusa@workspace:apps/medusa"
   dependencies:
     "@lambdacurry/medusa-product-reviews": "npm:1.2.0"
+    "@lambdacurry/page-builder-sdk": "npm:0.0.1"
     "@medusajs/admin-sdk": "npm:2.8.2"
     "@medusajs/cli": "npm:2.8.2"
     "@medusajs/framework": "npm:2.8.2"

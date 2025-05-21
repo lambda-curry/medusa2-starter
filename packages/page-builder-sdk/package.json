@@ -1,6 +1,6 @@
 {
   "name": "@lambdacurry/page-builder-sdk",
-  "version": "0.0.6-beta.3",
+  "version": "0.0.1",
   "description": "SDK for Medusa plugins",
   "author": "Lambda Curry (https://lambdacurry.dev)",
   "license": "MIT",
