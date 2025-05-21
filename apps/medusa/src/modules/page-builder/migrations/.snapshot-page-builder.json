@@ -99,20 +99,20 @@
           "mappedType": "datetime"
         }
       },
-      "name": "navigation_item",
+      "name": "page_builder_navigation_item",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_navigation_item_deleted_at",
+          "keyName": "IDX_page_builder_navigation_item_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_navigation_item_deleted_at\" ON \"navigation_item\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_navigation_item_deleted_at\" ON \"page_builder_navigation_item\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "navigation_item_pkey",
+          "keyName": "page_builder_navigation_item_pkey",
           "columnNames": [
             "id"
           ],
@@ -294,38 +294,38 @@
           "mappedType": "datetime"
         }
       },
-      "name": "post",
+      "name": "page_builder_post",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_post_handle_unique",
+          "keyName": "IDX_page_builder_post_handle_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_post_handle_unique\" ON \"post\" (handle) WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_page_builder_post_handle_unique\" ON \"page_builder_post\" (handle) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_post_root_id",
+          "keyName": "IDX_page_builder_post_root_id",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_root_id\" ON \"post\" (root_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_root_id\" ON \"page_builder_post\" (root_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_post_deleted_at",
+          "keyName": "IDX_page_builder_post_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_deleted_at\" ON \"post\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_deleted_at\" ON \"page_builder_post\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "post_pkey",
+          "keyName": "page_builder_post_pkey",
           "columnNames": [
             "id"
           ],
@@ -337,16 +337,16 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "post_root_id_foreign": {
-          "constraintName": "post_root_id_foreign",
+        "page_builder_post_root_id_foreign": {
+          "constraintName": "page_builder_post_root_id_foreign",
           "columnNames": [
             "root_id"
           ],
-          "localTableName": "public.post",
+          "localTableName": "public.page_builder_post",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post",
+          "referencedTableName": "public.page_builder_post",
           "deleteRule": "set null",
           "updateRule": "cascade"
         }
@@ -415,29 +415,29 @@
           "mappedType": "datetime"
         }
       },
-      "name": "post_author",
+      "name": "page_builder_post_author",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_post_author_medusa_user_id_unique",
+          "keyName": "IDX_page_builder_post_author_medusa_user_id_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_post_author_medusa_user_id_unique\" ON \"post_author\" (medusa_user_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_page_builder_post_author_medusa_user_id_unique\" ON \"page_builder_post_author\" (medusa_user_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_post_author_deleted_at",
+          "keyName": "IDX_page_builder_post_author_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_author_deleted_at\" ON \"post_author\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_author_deleted_at\" ON \"page_builder_post_author\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "post_author_pkey",
+          "keyName": "page_builder_post_author_pkey",
           "columnNames": [
             "id"
           ],
@@ -472,11 +472,11 @@
           "mappedType": "text"
         }
       },
-      "name": "post_post_authors",
+      "name": "page_builder_post_page_builder_post_authors",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "post_post_authors_pkey",
+          "keyName": "page_builder_post_page_builder_post_authors_pkey",
           "columnNames": [
             "post_id",
             "post_author_id"
@@ -489,29 +489,29 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "post_post_authors_post_id_foreign": {
-          "constraintName": "post_post_authors_post_id_foreign",
+        "page_builder_post_page_builder_post_authors_post_id_foreign": {
+          "constraintName": "page_builder_post_page_builder_post_authors_post_id_foreign",
           "columnNames": [
             "post_id"
           ],
-          "localTableName": "public.post_post_authors",
+          "localTableName": "public.page_builder_post_page_builder_post_authors",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post",
+          "referencedTableName": "public.page_builder_post",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         },
-        "post_post_authors_post_author_id_foreign": {
-          "constraintName": "post_post_authors_post_author_id_foreign",
+        "page_builder_post_page_builder_post_authors_post_c619d_foreign": {
+          "constraintName": "page_builder_post_page_builder_post_authors_post_c619d_foreign",
           "columnNames": [
             "post_author_id"
           ],
-          "localTableName": "public.post_post_authors",
+          "localTableName": "public.page_builder_post_page_builder_post_authors",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post_author",
+          "referencedTableName": "public.page_builder_post_author",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }
@@ -598,29 +598,29 @@
           "mappedType": "datetime"
         }
       },
-      "name": "post_tag",
+      "name": "page_builder_post_tag",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_post_tag_handle_unique",
+          "keyName": "IDX_page_builder_post_tag_handle_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_post_tag_handle_unique\" ON \"post_tag\" (handle) WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_page_builder_post_tag_handle_unique\" ON \"page_builder_post_tag\" (handle) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_post_tag_deleted_at",
+          "keyName": "IDX_page_builder_post_tag_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_tag_deleted_at\" ON \"post_tag\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_tag_deleted_at\" ON \"page_builder_post_tag\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "post_tag_pkey",
+          "keyName": "page_builder_post_tag_pkey",
           "columnNames": [
             "id"
           ],
@@ -655,11 +655,11 @@
           "mappedType": "text"
         }
       },
-      "name": "post_post_tags",
+      "name": "page_builder_post_page_builder_post_tags",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "post_post_tags_pkey",
+          "keyName": "page_builder_post_page_builder_post_tags_pkey",
           "columnNames": [
             "post_id",
             "post_tag_id"
@@ -672,29 +672,29 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "post_post_tags_post_id_foreign": {
-          "constraintName": "post_post_tags_post_id_foreign",
+        "page_builder_post_page_builder_post_tags_post_id_foreign": {
+          "constraintName": "page_builder_post_page_builder_post_tags_post_id_foreign",
           "columnNames": [
             "post_id"
           ],
-          "localTableName": "public.post_post_tags",
+          "localTableName": "public.page_builder_post_page_builder_post_tags",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post",
+          "referencedTableName": "public.page_builder_post",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         },
-        "post_post_tags_post_tag_id_foreign": {
-          "constraintName": "post_post_tags_post_tag_id_foreign",
+        "page_builder_post_page_builder_post_tags_post_tag_id_foreign": {
+          "constraintName": "page_builder_post_page_builder_post_tags_post_tag_id_foreign",
           "columnNames": [
             "post_tag_id"
           ],
-          "localTableName": "public.post_post_tags",
+          "localTableName": "public.page_builder_post_page_builder_post_tags",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post_tag",
+          "referencedTableName": "public.page_builder_post_tag",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }
@@ -801,20 +801,20 @@
           "mappedType": "datetime"
         }
       },
-      "name": "post_template",
+      "name": "page_builder_post_template",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_post_template_deleted_at",
+          "keyName": "IDX_page_builder_post_template_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_template_deleted_at\" ON \"post_template\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_template_deleted_at\" ON \"page_builder_post_template\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "post_template_pkey",
+          "keyName": "page_builder_post_template_pkey",
           "columnNames": [
             "id"
           ],
@@ -991,38 +991,38 @@
           "mappedType": "datetime"
         }
       },
-      "name": "post_section",
+      "name": "page_builder_post_section",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_post_section_post_id",
+          "keyName": "IDX_page_builder_post_section_post_id",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_section_post_id\" ON \"post_section\" (post_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_section_post_id\" ON \"page_builder_post_section\" (post_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_post_section_post_template_id",
+          "keyName": "IDX_page_builder_post_section_post_template_id",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_section_post_template_id\" ON \"post_section\" (post_template_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_section_post_template_id\" ON \"page_builder_post_section\" (post_template_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_post_section_deleted_at",
+          "keyName": "IDX_page_builder_post_section_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_post_section_deleted_at\" ON \"post_section\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_post_section_deleted_at\" ON \"page_builder_post_section\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "post_section_pkey",
+          "keyName": "page_builder_post_section_pkey",
           "columnNames": [
             "id"
           ],
@@ -1034,29 +1034,29 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "post_section_post_id_foreign": {
-          "constraintName": "post_section_post_id_foreign",
+        "page_builder_post_section_post_id_foreign": {
+          "constraintName": "page_builder_post_section_post_id_foreign",
           "columnNames": [
             "post_id"
           ],
-          "localTableName": "public.post_section",
+          "localTableName": "public.page_builder_post_section",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post",
+          "referencedTableName": "public.page_builder_post",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
-        "post_section_post_template_id_foreign": {
-          "constraintName": "post_section_post_template_id_foreign",
+        "page_builder_post_section_post_template_id_foreign": {
+          "constraintName": "page_builder_post_section_post_template_id_foreign",
           "columnNames": [
             "post_template_id"
           ],
-          "localTableName": "public.post_section",
+          "localTableName": "public.page_builder_post_section",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post_template",
+          "referencedTableName": "public.page_builder_post_template",
           "deleteRule": "set null",
           "updateRule": "cascade"
         }
@@ -1296,20 +1296,20 @@
           "mappedType": "datetime"
         }
       },
-      "name": "site_settings",
+      "name": "page_builder_site_settings",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_site_settings_deleted_at",
+          "keyName": "IDX_page_builder_site_settings_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_site_settings_deleted_at\" ON \"site_settings\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_site_settings_deleted_at\" ON \"page_builder_site_settings\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "site_settings_pkey",
+          "keyName": "page_builder_site_settings_pkey",
           "columnNames": [
             "id"
           ],
@@ -1403,47 +1403,47 @@
           "mappedType": "datetime"
         }
       },
-      "name": "image",
+      "name": "page_builder_image",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_image_post_id_unique",
+          "keyName": "IDX_page_builder_image_post_id_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_image_post_id_unique\" ON \"image\" (post_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_page_builder_image_post_id_unique\" ON \"page_builder_image\" (post_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_image_site_settings_id_unique",
+          "keyName": "IDX_page_builder_image_site_settings_id_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_image_site_settings_id_unique\" ON \"image\" (site_settings_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_page_builder_image_site_settings_id_unique\" ON \"page_builder_image\" (site_settings_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_image_deleted_at",
+          "keyName": "IDX_page_builder_image_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_image_deleted_at\" ON \"image\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_image_deleted_at\" ON \"page_builder_image\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_product_image_url",
+          "keyName": "IDX_page_builder_image_url",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_product_image_url\" ON \"image\" (url) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_page_builder_image_url\" ON \"page_builder_image\" (url) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "image_pkey",
+          "keyName": "page_builder_image_pkey",
           "columnNames": [
             "id"
           ],
@@ -1455,29 +1455,29 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "image_post_id_foreign": {
-          "constraintName": "image_post_id_foreign",
+        "page_builder_image_post_id_foreign": {
+          "constraintName": "page_builder_image_post_id_foreign",
           "columnNames": [
             "post_id"
           ],
-          "localTableName": "public.image",
+          "localTableName": "public.page_builder_image",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.post",
+          "referencedTableName": "public.page_builder_post",
           "deleteRule": "set null",
           "updateRule": "cascade"
         },
-        "image_site_settings_id_foreign": {
-          "constraintName": "image_site_settings_id_foreign",
+        "page_builder_image_site_settings_id_foreign": {
+          "constraintName": "page_builder_image_site_settings_id_foreign",
           "columnNames": [
             "site_settings_id"
           ],
-          "localTableName": "public.image",
+          "localTableName": "public.page_builder_image",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.site_settings",
+          "referencedTableName": "public.page_builder_site_settings",
           "deleteRule": "set null",
           "updateRule": "cascade"
         }
