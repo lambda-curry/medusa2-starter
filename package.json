@@ -22,8 +22,8 @@
     "node": ">=20"
   },
   "resolutions": {
-    "@medusajs/js-sdk": "2.7.0",
-    "@medusajs/types": "2.7.0"
+    "@medusajs/js-sdk": "2.8.2",
+    "@medusajs/types": "2.8.2"
   },
   "packageManager": "yarn@4.5.0",
   "workspaces": [
