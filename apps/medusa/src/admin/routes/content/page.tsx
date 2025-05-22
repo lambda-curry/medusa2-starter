@@ -1,27 +1,26 @@
-import { Button, Container, TooltipProvider } from "@medusajs/ui"
-import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { DocumentText } from "@medusajs/icons"
-import { useNavigate } from "react-router-dom"
-import { SingleColumnLayout } from "../../layouts/single-column"
-import { Header } from "../../components/header"
-import { PostsDataTable } from "./components/posts-data-table"
-import { useAdminCreatePost } from "../../hooks/posts-mutations"
+import { Button, Container } from '@medusajs/ui';
+import { defineRouteConfig } from '@medusajs/admin-sdk';
+import { DocumentText } from '@medusajs/icons';
+import { useNavigate } from 'react-router-dom';
+import { SingleColumnLayout } from '../../layouts/single-column';
+import { Header } from '../../components/header';
+import { PostsDataTable } from './components/posts-data-table';
+import { useAdminCreatePost } from '../../hooks/posts-mutations';
 
 const ContentPage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { mutateAsync: createPost, isPending } = useAdminCreatePost()
+  const { mutateAsync: createPost, isPending } = useAdminCreatePost();
 
   const handleCreatePost = async () => {
-    await createPost({
-      title: 'New Page',
+    const post = await createPost({
+      title: '',
       content: {},
-      type: 'page'
-    })
+      type: 'page',
+    });
 
-    navigate(`editor/test`) // TODO: change to the correct path
-    // navigate(`/editor/${type}/new`)
-  }
+    navigate(`/content/editor/${post.post.id}`);
+  };
 
   return (
     <SingleColumnLayout>
@@ -30,20 +29,24 @@ const ContentPage = () => {
           title="Content"
           actions={[
             {
-              type: "custom",
-              children: <Button variant="primary" size="small" onClick={handleCreatePost} isLoading={isPending}>Create</Button>
-            }
+              type: 'custom',
+              children: (
+                <Button variant="primary" size="small" onClick={handleCreatePost} isLoading={isPending}>
+                  Create
+                </Button>
+              ),
+            },
           ]}
         />
-          <PostsDataTable />
+        <PostsDataTable />
       </Container>
     </SingleColumnLayout>
-  )
-}
+  );
+};
 
 export const config = defineRouteConfig({
-  label: "Content",
+  label: 'Content',
   icon: DocumentText,
-})
+});
 
-export default ContentPage 
+export default ContentPage;

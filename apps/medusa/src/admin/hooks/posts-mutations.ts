@@ -27,9 +27,10 @@ export const useAdminCreatePost = () => {
 
 export const useAdminUpdatePost = () => {
   const queryClient = useQueryClient();
-  return useMutation<AdminPageBuilderUpdatePostResponse, Error, AdminPageBuilderUpdatePostBody>({
-    mutationFn: async (data) => {
-      return sdk.admin.pageBuilder.updatePost(data.id, data);
+  return useMutation<AdminPageBuilderUpdatePostResponse, Error, { id: string; data: AdminPageBuilderUpdatePostBody }>({
+    mutationFn: async ({ id, data }) => {
+      const { ...rest } = data;
+      return sdk.admin.pageBuilder.updatePost(id, rest);
     },
     mutationKey: QUERY_KEY,
     onSuccess: () => {

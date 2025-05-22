@@ -52,7 +52,6 @@ export interface AdminPageBuilderCreatePostResponse {
 }
 
 export type AdminPageBuilderUpdatePostBody = {
-  id: string;
   title?: string;
   handle?: string;
   excerpt?: string;

@@ -1,4 +1,5 @@
 import { defineConfig, loadEnv } from '@medusajs/framework/utils';
+import { sectionConfig } from 'section-config';
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd());
 

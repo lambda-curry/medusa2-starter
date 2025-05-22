@@ -72,7 +72,7 @@ export const PostsDataTable = () => {
   }, [filtering]);
 
   const handleEdit = (id: string) => {
-    navigate('editor/test'); // TODO: change to the actual content detail page
+    navigate(`/content/editor/${id}`);
   };
 
   const handleDuplicate = async (id: string) => {

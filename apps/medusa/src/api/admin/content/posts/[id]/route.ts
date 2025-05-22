@@ -2,10 +2,10 @@ import type { AuthenticatedMedusaRequest, MedusaResponse } from '@medusajs/frame
 import { updatePostWorkflow } from '../../../../../workflows/update-post';
 import { deletePostWorkflow } from '../../../../../workflows/delete-post';
 import type { AdminPageBuilderUpdatePostBody } from '@lambdacurry/page-builder-types';
-import { MedusaError } from '@medusajs/framework/utils';
 
 export const PUT = async (req: AuthenticatedMedusaRequest<AdminPageBuilderUpdatePostBody>, res: MedusaResponse) => {
   const id = req.params.id;
+
   const data = { ...req.validatedBody, id };
 
   const { result } = await updatePostWorkflow(req.scope).run({
