@@ -23,6 +23,9 @@ coverage
 # Vercel
 .vercel
 
+#Kamal
+.kamal/secrets
+
 # Build Outputs
 .next/
 out/
