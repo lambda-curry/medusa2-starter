@@ -9,7 +9,7 @@ type DrawerSidebarContainerProps = PropsWithChildren & {
 };
 
 const DrawerSidebarContainer = ({ title, children, side = 'left' }: DrawerSidebarContainerProps) => {
-  const { left, right, toggleLeft, toggleRight } = useEditorSidebar();
+  const { sections: left, settings: right, toggleLeft, toggleRight } = useEditorSidebar();
 
   const isOpen = side === 'left' ? left.drawer : right.drawer;
   const toggle = side === 'left' ? () => toggleLeft('drawer') : () => toggleRight('drawer');
@@ -35,7 +35,7 @@ const DrawerSidebarContainer = ({ title, children, side = 'left' }: DrawerSideba
 };
 
 const StaticSidebarContainer = ({ children, side = 'left' }: PropsWithChildren & { side?: 'left' | 'right' }) => {
-  const { left, right } = useEditorSidebar();
+  const { sections: left, settings: right } = useEditorSidebar();
   const isOpen = side === 'left' ? left.static : right.static;
 
   return (

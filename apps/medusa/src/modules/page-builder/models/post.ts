@@ -16,7 +16,10 @@ export const PostModel = model.define(
     content: model.json().nullable(),
     status: model.enum([...postStatusValues]).default('draft'),
     content_mode: model.enum([...postContentModeValues]).default('advanced'),
-    seo: model.json().nullable(),
+    meta_title: model.text().nullable(),
+    meta_description: model.text().nullable(),
+    meta_image_url: model.text().nullable(),
+
     published_at: model.text().nullable(),
     archived_at: model.text().nullable(),
     is_home_page: model.boolean().default(false),
@@ -25,6 +28,7 @@ export const PostModel = model.define(
     featured_image: model.hasOne(() => ImageModel, {
       mappedBy: 'post',
     }),
+
     authors: model.manyToMany(() => PostAuthorModel, {
       mappedBy: 'posts',
     }),

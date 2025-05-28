@@ -1,16 +1,16 @@
-import { Text } from '@medusajs/ui'
-import { ReactNode } from 'react'
-import { NavLink } from 'react-router-dom'
+import { Text } from '@medusajs/ui';
+import { ReactNode } from 'react';
+import { NavLink } from 'react-router-dom';
 
 export type INavItem = {
-  icon?: ReactNode
-  label: string
-  to: string
-  from?: string
-}
+  icon?: ReactNode;
+  label: string;
+  to: string;
+  from?: string;
+};
 
 const BASE_NAV_LINK_CLASSES =
-  'text-ui-fg-subtle transition-fg hover:bg-ui-bg-subtle-hover flex items-center gap-x-2 rounded-md py-0.5 pl-0.5 pr-2 outline-none [&>svg]:text-ui-fg-subtle focus-visible:shadow-borders-focus'
+  'text-ui-fg-subtle transition-fg hover:bg-ui-bg-subtle-hover flex items-center gap-x-2 rounded-md py-0.5 pl-0.5 pr-2 outline-none [&>svg]:text-ui-fg-subtle focus-visible:shadow-borders-focus';
 
 export const NavItem = ({ icon, label, to, from }: INavItem) => {
   return (
@@ -33,5 +33,5 @@ export const NavItem = ({ icon, label, to, from }: INavItem) => {
         </Text>
       </NavLink>
     </div>
-  )
-}
+  );
+};

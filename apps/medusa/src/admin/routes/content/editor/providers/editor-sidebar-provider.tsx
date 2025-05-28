@@ -1,6 +1,5 @@
 import { PropsWithChildren, useState } from 'react';
 import { PostEditorContext, SidebarState, SidebarViewType } from './editor-sidebar-context';
-import { useToggleState } from '@medusajs/ui';
 
 /**
  * Provider for the editor sidebar state
@@ -8,28 +7,25 @@ import { useToggleState } from '@medusajs/ui';
  * with separate states for drawer and static views
  */
 export const EditorSidebarProvider = ({ children }: PropsWithChildren) => {
-  const [postDetailsDrawerIsOpen, openPostDetailsDrawer, closePostDetailsDrawer, togglePostDetailsDrawer] =
-    useToggleState();
-
-  const [leftSidebar, setLeftSidebar] = useState<SidebarState>({
+  const [sectionsSidebar, setSectionsSidebar] = useState<SidebarState>({
     drawer: false,
     static: true,
   });
 
-  const [rightSidebar, setRightSidebar] = useState<SidebarState>({
+  const [settingsSidebar, setSettingsSidebar] = useState<SidebarState>({
     drawer: false,
-    static: false,
+    static: true,
   });
 
-  const toggleLeft = (viewType: SidebarViewType) => {
-    setLeftSidebar((prev) => ({
+  const toggleSectionsSidebar = (viewType: SidebarViewType) => {
+    setSectionsSidebar((prev) => ({
       ...prev,
       [viewType]: !prev[viewType],
     }));
   };
 
-  const toggleRight = (viewType: SidebarViewType) => {
-    setRightSidebar((prev) => ({
+  const toggleSettingsSidebar = (viewType: SidebarViewType) => {
+    setSettingsSidebar((prev) => ({
       ...prev,
       [viewType]: !prev[viewType],
     }));
@@ -38,10 +34,10 @@ export const EditorSidebarProvider = ({ children }: PropsWithChildren) => {
   return (
     <PostEditorContext.Provider
       value={{
-        left: leftSidebar,
-        right: rightSidebar,
-        toggleLeft,
-        toggleRight,
+        sections: sectionsSidebar,
+        settings: settingsSidebar,
+        toggleLeft: toggleSectionsSidebar,
+        toggleRight: toggleSettingsSidebar,
       }}
     >
       {children}

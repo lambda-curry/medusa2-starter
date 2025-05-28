@@ -8,20 +8,20 @@ export interface SidebarState {
 }
 
 export interface EditorSidebarContextType {
-  left: SidebarState;
-  right: SidebarState;
+  sections: SidebarState;
+  settings: SidebarState;
   toggleLeft: (viewType: SidebarViewType) => void;
   toggleRight: (viewType: SidebarViewType) => void;
 }
 
 export const PostEditorContext = createContext<EditorSidebarContextType>({
-  left: {
+  sections: {
     drawer: false,
     static: true,
   },
-  right: {
+  settings: {
     drawer: false,
-    static: false,
+    static: true,
   },
   toggleLeft: () => {},
   toggleRight: () => {},
