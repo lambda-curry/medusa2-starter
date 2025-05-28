@@ -1,5 +1,5 @@
 import { PostContentMode, PostStatus, PostType } from './common';
-import type { Post } from './models';
+import type { Post, PostSection } from './models';
 
 // Response Types
 export interface PaginatedResponse {
@@ -43,7 +43,9 @@ export type AdminPageBuilderCreatePostBody = {
   status?: PostStatus;
   type?: PostType;
   content_mode?: PostContentMode;
-  seo?: Record<string, unknown>;
+  meta_title?: string;
+  meta_description?: string;
+  meta_image_url?: string;
   is_home_page?: boolean;
 };
 
@@ -59,7 +61,9 @@ export type AdminPageBuilderUpdatePostBody = {
   status?: PostStatus;
   type?: PostType;
   content_mode?: PostContentMode;
-  seo?: Record<string, unknown>;
+  meta_title?: string;
+  meta_description?: string;
+  meta_image_url?: string;
   is_home_page?: boolean;
 };
 
@@ -76,3 +80,44 @@ export interface AdminPageBuilderDeletePostResponse {
 export interface AdminPageBuilderDuplicatePostResponse {
   post: Post;
 }
+
+export type AdminPageBuilderListPostSectionsQuery = {
+  limit?: number;
+  offset?: number;
+  fields?: string[];
+  expand?: string[];
+  order?: string;
+};
+
+export type AdminPageBuilderListPostSectionsResponse = {
+  sections: PostSection[];
+  count: number;
+  offset: number;
+  limit: number;
+};
+
+export type AdminPageBuilderCreatePostSectionBody = {
+  name: string;
+  layout?: 'full_width' | 'two_column' | 'grid';
+  sort_order?: number;
+  blocks?: any;
+  post_id?: string;
+  post_template_id?: string;
+  status?: 'draft' | 'published' | 'archived';
+};
+
+export type AdminPageBuilderCreatePostSectionResponse = {
+  section: PostSection;
+};
+
+export type AdminPageBuilderUpdatePostSectionBody = Partial<AdminPageBuilderCreatePostSectionBody>;
+
+export type AdminPageBuilderUpdatePostSectionResponse = {
+  section: PostSection;
+};
+
+export type AdminPageBuilderDeletePostSectionResponse = {
+  id: string;
+  object: 'post_section';
+  deleted: boolean;
+};

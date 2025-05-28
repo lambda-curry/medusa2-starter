@@ -8,6 +8,13 @@ import type {
   AdminPageBuilderUpdatePostBody,
   AdminPageBuilderUpdatePostResponse,
   AdminPageBuilderDuplicatePostResponse,
+  AdminPageBuilderListPostSectionsQuery,
+  AdminPageBuilderListPostSectionsResponse,
+  AdminPageBuilderCreatePostSectionBody,
+  AdminPageBuilderCreatePostSectionResponse,
+  AdminPageBuilderUpdatePostSectionBody,
+  AdminPageBuilderUpdatePostSectionResponse,
+  AdminPageBuilderDeletePostSectionResponse,
 } from '@lambdacurry/page-builder-types';
 
 export class AdminPageBuilderResource {
@@ -43,6 +50,33 @@ export class AdminPageBuilderResource {
   async duplicatePost(id: string) {
     return this.client.fetch<AdminPageBuilderDuplicatePostResponse>(`/admin/content/posts/${id}/duplicate`, {
       method: 'POST',
+    });
+  }
+
+  async listPostSections(query: AdminPageBuilderListPostSectionsQuery) {
+    return this.client.fetch<AdminPageBuilderListPostSectionsResponse>('/admin/content/sections', {
+      method: 'GET',
+      query,
+    });
+  }
+
+  async createPostSection(data: AdminPageBuilderCreatePostSectionBody) {
+    return this.client.fetch<AdminPageBuilderCreatePostSectionResponse>('/admin/content/sections', {
+      method: 'POST',
+      body: data,
+    });
+  }
+
+  async updatePostSection(id: string, data: AdminPageBuilderUpdatePostSectionBody) {
+    return this.client.fetch<AdminPageBuilderUpdatePostSectionResponse>(`/admin/content/sections/${id}`, {
+      method: 'PUT',
+      body: data,
+    });
+  }
+
+  async deletePostSection(id: string) {
+    return this.client.fetch<AdminPageBuilderDeletePostSectionResponse>(`/admin/content/sections/${id}`, {
+      method: 'DELETE',
     });
   }
 }

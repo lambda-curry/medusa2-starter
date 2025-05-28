@@ -9,7 +9,7 @@ export type PostFormValues = {
   status: PostStatus;
   meta_title?: string;
   meta_description?: string;
-  meta_image?: string;
+  meta_image_url?: string;
 };
 
 const buildDefaultValues = (post: Post): PostFormValues => {
@@ -19,7 +19,7 @@ const buildDefaultValues = (post: Post): PostFormValues => {
     status: post.status ?? 'draft',
     meta_title: '',
     meta_description: '',
-    meta_image: '',
+    meta_image_url: '',
   };
 };
 

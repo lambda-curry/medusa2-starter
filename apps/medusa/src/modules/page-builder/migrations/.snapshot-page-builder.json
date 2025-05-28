@@ -215,14 +215,32 @@
           ],
           "mappedType": "enum"
         },
-        "seo": {
-          "name": "seo",
-          "type": "jsonb",
+        "meta_title": {
+          "name": "meta_title",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "json"
+          "mappedType": "text"
+        },
+        "meta_description": {
+          "name": "meta_description",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
+        },
+        "meta_image_url": {
+          "name": "meta_image_url",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "text"
         },
         "published_at": {
           "name": "published_at",
@@ -839,27 +857,6 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "enumItems": [
-            "button_list",
-            "cta",
-            "header",
-            "hero",
-            "product_carousel",
-            "product_grid",
-            "image_gallery",
-            "raw_html",
-            "rich_text",
-            "blog_list"
-          ],
-          "mappedType": "enum"
-        },
         "status": {
           "name": "status",
           "type": "text",
@@ -884,52 +881,20 @@
           "nullable": false,
           "mappedType": "text"
         },
-        "content": {
-          "name": "content",
-          "type": "jsonb",
+        "layout": {
+          "name": "layout",
+          "type": "text",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "json"
-        },
-        "settings": {
-          "name": "settings",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "json"
-        },
-        "styles": {
-          "name": "styles",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "json"
-        },
-        "is_reusable": {
-          "name": "is_reusable",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "false",
-          "mappedType": "boolean"
-        },
-        "usage_count": {
-          "name": "usage_count",
-          "type": "integer",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "default": "1",
-          "mappedType": "integer"
+          "default": "'full_width'",
+          "enumItems": [
+            "full_width",
+            "two_column",
+            "grid"
+          ],
+          "mappedType": "enum"
         },
         "sort_order": {
           "name": "sort_order",
@@ -939,6 +904,15 @@
           "primary": false,
           "nullable": false,
           "mappedType": "integer"
+        },
+        "blocks": {
+          "name": "blocks",
+          "type": "jsonb",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "json"
         },
         "post_id": {
           "name": "post_id",
