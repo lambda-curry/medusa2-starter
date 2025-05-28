@@ -20,6 +20,7 @@ export const useAdminCreatePostSection = () => {
     mutationKey: QUERY_KEY,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
     },
   });
 };

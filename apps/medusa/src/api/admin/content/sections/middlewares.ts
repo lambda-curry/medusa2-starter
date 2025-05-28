@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { validateAndTransformBody } from '@medusajs/framework';
+import { validateAndTransformBody, type MiddlewareRoute } from '@medusajs/framework';
 
 const createPostSectionSchema = z.object({
   name: z.string(),
@@ -14,3 +14,16 @@ const updatePostSectionSchema = createPostSectionSchema.partial();
 
 export const validateCreatePostSection = validateAndTransformBody(createPostSectionSchema);
 export const validateUpdatePostSection = validateAndTransformBody(updatePostSectionSchema);
+
+export const adminSectionRoutesMiddlewares: MiddlewareRoute[] = [
+  {
+    matcher: '/admin/content/sections',
+    method: 'POST',
+    middlewares: [validateCreatePostSection],
+  },
+  {
+    matcher: '/admin/content/sections/:id',
+    method: 'PATCH',
+    middlewares: [validateUpdatePostSection],
+  },
+];
