@@ -10,6 +10,7 @@ import {
   useAdminDuplicatePostSection,
 } from '../../../../hooks/post-sections-mutations';
 import { usePost } from '../../../hooks/use-post';
+import { editSectionPath } from '../../../utils';
 
 export interface PostSectionListItemProps {
   index: number;
@@ -26,8 +27,7 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
   const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
 
   const handleEditClick = () => {
-    // navigate(selectEditSectionPath(post, section.id));
-    toast.warning('Not implemented');
+    navigate(editSectionPath({ postId: post.id, sectionId: section.id }));
   };
 
   const handleDuplicateClick: MouseEventHandler<HTMLDivElement> = async (event) => {
