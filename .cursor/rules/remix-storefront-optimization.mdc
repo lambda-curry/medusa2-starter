@@ -1,0 +1,257 @@
+---
+description: Remix storefront optimization patterns including performance, SEO, error handling, testing, and accessibility best practices
+globs: 
+  - "apps/storefront/**/*.ts"
+  - "apps/storefront/**/*.tsx"
+  - "apps/storefront/**/app/**/*.ts"
+  - "apps/storefront/**/app/**/*.tsx"
+alwaysApply: true
+---
+
+# Remix Storefront Optimization & Best Practices
+
+You are an expert in web performance optimization, SEO, error handling, testing, and accessibility for React Router v7 (Remix) applications in e-commerce contexts.
+
+## Core Principles
+
+- Optimize for performance and user experience
+- Implement comprehensive SEO strategies
+- Handle errors gracefully and provide good user feedback
+- Write maintainable tests for components and user flows
+- Ensure accessibility compliance and inclusive design
+- Follow web standards and best practices
+
+## Performance Optimization
+
+### Image Optimization
+```typescript
+// Use proper image optimization
+<img
+  src={product.thumbnail}
+  alt={product.title}
+  loading="lazy"
+  className="aspect-square object-cover"
+  sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
+/>
+```
+
+### Code Splitting
+```typescript
+// Use React.lazy for code splitting
+import { lazy, Suspense } from "react"
+
+const CheckoutForm = lazy(() => import("./CheckoutForm"))
+
+export function CheckoutPage() {
+  return (
+    <Suspense fallback={<div>Loading checkout...</div>}>
+      <CheckoutForm />
+    </Suspense>
+  )
+}
+```
+
+### Caching Strategies
+```typescript
+// Use proper cache headers in loaders
+export async function loader({ request }: LoaderFunctionArgs) {
+  const products = await getProducts()
+  
+  return data(
+    { products },
+    {
+      headers: {
+        "Cache-Control": "public, max-age=300, s-maxage=3600",
+      },
+    }
+  )
+}
+```
+
+## SEO and Meta Tags
+
+### Dynamic Meta Tags
+```typescript
+export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
+  const product = data?.product
+  
+  if (!product) {
+    return [
+      { title: "Product Not Found" },
+      { name: "robots", content: "noindex" },
+    ]
+  }
+  
+  return [
+    { title: `${product.title} | Your Store` },
+    { name: "description", content: product.description },
+    { property: "og:title", content: product.title },
+    { property: "og:description", content: product.description },
+    { property: "og:image", content: product.thumbnail },
+    { property: "og:url", content: `https://yourstore.com${location.pathname}` },
+    { name: "twitter:card", content: "summary_large_image" },
+  ]
+}
+```
+
+### Structured Data
+```typescript
+// Add JSON-LD structured data
+export function ProductStructuredData({ product }: { product: Product }) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.description,
+    image: product.thumbnail,
+    offers: {
+      "@type": "Offer",
+      price: product.variants?.[0]?.prices?.[0]?.amount,
+      priceCurrency: product.variants?.[0]?.prices?.[0]?.currency_code,
+      availability: "https://schema.org/InStock",
+    },
+  }
+  
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    />
+  )
+}
+```
+
+## Error Handling
+
+### Error Boundaries
+```typescript
+// components/ErrorBoundary.tsx
+import { isRouteErrorResponse, useRouteError } from "@react-router/react"
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+  
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold">{error.status}</h1>
+          <p className="text-xl">{error.statusText}</p>
+        </div>
+      </div>
+    )
+  }
+  
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold">Oops!</h1>
+        <p className="text-xl">Something went wrong</p>
+      </div>
+    </div>
+  )
+}
+```
+
+## Testing Patterns
+
+### Component Testing
+```typescript
+// __tests__/ProductCard.test.tsx
+import { render, screen } from "@testing-library/react"
+import { ProductCard } from "../ProductCard"
+
+const mockProduct = {
+  id: "1",
+  title: "Test Product",
+  handle: "test-product",
+  thumbnail: "/test.jpg",
+  variants: [{
+    prices: [{
+      amount: 1000,
+      currency_code: "usd",
+    }],
+  }],
+}
+
+test("renders product information", () => {
+  render(<ProductCard product={mockProduct} />)
+  
+  expect(screen.getByText("Test Product")).toBeInTheDocument()
+  expect(screen.getByRole("img")).toHaveAttribute("alt", "Test Product")
+})
+```
+
+## Accessibility
+
+### ARIA Labels and Roles
+```typescript
+// Proper accessibility attributes
+<button
+  aria-label={`Add ${product.title} to cart`}
+  aria-describedby={`price-${product.id}`}
+  onClick={handleAddToCart}
+>
+  Add to Cart
+</button>
+
+<span id={`price-${product.id}`} className="sr-only">
+  Price: {formatPrice(price.amount, price.currency_code)}
+</span>
+```
+
+### Keyboard Navigation
+```typescript
+// Implement proper keyboard navigation
+<div
+  role="button"
+  tabIndex={0}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      handleClick()
+    }
+  }}
+  onClick={handleClick}
+>
+  Interactive Element
+</div>
+```
+
+## Common Patterns to Avoid
+
+- Don't use `useEffect` for data fetching (use loaders instead)
+- Avoid client-side routing for SEO-critical pages
+- Don't skip error boundaries
+- Avoid inline styles (use Tailwind classes)
+- Don't ignore accessibility requirements
+- Avoid large bundle sizes (use code splitting)
+- Don't skip image optimization
+- Avoid blocking the main thread with heavy computations
+
+## Environment Configuration
+
+### Environment Variables
+```typescript
+// app/lib/env.ts
+const requiredEnvVars = [
+  "MEDUSA_BACKEND_URL",
+  "STRIPE_PUBLISHABLE_KEY",
+] as const
+
+type EnvVar = typeof requiredEnvVars[number]
+
+function getEnvVar(name: EnvVar): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+  return value
+}
+
+export const env = {
+  MEDUSA_BACKEND_URL: getEnvVar("MEDUSA_BACKEND_URL"),
+  STRIPE_PUBLISHABLE_KEY: getEnvVar("STRIPE_PUBLISHABLE_KEY"),
+}
+```
+
+Remember: Always prioritize user experience, performance, and accessibility. Follow React Router v7 conventions and integrate seamlessly with the Medusa backend. Use TypeScript for type safety and Tailwind CSS for consistent styling.

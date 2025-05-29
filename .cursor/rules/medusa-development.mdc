@@ -1,0 +1,379 @@
+---
+description: Comprehensive Cursor rules for Medusa v2 development with TypeScript, covering API development, modules, services, and best practices
+globs: 
+  - "apps/medusa/**/*.ts"
+  - "apps/medusa/**/*.tsx"
+  - "apps/medusa/**/*.js"
+  - "apps/medusa/**/*.jsx"
+alwaysApply: true
+---
+
+# Medusa v2 Development Rules
+
+You are an expert in Medusa v2, TypeScript, Node.js, PostgreSQL, and modern e-commerce development patterns.
+
+## Core Principles
+
+- Write clean, maintainable, and well-documented TypeScript code
+- Follow Medusa v2 architectural patterns and conventions
+- Prioritize type safety and proper error handling
+- Use dependency injection and modular design patterns
+- Implement proper validation and sanitization
+- Follow RESTful API design principles
+- Write comprehensive tests for all business logic
+
+## Medusa v2 Architecture
+
+### Framework Structure
+- **Modules**: Self-contained packages with domain-specific functionality
+- **Services**: Business logic layer with dependency injection
+- **API Routes**: RESTful endpoints in `/api/admin` and `/api/store`
+- **Workflows**: Multi-step business processes with error handling
+- **Subscribers**: Event-driven handlers for business events
+- **Jobs**: Background task processing
+- **Links**: Data relationships between modules
+
+### Module Development
+```typescript
+// Module definition pattern
+import { Module } from "@medusajs/framework/utils"
+
+export const myModule = Module("my-module", {
+  service: MyService,
+  model: [MyModel],
+})
+
+// Service pattern with dependency injection
+import { MedusaService } from "@medusajs/framework/utils"
+
+class MyService extends MedusaService({
+  MyModel,
+}) {
+  async create(data: CreateMyEntityInput): Promise<MyEntity> {
+    return await this.myModelRepository_.create(data)
+  }
+}
+```
+
+### API Route Patterns
+```typescript
+// Admin API route
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { z } from "zod"
+
+const schema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+})
+
+export async function POST(
+  req: MedusaRequest,
+  res: MedusaResponse
+): Promise<void> {
+  const validatedBody = schema.parse(req.body)
+  
+  const myService = req.scope.resolve("myService")
+  const result = await myService.create(validatedBody)
+  
+  res.status(200).json({ data: result })
+}
+```
+
+## TypeScript Best Practices
+
+### Type Definitions
+- Use strict TypeScript configuration
+- Define interfaces for all data structures
+- Use generic types for reusable components
+- Implement proper type guards and validation
+- Use `as const` for immutable data structures
+
+### Error Handling
+```typescript
+import { MedusaError } from "@medusajs/framework/utils"
+
+// Use Medusa error types
+throw new MedusaError(
+  MedusaError.Types.NOT_FOUND,
+  "Entity not found"
+)
+
+// Implement proper error boundaries
+try {
+  await riskyOperation()
+} catch (error) {
+  if (error instanceof MedusaError) {
+    throw error
+  }
+  throw new MedusaError(
+    MedusaError.Types.UNEXPECTED_STATE,
+    "Unexpected error occurred"
+  )
+}
+```
+
+## Database and Models
+
+### Model Definitions
+```typescript
+import { model } from "@medusajs/framework/utils"
+
+const MyEntity = model.define("my_entity", {
+  id: model.id().primaryKey(),
+  name: model.text(),
+  description: model.text().nullable(),
+  created_at: model.dateTime().default("now"),
+  updated_at: model.dateTime().default("now"),
+})
+```
+
+### Repository Patterns
+- Use repository pattern for data access
+- Implement proper query optimization
+- Use transactions for multi-step operations
+- Handle database constraints and validations
+
+## Validation and Security
+
+### Input Validation
+```typescript
+import { z } from "zod"
+
+// Use Zod for runtime validation
+const CreateEntitySchema = z.object({
+  name: z.string().min(1).max(255),
+  email: z.string().email(),
+  price: z.number().positive(),
+})
+
+type CreateEntityInput = z.infer<typeof CreateEntitySchema>
+```
+
+### Security Practices
+- Validate all inputs at API boundaries
+- Use parameterized queries to prevent SQL injection
+- Implement proper authentication and authorization
+- Sanitize output data
+- Use HTTPS in production
+- Implement rate limiting for public APIs
+
+## Testing Patterns
+
+### Unit Tests
+```typescript
+import { createMedusaContainer } from "@medusajs/framework/utils"
+
+describe("MyService", () => {
+  let container: MedusaContainer
+  let service: MyService
+
+  beforeEach(() => {
+    container = createMedusaContainer()
+    service = container.resolve("myService")
+  })
+
+  it("should create entity", async () => {
+    const input = { name: "Test Entity" }
+    const result = await service.create(input)
+    
+    expect(result).toBeDefined()
+    expect(result.name).toBe(input.name)
+  })
+})
+```
+
+### Integration Tests
+- Test API endpoints with real database
+- Use test fixtures and factories
+- Test error scenarios and edge cases
+- Verify business logic workflows
+
+## Performance Optimization
+
+### Database Optimization
+- Use proper indexing strategies
+- Implement pagination for large datasets
+- Use eager loading for related data
+- Optimize N+1 query problems
+
+### Caching Strategies
+```typescript
+// Use Medusa's caching system
+const cacheService = req.scope.resolve("cacheService")
+const cacheKey = `entity:${id}`
+
+let entity = await cacheService.get(cacheKey)
+if (!entity) {
+  entity = await service.retrieve(id)
+  await cacheService.set(cacheKey, entity, 3600) // 1 hour TTL
+}
+```
+
+## Event-Driven Architecture
+
+### Subscribers
+```typescript
+import { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
+
+export default async function mySubscriber({
+  event,
+  container,
+}: SubscriberArgs<{ id: string }>) {
+  const myService = container.resolve("myService")
+  await myService.handleEvent(event.data.id)
+}
+
+export const config: SubscriberConfig = {
+  event: "my-entity.created",
+}
+```
+
+### Workflows
+```typescript
+import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
+
+const myWorkflow = createWorkflow(
+  "my-workflow",
+  function (input: WorkflowInput) {
+    const step1Result = step1(input)
+    const step2Result = step2(step1Result)
+    
+    return new WorkflowResponse({
+      result: step2Result,
+    })
+  }
+)
+```
+
+## Configuration Management
+
+### Environment Variables
+- Use `.env` files for configuration
+- Validate environment variables at startup
+- Use different configs for different environments
+- Never commit sensitive data to version control
+
+### Medusa Configuration
+```typescript
+// medusa-config.ts
+import { defineConfig } from "@medusajs/framework/utils"
+
+export default defineConfig({
+  projectConfig: {
+    databaseUrl: process.env.DATABASE_URL,
+    redisUrl: process.env.REDIS_URL,
+  },
+  modules: [
+    {
+      resolve: "./src/modules/my-module",
+      options: {
+        // module configuration
+      },
+    },
+  ],
+})
+```
+
+## Code Organization
+
+### File Structure
+```
+apps/medusa/src/
+├── api/
+│   ├── admin/
+│   └── store/
+├── modules/
+│   └── my-module/
+│       ├── models/
+│       ├── services/
+│       └── index.ts
+├── subscribers/
+├── workflows/
+├── jobs/
+└── scripts/
+```
+
+### Naming Conventions
+- Use PascalCase for classes and interfaces
+- Use camelCase for variables and functions
+- Use kebab-case for file names
+- Use SCREAMING_SNAKE_CASE for constants
+- Use descriptive names that reflect business domain
+
+## Documentation Standards
+
+### Code Comments
+```typescript
+/**
+ * Creates a new entity with the provided data
+ * @param data - The entity creation data
+ * @returns Promise resolving to the created entity
+ * @throws {MedusaError} When validation fails
+ */
+async create(data: CreateEntityInput): Promise<Entity> {
+  // Implementation
+}
+```
+
+### API Documentation
+- Document all API endpoints with OpenAPI/Swagger
+- Include request/response examples
+- Document error responses
+- Provide usage examples
+
+## Common Patterns to Avoid
+
+- Don't use `any` type unless absolutely necessary
+- Avoid deep nesting in business logic
+- Don't mix business logic with API route handlers
+- Avoid circular dependencies between modules
+- Don't ignore error handling
+- Avoid hardcoded configuration values
+- Don't skip input validation
+- Avoid blocking operations in event handlers
+
+## Integration Patterns
+
+### Third-Party Services
+```typescript
+// Use dependency injection for external services
+class PaymentService {
+  constructor(
+    private readonly stripeClient: StripeClient,
+    private readonly logger: Logger
+  ) {}
+
+  async processPayment(data: PaymentData): Promise<PaymentResult> {
+    try {
+      return await this.stripeClient.charges.create(data)
+    } catch (error) {
+      this.logger.error("Payment processing failed", error)
+      throw new MedusaError(
+        MedusaError.Types.PAYMENT_AUTHORIZATION_ERROR,
+        "Payment processing failed"
+      )
+    }
+  }
+}
+```
+
+### Plugin Development
+- Follow Medusa plugin conventions
+- Implement proper lifecycle hooks
+- Use configuration validation
+- Provide comprehensive documentation
+- Include migration scripts when needed
+
+## Deployment Considerations
+
+### Production Readiness
+- Use proper logging and monitoring
+- Implement health checks
+- Use environment-specific configurations
+- Set up proper database migrations
+- Configure proper CORS settings
+- Use connection pooling for databases
+- Implement graceful shutdown handling
+
+Remember: Always prioritize code clarity, maintainability, and adherence to Medusa v2 patterns. When in doubt, refer to the official Medusa documentation and follow established conventions in the codebase.
+

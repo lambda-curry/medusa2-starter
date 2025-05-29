@@ -1,0 +1,147 @@
+---
+description: Remix storefront component patterns with React, TypeScript, and Tailwind CSS for building reusable UI components and styling patterns
+globs: 
+  - "apps/storefront/**/*.ts"
+  - "apps/storefront/**/*.tsx"
+  - "apps/storefront/**/components/**/*.ts"
+  - "apps/storefront/**/components/**/*.tsx"
+  - "apps/storefront/**/app/components/**/*.ts"
+  - "apps/storefront/**/app/components/**/*.tsx"
+alwaysApply: true
+---
+
+# Remix Storefront Component & Styling Patterns
+
+You are an expert in React component development, TypeScript, and Tailwind CSS for building reusable, accessible, and performant UI components in e-commerce storefronts.
+
+## Core Principles
+
+- Write performant, accessible React components
+- Use TypeScript for type safety and better developer experience
+- Follow responsive design principles with Tailwind CSS
+- Create reusable component patterns and design systems
+- Prioritize user experience and accessibility
+- Implement proper component composition and prop patterns
+
+## Component Patterns
+
+### Product Components
+```typescript
+// components/ProductCard.tsx
+interface ProductCardProps {
+  product: Product
+  className?: string
+}
+
+export function ProductCard({ product, className }: ProductCardProps) {
+  const variant = product.variants?.[0]
+  const price = variant?.prices?.[0]
+  
+  return (
+    <div className={cn("group relative", className)}>
+      <div className="aspect-square overflow-hidden rounded-lg bg-gray-200">
+        <img
+          src={product.thumbnail || "/placeholder.jpg"}
+          alt={product.title}
+          className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform"
+        />
+      </div>
+      
+      <div className="mt-4 space-y-2">
+        <h3 className="text-sm font-medium text-gray-900">
+          <Link to={`/products/${product.handle}`}>
+            <span aria-hidden="true" className="absolute inset-0" />
+            {product.title}
+          </Link>
+        </h3>
+        
+        {price && (
+          <p className="text-sm text-gray-700">
+            {formatPrice(price.amount, price.currency_code)}
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+### Layout Components
+```typescript
+// components/Layout.tsx
+import { Outlet } from "@react-router/react"
+import { Header } from "./Header"
+import { Footer } from "./Footer"
+
+export function Layout() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  )
+}
+```
+
+## Styling with Tailwind CSS
+
+### Responsive Design
+```typescript
+// Use mobile-first responsive design
+<div className="
+  grid 
+  grid-cols-1 
+  gap-4 
+  sm:grid-cols-2 
+  md:grid-cols-3 
+  lg:grid-cols-4 
+  xl:grid-cols-5
+">
+  {products.map(product => (
+    <ProductCard key={product.id} product={product} />
+  ))}
+</div>
+```
+
+### Component Variants
+```typescript
+// Use clsx for conditional classes
+import { clsx } from "clsx"
+
+interface ButtonProps {
+  variant?: "primary" | "secondary" | "outline"
+  size?: "sm" | "md" | "lg"
+  children: React.ReactNode
+}
+
+export function Button({ 
+  variant = "primary", 
+  size = "md", 
+  children,
+  ...props 
+}: ButtonProps) {
+  return (
+    <button
+      className={clsx(
+        "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+        {
+          "bg-blue-600 text-white hover:bg-blue-700": variant === "primary",
+          "bg-gray-200 text-gray-900 hover:bg-gray-300": variant === "secondary",
+          "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50": variant === "outline",
+        },
+        {
+          "px-3 py-2 text-sm": size === "sm",
+          "px-4 py-2 text-base": size === "md",
+          "px-6 py-3 text-lg": size === "lg",
+        }
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+```

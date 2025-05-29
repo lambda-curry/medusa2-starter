@@ -1,0 +1,511 @@
+---
+description: TypeScript development patterns and best practices for the Medusa monorepo
+globs: 
+  - "**/*.ts"
+  - "**/*.tsx"
+alwaysApply: true
+---
+
+# TypeScript Development Patterns
+
+You are an expert in TypeScript, modern JavaScript, and type-safe development practices.
+
+## Core TypeScript Principles
+
+- Use strict TypeScript configuration
+- Prefer type inference over explicit typing when clear
+- Use union types and discriminated unions effectively
+- Implement proper type guards and validation
+- Leverage generic types for reusability
+- Use `as const` for immutable data structures
+- Prefer interfaces over type aliases for object shapes
+
+## Type Definitions
+
+### Interface Design
+```typescript
+// Use interfaces for object shapes
+interface User {
+  readonly id: string
+  name: string
+  email: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// Use generic interfaces for reusability
+interface ApiResponse<T> {
+  data: T
+  success: boolean
+  message?: string
+}
+
+// Extend interfaces for specialization
+interface AdminUser extends User {
+  role: "admin" | "super_admin"
+  permissions: Permission[]
+}
+```
+
+### Union Types and Discriminated Unions
+```typescript
+// Use discriminated unions for type safety
+type PaymentStatus = 
+  | { status: "pending"; pendingReason: string }
+  | { status: "completed"; completedAt: Date }
+  | { status: "failed"; error: string }
+
+// Type guards for discriminated unions
+function isCompletedPayment(
+  payment: PaymentStatus
+): payment is Extract<PaymentStatus, { status: "completed" }> {
+  return payment.status === "completed"
+}
+```
+
+### Generic Types
+```typescript
+// Generic utility types
+type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
+
+// Generic function types
+type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>
+
+// Generic class types
+class Repository<T extends { id: string }> {
+  async findById(id: string): Promise<T | null> {
+    // Implementation
+  }
+  
+  async create(data: Omit<T, "id">): Promise<T> {
+    // Implementation
+  }
+}
+```
+
+## Advanced Type Patterns
+
+### Conditional Types
+```typescript
+// Conditional types for API responses
+type ApiResult<T> = T extends string 
+  ? { message: T }
+  : T extends Error
+  ? { error: T }
+  : { data: T }
+
+// Mapped types for form validation
+type ValidationErrors<T> = {
+  [K in keyof T]?: string[]
+}
+
+// Template literal types
+type EventName<T extends string> = `${T}:created` | `${T}:updated` | `${T}:deleted`
+type UserEvents = EventName<"user"> // "user:created" | "user:updated" | "user:deleted"
+```
+
+### Utility Types
+```typescript
+// Custom utility types
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
+}
+
+type NonNullable<T> = T extends null | undefined ? never : T
+
+type PickByType<T, U> = {
+  [K in keyof T as T[K] extends U ? K : never]: T[K]
+}
+
+// Usage examples
+type UserStringFields = PickByType<User, string> // { name: string; email: string }
+type PartialUser = DeepPartial<User>
+```
+
+## Type Guards and Validation
+
+### Runtime Type Checking
+```typescript
+// Type guards for runtime validation
+function isString(value: unknown): value is string {
+  return typeof value === "string"
+}
+
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "id" in value &&
+    "name" in value &&
+    "email" in value &&
+    isString((value as any).id) &&
+    isString((value as any).name) &&
+    isString((value as any).email)
+  )
+}
+
+// Assertion functions
+function assertIsUser(value: unknown): asserts value is User {
+  if (!isUser(value)) {
+    throw new Error("Value is not a valid User")
+  }
+}
+```
+
+### Zod Integration
+```typescript
+import { z } from "zod"
+
+// Define schemas with Zod
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  email: z.string().email(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+// Infer types from schemas
+type User = z.infer<typeof UserSchema>
+
+// Validation with proper error handling
+function validateUser(data: unknown): User {
+  const result = UserSchema.safeParse(data)
+  
+  if (!result.success) {
+    throw new Error(`Invalid user data: ${result.error.message}`)
+  }
+  
+  return result.data
+}
+```
+
+## Error Handling Patterns
+
+### Custom Error Types
+```typescript
+// Base error class
+abstract class AppError extends Error {
+  abstract readonly code: string
+  abstract readonly statusCode: number
+  
+  constructor(message: string, public readonly context?: Record<string, any>) {
+    super(message)
+    this.name = this.constructor.name
+  }
+}
+
+// Specific error types
+class ValidationError extends AppError {
+  readonly code = "VALIDATION_ERROR"
+  readonly statusCode = 400
+  
+  constructor(
+    message: string,
+    public readonly errors: Record<string, string[]>
+  ) {
+    super(message)
+  }
+}
+
+class NotFoundError extends AppError {
+  readonly code = "NOT_FOUND"
+  readonly statusCode = 404
+}
+```
+
+### Result Pattern
+```typescript
+// Result type for error handling
+type Result<T, E = Error> = 
+  | { success: true; data: T }
+  | { success: false; error: E }
+
+// Helper functions
+function success<T>(data: T): Result<T, never> {
+  return { success: true, data }
+}
+
+function failure<E>(error: E): Result<never, E> {
+  return { success: false, error }
+}
+
+// Usage in functions
+async function fetchUser(id: string): Promise<Result<User, NotFoundError>> {
+  try {
+    const user = await userRepository.findById(id)
+    return user ? success(user) : failure(new NotFoundError("User not found"))
+  } catch (error) {
+    return failure(new NotFoundError("User not found"))
+  }
+}
+```
+
+## Async Patterns
+
+### Promise Utilities
+```typescript
+// Timeout wrapper
+function withTimeout<T>(
+  promise: Promise<T>, 
+  timeoutMs: number
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Timeout")), timeoutMs)
+    ),
+  ])
+}
+
+// Retry logic
+async function retry<T>(
+  fn: () => Promise<T>,
+  maxAttempts: number = 3,
+  delay: number = 1000
+): Promise<T> {
+  let lastError: Error
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn()
+    } catch (error) {
+      lastError = error as Error
+      
+      if (attempt === maxAttempts) {
+        throw lastError
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, delay * attempt))
+    }
+  }
+  
+  throw lastError!
+}
+```
+
+### Async Iterators
+```typescript
+// Async generator for pagination
+async function* paginateResults<T>(
+  fetchPage: (offset: number, limit: number) => Promise<T[]>,
+  limit: number = 20
+): AsyncGenerator<T[], void, unknown> {
+  let offset = 0
+  let hasMore = true
+  
+  while (hasMore) {
+    const results = await fetchPage(offset, limit)
+    
+    if (results.length === 0) {
+      hasMore = false
+    } else {
+      yield results
+      offset += limit
+      hasMore = results.length === limit
+    }
+  }
+}
+
+// Usage
+for await (const batch of paginateResults(fetchUsers)) {
+  await processBatch(batch)
+}
+```
+
+## Functional Programming Patterns
+
+### Higher-Order Functions
+```typescript
+// Memoization
+function memoize<T extends any[], R>(
+  fn: (...args: T) => R
+): (...args: T) => R {
+  const cache = new Map<string, R>()
+  
+  return (...args: T): R => {
+    const key = JSON.stringify(args)
+    
+    if (cache.has(key)) {
+      return cache.get(key)!
+    }
+    
+    const result = fn(...args)
+    cache.set(key, result)
+    return result
+  }
+}
+
+// Debounce
+function debounce<T extends any[]>(
+  fn: (...args: T) => void,
+  delay: number
+): (...args: T) => void {
+  let timeoutId: NodeJS.Timeout
+  
+  return (...args: T) => {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn(...args), delay)
+  }
+}
+```
+
+### Pipe and Compose
+```typescript
+// Pipe function for data transformation
+function pipe<T>(...fns: Array<(arg: T) => T>) {
+  return (value: T): T => fns.reduce((acc, fn) => fn(acc), value)
+}
+
+// Usage
+const processUser = pipe(
+  (user: User) => ({ ...user, name: user.name.trim() }),
+  (user: User) => ({ ...user, email: user.email.toLowerCase() }),
+  (user: User) => ({ ...user, updatedAt: new Date() })
+)
+```
+
+## Module Patterns
+
+### Dependency Injection
+```typescript
+// Service container pattern
+interface ServiceContainer {
+  get<T>(token: string): T
+  register<T>(token: string, factory: () => T): void
+}
+
+class Container implements ServiceContainer {
+  private services = new Map<string, any>()
+  private factories = new Map<string, () => any>()
+  
+  register<T>(token: string, factory: () => T): void {
+    this.factories.set(token, factory)
+  }
+  
+  get<T>(token: string): T {
+    if (this.services.has(token)) {
+      return this.services.get(token)
+    }
+    
+    const factory = this.factories.get(token)
+    if (!factory) {
+      throw new Error(`Service not found: ${token}`)
+    }
+    
+    const service = factory()
+    this.services.set(token, service)
+    return service
+  }
+}
+```
+
+### Factory Pattern
+```typescript
+// Abstract factory
+interface PaymentProcessor {
+  processPayment(amount: number): Promise<PaymentResult>
+}
+
+class PaymentProcessorFactory {
+  static create(provider: "stripe" | "paypal"): PaymentProcessor {
+    switch (provider) {
+      case "stripe":
+        return new StripeProcessor()
+      case "paypal":
+        return new PayPalProcessor()
+      default:
+        throw new Error(`Unknown payment provider: ${provider}`)
+    }
+  }
+}
+```
+
+## Testing Patterns
+
+### Type Testing
+```typescript
+// Type-only tests
+type AssertEqual<T, U> = T extends U ? (U extends T ? true : false) : false
+type AssertTrue<T extends true> = T
+
+// Test type assertions
+type Test1 = AssertTrue<AssertEqual<User["id"], string>>
+type Test2 = AssertTrue<AssertEqual<ApiResponse<User>["data"], User>>
+```
+
+### Mock Types
+```typescript
+// Mock implementations for testing
+type MockFunction<T extends (...args: any[]) => any> = jest.MockedFunction<T>
+
+interface MockRepository<T> {
+  findById: MockFunction<(id: string) => Promise<T | null>>
+  create: MockFunction<(data: Omit<T, "id">) => Promise<T>>
+  update: MockFunction<(id: string, data: Partial<T>) => Promise<T>>
+  delete: MockFunction<(id: string) => Promise<void>>
+}
+
+// Factory for creating mocks
+function createMockRepository<T>(): MockRepository<T> {
+  return {
+    findById: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  }
+}
+```
+
+## Performance Considerations
+
+### Type-Level Performance
+```typescript
+// Avoid deep recursion in types
+type DeepReadonly<T> = T extends any[]
+  ? ReadonlyArray<DeepReadonly<T[number]>>
+  : T extends object
+  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+  : T
+
+// Use branded types for performance
+type UserId = string & { readonly brand: unique symbol }
+type ProductId = string & { readonly brand: unique symbol }
+
+function createUserId(id: string): UserId {
+  return id as UserId
+}
+```
+
+## Common Anti-Patterns to Avoid
+
+- Don't use `any` type unless absolutely necessary
+- Avoid function overloads when union types suffice
+- Don't ignore TypeScript errors with `@ts-ignore`
+- Avoid deep nesting in type definitions
+- Don't use `Function` type (use specific function signatures)
+- Avoid mutation of readonly types
+- Don't use `object` type (use `Record<string, unknown>` or specific interfaces)
+- Avoid circular type dependencies
+
+## Configuration
+
+### TSConfig Best Practices
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false
+  }
+}
+```
+
+Remember: TypeScript is a tool for developer productivity and code safety. Use it to catch errors at compile time, improve code documentation, and enable better IDE support. Always prefer type safety over convenience.
+

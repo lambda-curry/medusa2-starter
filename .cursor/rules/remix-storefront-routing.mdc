@@ -1,0 +1,205 @@
+---
+description: Remix storefront routing patterns with React Router v7, TypeScript, and Medusa integration for route structure, forms, and API integration
+globs: 
+  - "apps/storefront/**/*.ts"
+  - "apps/storefront/**/*.tsx"
+  - "apps/storefront/**/routes/**/*.ts"
+  - "apps/storefront/**/routes/**/*.tsx"
+  - "apps/storefront/**/app/routes/**/*.ts"
+  - "apps/storefront/**/app/routes/**/*.tsx"
+alwaysApply: true
+---
+
+# Remix Storefront Routing & Integration Patterns
+
+You are an expert in React Router v7 (Remix), TypeScript, React, and e-commerce storefront development with Medusa integration, focusing on routing patterns, form handling, and API integration.
+
+## Core Principles
+
+- Write performant, accessible React components
+- Follow React Router v7 conventions and patterns
+- Implement proper SEO optimization
+- Use TypeScript for type safety
+- Follow responsive design principles with Tailwind CSS
+- Integrate seamlessly with Medusa backend APIs
+- Prioritize user experience and performance
+
+## React Router v7 (Remix) Patterns
+
+### Route Structure
+```typescript
+// app/routes/products.$handle.tsx
+import type { LoaderFunctionArgs, MetaFunction } from "@react-router/node"
+import { useLoaderData } from "@react-router/react"
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: data?.product?.title || "Product" },
+    { name: "description", content: data?.product?.description },
+  ]
+}
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const product = await getProduct(params.handle!)
+  
+  if (!product) {
+    throw new Response("Not Found", { status: 404 })
+  }
+  
+  return { product }
+}
+
+export default function ProductPage() {
+  const { product } = useLoaderData<typeof loader>()
+  
+  return (
+    <div>
+      <h1>{product.title}</h1>
+      {/* Component implementation */}
+    </div>
+  )
+}
+```
+
+### Form Handling
+```typescript
+// Use @lambdacurry/forms with remix-hook-form
+import { RemixFormProvider, useRemixForm } from "remix-hook-form"
+import { TextField } from "@lambdacurry/forms/remix-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+
+const schema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  firstName: z.string().min(1, "First name is required"),
+})
+
+export default function ContactForm() {
+  const form = useRemixForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      firstName: "",
+    },
+  })
+
+  return (
+    <RemixFormProvider {...form}>
+      <form method="post">
+        <TextField 
+          name="email" 
+          label="Email" 
+          type="email"
+          required 
+        />
+        <TextField 
+          name="firstName" 
+          label="First Name" 
+          required 
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </RemixFormProvider>
+  )
+}
+```
+
+### Action Handlers
+```typescript
+import type { ActionFunctionArgs } from "@react-router/node"
+import { data } from "@react-router/node"
+import { getValidatedFormData } from "remix-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
+export async function action({ request }: ActionFunctionArgs) {
+  const {
+    errors,
+    data: formData,
+    receivedValues,
+  } = await getValidatedFormData<FormData>(request, zodResolver(schema))
+
+  if (errors) {
+    return data({ errors }, { status: 400 })
+  }
+
+  try {
+    await processForm(formData)
+    return data({ success: true })
+  } catch (error) {
+    return data(
+      { errors: { root: { message: "Something went wrong" } } },
+      { status: 500 }
+    )
+  }
+}
+```
+
+## Medusa Integration
+
+### SDK Usage
+```typescript
+// lib/medusa.ts
+import { Medusa } from "@medusajs/js-sdk"
+
+export const medusa = new Medusa({
+  baseUrl: process.env.MEDUSA_BACKEND_URL || "http://localhost:9000",
+  debug: process.env.NODE_ENV === "development",
+})
+
+// In route loaders
+export async function loader() {
+  const { products } = await medusa.store.product.list({
+    limit: 20,
+    fields: "+variants.prices",
+  })
+  
+  return { products }
+}
+```
+
+### Cart Management
+```typescript
+// hooks/useCart.ts
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+
+interface CartState {
+  cartId: string | null
+  items: CartItem[]
+  addItem: (variantId: string, quantity: number) => Promise<void>
+  removeItem: (lineId: string) => Promise<void>
+  updateQuantity: (lineId: string, quantity: number) => Promise<void>
+}
+
+export const useCart = create<CartState>()(
+  persist(
+    (set, get) => ({
+      cartId: null,
+      items: [],
+      
+      addItem: async (variantId, quantity) => {
+        const { cartId } = get()
+        
+        if (!cartId) {
+          const cart = await medusa.store.cart.create({})
+          set({ cartId: cart.id })
+        }
+        
+        await medusa.store.cart.lineItem.create(cartId, {
+          variant_id: variantId,
+          quantity,
+        })
+        
+        // Refresh cart data
+        await refreshCart()
+      },
+      
+      // Other methods...
+    }),
+    {
+      name: "cart-storage",
+      partialize: (state) => ({ cartId: state.cartId }),
+    }
+  )
+)
+```
