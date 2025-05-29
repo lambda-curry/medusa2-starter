@@ -247,6 +247,21 @@ export const useAdminDeleteResource = () => {
     },
   });
 };
+
+export const useAdminCreatePostSection = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CreatePostSectionResponse, Error, CreatePostSectionInput>({
+    mutationFn: async (data) => {
+      return sdk.admin.pageBuilder.createPostSection(data);
+    },
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
+    },
+  });
+};
 ```
 
 ### Query Hooks
@@ -394,6 +409,22 @@ export const QUERY_KEYS = {
   AUTHORS: ['authors'],
   TAGS: ['tags'],
 } as const;
+
+// Always invalidate related queries in mutations
+export const useAdminCreatePostSection = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CreatePostSectionResponse, Error, CreatePostSectionInput>({
+    mutationFn: async (data) => {
+      return sdk.admin.pageBuilder.createPostSection(data);
+    },
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
+    },
+  });
+};
 ```
 
 ### Error Handling
@@ -609,28 +640,33 @@ describe('useAdminCreateResource', () => {
 });
 ```
 
-## Common Anti-Patterns to Avoid
+## Verification Checklist
 
-❌ **Don't**: Use inline styles or CSS-in-JS
-✅ **Do**: Use Tailwind CSS classes and Medusa UI components
+Before submitting admin UI code, ensure:
 
-❌ **Don't**: Fetch data directly in components
-✅ **Do**: Use custom hooks with TanStack Query
+### State Management
+- [ ] All mutations invalidate related query keys using `QUERY_KEYS`
+- [ ] Query keys are centralized and use consistent naming
+- [ ] Loading and error states are properly handled
+- [ ] Optimistic updates are implemented where appropriate
 
-❌ **Don't**: Mutate state directly
-✅ **Do**: Use React Hook Form for form state and TanStack Query for server state
+### Component Patterns
+- [ ] Event handlers use `stopPropagation()` for nested actions
+- [ ] Components use proper TypeScript generics for reusability
+- [ ] Form validation uses Zod schemas with proper error handling
+- [ ] Accessibility attributes (ARIA labels, roles) are included
 
-❌ **Don't**: Create deeply nested component hierarchies
-✅ **Do**: Use composition and context for state sharing
+### Performance
+- [ ] Components use `memo()` for expensive renders
+- [ ] Event handlers are wrapped in `useCallback()` when needed
+- [ ] Heavy computations use `useMemo()`
+- [ ] Query data is properly selected to minimize re-renders
 
-❌ **Don't**: Skip error boundaries and error handling
-✅ **Do**: Implement proper error handling with toast notifications
-
-❌ **Don't**: Use any types or skip TypeScript
-✅ **Do**: Define strict interfaces and use proper typing
-
-❌ **Don't**: Forget accessibility attributes
-✅ **Do**: Include proper ARIA labels, roles, and keyboard navigation
+### Error Handling
+- [ ] All async operations have try-catch blocks
+- [ ] User-friendly error messages are displayed via toast
+- [ ] Network errors are handled gracefully
+- [ ] Form validation errors are displayed inline
 
 ## Dependencies
 
@@ -644,3 +680,80 @@ Required packages for Medusa v2 admin development:
 - `clsx`: Conditional class names
 - `react-router-dom`: Client-side routing
 
+## Common Anti-Patterns to Avoid
+
+❌ **Don't**: Fetch data directly in components
+```typescript
+// Bad - direct API calls in components
+const MyComponent = () => {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch('/api/data').then(res => setData(res));
+  }, []);
+};
+```
+
+✅ **Do**: Use custom hooks with TanStack Query
+```typescript
+// Good - use query hooks
+const MyComponent = () => {
+  const { data, isLoading } = useAdminListResources();
+};
+```
+
+❌ **Don't**: Skip event.stopPropagation() in nested actions
+```typescript
+// Bad - events bubble up unintentionally
+const handleDelete = async () => {
+  await deleteItem(id); // Parent onClick also fires
+};
+```
+
+✅ **Do**: Use stopPropagation for nested actions
+```typescript
+// Good - prevent event bubbling
+const handleDelete = async (event: MouseEvent) => {
+  event.stopPropagation();
+  await deleteItem(id);
+};
+```
+
+❌ **Don't**: Forget to invalidate query cache
+```typescript
+// Bad - stale data after mutations
+const { mutate } = useMutation({
+  mutationFn: createResource,
+  // Missing onSuccess invalidation
+});
+```
+
+✅ **Do**: Always invalidate related queries
+```typescript
+// Good - fresh data after mutations
+const { mutate } = useMutation({
+  mutationFn: createResource,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RESOURCES });
+  },
+});
+```
+
+### Component Files
+- Use PascalCase for component files: `PostSectionListItem.tsx`
+- Co-locate related files in feature directories
+- Separate concerns: components, hooks, types, and tests
+
+#### Hook Files
+- Group by functionality: `post-sections-mutations.ts`, `post-sections-queries.ts`
+- Use descriptive names: `useAdminCreatePostSection`
+- Export related hooks from index files
+
+#### Type Files
+- Define interfaces close to usage
+- Use barrel exports for shared types
+- Prefer type-only imports: `import type { User } from './types'`
+
+#### Test Files
+- Mirror source structure: `components/__tests__/Button.test.tsx`
+- Use descriptive test names
+- Group related tests in describe blocks
