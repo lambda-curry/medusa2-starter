@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type {
   AdminPageBuilderListPostSectionsQuery,
   AdminPageBuilderListPostSectionsResponse,
+  AdminPageBuilderRetrievePostSectionResponse,
   PostSection,
 } from '@lambdacurry/page-builder-types';
 
@@ -19,14 +20,12 @@ export const useAdminListPostSections = (query: AdminPageBuilderListPostSections
 };
 
 export const useAdminFetchPostSection = (id: string) => {
-  return useQuery<PostSection>({
+  return useQuery<PostSection, Error>({
     queryKey: [...POST_SECTIONS_QUERY_KEY, id],
     queryFn: async () => {
-      const sections = await sdk.admin.pageBuilder.listPostSections({
-        id,
-      } as AdminPageBuilderListPostSectionsQuery);
+      const result = await sdk.admin.pageBuilder.retrievePostSection(id);
 
-      return sections?.sections?.[0];
+      return result?.section;
     },
   });
 };

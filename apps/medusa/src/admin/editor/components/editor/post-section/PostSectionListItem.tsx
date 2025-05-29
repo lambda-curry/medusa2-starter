@@ -19,14 +19,13 @@ export interface PostSectionListItemProps {
   section: PostSection;
 }
 
-export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, section }) => {
+export const PostSectionListItem: FC<PostSectionListItemProps> = ({ section }) => {
   const { post } = usePost();
   const prompt = usePrompt();
   const { mutateAsync: deletePostSection } = useAdminDeletePostSection();
   const { mutateAsync: duplicatePostSection } = useAdminDuplicatePostSection();
-
-  const navigate = useNavigate();
   const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
+  const navigate = useNavigate();
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
 
@@ -52,7 +51,6 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
   };
 
   const handlePublishClick: MouseEventHandler<HTMLDivElement> = async (event) => {
-    console.log('handlePublishClick', section);
     event.stopPropagation();
 
     await updatePostSection({
@@ -112,7 +110,7 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
 
         <div className="min-w-0 max-w-[calc(100%-40px)] flex-1">
           <Text size="base" weight="plus" className="w-full truncate">
-            {section.name || 'Untitled'}
+            {section.title || 'Untitled'}
           </Text>
         </div>
       </div>
@@ -126,11 +124,7 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
           </IconButton>
         </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content
-          align="start"
-          sideOffset={4}
-          className="bg-grey-0 border-grey-20 rounded-rounded shadow-dropdown z-30 min-w-[160px] border py-2"
-        >
+        <DropdownMenu.Content align="start" sideOffset={4} className="">
           <DropdownMenu.Item onClick={handleEditClick}>Edit</DropdownMenu.Item>
 
           {section.status === 'published' && (

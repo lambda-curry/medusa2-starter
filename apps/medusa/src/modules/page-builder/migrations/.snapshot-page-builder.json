@@ -872,8 +872,8 @@
           ],
           "mappedType": "enum"
         },
-        "name": {
-          "name": "name",
+        "title": {
+          "name": "title",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,

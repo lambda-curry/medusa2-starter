@@ -1,38 +1,37 @@
-import { PostSection } from '@lambdacurry/page-builder-types';
-import { Plus } from '@medusajs/icons';
-import { Button, DropdownMenu, Heading, toast } from '@medusajs/ui';
-import { FormProvider } from 'react-hook-form';
-import { Sidebar } from '../../../components/Sidebar';
-import { ControlledInput } from '../../../components/inputs/ControlledFields/ControlledInput';
-import { useAdminCreatePostSection, useAdminUpdatePostSection } from '../../../hooks/post-sections-mutations';
-import { useSectionsSidebar } from '../../../routes/content/editor/providers/SectionsSidebarContext';
-import { usePost } from '../../hooks/use-post';
-import { PostSectionListItem } from './post-section/PostSectionListItem';
 import {
   DndContext,
-  closestCenter,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
+  closestCenter,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { PostSection, PostSectionLayout } from '@lambdacurry/page-builder-types';
+import { Plus } from '@medusajs/icons';
+import { Button, DropdownMenu, Heading, toast } from '@medusajs/ui';
+import { useEffect, useState } from 'react';
+import { FormProvider } from 'react-hook-form';
+import { ControlledInput } from '../../../components/inputs/ControlledFields/ControlledInput';
+import { useAdminCreatePostSection } from '../../../hooks/post-sections-mutations';
+import { useAdminReorderPostSections } from '../../../hooks/posts-mutations';
+import { usePost } from '../../hooks/use-post';
+import { PostSectionListItem } from './post-section/PostSectionListItem';
 
-export const SectionsSidebar = () => {
+export const PostSectionsSidebarContent = ({ className }: { className?: string }) => {
   const { post } = usePost();
-  const { isOpen, open, close, toggle } = useSectionsSidebar();
-
   return (
-    <>
-      <Sidebar side="left" isOpen={isOpen} toggle={toggle} open={open} close={close} className="min-w-[375px]">
-        <aside className="flex flex-1 flex-col overflow-y-auto p-4">
-          <PostTitleForm className="mb-4" />
-          <SectionsMenu sections={post?.sections ?? []} />
-          <CreateSectionButton />
-        </aside>
-      </Sidebar>
-    </>
+    <div className={className}>
+      <PostTitleForm className="mb-4" />
+      <SectionsMenu sections={post?.sections ?? []} />
+      <CreateSectionButton />
+    </div>
   );
 };
 
@@ -51,8 +50,16 @@ const PostTitleForm = ({ className }: { className?: string }) => {
   );
 };
 
-const SectionsMenu = ({ sections }: { sections: PostSection[] }) => {
-  const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
+const SectionsMenu = ({ sections: _sections }: { sections: PostSection[] }) => {
+  const { post } = usePost();
+
+  const [sections, setSections] = useState<PostSection[]>(_sections);
+
+  useEffect(() => {
+    setSections(_sections);
+  }, [_sections]);
+
+  const { mutateAsync: reorderSections } = useAdminReorderPostSections();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -69,31 +76,16 @@ const SectionsMenu = ({ sections }: { sections: PostSection[] }) => {
       const newIndex = sections.findIndex((section) => section.id === over.id);
 
       // Create a new array with the reordered sections
-      const reorderedSections = [...sections];
-      const [movedSection] = reorderedSections.splice(oldIndex, 1);
-      reorderedSections.splice(newIndex, 0, movedSection);
+      const reorderedSections = arrayMove(post?.sections ?? [], oldIndex, newIndex);
 
-      reorderedSections.forEach((section, index) => {
-        section.sort_order = index;
+      setSections(reorderedSections);
+
+      await reorderSections({
+        id: post?.id as string,
+        data: {
+          section_ids: reorderedSections.map((section) => section.id),
+        },
       });
-
-      // Update sort_order for all affected sections
-      try {
-        await Promise.all(
-          reorderedSections.map((section, index) =>
-            updatePostSection({
-              id: section.id,
-              data: {
-                sort_order: index,
-              },
-            }),
-          ),
-        );
-        toast.success('Sections reordered successfully');
-      } catch (error) {
-        console.error('Failed to reorder sections:', error);
-        toast.error('Failed to reorder sections');
-      }
     }
   };
 
@@ -121,12 +113,12 @@ const CreateSectionButton = () => {
 
   const createSection = useAdminCreatePostSection();
 
-  const handleCreateSection = async (layout: 'full_width' | 'two_column' | 'grid') => {
+  const handleCreateSection = async (layout: PostSectionLayout) => {
     if (!post?.id) return;
 
     try {
       const result = await createSection.mutateAsync({
-        name: `New ${layout.replace('_', ' ')} section`,
+        title: `New ${layout.replace('_', ' ')} section`,
         layout,
         blocks: {},
         post_id: post.id,

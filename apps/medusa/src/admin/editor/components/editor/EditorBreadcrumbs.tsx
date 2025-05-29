@@ -1,5 +1,6 @@
 import { Breadcrumbs } from '../../../components/Breadcrumbs';
 import { usePost } from '../../hooks/use-post';
+import { usePostSection } from '../../hooks/use-post-section';
 
 type Crumb = {
   label: string;
@@ -8,6 +9,7 @@ type Crumb = {
 
 export const PostEditorBreadcrumbs = () => {
   const { post } = usePost();
+  const { section } = usePostSection();
 
   const crumbs: Crumb[] = [
     {
@@ -20,9 +22,16 @@ export const PostEditorBreadcrumbs = () => {
     },
     {
       label: post.title as string,
-      path: post.id as string,
+      path: `/content/editor/${post.id}`,
     },
   ];
+
+  if (section) {
+    crumbs.push({
+      label: section.title as string,
+      path: `/content/editor/${post.id}/section/${section.id}`,
+    });
+  }
 
   return <Breadcrumbs crumbs={crumbs} />;
 };

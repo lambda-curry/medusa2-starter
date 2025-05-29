@@ -6,6 +6,8 @@ import type {
   AdminPageBuilderDuplicatePostResponse,
   AdminPageBuilderUpdatePostBody,
   AdminPageBuilderUpdatePostResponse,
+  AdminPageBuilderReorderSectionsBody,
+  AdminPageBuilderReorderSectionsResponse,
 } from '@lambdacurry/page-builder-types';
 
 import { sdk } from '../sdk';
@@ -57,6 +59,24 @@ export const useAdminDuplicatePost = () => {
     mutationFn: async (id: string) => {
       return sdk.admin.pageBuilder.duplicatePost(id);
     },
+    mutationKey: QUERY_KEYS.POSTS,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
+    },
+  });
+};
+
+export const useAdminReorderPostSections = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    AdminPageBuilderReorderSectionsResponse,
+    Error,
+    { id: string; data: AdminPageBuilderReorderSectionsBody }
+  >({
+    mutationFn: async ({ id, data }) => {
+      return sdk.admin.pageBuilder.reorderPostSections(id, data);
+    },
+
     mutationKey: QUERY_KEYS.POSTS,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });

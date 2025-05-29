@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { validateAndTransformBody, type MiddlewareRoute } from '@medusajs/framework';
 
 const createPostSectionSchema = z.object({
-  name: z.string(),
+  title: z.string(),
   status: z.enum(['draft', 'published']).default('draft'),
   layout: z.enum(['full_width', 'two_column', 'grid']).default('full_width'),
   sort_order: z.number().optional(),

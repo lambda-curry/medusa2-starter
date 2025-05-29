@@ -16,6 +16,9 @@ import type {
   AdminPageBuilderUpdatePostSectionResponse,
   AdminPageBuilderDeletePostSectionResponse,
   AdminPageBuilderDuplicatePostSectionResponse,
+  AdminPageBuilderReorderSectionsBody,
+  AdminPageBuilderReorderSectionsResponse,
+  AdminPageBuilderRetrievePostSectionResponse,
 } from '@lambdacurry/page-builder-types';
 
 export class AdminPageBuilderResource {
@@ -61,6 +64,12 @@ export class AdminPageBuilderResource {
     });
   }
 
+  async retrievePostSection(id: string) {
+    return this.client.fetch<AdminPageBuilderRetrievePostSectionResponse>(`/admin/content/sections/${id}`, {
+      method: 'GET',
+    });
+  }
+
   async createPostSection(data: AdminPageBuilderCreatePostSectionBody) {
     return this.client.fetch<AdminPageBuilderCreatePostSectionResponse>('/admin/content/sections', {
       method: 'POST',
@@ -85,5 +94,15 @@ export class AdminPageBuilderResource {
     return this.client.fetch<AdminPageBuilderDuplicatePostSectionResponse>(`/admin/content/sections/${id}/duplicate`, {
       method: 'POST',
     });
+  }
+
+  async reorderPostSections(postId: string, data: AdminPageBuilderReorderSectionsBody) {
+    return this.client.fetch<AdminPageBuilderReorderSectionsResponse>(
+      `/admin/content/posts/${postId}/reorder-sections`,
+      {
+        method: 'POST',
+        body: data,
+      },
+    );
   }
 }

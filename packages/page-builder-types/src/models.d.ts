@@ -2,7 +2,7 @@
  * Type declarations for page builder models
  */
 
-import type { PostContentMode, PostStatus, PostType } from './common';
+import type { PostContentMode, PostSectionLayout, PostSectionStatus, PostStatus, PostType } from './common';
 
 export interface Base {
   id: string;
@@ -57,17 +57,20 @@ export interface PostAuthor extends Base {
   posts?: Post[];
 }
 
+export interface ContentBlock {
+  id: string;
+  type: string;
+  styles: Record<string, unknown>;
+  content: Record<string, unknown>;
+}
+
 export interface PostSection extends Base {
-  name: string;
-  layout: 'full_width' | 'two_column' | 'grid';
-  data?: Record<string, unknown>;
+  title: string;
+  layout: PostSectionLayout;
+  blocks: ContentBlock[];
   sort_order: number;
   post_id?: string;
-  status: 'draft' | 'published';
-  post?: Post;
-  parent_section_id?: string;
-  parent_section?: PostSection;
-  child_sections?: PostSection[];
+  status: PostSectionStatus;
 }
 
 export interface PostTag extends Base {

@@ -97,8 +97,8 @@ export type AdminPageBuilderListPostSectionsResponse = {
 };
 
 export type AdminPageBuilderCreatePostSectionBody = {
-  name: string;
-  layout?: 'full_width' | 'two_column' | 'grid';
+  title: string;
+  layout?: PostSectionLayout;
   sort_order?: number;
   blocks?: any;
   post_id?: string;
@@ -111,6 +111,10 @@ export type AdminPageBuilderCreatePostSectionResponse = {
 };
 
 export type AdminPageBuilderUpdatePostSectionBody = Partial<AdminPageBuilderCreatePostSectionBody>;
+
+export type AdminPageBuilderRetrievePostSectionResponse = {
+  section: PostSection;
+};
 
 export type AdminPageBuilderUpdatePostSectionResponse = {
   section: PostSection;
@@ -125,3 +129,11 @@ export type AdminPageBuilderDeletePostSectionResponse = {
 export type AdminPageBuilderDuplicatePostSectionResponse = {
   section: PostSection;
 };
+
+export type AdminPageBuilderReorderSectionsBody = {
+  section_ids: string[];
+};
+
+export interface AdminPageBuilderReorderSectionsResponse {
+  post: Post;
+}

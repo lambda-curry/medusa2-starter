@@ -23,7 +23,7 @@ export const duplicatePostSectionStep = createStep(
 
     // Create a new section with the same data, but always as draft
     const newSection = await pageBuilderService.createPostSections({
-      name: `${originalSection.name} (copy)`,
+      title: `${originalSection.title} (copy)`,
       status: 'draft',
       layout: originalSection.layout,
       blocks: originalSection.blocks,

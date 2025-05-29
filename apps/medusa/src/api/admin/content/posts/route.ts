@@ -13,7 +13,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
   });
 
   posts.forEach((post) => {
-    post.sections.sort((a, b) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0));
+    post.sections?.sort((a, b) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0));
   });
 
   res.status(200).json({

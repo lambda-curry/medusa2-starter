@@ -5,8 +5,8 @@ import { EditorTopbar } from '../../../../editor/components/editor/EditorTopBar'
 import { PostEditorLayout } from '../../../../editor/components/editor/PostEditorLayout';
 import { PostContextProvider } from '../../../../editor/components/editor/PostContextProvider';
 import { useAdminFetchPost } from '../../../../hooks/posts-queries';
-import { SectionsSidebarProvider } from '../providers/SectionsSidebarContext';
-import { SettingsSidebarProvider } from '../providers/SettingsSidebarContext';
+import { PostSectionsSidebarProvider } from '../providers/PostSectionsSidebarContext';
+import { PostSettingsSidebarProvider } from '../providers/PostSettingsSidebarContext';
 import { EditorSidebarProvider } from '../providers/editor-sidebar-provider';
 
 const PostDetailsPage = () => {
@@ -17,8 +17,8 @@ const PostDetailsPage = () => {
   return (
     <PostContextProvider post={post}>
       <TooltipProvider>
-        <SettingsSidebarProvider>
-          <SectionsSidebarProvider>
+        <PostSettingsSidebarProvider>
+          <PostSectionsSidebarProvider>
             <EditorSidebarProvider>
               <EditorModal open={true}>
                 <EditorModal.Content>
@@ -32,8 +32,8 @@ const PostDetailsPage = () => {
                 </EditorModal.Content>
               </EditorModal>
             </EditorSidebarProvider>
-          </SectionsSidebarProvider>
-        </SettingsSidebarProvider>
+          </PostSectionsSidebarProvider>
+        </PostSettingsSidebarProvider>
       </TooltipProvider>
     </PostContextProvider>
   );

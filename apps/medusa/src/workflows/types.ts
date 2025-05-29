@@ -1,13 +1,13 @@
-import type { Post } from '@lambdacurry/page-builder-types';
+import type { Post, PostSectionLayout, PostSectionStatus } from '@lambdacurry/page-builder-types';
 
 export type CreatePostSectionStepInput = {
   name: string;
-  layout?: 'full_width' | 'two_column' | 'grid';
+  layout?: PostSectionLayout;
   sort_order?: number;
   blocks?: any;
   post_id?: string;
   post_template_id?: string;
-  status?: 'draft' | 'published' | 'archived';
+  status?: PostSectionStatus;
 };
 
 export type UpdatePostSectionStepInput = Partial<CreatePostSectionStepInput> & {
@@ -24,6 +24,11 @@ export type UpdatePostSectionWorkflowInput = {
 
 export type DeletePostSectionWorkflowInput = {
   id: string;
+};
+
+export type ReorderPostSectionsWorkflowInput = {
+  post_id: string;
+  section_ids: string[];
 };
 
 type PostInput = Omit<
