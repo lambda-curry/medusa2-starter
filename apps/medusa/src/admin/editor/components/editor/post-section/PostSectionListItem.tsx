@@ -1,12 +1,11 @@
 import { PostSection } from '@lambdacurry/page-builder-types';
-import { DotsSix, EllipsisHorizontal, Pencil, Trash } from '@medusajs/icons';
-import { Badge, Button, DropdownMenu, IconButton, Text, Tooltip, toast } from '@medusajs/ui';
+import { DotsSix, EllipsisHorizontal, Trash } from '@medusajs/icons';
+import { Badge, DropdownMenu, IconButton, Text, toast, usePrompt } from '@medusajs/ui';
 import clsx from 'clsx';
-import { FC, MouseEventHandler, useState } from 'react';
+import { FC, MouseEventHandler } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdminUpdatePostSection } from '../../../../hooks/post-sections-mutations';
+import { useAdminDeletePostSection, useAdminUpdatePostSection } from '../../../../hooks/post-sections-mutations';
 import { usePost } from '../../../hooks/use-post';
-import { PostSectionDeleteButton } from './PostSectionDeleteButton';
 
 export interface PostSectionListItemProps {
   index: number;
@@ -15,21 +14,22 @@ export interface PostSectionListItemProps {
 
 export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, section }) => {
   const { post } = usePost();
-  //   const { onDuplicate, refetchPostSections, removeItem, onDelete } = usePostSectionsEditorContext();
+  const prompt = usePrompt();
+  const { mutateAsync: deletePostSection } = useAdminDeletePostSection();
+
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
-  //   const { mutateAsync: duplicatePostSection } = useAdminDuplicatePostSection(section.id);
 
   const handleEditClick = () => {
     // navigate(selectEditSectionPath(post, section.id));
     toast.warning('Not implemented');
-    setIsMenuOpen(false);
   };
 
-  const handleDuplicateClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
+  const handleDuplicateClick: MouseEventHandler<HTMLDivElement> = async (event) => {
     // TODO: Implement duplicate section
-    // event.stopPropagation();
+    event.stopPropagation();
+    toast.warning('Duplicate not implemented');
+
     // const {
     //   data: { post_section },
     // } = await duplicatePostSection({ type: section.type });
@@ -37,53 +37,42 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
     // onDuplicate(section.id, post_section);
   };
 
-  const handlePublishClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
-    toast.warning('Not implemented');
-
-    // event.stopPropagation();
-    // // updateLivePreviewPostData({
-    // //   post,
-    // //   sections: [{ ...section, status: PostSectionStatus.PUBLISHED }],
-    // // });
-    // await updatePostSection({
-    //   id: section.id,
-    //   data: {
-    //     status: 'published',
-    //   },
-    // });
-    // setIsMenuOpen(false);
-    // refetchPostSections();
-  };
-
-  const handleUnpublishClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
-    toast.warning('Not implemented');
-    // event.stopPropagation();
-    // updateLivePreviewPostData({
-    //   post,
-    //   sections: [{ ...section, status: PostSectionStatus.DRAFT }],
-    // });
-    // await updatePostSection({
-    //   type: section.type,
-    //   status: PostSectionStatus.DRAFT,
-    // });
-    // setIsMenuOpen(false);
-    // refetchPostSections();
-  };
-
-  const handleRemoveClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
+  const handlePublishClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    console.log('handlePublishClick', section);
     event.stopPropagation();
-    toast.warning('Not implemented');
-    // removeItem(index);
-    // updateLivePreviewPostData({
-    //   post,
-    //   sectionIndex: index,
-    // });
-    // setIsMenuOpen(false);
+
+    await updatePostSection({
+      id: section.id,
+      data: {
+        status: 'published',
+      },
+    });
   };
 
-  const toggleIsMenuOpen: MouseEventHandler<HTMLButtonElement> = async (event) => {
+  const handleUnpublishClick: MouseEventHandler<HTMLDivElement> = async (event) => {
     event.stopPropagation();
-    setIsMenuOpen((prev) => !prev);
+
+    await updatePostSection({
+      id: section.id,
+      data: {
+        status: 'draft',
+      },
+    });
+  };
+
+  const handleDeleteClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    event.stopPropagation();
+    const confirmed = await prompt({
+      title: 'Delete section',
+      description: 'Are you sure you want to delete this section?',
+      confirmText: 'Yes, delete',
+      cancelText: 'Cancel',
+    });
+
+    if (confirmed) {
+      await deletePostSection(section.id);
+      return;
+    }
   };
 
   return (
@@ -118,7 +107,7 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
 
       <DropdownMenu>
         <DropdownMenu.Trigger asChild>
-          <IconButton variant="transparent" size="small" onClick={toggleIsMenuOpen}>
+          <IconButton variant="transparent" size="small">
             <EllipsisHorizontal />
           </IconButton>
         </DropdownMenu.Trigger>
@@ -128,63 +117,20 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
           sideOffset={4}
           className="bg-grey-0 border-grey-20 rounded-rounded shadow-dropdown z-30 min-w-[160px] border py-2"
         >
-          <DropdownMenu.Item asChild>
-            <Button
-              variant="transparent"
-              size="small"
-              className="w-full justify-start rounded-none px-4"
-              onClick={handleEditClick}
-            >
-              <Pencil className="h-4 w-4" /> Edit
-            </Button>
-          </DropdownMenu.Item>
+          <DropdownMenu.Item onClick={handleEditClick}>Edit</DropdownMenu.Item>
 
           {section.status === 'published' && (
-            <DropdownMenu.Item asChild>
-              <Button
-                variant="transparent"
-                size="small"
-                className="w-full justify-start rounded-none px-4"
-                onClick={handleUnpublishClick}
-              >
-                Unpublish
-              </Button>
-            </DropdownMenu.Item>
+            <DropdownMenu.Item onClick={handleUnpublishClick}>Unpublish</DropdownMenu.Item>
           )}
 
-          {section.status === 'draft' && (
-            <DropdownMenu.Item asChild>
-              <Button
-                variant="transparent"
-                size="small"
-                className="w-full justify-start rounded-none px-4"
-                onClick={handlePublishClick}
-              >
-                Publish
-              </Button>
-            </DropdownMenu.Item>
-          )}
+          {section.status === 'draft' && <DropdownMenu.Item onClick={handlePublishClick}>Publish</DropdownMenu.Item>}
 
-          <DropdownMenu.Item asChild>
-            <Button
-              variant="transparent"
-              size="small"
-              className="w-full justify-start rounded-none px-4"
-              onClick={handleDuplicateClick}
-            >
-              Duplicate
-            </Button>
-          </DropdownMenu.Item>
+          <DropdownMenu.Item onClick={handleDuplicateClick}>Duplicate</DropdownMenu.Item>
 
-          <DropdownMenu.Item>
-            <PostSectionDeleteButton
-              postSection={section}
-              size="small"
-              className="!w-full justify-start rounded-none !border-none px-4"
-              onCancel={() => setIsMenuOpen(false)}
-            >
-              <Trash className="h-4 w-4" /> Delete
-            </PostSectionDeleteButton>
+          <DropdownMenu.Separator />
+
+          <DropdownMenu.Item onClick={handleDeleteClick} className="">
+            <Trash className="mr-2" /> Delete
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu>

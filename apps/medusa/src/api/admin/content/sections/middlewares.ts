@@ -3,6 +3,7 @@ import { validateAndTransformBody, type MiddlewareRoute } from '@medusajs/framew
 
 const createPostSectionSchema = z.object({
   name: z.string(),
+  status: z.enum(['draft', 'published']).default('draft'),
   layout: z.enum(['full_width', 'two_column', 'grid']).default('full_width'),
   sort_order: z.number().optional(),
   blocks: z.any().optional(),
@@ -23,7 +24,7 @@ export const adminSectionRoutesMiddlewares: MiddlewareRoute[] = [
   },
   {
     matcher: '/admin/content/sections/:id',
-    method: 'PATCH',
+    method: 'PUT',
     middlewares: [validateUpdatePostSection],
   },
 ];

@@ -11,6 +11,8 @@ export const PUT = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
     id,
   };
 
+  console.log('PUT', id, data);
+
   const { result } = await updatePostSectionWorkflow(req.scope).run({
     input: {
       section: data,

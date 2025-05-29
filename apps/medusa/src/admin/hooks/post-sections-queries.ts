@@ -7,11 +7,11 @@ import type {
 
 import { sdk } from '../sdk';
 
-const QUERY_KEY = ['post-sections'];
+export const POST_SECTIONS_QUERY_KEY = ['post-sections'];
 
 export const useAdminListPostSections = (query: AdminPageBuilderListPostSectionsQuery) => {
   return useQuery<AdminPageBuilderListPostSectionsResponse, Error>({
-    queryKey: [...QUERY_KEY, query],
+    queryKey: [...POST_SECTIONS_QUERY_KEY, query],
     queryFn: async () => {
       return sdk.admin.pageBuilder.listPostSections(query);
     },
@@ -20,7 +20,7 @@ export const useAdminListPostSections = (query: AdminPageBuilderListPostSections
 
 export const useAdminFetchPostSection = (id: string) => {
   return useQuery<PostSection>({
-    queryKey: [...QUERY_KEY, id],
+    queryKey: [...POST_SECTIONS_QUERY_KEY, id],
     queryFn: async () => {
       const sections = await sdk.admin.pageBuilder.listPostSections({
         id,

@@ -8,8 +8,7 @@ import type {
 } from '@lambdacurry/page-builder-types';
 
 import { sdk } from '../sdk';
-
-const QUERY_KEY = ['post-sections'];
+import { QUERY_KEYS } from './keys';
 
 export const useAdminCreatePostSection = () => {
   const queryClient = useQueryClient();
@@ -17,10 +16,10 @@ export const useAdminCreatePostSection = () => {
     mutationFn: async (data) => {
       return sdk.admin.pageBuilder.createPostSection(data);
     },
-    mutationKey: QUERY_KEY,
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
     },
   });
 };
@@ -36,9 +35,10 @@ export const useAdminUpdatePostSection = () => {
       const { ...rest } = data;
       return sdk.admin.pageBuilder.updatePostSection(id, rest);
     },
-    mutationKey: QUERY_KEY,
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
     },
   });
 };
@@ -49,9 +49,10 @@ export const useAdminDeletePostSection = () => {
     mutationFn: async (id: string) => {
       return sdk.admin.pageBuilder.deletePostSection(id);
     },
-    mutationKey: QUERY_KEY,
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
     },
   });
 };

@@ -11,8 +11,7 @@ export const updatePostSectionStep = createStep(
   async (data: UpdatePostSectionStepInput, { container }) => {
     const pageBuilderService = container.resolve<PageBuilderService>(PAGE_BUILDER_MODULE);
 
-    const { id, ...updateData } = data;
-    const section = await pageBuilderService.updatePostSections(updateData, { id });
+    const section = await pageBuilderService.updatePostSections(data);
 
     return new StepResponse(section, {
       sectionId: section.id,
