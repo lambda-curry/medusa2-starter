@@ -252,6 +252,39 @@ export const createPostSectionSchema = z.object({
 
 ## Testing Patterns
 
+### Workflow Testing
+```typescript
+import { createPostWorkflow } from '../create-post';
+
+describe('createPostWorkflow', () => {
+  it('should create post successfully', async () => {
+    const input = {
+      post: {
+        title: 'Test Post',
+        status: 'draft',
+        author_id: 'author-1',
+      },
+    };
+
+    const { result } = await createPostWorkflow(container).run({ input });
+    
+    expect(result).toMatchObject({
+      id: expect.any(String),
+      title: 'Test Post',
+      status: 'draft',
+    });
+  });
+
+  it('should handle validation errors', async () => {
+    const input = { post: { title: '' } }; // Invalid input
+    
+    await expect(
+      createPostWorkflow(container).run({ input })
+    ).rejects.toThrow('Title is required');
+  });
+});
+```
+
 ### Unit Tests
 ```typescript
 describe('PostSectionService', () => {
@@ -278,22 +311,77 @@ describe('PostSectionService', () => {
 - Test error scenarios and rollbacks
 - Validate API response formats
 
+## Verification Checklist
+
+Before submitting backend code, ensure:
+
+### API Endpoints
+- [ ] All endpoints use workflow pattern for business logic
+- [ ] Proper middleware validation with Zod schemas
+- [ ] Consistent response structure with proper status codes
+- [ ] Error handling with appropriate HTTP status codes
+
+### Workflows
+- [ ] Each workflow has a single responsibility
+- [ ] Steps are atomic and can be rolled back
+- [ ] Proper error handling and compensation logic
+- [ ] Input/output types are properly defined
+
+### Database
+- [ ] Migrations are reversible and tested
+- [ ] Indexes are added for query performance
+- [ ] Foreign key constraints are properly defined
+- [ ] Soft deletes are used where appropriate
+
+### Security
+- [ ] Input validation on all endpoints
+- [ ] Authentication checks where required
+- [ ] Proper error message sanitization
+- [ ] Rate limiting considerations
+
 ## Common Anti-Patterns to Avoid
 
 ❌ **Don't**: Put business logic directly in API routes
-✅ **Do**: Use workflows for all business operations
+```typescript
+// Bad - business logic in route handler
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const data = req.validatedBody;
+  const postSection = await req.scope.resolve('postSectionService').create(data);
+  // Missing validation, error handling, events
+  res.json({ section: postSection });
+};
+```
 
-❌ **Don't**: Import services directly in workflows
-✅ **Do**: Resolve services from container
+✅ **Do**: Use workflows for business logic
+```typescript
+// Good - workflow handles business logic
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const { result } = await createPostSectionWorkflow(req.scope).run({
+    input: { section: req.validatedBody }
+  });
+  res.json({ section: result });
+};
+```
 
-❌ **Don't**: Skip compensation logic in workflow steps
-✅ **Do**: Always implement proper rollback mechanisms
+❌ **Don't**: Skip input validation
+```typescript
+// Bad - no validation
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const data = req.body; // Unvalidated input
+  // Process data...
+};
+```
 
-❌ **Don't**: Use any types or skip validation
-✅ **Do**: Define strict TypeScript interfaces and validate inputs
+✅ **Do**: Use Zod middleware validation
+```typescript
+// Good - proper validation
+const createSchema = z.object({
+  name: z.string().min(1),
+  status: z.enum(['draft', 'published']).default('draft'),
+});
 
-❌ **Don't**: Create endpoints without authentication
-✅ **Do**: Always use AuthenticatedMedusaRequest for admin routes
+export const validateCreate = validateAndTransformBody(createSchema);
+```
 
 ## Dependencies
 
@@ -303,4 +391,3 @@ Required packages for Medusa v2 backend development:
 - `@mikro-orm/core`: Database ORM
 - `zod`: Schema validation
 - `@types/node`: Node.js type definitions
-
