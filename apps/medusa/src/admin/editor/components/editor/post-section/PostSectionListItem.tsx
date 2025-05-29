@@ -4,7 +4,11 @@ import { Badge, DropdownMenu, IconButton, Text, toast, usePrompt } from '@medusa
 import clsx from 'clsx';
 import { FC, MouseEventHandler } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdminDeletePostSection, useAdminUpdatePostSection } from '../../../../hooks/post-sections-mutations';
+import {
+  useAdminDeletePostSection,
+  useAdminUpdatePostSection,
+  useAdminDuplicatePostSection,
+} from '../../../../hooks/post-sections-mutations';
 import { usePost } from '../../../hooks/use-post';
 
 export interface PostSectionListItemProps {
@@ -16,6 +20,7 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
   const { post } = usePost();
   const prompt = usePrompt();
   const { mutateAsync: deletePostSection } = useAdminDeletePostSection();
+  const { mutateAsync: duplicatePostSection } = useAdminDuplicatePostSection();
 
   const navigate = useNavigate();
   const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
@@ -26,15 +31,14 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
   };
 
   const handleDuplicateClick: MouseEventHandler<HTMLDivElement> = async (event) => {
-    // TODO: Implement duplicate section
     event.stopPropagation();
-    toast.warning('Duplicate not implemented');
-
-    // const {
-    //   data: { post_section },
-    // } = await duplicatePostSection({ type: section.type });
-    // setIsMenuOpen(false);
-    // onDuplicate(section.id, post_section);
+    try {
+      await duplicatePostSection(section.id);
+      toast.success('Section duplicated successfully');
+    } catch (error) {
+      toast.error('Failed to duplicate section');
+      console.error('Failed to duplicate section:', error);
+    }
   };
 
   const handlePublishClick: MouseEventHandler<HTMLDivElement> = async (event) => {

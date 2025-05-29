@@ -20,11 +20,11 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
   });
 };
 
-export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+export const POST = async (req: AuthenticatedMedusaRequest<CreatePostSectionStepInput>, res: MedusaResponse) => {
   const { result } = await createPostSectionWorkflow(req.scope).run({
     input: {
       section: {
-        ...(req.validatedBody as CreatePostSectionStepInput),
+        ...req.validatedBody,
         blocks: req.validatedBody.blocks || {},
       },
     },

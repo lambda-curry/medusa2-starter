@@ -121,3 +121,7 @@ export type AdminPageBuilderDeletePostSectionResponse = {
   object: 'post_section';
   deleted: boolean;
 };
+
+export type AdminPageBuilderDuplicatePostSectionResponse = {
+  section: PostSection;
+};

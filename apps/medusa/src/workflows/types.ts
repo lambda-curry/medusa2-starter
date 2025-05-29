@@ -66,3 +66,7 @@ export type DuplicatePostStepInput = {
 export type DuplicatePostWorkflowInput = {
   id: string;
 };
+
+export type DuplicatePostSectionWorkflowInput = {
+  id: string;
+};

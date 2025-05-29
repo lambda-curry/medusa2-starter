@@ -5,6 +5,7 @@ import type {
   AdminPageBuilderDeletePostSectionResponse,
   AdminPageBuilderUpdatePostSectionBody,
   AdminPageBuilderUpdatePostSectionResponse,
+  AdminPageBuilderDuplicatePostSectionResponse,
 } from '@lambdacurry/page-builder-types';
 
 import { sdk } from '../sdk';
@@ -48,6 +49,20 @@ export const useAdminDeletePostSection = () => {
   return useMutation<AdminPageBuilderDeletePostSectionResponse, Error, string>({
     mutationFn: async (id: string) => {
       return sdk.admin.pageBuilder.deletePostSection(id);
+    },
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
+    },
+  });
+};
+
+export const useAdminDuplicatePostSection = () => {
+  const queryClient = useQueryClient();
+  return useMutation<AdminPageBuilderDuplicatePostSectionResponse, Error, string>({
+    mutationFn: async (id) => {
+      return sdk.admin.pageBuilder.duplicatePostSection(id);
     },
     mutationKey: QUERY_KEYS.POST_SECTIONS,
     onSuccess: () => {

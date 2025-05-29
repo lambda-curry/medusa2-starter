@@ -15,6 +15,7 @@ import type {
   AdminPageBuilderUpdatePostSectionBody,
   AdminPageBuilderUpdatePostSectionResponse,
   AdminPageBuilderDeletePostSectionResponse,
+  AdminPageBuilderDuplicatePostSectionResponse,
 } from '@lambdacurry/page-builder-types';
 
 export class AdminPageBuilderResource {
@@ -77,6 +78,12 @@ export class AdminPageBuilderResource {
   async deletePostSection(id: string) {
     return this.client.fetch<AdminPageBuilderDeletePostSectionResponse>(`/admin/content/sections/${id}`, {
       method: 'DELETE',
+    });
+  }
+
+  async duplicatePostSection(id: string) {
+    return this.client.fetch<AdminPageBuilderDuplicatePostSectionResponse>(`/admin/content/sections/${id}/duplicate`, {
+      method: 'POST',
     });
   }
 }
