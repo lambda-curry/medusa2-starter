@@ -11,6 +11,8 @@ import {
 } from '../../../../hooks/post-sections-mutations';
 import { usePost } from '../../../hooks/use-post';
 import { editSectionPath } from '../../../utils';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 export interface PostSectionListItemProps {
   index: number;
@@ -25,6 +27,14 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
 
   const navigate = useNavigate();
   const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const handleEditClick = () => {
     navigate(editSectionPath({ postId: post.id, sectionId: section.id }));
@@ -81,6 +91,8 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
 
   return (
     <article
+      ref={setNodeRef}
+      style={style}
       className={clsx(
         `border-grey-20 rounded-rounded hover:bg-grey-5 focus:border-violet-60 focus:text-violet-60 focus:shadow-cta flex items-center justify-between border bg-white p-3 text-left leading-none focus:outline-none`,
         {
@@ -92,12 +104,10 @@ export const PostSectionListItem: FC<PostSectionListItemProps> = ({ index, secti
       role="button"
     >
       <div className="flex min-w-0 flex-1 items-center gap-1.5">
-        <div className="shrink-0 grow-0">
-          {/* <SortableItemHandle> */}
+        <div className="shrink-0 grow-0" {...attributes} {...listeners}>
           <IconButton size="small" variant="transparent" type="button" className={clsx('cursor-grab')}>
             <DotsSix />
           </IconButton>
-          {/* </SortableItemHandle> */}
         </div>
 
         <div className="min-w-0 max-w-[calc(100%-40px)] flex-1">

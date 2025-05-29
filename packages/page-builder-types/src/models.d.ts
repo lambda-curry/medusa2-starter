@@ -61,7 +61,7 @@ export interface PostSection extends Base {
   name: string;
   layout: 'full_width' | 'two_column' | 'grid';
   data?: Record<string, unknown>;
-  order: number;
+  sort_order: number;
   post_id?: string;
   status: 'draft' | 'published';
   post?: Post;
