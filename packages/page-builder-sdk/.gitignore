@@ -1,0 +1,12 @@
+/dist
+/node_modules
+
+.idea
+.DS_Store
+
+yarn-error.log
+
+*.tsbuildinfo
+
+.cache
+.turbo

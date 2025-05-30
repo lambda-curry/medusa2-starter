@@ -1,0 +1,147 @@
+import { PostSection } from '@lambdacurry/page-builder-types';
+import { DotsSix, EllipsisHorizontal, Trash } from '@medusajs/icons';
+import { Badge, DropdownMenu, IconButton, Text, toast, usePrompt } from '@medusajs/ui';
+import clsx from 'clsx';
+import { FC, MouseEventHandler } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  useAdminDeletePostSection,
+  useAdminUpdatePostSection,
+  useAdminDuplicatePostSection,
+} from '../../../../hooks/post-sections-mutations';
+import { usePost } from '../../../hooks/use-post';
+import { editSectionPath } from '../../../utils';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+export interface PostSectionListItemProps {
+  index: number;
+  section: PostSection;
+}
+
+export const PostSectionListItem: FC<PostSectionListItemProps> = ({ section }) => {
+  const { post } = usePost();
+  const prompt = usePrompt();
+  const { mutateAsync: deletePostSection } = useAdminDeletePostSection();
+  const { mutateAsync: duplicatePostSection } = useAdminDuplicatePostSection();
+  const { mutateAsync: updatePostSection } = useAdminUpdatePostSection();
+  const navigate = useNavigate();
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const handleEditClick = () => {
+    navigate(editSectionPath({ postId: post.id, sectionId: section.id }));
+  };
+
+  const handleDuplicateClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    event.stopPropagation();
+    try {
+      await duplicatePostSection(section.id);
+      toast.success('Section duplicated successfully');
+    } catch (error) {
+      toast.error('Failed to duplicate section');
+      console.error('Failed to duplicate section:', error);
+    }
+  };
+
+  const handlePublishClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    event.stopPropagation();
+
+    await updatePostSection({
+      id: section.id,
+      data: {
+        status: 'published',
+      },
+    });
+  };
+
+  const handleUnpublishClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    event.stopPropagation();
+
+    await updatePostSection({
+      id: section.id,
+      data: {
+        status: 'draft',
+      },
+    });
+  };
+
+  const handleDeleteClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    event.stopPropagation();
+    const confirmed = await prompt({
+      title: 'Delete section',
+      description: 'Are you sure you want to delete this section?',
+      confirmText: 'Yes, delete',
+      cancelText: 'Cancel',
+    });
+
+    if (confirmed) {
+      await deletePostSection(section.id);
+      return;
+    }
+  };
+
+  return (
+    <article
+      ref={setNodeRef}
+      style={style}
+      className={clsx(
+        `border-grey-20 rounded-rounded hover:bg-grey-5 focus:border-violet-60 focus:text-violet-60 focus:shadow-cta flex items-center justify-between border bg-white p-3 text-left leading-none focus:outline-none`,
+        {
+          '!bg-grey-5 !pointer-events-none !cursor-not-allowed': false,
+        },
+      )}
+      onClick={handleEditClick}
+      tabIndex={0}
+      role="button"
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-1.5">
+        <div className="shrink-0 grow-0" {...attributes} {...listeners}>
+          <IconButton size="small" variant="transparent" type="button" className={clsx('cursor-grab')}>
+            <DotsSix />
+          </IconButton>
+        </div>
+
+        <div className="min-w-0 max-w-[calc(100%-40px)] flex-1">
+          <Text size="base" weight="plus" className="w-full truncate">
+            {section.title || 'Untitled'}
+          </Text>
+        </div>
+      </div>
+
+      {section.status === 'draft' && <Badge className="mx-2">Draft</Badge>}
+
+      <DropdownMenu>
+        <DropdownMenu.Trigger asChild>
+          <IconButton variant="transparent" size="small">
+            <EllipsisHorizontal />
+          </IconButton>
+        </DropdownMenu.Trigger>
+
+        <DropdownMenu.Content align="start" sideOffset={4} className="">
+          <DropdownMenu.Item onClick={handleEditClick}>Edit</DropdownMenu.Item>
+
+          {section.status === 'published' && (
+            <DropdownMenu.Item onClick={handleUnpublishClick}>Unpublish</DropdownMenu.Item>
+          )}
+
+          {section.status === 'draft' && <DropdownMenu.Item onClick={handlePublishClick}>Publish</DropdownMenu.Item>}
+
+          <DropdownMenu.Item onClick={handleDuplicateClick}>Duplicate</DropdownMenu.Item>
+
+          <DropdownMenu.Separator />
+
+          <DropdownMenu.Item onClick={handleDeleteClick} className="">
+            <Trash className="mr-2" /> Delete
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu>
+    </article>
+  );
+};

@@ -76,6 +76,10 @@ module.exports = defineConfig({
     cacheModule,
     eventBusModule,
     workflowEngineModule,
+    {
+      resolve: './src/modules/page-builder',
+      options: {},
+    },
   ],
   admin: {
     backendUrl: process.env.ADMIN_BACKEND_URL,

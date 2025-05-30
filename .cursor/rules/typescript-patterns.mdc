@@ -1,511 +1,455 @@
 ---
-description: TypeScript development patterns and best practices for the Medusa monorepo
-globs: 
-  - "**/*.ts"
-  - "**/*.tsx"
+description: TypeScript patterns and conventions for the Medusa2 starter project
+globs: ["**/*.ts", "**/*.tsx"]
 alwaysApply: true
 ---
 
-# TypeScript Development Patterns
+# TypeScript Patterns and Conventions
 
-You are an expert in TypeScript, modern JavaScript, and type-safe development practices.
+## Overview
 
-## Core TypeScript Principles
+This document outlines TypeScript-specific patterns, conventions, and best practices for the Medusa2 starter project.
 
-- Use strict TypeScript configuration
-- Prefer type inference over explicit typing when clear
-- Use union types and discriminated unions effectively
-- Implement proper type guards and validation
-- Leverage generic types for reusability
-- Use `as const` for immutable data structures
-- Prefer interfaces over type aliases for object shapes
+## Core Principles
 
-## Type Definitions
+1. **Strict Type Safety**: Use TypeScript's strict mode and avoid `any` types
+2. **Explicit Interfaces**: Define clear interfaces for all data structures
+3. **Generic Constraints**: Use proper generic constraints for reusable components
+4. **Utility Types**: Leverage TypeScript utility types for type transformations
 
-### Interface Design
+## Type Definition Patterns
+
+### Interface Definitions
 ```typescript
 // Use interfaces for object shapes
 interface User {
-  readonly id: string
-  name: string
-  email: string
-  createdAt: Date
-  updatedAt: Date
+  readonly id: string;
+  name: string;
+  email: string;
+  status: 'active' | 'inactive';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// Use generic interfaces for reusability
+// Use type aliases for unions and computed types
+type UserStatus = 'active' | 'inactive';
+type UserWithoutTimestamps = Omit<User, 'createdAt' | 'updatedAt'>;
+```
+
+### API Response Types
+```typescript
+// Consistent API response structure
 interface ApiResponse<T> {
-  data: T
-  success: boolean
-  message?: string
+  data: T;
+  success: boolean;
+  message?: string;
 }
 
-// Extend interfaces for specialization
-interface AdminUser extends User {
-  role: "admin" | "super_admin"
-  permissions: Permission[]
+interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
+
+// Example usage
+type UsersResponse = ApiResponse<User[]>;
+type PaginatedUsersResponse = PaginatedResponse<User>;
 ```
 
-### Union Types and Discriminated Unions
+### Form Types
 ```typescript
-// Use discriminated unions for type safety
-type PaymentStatus = 
-  | { status: "pending"; pendingReason: string }
-  | { status: "completed"; completedAt: Date }
-  | { status: "failed"; error: string }
+// Form input types derived from entity types
+type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'updatedAt'>;
+type UpdateUserInput = Partial<CreateUserInput>;
 
-// Type guards for discriminated unions
-function isCompletedPayment(
-  payment: PaymentStatus
-): payment is Extract<PaymentStatus, { status: "completed" }> {
-  return payment.status === "completed"
-}
+// Form validation schemas should match these types
+const createUserSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email format'),
+  status: z.enum(['active', 'inactive']).default('active'),
+}) satisfies z.ZodType<CreateUserInput>;
 ```
 
-### Generic Types
+## Generic Patterns
+
+### Component Props with Generics
 ```typescript
-// Generic utility types
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
-type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
+interface DataTableProps<T> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  onRowClick?: (row: T) => void;
+  loading?: boolean;
+}
 
-// Generic function types
-type AsyncFunction<T extends any[], R> = (...args: T) => Promise<R>
+export const DataTable = <T extends Record<string, any>>({
+  data,
+  columns,
+  onRowClick,
+  loading = false,
+}: DataTableProps<T>) => {
+  // Component implementation
+};
+```
 
-// Generic class types
-class Repository<T extends { id: string }> {
-  async findById(id: string): Promise<T | null> {
-    // Implementation
+### Hook Generics
+```typescript
+interface UseApiOptions<T> {
+  onSuccess?: (data: T) => void;
+  onError?: (error: Error) => void;
+}
+
+export const useApi = <T>(
+  endpoint: string,
+  options?: UseApiOptions<T>
+) => {
+  // Hook implementation with proper typing
+  return useQuery<T, Error>({
+    queryKey: [endpoint],
+    queryFn: () => fetchData<T>(endpoint),
+    onSuccess: options?.onSuccess,
+    onError: options?.onError,
+  });
+};
+```
+
+## Utility Type Patterns
+
+### Common Utility Types
+```typescript
+// Make specific fields optional
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+// Make specific fields required
+type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>;
+
+// Deep readonly
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
+};
+
+// Example usage
+type UserWithOptionalEmail = PartialBy<User, 'email'>;
+type UserWithRequiredStatus = RequiredBy<Partial<User>, 'status'>;
+```
+
+### Branded Types
+```typescript
+// Use branded types for IDs to prevent mixing
+type UserId = string & { readonly brand: unique symbol };
+type PostId = string & { readonly brand: unique symbol };
+
+const createUserId = (id: string): UserId => id as UserId;
+const createPostId = (id: string): PostId => id as PostId;
+
+// This prevents accidentally passing a UserId where PostId is expected
+```
+
+## Error Handling Types
+
+### Result Pattern
+```typescript
+type Result<T, E = Error> = 
+  | { success: true; data: T }
+  | { success: false; error: E };
+
+const processUser = async (id: string): Promise<Result<User>> => {
+  try {
+    const user = await fetchUser(id);
+    return { success: true, data: user };
+  } catch (error) {
+    return { success: false, error: error as Error };
   }
-  
-  async create(data: Omit<T, "id">): Promise<T> {
-    // Implementation
-  }
-}
+};
 ```
-
-## Advanced Type Patterns
-
-### Conditional Types
-```typescript
-// Conditional types for API responses
-type ApiResult<T> = T extends string 
-  ? { message: T }
-  : T extends Error
-  ? { error: T }
-  : { data: T }
-
-// Mapped types for form validation
-type ValidationErrors<T> = {
-  [K in keyof T]?: string[]
-}
-
-// Template literal types
-type EventName<T extends string> = `${T}:created` | `${T}:updated` | `${T}:deleted`
-type UserEvents = EventName<"user"> // "user:created" | "user:updated" | "user:deleted"
-```
-
-### Utility Types
-```typescript
-// Custom utility types
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
-}
-
-type NonNullable<T> = T extends null | undefined ? never : T
-
-type PickByType<T, U> = {
-  [K in keyof T as T[K] extends U ? K : never]: T[K]
-}
-
-// Usage examples
-type UserStringFields = PickByType<User, string> // { name: string; email: string }
-type PartialUser = DeepPartial<User>
-```
-
-## Type Guards and Validation
-
-### Runtime Type Checking
-```typescript
-// Type guards for runtime validation
-function isString(value: unknown): value is string {
-  return typeof value === "string"
-}
-
-function isUser(value: unknown): value is User {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "id" in value &&
-    "name" in value &&
-    "email" in value &&
-    isString((value as any).id) &&
-    isString((value as any).name) &&
-    isString((value as any).email)
-  )
-}
-
-// Assertion functions
-function assertIsUser(value: unknown): asserts value is User {
-  if (!isUser(value)) {
-    throw new Error("Value is not a valid User")
-  }
-}
-```
-
-### Zod Integration
-```typescript
-import { z } from "zod"
-
-// Define schemas with Zod
-const UserSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  email: z.string().email(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-})
-
-// Infer types from schemas
-type User = z.infer<typeof UserSchema>
-
-// Validation with proper error handling
-function validateUser(data: unknown): User {
-  const result = UserSchema.safeParse(data)
-  
-  if (!result.success) {
-    throw new Error(`Invalid user data: ${result.error.message}`)
-  }
-  
-  return result.data
-}
-```
-
-## Error Handling Patterns
 
 ### Custom Error Types
 ```typescript
-// Base error class
 abstract class AppError extends Error {
-  abstract readonly code: string
-  abstract readonly statusCode: number
-  
-  constructor(message: string, public readonly context?: Record<string, any>) {
-    super(message)
-    this.name = this.constructor.name
-  }
+  abstract readonly code: string;
+  abstract readonly statusCode: number;
 }
 
-// Specific error types
 class ValidationError extends AppError {
-  readonly code = "VALIDATION_ERROR"
-  readonly statusCode = 400
+  readonly code = 'VALIDATION_ERROR';
+  readonly statusCode = 400;
   
   constructor(
     message: string,
-    public readonly errors: Record<string, string[]>
+    public readonly field: string
   ) {
-    super(message)
+    super(message);
   }
 }
 
 class NotFoundError extends AppError {
-  readonly code = "NOT_FOUND"
-  readonly statusCode = 404
-}
-```
-
-### Result Pattern
-```typescript
-// Result type for error handling
-type Result<T, E = Error> = 
-  | { success: true; data: T }
-  | { success: false; error: E }
-
-// Helper functions
-function success<T>(data: T): Result<T, never> {
-  return { success: true, data }
-}
-
-function failure<E>(error: E): Result<never, E> {
-  return { success: false, error }
-}
-
-// Usage in functions
-async function fetchUser(id: string): Promise<Result<User, NotFoundError>> {
-  try {
-    const user = await userRepository.findById(id)
-    return user ? success(user) : failure(new NotFoundError("User not found"))
-  } catch (error) {
-    return failure(new NotFoundError("User not found"))
+  readonly code = 'NOT_FOUND';
+  readonly statusCode = 404;
+  
+  constructor(resource: string, id: string) {
+    super(`${resource} with id ${id} not found`);
   }
 }
 ```
 
-## Async Patterns
+## React Component Typing
 
-### Promise Utilities
+### Component Props
 ```typescript
-// Timeout wrapper
-function withTimeout<T>(
-  promise: Promise<T>, 
-  timeoutMs: number
-): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), timeoutMs)
-    ),
-  ])
+// Use interfaces for component props
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'danger';
+  size?: 'small' | 'medium' | 'large';
+  disabled?: boolean;
+  loading?: boolean;
+  children: React.ReactNode;
+  onClick?: () => void;
 }
 
-// Retry logic
-async function retry<T>(
-  fn: () => Promise<T>,
-  maxAttempts: number = 3,
-  delay: number = 1000
-): Promise<T> {
-  let lastError: Error
+// Use React.FC sparingly, prefer explicit typing
+export const Button = ({
+  variant = 'primary',
+  size = 'medium',
+  disabled = false,
+  loading = false,
+  children,
+  onClick,
+}: ButtonProps) => {
+  // Component implementation
+};
+```
+
+### Ref Forwarding
+```typescript
+interface InputProps {
+  label: string;
+  error?: string;
+  placeholder?: string;
+}
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, placeholder, ...props }, ref) => {
+    return (
+      <div>
+        <label>{label}</label>
+        <input ref={ref} placeholder={placeholder} {...props} />
+        {error && <span className="error">{error}</span>}
+      </div>
+    );
+  }
+);
+
+Input.displayName = 'Input';
+```
+
+### Event Handlers
+```typescript
+interface FormProps {
+  onSubmit: (data: FormData) => void;
+  onChange: (field: string, value: string) => void;
+}
+
+export const Form = ({ onSubmit, onChange }: FormProps) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    onSubmit(formData);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.name, event.target.value);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input onChange={handleInputChange} />
+    </form>
+  );
+};
+```
+
+## Module Declaration Patterns
+
+### Ambient Declarations
+```typescript
+// types/global.d.ts
+declare global {
+  interface Window {
+    ENV: {
+      API_URL: string;
+      NODE_ENV: string;
+    };
+  }
+}
+
+// Module augmentation
+declare module '@medusajs/ui' {
+  interface ButtonProps {
+    customProp?: string;
+  }
+}
+```
+
+### Type-only Imports
+```typescript
+// Use type-only imports when importing only types
+import type { User, CreateUserInput } from './types';
+import type { ComponentProps } from 'react';
+
+// Regular imports for values
+import { createUser } from './api';
+import { Button } from '@medusajs/ui';
+```
+
+## Configuration Types
+
+### Environment Variables
+```typescript
+interface EnvironmentConfig {
+  readonly NODE_ENV: 'development' | 'production' | 'test';
+  readonly API_URL: string;
+  readonly DATABASE_URL: string;
+  readonly REDIS_URL?: string;
+}
+
+const config: EnvironmentConfig = {
+  NODE_ENV: process.env.NODE_ENV as EnvironmentConfig['NODE_ENV'],
+  API_URL: process.env.API_URL!,
+  DATABASE_URL: process.env.DATABASE_URL!,
+  REDIS_URL: process.env.REDIS_URL,
+};
+
+// Validate required environment variables at startup
+const validateConfig = (config: EnvironmentConfig): void => {
+  const required: (keyof EnvironmentConfig)[] = ['NODE_ENV', 'API_URL', 'DATABASE_URL'];
   
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn()
-    } catch (error) {
-      lastError = error as Error
-      
-      if (attempt === maxAttempts) {
-        throw lastError
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, delay * attempt))
+  for (const key of required) {
+    if (!config[key]) {
+      throw new Error(`Missing required environment variable: ${key}`);
     }
   }
-  
-  throw lastError!
-}
+};
 ```
 
-### Async Iterators
+## Testing Types
+
+### Test Utilities
 ```typescript
-// Async generator for pagination
-async function* paginateResults<T>(
-  fetchPage: (offset: number, limit: number) => Promise<T[]>,
-  limit: number = 20
-): AsyncGenerator<T[], void, unknown> {
-  let offset = 0
-  let hasMore = true
-  
-  while (hasMore) {
-    const results = await fetchPage(offset, limit)
-    
-    if (results.length === 0) {
-      hasMore = false
-    } else {
-      yield results
-      offset += limit
-      hasMore = results.length === limit
-    }
-  }
+// Test helper types
+type MockedFunction<T extends (...args: any[]) => any> = jest.MockedFunction<T>;
+
+interface TestUser extends User {
+  password?: string; // Only for testing
 }
 
-// Usage
-for await (const batch of paginateResults(fetchUsers)) {
-  await processBatch(batch)
-}
-```
-
-## Functional Programming Patterns
-
-### Higher-Order Functions
-```typescript
-// Memoization
-function memoize<T extends any[], R>(
-  fn: (...args: T) => R
-): (...args: T) => R {
-  const cache = new Map<string, R>()
-  
-  return (...args: T): R => {
-    const key = JSON.stringify(args)
-    
-    if (cache.has(key)) {
-      return cache.get(key)!
-    }
-    
-    const result = fn(...args)
-    cache.set(key, result)
-    return result
-  }
-}
-
-// Debounce
-function debounce<T extends any[]>(
-  fn: (...args: T) => void,
-  delay: number
-): (...args: T) => void {
-  let timeoutId: NodeJS.Timeout
-  
-  return (...args: T) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => fn(...args), delay)
-  }
-}
-```
-
-### Pipe and Compose
-```typescript
-// Pipe function for data transformation
-function pipe<T>(...fns: Array<(arg: T) => T>) {
-  return (value: T): T => fns.reduce((acc, fn) => fn(acc), value)
-}
-
-// Usage
-const processUser = pipe(
-  (user: User) => ({ ...user, name: user.name.trim() }),
-  (user: User) => ({ ...user, email: user.email.toLowerCase() }),
-  (user: User) => ({ ...user, updatedAt: new Date() })
-)
-```
-
-## Module Patterns
-
-### Dependency Injection
-```typescript
-// Service container pattern
-interface ServiceContainer {
-  get<T>(token: string): T
-  register<T>(token: string, factory: () => T): void
-}
-
-class Container implements ServiceContainer {
-  private services = new Map<string, any>()
-  private factories = new Map<string, () => any>()
-  
-  register<T>(token: string, factory: () => T): void {
-    this.factories.set(token, factory)
-  }
-  
-  get<T>(token: string): T {
-    if (this.services.has(token)) {
-      return this.services.get(token)
-    }
-    
-    const factory = this.factories.get(token)
-    if (!factory) {
-      throw new Error(`Service not found: ${token}`)
-    }
-    
-    const service = factory()
-    this.services.set(token, service)
-    return service
-  }
-}
-```
-
-### Factory Pattern
-```typescript
-// Abstract factory
-interface PaymentProcessor {
-  processPayment(amount: number): Promise<PaymentResult>
-}
-
-class PaymentProcessorFactory {
-  static create(provider: "stripe" | "paypal"): PaymentProcessor {
-    switch (provider) {
-      case "stripe":
-        return new StripeProcessor()
-      case "paypal":
-        return new PayPalProcessor()
-      default:
-        throw new Error(`Unknown payment provider: ${provider}`)
-    }
-  }
-}
-```
-
-## Testing Patterns
-
-### Type Testing
-```typescript
-// Type-only tests
-type AssertEqual<T, U> = T extends U ? (U extends T ? true : false) : false
-type AssertTrue<T extends true> = T
-
-// Test type assertions
-type Test1 = AssertTrue<AssertEqual<User["id"], string>>
-type Test2 = AssertTrue<AssertEqual<ApiResponse<User>["data"], User>>
-```
-
-### Mock Types
-```typescript
-// Mock implementations for testing
-type MockFunction<T extends (...args: any[]) => any> = jest.MockedFunction<T>
-
-interface MockRepository<T> {
-  findById: MockFunction<(id: string) => Promise<T | null>>
-  create: MockFunction<(data: Omit<T, "id">) => Promise<T>>
-  update: MockFunction<(id: string, data: Partial<T>) => Promise<T>>
-  delete: MockFunction<(id: string) => Promise<void>>
-}
-
-// Factory for creating mocks
-function createMockRepository<T>(): MockRepository<T> {
-  return {
-    findById: jest.fn(),
-    create: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  }
-}
-```
-
-## Performance Considerations
-
-### Type-Level Performance
-```typescript
-// Avoid deep recursion in types
-type DeepReadonly<T> = T extends any[]
-  ? ReadonlyArray<DeepReadonly<T[number]>>
-  : T extends object
-  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
-  : T
-
-// Use branded types for performance
-type UserId = string & { readonly brand: unique symbol }
-type ProductId = string & { readonly brand: unique symbol }
-
-function createUserId(id: string): UserId {
-  return id as UserId
-}
+const createTestUser = (overrides?: Partial<TestUser>): TestUser => ({
+  id: 'test-user-id',
+  name: 'Test User',
+  email: 'test@example.com',
+  status: 'active',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...overrides,
+});
 ```
 
 ## Common Anti-Patterns to Avoid
 
-- Don't use `any` type unless absolutely necessary
-- Avoid function overloads when union types suffice
-- Don't ignore TypeScript errors with `@ts-ignore`
-- Avoid deep nesting in type definitions
-- Don't use `Function` type (use specific function signatures)
-- Avoid mutation of readonly types
-- Don't use `object` type (use `Record<string, unknown>` or specific interfaces)
-- Avoid circular type dependencies
+❌ **Don't**: Use `any` type
+```typescript
+// Bad
+const processData = (data: any) => {
+  return data.someProperty;
+};
+```
 
-## Configuration
+✅ **Do**: Use proper typing
+```typescript
+// Good
+interface DataInput {
+  someProperty: string;
+}
 
-### TSConfig Best Practices
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "allowUnusedLabels": false,
-    "allowUnreachableCode": false
-  }
+const processData = (data: DataInput) => {
+  return data.someProperty;
+};
+```
+
+❌ **Don't**: Use function declarations for components
+```typescript
+// Bad
+function MyComponent(props: Props) {
+  return <div>{props.children}</div>;
 }
 ```
 
-Remember: TypeScript is a tool for developer productivity and code safety. Use it to catch errors at compile time, improve code documentation, and enable better IDE support. Always prefer type safety over convenience.
+✅ **Do**: Use const assertions for components
+```typescript
+// Good
+const MyComponent = (props: Props) => {
+  return <div>{props.children}</div>;
+};
+```
+
+❌ **Don't**: Ignore strict TypeScript settings
+```typescript
+// Bad - tsconfig.json
+{
+  "strict": false,
+  "noImplicitAny": false
+}
+```
+
+✅ **Do**: Use strict TypeScript settings
+```typescript
+// Good - tsconfig.json
+{
+  "strict": true,
+  "noImplicitAny": true,
+  "strictNullChecks": true,
+  "noImplicitReturns": true
+}
+```
+
+## TypeScript Configuration
+
+### Recommended tsconfig.json
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
+}
+```
+
+## Dependencies
+
+TypeScript-related packages:
+- `typescript`: ^5.0.0
+- `@types/react`: Latest
+- `@types/react-dom`: Latest
+- `@types/node`: Latest
+- `zod`: For runtime type validation
 

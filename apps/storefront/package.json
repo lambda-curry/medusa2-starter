@@ -25,7 +25,7 @@
     "directory": "packages/markethaus-storefront"
   },
   "devDependencies": {
-    "@medusajs/types": "2.7.0",
+    "@medusajs/types": "2.8.2",
     "@react-router/dev": "^7.5.3",
     "@react-router/fs-routes": "^7.5.3",
     "@swc-node/register": "^1.4.2",
@@ -83,8 +83,7 @@
     "@heroicons/react": "^2.0.18",
     "@lambdacurry/forms": "^0.15.0",
     "@lambdacurry/medusa-plugins-sdk": "0.0.5",
-    "@loadable/component": "^5.15.3",
-    "@medusajs/js-sdk": "2.7.0",
+    "@medusajs/js-sdk": "2.8.2",
     "@mjackson/file-storage": "^0.6.1",
     "@mjackson/form-data-parser": "^0.7.0",
     "@radix-ui/react-slot": "^1.0.2",
