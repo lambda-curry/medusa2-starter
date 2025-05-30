@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { Sidebar } from '../../../components/Sidebar';
-import { useSettingsSidebar } from '../../../routes/content/editor/providers/SettingsSidebarContext';
+import { usePostSettingsSidebar } from '../../../routes/content/editor/providers/PostSettingsSidebarContext';
 import { usePost } from '../../hooks/use-post';
 import { PostDetailsForm } from './PostDetailsForm';
 
 export const PostSettingsSidebar = () => {
   const { post } = usePost();
-  const { isOpen, open, close, toggle } = useSettingsSidebar();
+  const { isOpen, open, close, toggle } = usePostSettingsSidebar();
   const navigate = useNavigate();
 
   if (!post) return null;

@@ -1,9 +1,9 @@
 import { SidebarLeft } from '@medusajs/icons';
 import { IconButton } from '@medusajs/ui';
-import { useSectionsSidebar } from '../../../routes/content/editor/providers/SectionsSidebarContext';
+import { usePostSectionsSidebar } from '../../../routes/content/editor/providers/PostSectionsSidebarContext';
 
 export const SectionsSidebarToggleButton = () => {
-  const { toggle } = useSectionsSidebar();
+  const { toggle } = usePostSectionsSidebar();
   return (
     <IconButton variant="transparent" onClick={() => toggle()} size="small">
       <SidebarLeft />

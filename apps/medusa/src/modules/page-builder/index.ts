@@ -8,6 +8,9 @@ export const pageBuilderModuleEvents = Object.freeze({
   POST_CREATED: 'post.created',
   POST_UPDATED: 'post.updated',
   POST_DELETED: 'post.deleted',
+  SECTION_CREATED: 'section.created',
+  SECTION_UPDATED: 'section.updated',
+  SECTION_DELETED: 'section.deleted',
 });
 
 export default Module(PAGE_BUILDER_MODULE, {

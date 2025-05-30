@@ -12,6 +12,10 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
     pagination: req.queryConfig?.pagination || { skip: 0, take: 10 },
   });
 
+  posts.forEach((post) => {
+    post.sections?.sort((a, b) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0));
+  });
+
   res.status(200).json({
     posts: posts,
     count: metadata.count,

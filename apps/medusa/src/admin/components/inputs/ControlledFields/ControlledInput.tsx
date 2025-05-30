@@ -30,6 +30,7 @@ export const ControlledInput = <T extends FieldValues>({ name, rules, onChange, 
         <Input
           {...field}
           {...props}
+          labelClassName={props.labelClassName}
           formErrors={errors}
           onChange={(evt) => {
             if (onChange) {

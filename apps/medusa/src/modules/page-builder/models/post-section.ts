@@ -7,7 +7,7 @@ export const PostSectionModel = model.define(
   {
     id: model.id({ prefix: 'postsec' }).primaryKey(),
     status: model.enum(['draft', 'published', 'archived']).default('draft'),
-    name: model.text(),
+    title: model.text(),
     layout: model.enum(['full_width', 'two_column', 'grid']).default('full_width'),
     sort_order: model.number(),
     blocks: model.json(),
