@@ -1,0 +1,759 @@
+---
+description: Medusa v2 admin UI development patterns and best practices
+globs: ["apps/medusa/src/admin/**/*"]
+alwaysApply: true
+---
+
+# Medusa v2 Admin UI Development Rules
+
+## Overview
+
+This document outlines the architectural patterns and best practices for Medusa v2 admin UI development, including React components, hooks, forms, and state management patterns.
+
+## Core Principles
+
+1. **Component Composition**: Build reusable, composable React components
+2. **Type Safety**: Use TypeScript strictly throughout the admin UI
+3. **Consistent UI Patterns**: Follow Medusa UI design system conventions
+4. **Declarative State Management**: Use React Hook Form and TanStack Query
+5. **Accessibility First**: Ensure all components are accessible by default
+
+## Component Architecture
+
+### Component Structure
+```
+src/admin/
+├── components/           # Reusable UI components
+│   ├── inputs/          # Form input components
+│   │   └── ControlledFields/
+│   ├── Sidebar/         # Navigation components
+│   └── [ComponentName]/
+├── editor/              # Feature-specific components
+│   ├── components/
+│   ├── hooks/
+│   └── providers/
+├── hooks/               # Shared custom hooks
+├── routes/              # Page components and routing
+└── sdk.ts              # API client configuration
+```
+
+### Component Patterns
+
+#### Controlled Form Components
+```typescript
+import { Control, FieldValues, Path, UseFormSetError } from 'react-hook-form';
+import { Input } from '@medusajs/ui';
+
+interface ControlledInputProps<T extends FieldValues> {
+  name: Path<T>;
+  control: Control<T>;
+  rules?: object;
+  onChange?: (value: string) => void;
+  labelClassName?: string;
+}
+
+export const ControlledInput = <T extends FieldValues>({
+  name,
+  control,
+  rules,
+  onChange,
+  ...props
+}: ControlledInputProps<T>) => {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field, fieldState: { error } }) => (
+        <Input
+          {...field}
+          {...props}
+          labelClassName={props.labelClassName}
+          formErrors={error ? { [name]: error } : undefined}
+          onChange={(evt) => {
+            field.onChange(evt);
+            onChange?.(evt.target.value);
+          }}
+        />
+      )}
+    />
+  );
+};
+```
+
+#### List Item Components
+```typescript
+import { FC, MouseEventHandler } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Badge, DropdownMenu, IconButton, Text } from '@medusajs/ui';
+import { EllipsisHorizontal, Trash } from '@medusajs/icons';
+
+interface ListItemProps {
+  item: ResourceType;
+  index: number;
+  onEdit?: (item: ResourceType) => void;
+  onDelete?: (item: ResourceType) => void;
+  onDuplicate?: (item: ResourceType) => void;
+}
+
+export const ResourceListItem: FC<ListItemProps> = ({
+  item,
+  index,
+  onEdit,
+  onDelete,
+  onDuplicate,
+}) => {
+  const navigate = useNavigate();
+
+  const handleEditClick = () => {
+    onEdit?.(item);
+  };
+
+  const handleDeleteClick: MouseEventHandler<HTMLDivElement> = async (event) => {
+    event.stopPropagation();
+    onDelete?.(item);
+  };
+
+  return (
+    <article
+      className="border-grey-20 rounded-rounded hover:bg-grey-5 focus:border-violet-60 focus:text-violet-60 focus:shadow-cta flex items-center justify-between border bg-white p-3 text-left leading-none focus:outline-none"
+      onClick={handleEditClick}
+      tabIndex={0}
+      role="button"
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-1.5">
+        <div className="min-w-0 max-w-[calc(100%-40px)] flex-1">
+          <Text size="base" weight="plus" className="w-full truncate">
+            {item.name || 'Untitled'}
+          </Text>
+        </div>
+      </div>
+
+      {item.status === 'draft' && <Badge className="mx-2">Draft</Badge>}
+
+      <DropdownMenu>
+        <DropdownMenu.Trigger asChild>
+          <IconButton variant="transparent" size="small">
+            <EllipsisHorizontal />
+          </IconButton>
+        </DropdownMenu.Trigger>
+
+        <DropdownMenu.Content align="start" sideOffset={4}>
+          <DropdownMenu.Item onClick={handleEditClick}>Edit</DropdownMenu.Item>
+          <DropdownMenu.Item onClick={onDuplicate}>Duplicate</DropdownMenu.Item>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item onClick={handleDeleteClick}>
+            <Trash className="mr-2" /> Delete
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu>
+    </article>
+  );
+};
+```
+
+#### Sidebar Components
+```typescript
+import { FC, PropsWithChildren } from 'react';
+import clsx from 'clsx';
+
+interface SidebarProps extends PropsWithChildren {
+  side: 'left' | 'right';
+  isOpen: boolean;
+  toggle: () => void;
+  open: () => void;
+  close: () => void;
+  className?: string;
+}
+
+export const Sidebar: FC<SidebarProps> = ({
+  side,
+  isOpen,
+  toggle,
+  open,
+  close,
+  className,
+  children,
+}) => {
+  return (
+    <div
+      className={clsx(
+        'fixed inset-y-0 z-50 flex w-80 flex-col bg-white shadow-lg transition-transform duration-300',
+        {
+          'left-0': side === 'left',
+          'right-0': side === 'right',
+          '-translate-x-full': side === 'left' && !isOpen,
+          'translate-x-full': side === 'right' && !isOpen,
+        },
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+```
+
+## Custom Hooks Patterns
+
+### API Mutation Hooks
+```typescript
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { sdk } from '../sdk';
+import { QUERY_KEYS } from './keys';
+
+export const useAdminCreateResource = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CreateResourceResponse, Error, CreateResourceInput>({
+    mutationFn: async (data) => {
+      return sdk.admin.resource.create(data);
+    },
+    mutationKey: QUERY_KEYS.RESOURCES,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RESOURCES });
+    },
+  });
+};
+
+export const useAdminUpdateResource = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<
+    UpdateResourceResponse,
+    Error,
+    { id: string; data: UpdateResourceInput }
+  >({
+    mutationFn: async ({ id, data }) => {
+      return sdk.admin.resource.update(id, data);
+    },
+    mutationKey: QUERY_KEYS.RESOURCES,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RESOURCES });
+    },
+  });
+};
+
+export const useAdminDeleteResource = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<DeleteResourceResponse, Error, string>({
+    mutationFn: async (id: string) => {
+      return sdk.admin.resource.delete(id);
+    },
+    mutationKey: QUERY_KEYS.RESOURCES,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RESOURCES });
+    },
+  });
+};
+
+export const useAdminCreatePostSection = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CreatePostSectionResponse, Error, CreatePostSectionInput>({
+    mutationFn: async (data) => {
+      return sdk.admin.pageBuilder.createPostSection(data);
+    },
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
+    },
+  });
+};
+```
+
+### Query Hooks
+```typescript
+import { useQuery } from '@tanstack/react-query';
+import { sdk } from '../sdk';
+
+export const RESOURCES_QUERY_KEY = ['resources'];
+
+export const useAdminListResources = (query: ListResourcesQuery) => {
+  return useQuery<ListResourcesResponse, Error>({
+    queryKey: [...RESOURCES_QUERY_KEY, query],
+    queryFn: async () => {
+      return sdk.admin.resource.list(query);
+    },
+  });
+};
+
+export const useAdminFetchResource = (id: string) => {
+  return useQuery<Resource>({
+    queryKey: [...RESOURCES_QUERY_KEY, id],
+    queryFn: async () => {
+      const response = await sdk.admin.resource.retrieve(id);
+      return response.resource;
+    },
+    enabled: !!id,
+  });
+};
+```
+
+### Context Hooks
+```typescript
+import { createContext, useContext, useState, ReactNode } from 'react';
+
+interface SidebarContextType {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+}
+
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+
+export const SidebarProvider = ({ children }: { children: ReactNode }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
+  const toggle = () => setIsOpen(!isOpen);
+
+  return (
+    <SidebarContext.Provider value={{ isOpen, open, close, toggle }}>
+      {children}
+    </SidebarContext.Provider>
+  );
+};
+
+export const useSidebar = () => {
+  const context = useContext(SidebarContext);
+  if (context === undefined) {
+    throw new Error('useSidebar must be used within a SidebarProvider');
+  }
+  return context;
+};
+```
+
+## Form Handling Patterns
+
+### Form Provider Setup
+```typescript
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const formSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  meta_title: z.string().optional(),
+  meta_description: z.string().optional(),
+  meta_image_url: z.string().url().optional(),
+  status: z.enum(['draft', 'published']).default('draft'),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+export const ResourceForm = () => {
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: '',
+      status: 'draft',
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await createResource(data);
+      toast.success('Resource created successfully');
+    } catch (error) {
+      toast.error('Failed to create resource');
+    }
+  };
+
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <ControlledInput name="title" label="Title" />
+        <ControlledInput name="meta_title" label="Meta Title" />
+        <ControlledTextarea name="meta_description" label="Meta Description" />
+        <ControlledInput name="meta_image_url" label="Meta Image URL" />
+        <Button type="submit">Create Resource</Button>
+      </form>
+    </FormProvider>
+  );
+};
+```
+
+### Delete Confirmation Pattern
+```typescript
+import { usePrompt } from '@medusajs/ui';
+
+export const useDeleteConfirmation = () => {
+  const prompt = usePrompt();
+
+  const confirmDelete = async (resourceName: string) => {
+    return await prompt({
+      title: `Delete ${resourceName}`,
+      description: `Are you sure you want to delete this ${resourceName}?`,
+      confirmText: 'Yes, delete',
+      cancelText: 'Cancel',
+    });
+  };
+
+  return { confirmDelete };
+};
+```
+
+## State Management Patterns
+
+### Query Key Management
+```typescript
+export const QUERY_KEYS = {
+  POSTS: ['posts'],
+  POST_SECTIONS: ['post-sections'],
+  TEMPLATES: ['templates'],
+  AUTHORS: ['authors'],
+  TAGS: ['tags'],
+} as const;
+
+// Always invalidate related queries in mutations
+export const useAdminCreatePostSection = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<CreatePostSectionResponse, Error, CreatePostSectionInput>({
+    mutationFn: async (data) => {
+      return sdk.admin.pageBuilder.createPostSection(data);
+    },
+    mutationKey: QUERY_KEYS.POST_SECTIONS,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POST_SECTIONS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.POSTS });
+    },
+  });
+};
+```
+
+### Error Handling
+```typescript
+import { toast } from '@medusajs/ui';
+
+export const handleAsyncOperation = async <T>(
+  operation: () => Promise<T>,
+  successMessage?: string,
+  errorMessage?: string
+): Promise<T | null> => {
+  try {
+    const result = await operation();
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+    return result;
+  } catch (error) {
+    console.error('Operation failed:', error);
+    toast.error(errorMessage || 'Operation failed');
+    return null;
+  }
+};
+```
+
+## UI Component Patterns
+
+### Medusa UI Components Usage
+```typescript
+import {
+  Button,
+  Heading,
+  Text,
+  Badge,
+  DropdownMenu,
+  IconButton,
+  toast,
+  usePrompt,
+} from '@medusajs/ui';
+import { Plus, EllipsisHorizontal, Trash } from '@medusajs/icons';
+
+// Always use Medusa UI components for consistency
+// Prefer semantic HTML elements with proper ARIA attributes
+// Use Medusa icons for visual consistency
+```
+
+### Layout Patterns
+```typescript
+export const AdminLayout = ({ children }: { children: ReactNode }) => {
+  return (
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar />
+      <main className="flex-1 overflow-auto">
+        <div className="p-6">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+};
+```
+
+## Routing Patterns
+
+### Route Organization
+```typescript
+// apps/medusa/src/admin/routes/content/posts/page.tsx
+export default function PostsPage() {
+  return <PostsDataTable />;
+}
+
+// apps/medusa/src/admin/routes/content/editor/[id]/page.tsx
+export default function EditorPage() {
+  return <PostEditor />;
+}
+```
+
+### Navigation Patterns
+```typescript
+import { useNavigate } from 'react-router-dom';
+
+export const useNavigation = () => {
+  const navigate = useNavigate();
+
+  const navigateToEdit = (resourceType: string, id: string) => {
+    navigate(`/content/${resourceType}/${id}/edit`);
+  };
+
+  const navigateToList = (resourceType: string) => {
+    navigate(`/content/${resourceType}`);
+  };
+
+  return { navigateToEdit, navigateToList };
+};
+```
+
+## Performance Optimization
+
+### Component Optimization
+```typescript
+import { memo, useMemo, useCallback } from 'react';
+
+export const OptimizedListItem = memo<ListItemProps>(({ item, onEdit, onDelete }) => {
+  const handleEdit = useCallback(() => {
+    onEdit?.(item);
+  }, [item, onEdit]);
+
+  const handleDelete = useCallback(() => {
+    onDelete?.(item);
+  }, [item, onDelete]);
+
+  const statusBadge = useMemo(() => {
+    return item.status === 'draft' ? <Badge>Draft</Badge> : null;
+  }, [item.status]);
+
+  return (
+    <div onClick={handleEdit}>
+      {/* Component content */}
+      {statusBadge}
+    </div>
+  );
+});
+```
+
+### Query Optimization
+```typescript
+// Use select to limit data fetching
+const { data: posts } = useAdminListPosts({
+  select: ['id', 'title', 'status', 'created_at'],
+  limit: 20,
+  offset: page * 20,
+});
+
+// Prefetch related data
+const queryClient = useQueryClient();
+const prefetchPostSections = useCallback((postId: string) => {
+  queryClient.prefetchQuery({
+    queryKey: [...QUERY_KEYS.POST_SECTIONS, { post_id: postId }],
+    queryFn: () => sdk.admin.postSections.list({ post_id: postId }),
+  });
+}, [queryClient]);
+```
+
+## Testing Patterns
+
+### Component Testing
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ResourceListItem } from './ResourceListItem';
+
+describe('ResourceListItem', () => {
+  const queryClient = new QueryClient();
+  
+  const renderWithProviders = (component: ReactElement) => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        {component}
+      </QueryClientProvider>
+    );
+  };
+
+  it('should render resource name', () => {
+    const mockItem = { id: '1', name: 'Test Resource', status: 'draft' };
+    
+    renderWithProviders(
+      <ResourceListItem item={mockItem} index={0} />
+    );
+    
+    expect(screen.getByText('Test Resource')).toBeInTheDocument();
+  });
+
+  it('should call onEdit when clicked', () => {
+    const mockOnEdit = jest.fn();
+    const mockItem = { id: '1', name: 'Test Resource', status: 'draft' };
+    
+    renderWithProviders(
+      <ResourceListItem item={mockItem} index={0} onEdit={mockOnEdit} />
+    );
+    
+    fireEvent.click(screen.getByRole('button'));
+    expect(mockOnEdit).toHaveBeenCalledWith(mockItem);
+  });
+});
+```
+
+### Hook Testing
+```typescript
+import { renderHook, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAdminCreateResource } from './resource-mutations';
+
+describe('useAdminCreateResource', () => {
+  it('should create resource successfully', async () => {
+    const queryClient = new QueryClient();
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useAdminCreateResource(), { wrapper });
+
+    await act(async () => {
+      await result.current.mutateAsync({
+        name: 'Test Resource',
+        status: 'draft',
+      });
+    });
+
+    expect(result.current.isSuccess).toBe(true);
+  });
+});
+```
+
+## Verification Checklist
+
+Before submitting admin UI code, ensure:
+
+### State Management
+- [ ] All mutations invalidate related query keys using `QUERY_KEYS`
+- [ ] Query keys are centralized and use consistent naming
+- [ ] Loading and error states are properly handled
+- [ ] Optimistic updates are implemented where appropriate
+
+### Component Patterns
+- [ ] Event handlers use `stopPropagation()` for nested actions
+- [ ] Components use proper TypeScript generics for reusability
+- [ ] Form validation uses Zod schemas with proper error handling
+- [ ] Accessibility attributes (ARIA labels, roles) are included
+
+### Performance
+- [ ] Components use `memo()` for expensive renders
+- [ ] Event handlers are wrapped in `useCallback()` when needed
+- [ ] Heavy computations use `useMemo()`
+- [ ] Query data is properly selected to minimize re-renders
+
+### Error Handling
+- [ ] All async operations have try-catch blocks
+- [ ] User-friendly error messages are displayed via toast
+- [ ] Network errors are handled gracefully
+- [ ] Form validation errors are displayed inline
+
+## Dependencies
+
+Required packages for Medusa v2 admin development:
+- `@medusajs/ui`: Official UI component library
+- `@medusajs/icons`: Official icon library
+- `@tanstack/react-query`: Server state management
+- `react-hook-form`: Form state management
+- `@hookform/resolvers`: Form validation resolvers
+- `zod`: Schema validation
+- `clsx`: Conditional class names
+- `react-router-dom`: Client-side routing
+
+## Common Anti-Patterns to Avoid
+
+❌ **Don't**: Fetch data directly in components
+```typescript
+// Bad - direct API calls in components
+const MyComponent = () => {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch('/api/data').then(res => setData(res));
+  }, []);
+};
+```
+
+✅ **Do**: Use custom hooks with TanStack Query
+```typescript
+// Good - use query hooks
+const MyComponent = () => {
+  const { data, isLoading } = useAdminListResources();
+};
+```
+
+❌ **Don't**: Skip event.stopPropagation() in nested actions
+```typescript
+// Bad - events bubble up unintentionally
+const handleDelete = async () => {
+  await deleteItem(id); // Parent onClick also fires
+};
+```
+
+✅ **Do**: Use stopPropagation for nested actions
+```typescript
+// Good - prevent event bubbling
+const handleDelete = async (event: MouseEvent) => {
+  event.stopPropagation();
+  await deleteItem(id);
+};
+```
+
+❌ **Don't**: Forget to invalidate query cache
+```typescript
+// Bad - stale data after mutations
+const { mutate } = useMutation({
+  mutationFn: createResource,
+  // Missing onSuccess invalidation
+});
+```
+
+✅ **Do**: Always invalidate related queries
+```typescript
+// Good - fresh data after mutations
+const { mutate } = useMutation({
+  mutationFn: createResource,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RESOURCES });
+  },
+});
+```
+
+### Component Files
+- Use PascalCase for component files: `PostSectionListItem.tsx`
+- Co-locate related files in feature directories
+- Separate concerns: components, hooks, types, and tests
+
+#### Hook Files
+- Group by functionality: `post-sections-mutations.ts`, `post-sections-queries.ts`
+- Use descriptive names: `useAdminCreatePostSection`
+- Export related hooks from index files
+
+#### Type Files
+- Define interfaces close to usage
+- Use barrel exports for shared types
+- Prefer type-only imports: `import type { User } from './types'`
+
+#### Test Files
+- Mirror source structure: `components/__tests__/Button.test.tsx`
+- Use descriptive test names
+- Group related tests in describe blocks

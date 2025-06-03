@@ -1,0 +1,393 @@
+---
+description: Medusa v2 backend development patterns and best practices
+globs: ["apps/medusa/src/api/**/*", "apps/medusa/src/modules/**/*", "apps/medusa/src/workflows/**/*", "apps/medusa/src/links/**/*"]
+alwaysApply: true
+---
+
+# Medusa v2 Backend Development Rules
+
+## Overview
+
+This document outlines the architectural patterns and best practices for Medusa v2 backend development, including API endpoints, modules, workflows, and data models.
+
+## Core Principles
+
+1. **Workflow-First Architecture**: Use workflows for all complex business logic
+2. **Type Safety**: Leverage TypeScript strictly throughout the backend
+3. **Modular Design**: Organize code into focused, reusable modules
+4. **Consistent API Patterns**: Follow Medusa v2 conventions for all endpoints
+
+## API Endpoint Patterns
+
+### Route Structure
+```typescript
+// apps/medusa/src/api/admin/[resource]/[id]/route.ts
+import type { AuthenticatedMedusaRequest, MedusaResponse } from '@medusajs/framework/http';
+import { workflowName } from '../../../workflows/workflow-name';
+
+export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const id = req.params.id;
+  
+  const { result } = await workflowName(req.scope).run({
+    input: { id },
+  });
+
+  res.status(200).json({ resource: result });
+};
+```
+
+### Required Patterns
+- Always use `AuthenticatedMedusaRequest` and `MedusaResponse` types
+- Extract parameters from `req.params`
+- Use workflows for business logic, never inline complex operations
+- Return consistent response structure: `{ resource: result }`
+- Use appropriate HTTP status codes (200, 201, 400, 404, 500)
+
+### Error Handling
+```typescript
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  try {
+    const { result } = await createResourceWorkflow(req.scope).run({
+      input: req.body,
+    });
+    
+    res.status(201).json({ resource: result });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message || 'Failed to create resource' 
+    });
+  }
+};
+```
+
+## Module Development
+
+### Module Structure
+```
+src/modules/[module-name]/
+├── index.ts              # Module definition and exports
+├── models/              # Data models
+│   ├── [entity].ts
+│   └── index.ts
+├── services/            # Business logic services
+│   ├── [entity].ts
+│   └── index.ts
+├── migrations/          # Database migrations
+└── types.ts            # Module-specific types
+```
+
+### Model Patterns
+```typescript
+import { model } from '@medusajs/framework/utils';
+
+export const PostSection = model.define('post_section', {
+  id: model.id().primaryKey(),
+  name: model.text(),
+  layout: model.enum(['full_width', 'two_column', 'grid']),
+  blocks: model.json(),
+  status: model.enum(['draft', 'published']).default('draft'),
+  sort_order: model.number().default(0),
+  post_id: model.text(),
+  created_at: model.dateTime().default('now'),
+  updated_at: model.dateTime().default('now'),
+});
+```
+
+### Service Patterns
+```typescript
+import { MedusaService } from '@medusajs/framework/utils';
+
+class PostSectionService extends MedusaService({
+  PostSection,
+}) {
+  async createPostSection(data: CreatePostSectionInput) {
+    return await this.create(data);
+  }
+
+  async updatePostSection(id: string, data: UpdatePostSectionInput) {
+    return await this.update(id, data);
+  }
+
+  async deletePostSection(id: string) {
+    return await this.delete(id);
+  }
+}
+
+export default PostSectionService;
+```
+
+## Workflow Development
+
+### Workflow Structure
+```typescript
+import { createWorkflow, WorkflowResponse } from '@medusajs/framework/workflows';
+import { createPostSectionStep } from './steps/create-post-section';
+
+export const createPostSectionWorkflow = createWorkflow(
+  'create-post-section',
+  (input: CreatePostSectionWorkflowInput) => {
+    const postSection = createPostSectionStep(input);
+    
+    return new WorkflowResponse(postSection);
+  }
+);
+```
+
+### Step Patterns
+```typescript
+import { createStep, StepResponse } from '@medusajs/framework/workflows';
+
+export const createPostSectionStep = createStep(
+  'create-post-section-step',
+  async (input: CreatePostSectionInput, { container }) => {
+    const postSectionService = container.resolve('postSectionService');
+    
+    const postSection = await postSectionService.createPostSection(input);
+    
+    return new StepResponse(postSection, postSection.id);
+  },
+  async (id: string, { container }) => {
+    const postSectionService = container.resolve('postSectionService');
+    await postSectionService.deletePostSection(id);
+  }
+);
+```
+
+### Required Workflow Patterns
+- Always include compensation logic in steps
+- Use descriptive workflow and step names
+- Return `StepResponse` with both result and compensation data
+- Resolve services from container, never import directly
+- Handle errors gracefully with proper rollback
+
+## Type Definitions
+
+### API Types
+```typescript
+export interface AdminPageBuilderCreatePostSectionBody {
+  name: string;
+  layout: 'full_width' | 'two_column' | 'grid';
+  blocks: Record<string, any>;
+  post_id: string;
+  sort_order?: number;
+}
+
+export interface AdminPageBuilderCreatePostSectionResponse {
+  section: PostSection;
+}
+```
+
+### Workflow Types
+```typescript
+export interface CreatePostSectionWorkflowInput {
+  name: string;
+  layout: string;
+  blocks: Record<string, any>;
+  post_id: string;
+  sort_order: number;
+}
+```
+
+## Database Patterns
+
+### Migration Structure
+```typescript
+import { Migration } from '@mikro-orm/migrations';
+
+export class Migration20240101000000 extends Migration {
+  async up(): Promise<void> {
+    this.addSql(`
+      CREATE TABLE "post_section" (
+        "id" text PRIMARY KEY,
+        "name" text NOT NULL,
+        "layout" text NOT NULL,
+        "blocks" jsonb NOT NULL DEFAULT '{}',
+        "status" text NOT NULL DEFAULT 'draft',
+        "sort_order" integer NOT NULL DEFAULT 0,
+        "post_id" text NOT NULL,
+        "created_at" timestamptz NOT NULL DEFAULT now(),
+        "updated_at" timestamptz NOT NULL DEFAULT now()
+      );
+    `);
+  }
+
+  async down(): Promise<void> {
+    this.addSql('DROP TABLE "post_section";');
+  }
+}
+```
+
+## Security & Validation
+
+### Input Validation
+```typescript
+import { z } from 'zod';
+
+export const createPostSectionSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  layout: z.enum(['full_width', 'two_column', 'grid']),
+  blocks: z.record(z.any()).default({}),
+  post_id: z.string().min(1, 'Post ID is required'),
+  sort_order: z.number().int().min(0).default(0),
+});
+```
+
+### Authentication
+- Always use `AuthenticatedMedusaRequest` for admin endpoints
+- Validate user permissions before executing workflows
+- Never expose internal service methods directly
+
+## Performance Considerations
+
+### Query Optimization
+- Use select queries to limit returned fields
+- Implement pagination for list endpoints
+- Use database indexes for frequently queried fields
+- Avoid N+1 queries in relationships
+
+### Caching
+- Cache frequently accessed data
+- Invalidate cache on data mutations
+- Use Redis for session and temporary data storage
+
+## Testing Patterns
+
+### Workflow Testing
+```typescript
+import { createPostWorkflow } from '../create-post';
+
+describe('createPostWorkflow', () => {
+  it('should create post successfully', async () => {
+    const input = {
+      post: {
+        title: 'Test Post',
+        status: 'draft',
+        author_id: 'author-1',
+      },
+    };
+
+    const { result } = await createPostWorkflow(container).run({ input });
+    
+    expect(result).toMatchObject({
+      id: expect.any(String),
+      title: 'Test Post',
+      status: 'draft',
+    });
+  });
+
+  it('should handle validation errors', async () => {
+    const input = { post: { title: '' } }; // Invalid input
+    
+    await expect(
+      createPostWorkflow(container).run({ input })
+    ).rejects.toThrow('Title is required');
+  });
+});
+```
+
+### Unit Tests
+```typescript
+describe('PostSectionService', () => {
+  it('should create a post section', async () => {
+    const service = new PostSectionService();
+    const input = {
+      name: 'Test Section',
+      layout: 'full_width',
+      blocks: {},
+      post_id: 'post_123',
+    };
+    
+    const result = await service.createPostSection(input);
+    
+    expect(result.name).toBe(input.name);
+    expect(result.layout).toBe(input.layout);
+  });
+});
+```
+
+### Integration Tests
+- Test complete workflow execution
+- Verify database state changes
+- Test error scenarios and rollbacks
+- Validate API response formats
+
+## Verification Checklist
+
+Before submitting backend code, ensure:
+
+### API Endpoints
+- [ ] All endpoints use workflow pattern for business logic
+- [ ] Proper middleware validation with Zod schemas
+- [ ] Consistent response structure with proper status codes
+- [ ] Error handling with appropriate HTTP status codes
+
+### Workflows
+- [ ] Each workflow has a single responsibility
+- [ ] Steps are atomic and can be rolled back
+- [ ] Proper error handling and compensation logic
+- [ ] Input/output types are properly defined
+
+### Database
+- [ ] Migrations are reversible and tested
+- [ ] Indexes are added for query performance
+- [ ] Foreign key constraints are properly defined
+- [ ] Soft deletes are used where appropriate
+
+### Security
+- [ ] Input validation on all endpoints
+- [ ] Authentication checks where required
+- [ ] Proper error message sanitization
+- [ ] Rate limiting considerations
+
+## Common Anti-Patterns to Avoid
+
+❌ **Don't**: Put business logic directly in API routes
+```typescript
+// Bad - business logic in route handler
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const data = req.validatedBody;
+  const postSection = await req.scope.resolve('postSectionService').create(data);
+  // Missing validation, error handling, events
+  res.json({ section: postSection });
+};
+```
+
+✅ **Do**: Use workflows for business logic
+```typescript
+// Good - workflow handles business logic
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const { result } = await createPostSectionWorkflow(req.scope).run({
+    input: { section: req.validatedBody }
+  });
+  res.json({ section: result });
+};
+```
+
+❌ **Don't**: Skip input validation
+```typescript
+// Bad - no validation
+export const POST = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
+  const data = req.body; // Unvalidated input
+  // Process data...
+};
+```
+
+✅ **Do**: Use Zod middleware validation
+```typescript
+// Good - proper validation
+const createSchema = z.object({
+  name: z.string().min(1),
+  status: z.enum(['draft', 'published']).default('draft'),
+});
+
+export const validateCreate = validateAndTransformBody(createSchema);
+```
+
+## Dependencies
+
+Required packages for Medusa v2 backend development:
+- `@medusajs/framework`: Core framework utilities
+- `@medusajs/types`: Type definitions
+- `@mikro-orm/core`: Database ORM
+- `zod`: Schema validation
+- `@types/node`: Node.js type definitions
