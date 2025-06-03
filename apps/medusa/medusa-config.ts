@@ -86,7 +86,7 @@ module.exports = defineConfig({
     vite: () => {
       return {
         optimizeDeps: {
-          include: ['@lambdacurry/medusa-plugins-sdk'],
+          include: ['@lambdacurry/medusa-plugins-sdk', '@lambdacurry/medusa-forms'],
         },
       };
     },

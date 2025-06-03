@@ -18,7 +18,7 @@ import { Plus } from '@medusajs/icons';
 import { Button, DropdownMenu, Heading, toast } from '@medusajs/ui';
 import { useEffect, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { ControlledInput } from '../../../components/inputs/ControlledFields/ControlledInput';
+import { ControlledInput } from '@lambdacurry/medusa-forms';
 import { useAdminCreatePostSection } from '../../../hooks/post-sections-mutations';
 import { useAdminReorderPostSections } from '../../../hooks/posts-mutations';
 import { usePost } from '../../hooks/use-post';
