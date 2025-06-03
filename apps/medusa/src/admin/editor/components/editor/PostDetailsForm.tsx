@@ -1,9 +1,8 @@
+import { ControlledInput, ControlledTextArea } from '@lambdacurry/medusa-forms';
 import { Post } from '@lambdacurry/page-builder-types';
 import { Button, Heading, Label, usePrompt } from '@medusajs/ui';
 import { useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { ControlledInput } from '../../../components/inputs/ControlledFields/ControlledInput';
-import { ControlledTextArea } from '../../../components/inputs/ControlledFields/ControlledTextArea';
 import { FieldGroup } from '../../../components/inputs/Field/FieldGroup';
 import FileUpload from '../../../components/inputs/Field/FileUpload';
 import { useAdminDeletePost } from '../../../hooks/posts-mutations';
@@ -40,8 +39,6 @@ export const PostDetailsForm = ({ post, afterSave, afterDelete }: PostDetailsFor
       await afterDelete();
     }
   };
-
-  console.log(form.formState);
 
   return (
     <FormProvider {...form}>

@@ -3567,6 +3567,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lambdacurry/medusa-forms@npm:^0.2.8":
+  version: 0.2.8
+  resolution: "@lambdacurry/medusa-forms@npm:0.2.8"
+  dependencies:
+    "@hookform/error-message": "npm:^2.0.1"
+  peerDependencies:
+    "@medusajs/ui": ^4.0.0
+    react: ^18.3.0 || ^19.0.0
+    react-hook-form: ^7.49.0
+  checksum: 10c0/e6c41a8c91a69a578e7ea66d24f4eb319caa3dab43ea676746edb12f79f0fd5a9be1341315067ae152ff95089a44d967358c2f094e2a291249f9782fcc5f0a9f
+  languageName: node
+  linkType: hard
+
 "@lambdacurry/medusa-plugins-sdk@npm:0.0.5":
   version: 0.0.5
   resolution: "@lambdacurry/medusa-plugins-sdk@npm:0.0.5"
@@ -21820,6 +21833,7 @@ __metadata:
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"
+    "@lambdacurry/medusa-forms": "npm:^0.2.8"
     "@lambdacurry/medusa-product-reviews": "npm:1.2.0"
     "@lambdacurry/page-builder-sdk": "npm:0.0.1"
     "@medusajs/admin-sdk": "npm:2.8.2"
