@@ -10,7 +10,8 @@
     "medusa:init": "turbo run medusa:init --filter=medusa",
     "format": "turbo run format",
     "clean": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}'",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "compose": "cd apps/medusa && docker compose up -d"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.3",
@@ -22,8 +23,8 @@
     "node": ">=20"
   },
   "resolutions": {
-    "@medusajs/js-sdk": "2.7.0",
-    "@medusajs/types": "2.7.0"
+    "@medusajs/js-sdk": "2.8.2",
+    "@medusajs/types": "2.8.2"
   },
   "packageManager": "yarn@4.5.0",
   "workspaces": [

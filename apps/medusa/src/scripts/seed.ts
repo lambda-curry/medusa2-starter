@@ -105,9 +105,15 @@ export default async function seedDemoData({ container }: ExecArgs) {
 
   logger.info('Seeding tax regions...');
 
+  const taxModule = container.resolve(Modules.TAX);
+
+  const taxProviders = await taxModule.listTaxProviders();
+  const taxProvider = taxProviders.find((provider) => provider.id.includes('system'));
+
   await createTaxRegionsWorkflow(container).run({
     input: allCountries.map((country_code) => ({
       country_code,
+      provider_id: taxProvider?.id,
     })),
   });
 
