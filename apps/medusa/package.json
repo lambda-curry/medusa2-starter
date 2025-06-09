@@ -32,7 +32,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@lambdacurry/medusa-product-reviews": "1.2.0",
+    "@lambdacurry/medusa-product-reviews": "1.2.1",
     "@medusajs/admin-sdk": "2.7.0",
     "@medusajs/cli": "2.7.0",
     "@medusajs/framework": "2.7.0",
