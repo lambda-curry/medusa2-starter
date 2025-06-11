@@ -1,6 +1,6 @@
 # MarketHaus Storefront
 
-- [Remix Docs](https://remix.run/docs)
+- [React Router 7 Docs](https://reactrouter.com/en/main)
 
 ## Development
 

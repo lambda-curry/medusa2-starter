@@ -33,7 +33,6 @@ jobs:
           fetch-depth: 0
 
       - name: Cache turbo build setup
-        if: env.skip == 'false'
         uses: WarpBuilds/cache@v1
         with:
           path: .turbo
@@ -51,9 +50,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Type-check
-        if: ${{ needs.detect-changes.outputs.e2e == 'true' }}
         run: yarn typecheck
 
       - name: Build
         run: yarn build
-      
