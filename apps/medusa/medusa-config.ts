@@ -35,6 +35,15 @@ const workflowEngineModule = IS_TEST
       },
     };
 
+const testModules = IS_TEST
+  ? [
+      {
+        resolve: '@lambdacurry/medusa-product-reviews/.medusa/server/src/modules/product-review',
+        options: {},
+      },
+    ]
+  : [];
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -76,6 +85,7 @@ module.exports = defineConfig({
     cacheModule,
     eventBusModule,
     workflowEngineModule,
+    ...testModules,
   ],
   admin: {
     backendUrl: process.env.ADMIN_BACKEND_URL,
