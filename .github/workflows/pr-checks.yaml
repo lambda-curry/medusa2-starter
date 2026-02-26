@@ -13,7 +13,7 @@ env:
 
 jobs:
   lint:
-    runs-on: warp-ubuntu-2404-x64-2x
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
         run: biome ci .
 
   typecheck:
-    runs-on: warp-ubuntu-2404-x64-2x
+    runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -33,8 +33,7 @@ jobs:
           fetch-depth: 0
 
       - name: Cache turbo build setup
-        if: env.skip == 'false'
-        uses: WarpBuilds/cache@v1
+        uses: actions/cache@v4
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
@@ -42,7 +41,7 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: Setup Node.js environment
-        uses: WarpBuilds/setup-node@v4
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
@@ -51,9 +50,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Type-check
-        if: ${{ needs.detect-changes.outputs.e2e == 'true' }}
         run: yarn typecheck
 
       - name: Build
         run: yarn build
-      
