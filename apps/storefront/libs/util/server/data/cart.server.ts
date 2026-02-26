@@ -144,7 +144,7 @@ export const deleteLineItem = withAuthHeaders(async (request, authHeaders, lineI
     throw new Error('Missing cart ID when deleting line item');
   }
 
-  return await sdk.store.cart.deleteLineItem(cartId, lineId, authHeaders).catch(medusaError);
+  return await sdk.store.cart.deleteLineItem(cartId, lineId, {}, authHeaders).catch(medusaError);
 });
 
 export async function enrichLineItems(

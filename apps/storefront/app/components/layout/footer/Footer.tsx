@@ -23,7 +23,7 @@ export const Footer = () => {
   const { region } = useRegion();
 
   const regionOptions = useMemo(() => {
-    return regions.map((region) => ({
+    return (regions ?? []).map((region) => ({
       label: `${region.name} (${region.currency_code})`,
       value: region.id,
     }));

@@ -284,6 +284,7 @@ export const getProductMeta: MetaFunction = ({ data, matches }) => {
   const ogDescription = description;
   const ogImage = product.thumbnail || product.images?.[0]?.url;
   const ogImageAlt = !!ogImage ? `${title} product thumbnail` : undefined;
+  const currencyCode = region?.currency_code ?? 'usd';
 
   return [
     { title },
@@ -293,11 +294,11 @@ export const getProductMeta: MetaFunction = ({ data, matches }) => {
     { property: 'og:image', content: ogImage },
     { property: 'og:image:alt', content: ogImageAlt },
     { property: 'og:type', content: 'product' },
-    { property: 'product:price:currency', content: region.currency_code },
+    { property: 'product:price:currency', content: currencyCode },
     {
       property: 'product:price:amount',
       content: formatPrice(getVariantFinalPrice(defaultVariant), {
-        currency: region.currency_code,
+        currency: currencyCode,
       }),
     },
   ];
