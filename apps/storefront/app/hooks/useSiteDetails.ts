@@ -1,7 +1,8 @@
+import type { SiteDetailsRootData } from '@libs/types';
 import { useRootLoaderData } from './useRootLoaderData';
 
 export const useSiteDetails = () => {
   const data = useRootLoaderData();
 
-  return data.siteDetails || {};
+  return data?.siteDetails ?? ({} as SiteDetailsRootData);
 };
