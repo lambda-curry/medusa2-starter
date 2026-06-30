@@ -16,15 +16,15 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
   updateStoresWorkflow,
 } from '@medusajs/core-flows';
-import type { IPaymentModuleService } from '@medusajs/framework/types';
-import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
-import { createCollectionsWorkflow } from '@medusajs/medusa/core-flows';
 import type {
   ExecArgs,
   IFulfillmentModuleService,
+  IPaymentModuleService,
   ISalesChannelModuleService,
   IStoreModuleService,
-} from '@medusajs/types';
+} from '@medusajs/framework/types';
+import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
+import { createCollectionsWorkflow } from '@medusajs/medusa/core-flows';
 import { seedProducts } from './seed/products';
 import { generateReviewResponse, reviewContents, texasCustomers } from './seed/reviews';
 

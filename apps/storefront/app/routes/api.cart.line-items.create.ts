@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 export const createLineItemSchema = z.object({
   productId: z.string().min(1, 'Product ID is required'),
-  options: z.record(z.string()).default({}),
+  options: z.record(z.string(), z.string()).default({}),
   quantity: z.coerce.number().int().min(1, 'Quantity must be at least 1'),
 });
 
