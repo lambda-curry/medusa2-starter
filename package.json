@@ -10,7 +10,11 @@
     "medusa:init": "turbo run medusa:init --filter=medusa",
     "format": "turbo run format",
     "clean": "find . -name \"node_modules\" -type d -prune -exec rm -rf '{}'",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "e2e": "yarn workspace e2e test",
+    "e2e:ui": "yarn workspace e2e test:ui",
+    "e2e:debug": "yarn workspace e2e test:debug",
+    "e2e:report": "yarn workspace e2e test:report"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.3",

@@ -1,0 +1,23 @@
+{
+  "name": "e2e",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.9.1",
+  "scripts": {
+    "test": "node --experimental-strip-types scripts/run-e2e.ts",
+    "test:playwright": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report",
+    "install:browsers": "playwright install --with-deps chromium",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@types/node": "26.0.1",
+    "typescript": "^5.6.2"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  }
+}
