@@ -25,6 +25,7 @@
     "node": ">=20"
   },
   "resolutions": {
+    "@hookform/resolvers": "5.4.0",
     "@medusajs/admin-bundler": "2.17.1",
     "@medusajs/admin-sdk": "2.17.1",
     "@medusajs/admin-shared": "2.17.1",
@@ -82,6 +83,7 @@
     "@medusajs/workflow-engine-redis": "2.17.1",
     "@medusajs/workflows-sdk": "2.17.1",
     "zod": "4.2.0",
+    "react-hook-form": "7.55.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },

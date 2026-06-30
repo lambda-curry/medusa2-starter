@@ -16,12 +16,14 @@ export const createLineItemSchema = z.object({
 });
 
 type CreateLineItemFormData = z.infer<typeof createLineItemSchema>;
+type CreateLineItemFormInput = z.input<typeof createLineItemSchema>;
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { errors, data: validatedFormData } = await getValidatedFormData<CreateLineItemFormData>(
-    request,
-    zodResolver(createLineItemSchema),
-  );
+  const { errors, data: validatedFormData } = await getValidatedFormData<
+    CreateLineItemFormInput,
+    any,
+    CreateLineItemFormData
+  >(request, zodResolver(createLineItemSchema));
 
   if (errors) {
     return data({ errors }, { status: 400 });

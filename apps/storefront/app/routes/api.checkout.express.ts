@@ -38,6 +38,7 @@ export const expressCheckoutSchema = z.object({
 });
 
 export type ExpressCheckoutFormData = z.infer<typeof expressCheckoutSchema>;
+type ExpressCheckoutFormInput = z.input<typeof expressCheckoutSchema>;
 
 export interface ExpressCheckoutResponse {
   cart: StoreCart;
@@ -46,7 +47,7 @@ export interface ExpressCheckoutResponse {
 }
 
 export async function action(actionArgs: ActionFunctionArgs) {
-  const { errors, data } = await getValidatedFormData<ExpressCheckoutFormData>(
+  const { errors, data } = await getValidatedFormData<ExpressCheckoutFormInput, any, ExpressCheckoutFormData>(
     actionArgs.request,
     zodResolver(expressCheckoutSchema),
   );
@@ -74,7 +75,7 @@ export async function action(actionArgs: ActionFunctionArgs) {
   if (data.shippingOptions) {
     await Promise.all(
       data.shippingOptions.map(
-        async (id) =>
+        async (id: string) =>
           await setShippingMethod(actionArgs.request, {
             cartId: data.cartId,
             shippingOptionId: id,
