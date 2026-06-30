@@ -1,7 +1,6 @@
 import { reactRouter } from '@react-router/dev/vite';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 // import { remixDevTools } from 'remix-development-tools';
 
 export default defineConfig({
@@ -14,6 +13,9 @@ export default defineConfig({
   ssr: {
     noExternal: ['@medusajs/js-sdk', '@lambdacurry/medusa-plugins-sdk'],
   },
-  plugins: [reactRouter(), tsconfigPaths({ root: './' }), vanillaExtractPlugin()],
+  resolve: {
+    tsconfigPaths: true,
+  },
+  plugins: [reactRouter(), vanillaExtractPlugin()],
   build: {},
 });
