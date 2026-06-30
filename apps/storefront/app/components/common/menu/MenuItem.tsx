@@ -1,6 +1,6 @@
 import { MenuItem as HeadlessMenuItem, type MenuItemProps as HeadlessMenuItemProps } from '@headlessui/react';
 import clsx from 'clsx';
-import type { ElementType, FC } from 'react';
+import type { ElementType, FC, ReactElement } from 'react';
 
 export interface MenuItemRenderProps {
   active: boolean;
@@ -10,7 +10,7 @@ export interface MenuItemRenderProps {
 }
 
 export type MenuItemProps = HeadlessMenuItemProps<ElementType> & {
-  item: (menuItemProps: MenuItemRenderProps) => JSX.Element;
+  item: (menuItemProps: MenuItemRenderProps) => ReactElement;
 };
 
 export const MenuItem: FC<MenuItemProps> = ({ item, ...props }) => (

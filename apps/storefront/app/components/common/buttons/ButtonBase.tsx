@@ -5,14 +5,15 @@ import {
   ForwardRefRenderFunction,
   ForwardedRef,
   HTMLAttributes,
+  ReactElement,
   forwardRef,
 } from 'react';
 
 export type ButtonRef = HTMLButtonElement & HTMLAnchorElement;
 
 export type ButtonAs =
-  | keyof Pick<JSX.IntrinsicElements, 'a' | 'button' | 'span'>
-  | ((props: ButtonHTMLAttributes<any> & AnchorHTMLAttributes<any> & HTMLAttributes<HTMLSpanElement>) => JSX.Element);
+  | keyof Pick<React.JSX.IntrinsicElements, 'a' | 'button' | 'span'>
+  | ((props: ButtonHTMLAttributes<any> & AnchorHTMLAttributes<any> & HTMLAttributes<HTMLSpanElement>) => ReactElement);
 
 export type ButtonBaseProps = (ButtonHTMLAttributes<any> &
   AnchorHTMLAttributes<any> &

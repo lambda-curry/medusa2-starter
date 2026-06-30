@@ -82,10 +82,10 @@
     "@medusajs/workflow-engine-inmemory": "2.17.1",
     "@medusajs/workflow-engine-redis": "2.17.1",
     "@medusajs/workflows-sdk": "2.17.1",
-    "zod": "4.2.0",
+    "zod": "4.4.3",
     "react-hook-form": "7.55.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "packageManager": "yarn@4.9.1",
   "workspaces": [
