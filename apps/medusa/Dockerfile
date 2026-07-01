@@ -1,6 +1,7 @@
 FROM node:26-alpine AS base
 
 RUN apk update && apk add --no-cache libc6-compat
+RUN npm install -g corepack && corepack enable && corepack prepare yarn@4.9.1 --activate
 
 WORKDIR /app
 
@@ -41,4 +42,4 @@ WORKDIR /app/server
 
 ENV PORT=80
 
-CMD ["yarn", "start:prod"]
+CMD ["sh", "-c", "yarn migrate:prod && yarn start:prod"]
