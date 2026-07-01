@@ -1,5 +1,5 @@
 import { CreateProductWorkflowInputDTO, ProductCollectionDTO, ProductTagDTO } from '@medusajs/framework/types';
-import { ProductStatus } from '@medusajs/utils';
+import { ProductStatus } from '@medusajs/framework/utils';
 
 const buildBaseProductData = ({
   sales_channels,

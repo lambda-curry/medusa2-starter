@@ -5,7 +5,7 @@ import { useCheckout } from '@app/hooks/useCheckout';
 import { useCustomer } from '@app/hooks/useCustomer';
 import { useRegions } from '@app/hooks/useRegions';
 import { CheckoutStep } from '@app/providers/checkout-provider';
-import { accountDetailsSchema } from '@app/routes/api.checkout.account-details';
+import { type AccountDetailsFormData, accountDetailsSchema } from '@app/routes/api.checkout.account-details';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TextField } from '@lambdacurry/forms/remix-hook-form';
 import type { MedusaAddress } from '@libs/types';
@@ -58,18 +58,28 @@ export const CheckoutAccountDetails = () => {
       label: country.display_name,
     })) as { value: string; label: string }[]) ?? [];
 
-  const defaultValues = {
+  const defaultShippingAddress = medusaAddressToAddress(initialShippingAddress as MedusaAddress);
+
+  const defaultValues: AccountDetailsFormData = {
     cartId: cart.id,
     email: customer?.email || cart.email || '',
     customerId: customer?.id,
-    allowSuggestions: true,
     shippingAddress: {
-      ...medusaAddressToAddress(initialShippingAddress as MedusaAddress),
+      firstName: defaultShippingAddress.firstName ?? '',
+      lastName: defaultShippingAddress.lastName ?? '',
+      company: defaultShippingAddress.company,
+      address1: defaultShippingAddress.address1 ?? '',
+      address2: defaultShippingAddress.address2,
+      city: defaultShippingAddress.city ?? '',
+      province: defaultShippingAddress.province ?? '',
+      countryCode: defaultShippingAddress.countryCode ?? '',
+      postalCode: defaultShippingAddress.postalCode ?? '',
+      phone: defaultShippingAddress.phone,
     },
     shippingAddressId: initialShippingAddressId,
   };
 
-  const form = useRemixForm({
+  const form = useRemixForm<AccountDetailsFormData>({
     resolver: zodResolver(accountDetailsSchema),
     defaultValues,
     fetcher: checkoutAccountDetailsFormFetcher,

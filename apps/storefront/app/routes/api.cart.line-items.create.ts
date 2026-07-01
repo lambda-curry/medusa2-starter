@@ -11,17 +11,19 @@ import { z } from 'zod';
 
 export const createLineItemSchema = z.object({
   productId: z.string().min(1, 'Product ID is required'),
-  options: z.record(z.string()).default({}),
+  options: z.record(z.string(), z.string()).default({}),
   quantity: z.coerce.number().int().min(1, 'Quantity must be at least 1'),
 });
 
 type CreateLineItemFormData = z.infer<typeof createLineItemSchema>;
+type CreateLineItemFormInput = z.input<typeof createLineItemSchema>;
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { errors, data: validatedFormData } = await getValidatedFormData<CreateLineItemFormData>(
-    request,
-    zodResolver(createLineItemSchema),
-  );
+  const { errors, data: validatedFormData } = await getValidatedFormData<
+    CreateLineItemFormInput,
+    any,
+    CreateLineItemFormData
+  >(request, zodResolver(createLineItemSchema));
 
   if (errors) {
     return data({ errors }, { status: 400 });

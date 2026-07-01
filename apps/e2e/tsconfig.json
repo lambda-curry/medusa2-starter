@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "strict": true,
+    "target": "ES2024",
+    "types": ["node", "@playwright/test"]
+  },
+  "include": ["playwright.config.ts", "scripts/**/*.ts", "tests/**/*.ts"]
+}

@@ -5,7 +5,6 @@ export interface ProductOptionSelectorProps {
   option: {
     id: string;
     title: string;
-    product_id: string;
     values: { value: string; label: string; disabled?: boolean }[];
   };
   value: string;

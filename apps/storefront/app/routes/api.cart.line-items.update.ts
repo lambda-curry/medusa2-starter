@@ -10,12 +10,14 @@ export const updateLineItemSchema = z.object({
 });
 
 type UpdateLineItemFormData = z.infer<typeof updateLineItemSchema>;
+type UpdateLineItemFormInput = z.input<typeof updateLineItemSchema>;
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { errors, data: validatedFormData } = await getValidatedFormData<UpdateLineItemFormData>(
-    request,
-    zodResolver(updateLineItemSchema),
-  );
+  const { errors, data: validatedFormData } = await getValidatedFormData<
+    UpdateLineItemFormInput,
+    any,
+    UpdateLineItemFormData
+  >(request, zodResolver(updateLineItemSchema));
 
   if (errors) {
     return data({ errors }, { status: 400 });

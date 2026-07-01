@@ -24,6 +24,9 @@ const schema = z.object({
   review_request_id: z.string().optional(),
 });
 
+type ProductReviewFormInput = z.input<typeof schema>;
+type ProductReviewFormData = z.output<typeof schema>;
+
 export interface ProductReviewFormValues {
   id?: string;
   rating?: number;
@@ -63,12 +66,12 @@ export const ProductReviewForm: FC<ProductReviewFormProps> = ({
   const formRef = useRef<HTMLFormElement>(null);
 
   const defaultValues = productReview
-    ? { rating: productReview.rating, content: productReview.content, images: productReview.images }
+    ? { rating: productReview.rating, content: productReview.content }
     : { rating: 5, content: '' };
 
   const existingImages = productReview?.images || [];
 
-  const form = useRemixForm({
+  const form = useRemixForm<ProductReviewFormInput, any, ProductReviewFormData>({
     resolver: zodResolver(schema),
     fetcher,
     submitHandlers: {
