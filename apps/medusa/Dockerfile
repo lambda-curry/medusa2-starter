@@ -42,4 +42,4 @@ WORKDIR /app/server
 
 ENV PORT=80
 
-CMD ["sh", "-c", "yarn migrate:prod && yarn start:prod"]
+CMD ["yarn", "start:prod"]
