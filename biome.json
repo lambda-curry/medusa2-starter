@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.1/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -7,10 +7,29 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-    "ignore": [".turbo", "yarn.lock", "node_modules", "apps/medusa/.medusa", "apps/storefront/.react-router"]
+    "includes": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "!**/.turbo",
+      "!**/yarn.lock",
+      "!**/node_modules",
+      "!**/apps/medusa/.medusa",
+      "!**/apps/storefront/.react-router",
+      "!**/build",
+      "!**/dist",
+      "!**/playwright-report",
+      "!**/test-results"
+    ]
   },
-  "organizeImports": { "enabled": true },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -27,9 +46,7 @@
   "linter": {
     "enabled": false,
     "rules": {
-      "all": true,
       "style": {
-        "all": true,
         "useBlockStatements": "off",
         "useNamingConvention": "off",
         "noImplicitBoolean": "off",
@@ -40,20 +57,24 @@
         "useExplicitLengthCheck": "off"
       },
       "complexity": {
-        "all": true,
         "noForEach": "off",
         "useLiteralKeys": "off"
       },
       "performance": {
-        "all": true,
         "noAccumulatingSpread": "off"
       },
       "suspicious": {
-        "noConsoleLog": "off",
-        "noReactSpecificProps": "off"
+        "noReactSpecificProps": "off",
+        "noConsole": {
+          "level": "off",
+          "options": {
+            "allow": [
+              "log"
+            ]
+          }
+        }
       },
       "correctness": {
-        "all": true,
         "noNodejsModules": "off",
         "noUndeclaredDependencies": "off",
         "useImportExtensions": "off"

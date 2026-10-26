@@ -4,7 +4,7 @@ import { footerNavigationItems, headerNavigationItems } from '@libs/config/site/
 import { siteSettings } from '@libs/config/site/site-settings';
 import type { HttpTypes } from '@medusajs/types';
 import { type LoaderFunctionArgs, data as remixData } from 'react-router';
-import { RemixLoaderResponse } from 'types/remix';
+import { RemixLoaderResponse } from '../../../types/remix';
 import { config } from './config.server';
 import { getSelectedRegionId, setSelectedRegionId } from './cookies.server';
 import { enrichLineItems, retrieveCart } from './data/cart.server';

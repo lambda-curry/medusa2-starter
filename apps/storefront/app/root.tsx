@@ -18,7 +18,7 @@ import { RootProviders } from './providers/root-providers';
 import '@app/styles/global.css';
 import { useRootLoaderData } from './hooks/useRootLoaderData';
 
-export const getRootMeta: MetaFunction = ({ data }) => {
+export const getRootMeta: MetaFunction = () => {
   const title = 'Barrio Store';
   const description = 'Discover our artisan-roasted coffee, crafted with care and delivered to your door.';
   const ogTitle = title;

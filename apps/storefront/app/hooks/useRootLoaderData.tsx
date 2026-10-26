@@ -5,5 +5,5 @@ export const useRootLoaderData = () => {
   const matches = useMatches();
   const rootMatch = matches[0] as UIMatch<RootLoaderResponse>;
 
-  return rootMatch.data;
+  return rootMatch.loaderData;
 };

@@ -1,6 +1,4 @@
-// https://github.com/remix-run/remix/issues/2947
-
-import * as Sentry from '@sentry/remix';
+import * as Sentry from '@sentry/react-router';
 import { StrictMode, startTransition } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { HydratedRouter } from 'react-router/dom';
