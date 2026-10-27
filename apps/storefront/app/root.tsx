@@ -2,6 +2,7 @@ import { getCommonMeta, mergeMeta } from '@libs/util/meta';
 import { getRootLoader } from '@libs/util/server/root.server';
 import { useRef } from 'react';
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   MetaFunction,
@@ -105,17 +106,31 @@ export default App;
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  const notFound = isRouteErrorResponse(error) && error.status === 404;
 
   console.error('error boundary error', error);
 
   return (
-    <html>
+    <html lang="en" className="min-h-screen">
       <head>
-        <title>Oh no!</title>
-        <Meta />
+        <meta charSet="UTF-8" />
+        {/* No <Meta />: it would add the root route's title next to this one. */}
+        <title>{notFound ? 'Page not found' : 'Something went wrong'}</title>
         <Links />
       </head>
-      <body>
+      <body className="flex min-h-screen items-center justify-center p-6">
+        <main className="max-w-md text-center">
+          <h1 className="text-3xl font-bold">{notFound ? 'Page not found' : 'Something went wrong'}</h1>
+          <p className="mt-4 text-gray-600">
+            {notFound
+              ? "We couldn't find the page you're looking for."
+              : 'Sorry, we hit an unexpected error. Please try again.'}
+          </p>
+          {/* A plain link forces a full page load, which resets the broken client state. */}
+          <a href="/" className="mt-8 inline-block rounded bg-gray-900 px-6 py-3 font-bold text-white">
+            Back to home
+          </a>
+        </main>
         <Scripts />
       </body>
     </html>

@@ -9138,25 +9138,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-router/serve@npm:8.5.0":
-  version: 8.5.0
-  resolution: "@react-router/serve@npm:8.5.0"
-  dependencies:
-    "@react-router/express": "npm:8.5.0"
-    "@react-router/node": "npm:8.5.0"
-    "@remix-run/node-fetch-server": "npm:^0.14.1"
-    compression: "npm:^1.8.1"
-    express: "npm:^5.2.1"
-    morgan: "npm:^1.10.1"
-    source-map-support: "npm:^0.5.21"
-  peerDependencies:
-    react-router: 8.5.0
-  bin:
-    react-router-serve: bin.cjs
-  checksum: 10c0/bb03aeeebf364de78d69eb9ef298e6cd5983d963d0d880ba2c06165dffc91808a890877f39874581632abaa92cd7e9d29699438edf278ac5138186c908484b75
-  languageName: node
-  linkType: hard
-
 "@react-stately/calendar@npm:^3.9.2":
   version: 3.9.2
   resolution: "@react-stately/calendar@npm:3.9.2"
@@ -12484,13 +12465,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-from@npm:^1.0.0":
-  version: 1.1.2
-  resolution: "buffer-from@npm:1.1.2"
-  checksum: 10c0/124fff9d66d691a86d3b062eff4663fe437a9d9ee4b47b1b9e97f5a5d14f6d5399345db80f796827be7c95e70a8e765dd404b7c3ff3b3324f98e9b0c8826cc34
-  languageName: node
-  linkType: hard
-
 "buffer@npm:5.6.0":
   version: 5.6.0
   resolution: "buffer@npm:5.6.0"
@@ -14246,7 +14220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^5.2.1":
+"express@npm:^5.3.0":
   version: 5.3.0
   resolution: "express@npm:5.3.0"
   dependencies:
@@ -19921,23 +19895,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.21":
-  version: 0.5.21
-  resolution: "source-map-support@npm:0.5.21"
-  dependencies:
-    buffer-from: "npm:^1.0.0"
-    source-map: "npm:^0.6.0"
-  checksum: 10c0/9ee09942f415e0f721d6daad3917ec1516af746a8120bba7bb56278707a37f1eb8642bde456e98454b8a885023af81a16e646869975f06afc1a711fb90484e7d
-  languageName: node
-  linkType: hard
-
-"source-map@npm:^0.6.0":
-  version: 0.6.1
-  resolution: "source-map@npm:0.6.1"
-  checksum: 10c0/ab55398007c5e5532957cb0beee2368529618ac0ab372d789806f5718123cc4367d57de3904b4e6a4170eb5a0b0f41373066d02ca0735a0c4d75c7d328d3e011
-  languageName: node
-  linkType: hard
-
 "split2@npm:^4.1.0":
   version: 4.2.0
   resolution: "split2@npm:4.2.0"
@@ -20029,9 +19986,9 @@ __metadata:
     "@mjackson/file-storage": "npm:^0.7.0"
     "@mjackson/form-data-parser": "npm:^0.9.1"
     "@react-router/dev": "npm:8.5.0"
+    "@react-router/express": "npm:8.5.0"
     "@react-router/fs-routes": "npm:8.5.0"
     "@react-router/node": "npm:8.5.0"
-    "@react-router/serve": "npm:8.5.0"
     "@sentry/react-router": "npm:^11.9.0"
     "@smastrom/react-rating": "npm:^1.5.0"
     "@stripe/react-stripe-js": "npm:^7.0.1"
@@ -20047,11 +20004,14 @@ __metadata:
     "@vanilla-extract/vite-plugin": "npm:^5.2.6"
     autoprefixer: "npm:^10.6.2"
     clsx: "npm:^2.1.1"
+    compression: "npm:^1.8.1"
     dotenv: "npm:^18.0.9"
     dotenv-cli: "npm:^11.0.0"
+    express: "npm:^5.3.0"
     isbot: "npm:^5.2.2"
     lodash: "npm:^4.18.1"
     lru-cache: "npm:^11.5.3"
+    morgan: "npm:^1.10.1"
     postcss: "npm:^8.5.32"
     react: "npm:19.3.1"
     react-dom: "npm:19.3.1"
