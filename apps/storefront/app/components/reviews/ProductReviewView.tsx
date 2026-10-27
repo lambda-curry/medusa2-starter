@@ -1,10 +1,9 @@
-import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
-import { FC, useState } from 'react';
-import { Link } from 'react-router';
-
 import { IconButton } from '@app/components/common/buttons';
 import { LightboxGallery } from '@app/components/common/images/LightboxGallery';
+import PencilIcon from '@heroicons/react/24/outline/PencilIcon';
 import { StoreOrderLineItem } from '@medusajs/types';
+import { FC, useState } from 'react';
+import { Link } from 'react-router';
 import { GalleryImage, ReviewImageThumbnailRow } from './ReviewImageThumbnailRow';
 import { StarRating } from './StarRating';
 

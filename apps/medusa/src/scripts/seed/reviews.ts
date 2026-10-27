@@ -241,10 +241,7 @@ export const reviewContents = [
   },
 ];
 
-export function generateReviewResponse(review: {
-  rating: number;
-  name: string | null;
-}) {
+export function generateReviewResponse(review: { rating: number; name: string | null }) {
   const rating = review.rating;
 
   const firstName = review.name?.split(' ')[0] ?? 'Customer';

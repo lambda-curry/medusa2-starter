@@ -1,6 +1,5 @@
 import { RadioGroup } from '@lambdacurry/forms/ui';
-import { StoreRegion } from '@medusajs/types';
-import { StoreCartShippingOption } from '@medusajs/types';
+import { StoreCartShippingOption, StoreRegion } from '@medusajs/types';
 import { clsx } from 'clsx';
 import { FC } from 'react';
 import { useRemixFormContext } from 'remix-hook-form';

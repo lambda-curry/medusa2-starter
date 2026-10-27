@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateCart } from '@libs/util/server/data/cart.server';
-import { data as remixData } from 'react-router';
 import type { ActionFunctionArgs } from 'react-router';
+import { data as remixData } from 'react-router';
 import { getValidatedFormData } from 'remix-hook-form';
 import { z } from 'zod';
 

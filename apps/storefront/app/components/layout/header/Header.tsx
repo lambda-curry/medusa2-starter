@@ -1,7 +1,7 @@
-import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
 import { IconButton } from '@app/components/common/buttons';
 import { Container } from '@app/components/common/container/Container';
 import { URLAwareNavLink } from '@app/components/common/link';
+import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
 import { useCart } from '@app/hooks/useCart';
 import { useRootLoaderData } from '@app/hooks/useRootLoaderData';
 import { useSiteDetails } from '@app/hooks/useSiteDetails';

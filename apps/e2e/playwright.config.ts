@@ -1,4 +1,4 @@
-import { type ReporterDescription, defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
 
 const reporters: ReporterDescription[] = process.env.CI
   ? [['list']]

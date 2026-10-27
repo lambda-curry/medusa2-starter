@@ -5,8 +5,7 @@ import { formatPhoneNumber } from '@libs/util/phoneNumber';
 import { formatPrice } from '@libs/util/prices';
 import { retrieveOrder } from '@libs/util/server/data/orders.server';
 import { StoreOrder, StorePaymentCollection } from '@medusajs/types';
-import { LoaderFunctionArgs, redirect } from 'react-router';
-import { Link, useLoaderData } from 'react-router';
+import { Link, LoaderFunctionArgs, redirect, useLoaderData } from 'react-router';
 
 export const loader = async ({ request }: LoaderFunctionArgs): Promise<{ order: StoreOrder }> => {
   const url = new URL(request.url);

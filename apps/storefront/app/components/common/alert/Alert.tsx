@@ -2,9 +2,8 @@ import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
 import ExclamationTriangleIcon from '@heroicons/react/24/solid/ExclamationTriangleIcon';
 import InformationCircleIcon from '@heroicons/react/24/solid/InformationCircleIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
-import { FC, HTMLAttributes } from 'react';
-
 import clsx from 'clsx';
+import { FC, HTMLAttributes } from 'react';
 
 export type AlertAction = FC<HTMLAttributes<HTMLButtonElement | HTMLAnchorElement>>;
 

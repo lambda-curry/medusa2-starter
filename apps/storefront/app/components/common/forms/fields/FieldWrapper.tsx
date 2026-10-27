@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { HTMLAttributes, forwardRef } from 'react';
+import { forwardRef, HTMLAttributes } from 'react';
 
 export interface FieldWrapperProps extends HTMLAttributes<HTMLDivElement> {
   name: string;

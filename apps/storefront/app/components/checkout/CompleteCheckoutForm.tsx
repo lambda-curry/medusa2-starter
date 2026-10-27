@@ -9,15 +9,15 @@ import { FetcherKeys } from '@libs/util/fetcher-keys';
 import { FC, FormEvent, PropsWithChildren, useState } from 'react';
 import { SubmitFunction, useFetcher } from 'react-router';
 import { RemixFormProvider, useRemixForm } from 'remix-hook-form';
-import { CheckoutOrderSummary } from '.';
 import { FormError } from '../common/remix-hook-form/forms/FormError';
+import { CheckoutOrderSummary } from '.';
+import { AddressDisplay } from './address/AddressDisplay';
 import HiddenAddressGroup from './HiddenAddressGroup';
 import {
+  defaultStripeAddress,
   MedusaStripeAddress,
   type StripeAddress,
-  defaultStripeAddress,
 } from './MedusaStripeAddress/MedusaStripeAddress';
-import { AddressDisplay } from './address/AddressDisplay';
 
 export interface CompleteCheckoutFormProps extends PropsWithChildren {
   id: string;

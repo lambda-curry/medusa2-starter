@@ -68,9 +68,7 @@
         "noConsole": {
           "level": "off",
           "options": {
-            "allow": [
-              "log"
-            ]
+            "allow": ["log"]
           }
         }
       },

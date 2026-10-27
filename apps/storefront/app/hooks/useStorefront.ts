@@ -3,8 +3,8 @@ import {
   StorefrontActionNames,
   StorefrontContext,
   StorefrontContextValue,
-  TogglePayload,
   ToggleableTargets,
+  TogglePayload,
 } from '@app/providers/storefront-provider';
 import { useContext } from 'react';
 

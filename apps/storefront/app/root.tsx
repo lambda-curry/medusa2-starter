@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import {
   Links,
   Meta,
+  MetaFunction,
   Outlet,
   Scripts,
   ScrollRestoration,
@@ -11,7 +12,6 @@ import {
   useLoaderData,
   useRouteError,
 } from 'react-router';
-import { MetaFunction } from 'react-router';
 import { Page } from './components/layout/Page';
 import { RootProviders } from './providers/root-providers';
 

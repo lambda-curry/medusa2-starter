@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { type ReactNode, type SelectHTMLAttributes, forwardRef } from 'react';
+import { forwardRef, type ReactNode, type SelectHTMLAttributes } from 'react';
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options?: { label: ReactNode; value: string; disabled?: boolean }[];
