@@ -1,7 +1,7 @@
 FROM node:26-alpine AS base
 
 RUN apk update && apk add --no-cache libc6-compat
-RUN npm install -g corepack && corepack enable && corepack prepare yarn@4.9.1 --activate
+RUN npm install -g corepack && corepack enable && corepack prepare yarn@4.18.1 --activate
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ FROM base AS builder
 
 COPY . .
 
-RUN npx --yes turbo@2.1.2 prune --scope=storefront --docker
+RUN npx --yes turbo@2.11.10 prune --scope=storefront --docker
 
 FROM base AS installer
 

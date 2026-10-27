@@ -1,5 +1,5 @@
 ---
-description: Remix storefront routing patterns with React Router v7, TypeScript, and Medusa integration for route structure, forms, and API integration
+description: Remix storefront routing patterns with React Router v8, TypeScript, and Medusa integration for route structure, forms, and API integration
 globs: 
   - "apps/storefront/**/*.ts"
   - "apps/storefront/**/*.tsx"
@@ -12,30 +12,30 @@ alwaysApply: true
 
 # Remix Storefront Routing & Integration Patterns
 
-You are an expert in React Router v7 (Remix), TypeScript, React, and e-commerce storefront development with Medusa integration, focusing on routing patterns, form handling, and API integration.
+You are an expert in React Router v8 (Remix), TypeScript, React, and e-commerce storefront development with Medusa integration, focusing on routing patterns, form handling, and API integration.
 
 ## Core Principles
 
 - Write performant, accessible React components
-- Follow React Router v7 conventions and patterns
+- Follow React Router v8 conventions and patterns
 - Implement proper SEO optimization
 - Use TypeScript for type safety
 - Follow responsive design principles with Tailwind CSS
 - Integrate seamlessly with Medusa backend APIs
 - Prioritize user experience and performance
 
-## React Router v7 (Remix) Patterns
+## React Router v8 (Remix) Patterns
 
 ### Route Structure
 ```typescript
 // app/routes/products.$handle.tsx
-import type { LoaderFunctionArgs, MetaFunction } from "@react-router/node"
-import { useLoaderData } from "@react-router/react"
+import type { LoaderFunctionArgs, MetaFunction } from "react-router"
+import { useLoaderData } from "react-router"
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
   return [
-    { title: data?.product?.title || "Product" },
-    { name: "description", content: data?.product?.description },
+    { title: loaderData?.product?.title || "Product" },
+    { name: "description", content: loaderData?.product?.description },
   ]
 }
 
@@ -106,8 +106,8 @@ export default function ContactForm() {
 
 ### Action Handlers
 ```typescript
-import type { ActionFunctionArgs } from "@react-router/node"
-import { data } from "@react-router/node"
+import type { ActionFunctionArgs } from "react-router"
+import { data } from "react-router"
 import { getValidatedFormData } from "remix-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 

@@ -60,7 +60,7 @@ export const getCommonMeta: MetaFunction = ({ matches }) => {
   const rootMatch = matches[0] as UIMatch<RootLoaderResponse>;
   const currentMatch = matches?.[matches?.length - 1];
 
-  const siteDetails = rootMatch.data?.siteDetails;
+  const siteDetails = rootMatch.loaderData?.siteDetails;
 
   if (!siteDetails) return [];
 

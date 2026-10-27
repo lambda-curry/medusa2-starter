@@ -1,7 +1,7 @@
 import { medusaError } from '@libs/util/medusaError';
 import { sdk } from '@libs/util/server/client.server';
 import { HttpTypes, StoreCart } from '@medusajs/types';
-import omit from 'lodash.omit';
+import omit from 'lodash/omit';
 import { withAuthHeaders } from '../auth.server';
 import { getCartId } from '../cookies.server';
 import { getProductsById } from './products.server';

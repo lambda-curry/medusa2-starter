@@ -1,5 +1,5 @@
 import { sdk } from '@libs/util/server/client.server';
-import { SitemapUrl, buildSitemapUrlSetXML } from '@libs/util/xml/sitemap-builder';
+import { buildSitemapUrlSetXML, SitemapUrl } from '@libs/util/xml/sitemap-builder';
 import { LoaderFunctionArgs } from 'react-router';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {

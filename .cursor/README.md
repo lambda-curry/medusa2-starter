@@ -18,7 +18,7 @@ This directory contains comprehensive Cursor rules designed to enhance AI-assist
 #### Remix Storefront Rules (Split for Better Organization)
 
 **`remix-storefront-routing.mdc`**
-- React Router v7 patterns and conventions
+- React Router v8 patterns and conventions
 - Route structure and loader/action patterns
 - Medusa SDK integration
 - Form handling with @lambdacurry/forms
@@ -232,7 +232,7 @@ Rules enhance development with existing scripts:
 
 ### Official Documentation
 - [Medusa v2 Documentation](https://docs.medusajs.com/)
-- [React Router v7 Documentation](https://reactrouter.com/)
+- [React Router v8 Documentation](https://reactrouter.com/)
 - [Cursor Rules Documentation](https://docs.cursor.com/context/rules)
 
 ### Code Examples
@@ -265,7 +265,7 @@ Each rule file contains extensive code examples demonstrating:
 
 ### Version Compatibility
 - Rules are designed for Medusa v2.7.0+
-- React Router v7 compatibility
+- React Router v8 compatibility
 - TypeScript 5.6+ features
 - Node.js 20+ patterns
 
