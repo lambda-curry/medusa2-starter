@@ -21,6 +21,7 @@ https://github.com/user-attachments/assets/3c10d2f5-91b8-405c-a47c-c8ae8a4be575
 - [Local Development Setup](#local-development-setup)
 - [Resetting the Database](#resetting-the-database)
 - [Linting](#linting)
+- [Deployment](#deployment)
 - [Enabling Express Checkout](#enabling-express-checkout)
 - [Useful Links](#useful-links)
 - [Contributors](#contributors)
@@ -117,6 +118,10 @@ The Medusa backend uses [`@medusajs/eslint-plugin`](https://docs.medusajs.com/re
 - In VS Code, install the recommended ESLint extension to see the rules inline.
 
 Formatting is handled separately by Biome (`yarn format`).
+
+## Deployment
+
+The Railway project **Barrio** auto-deploys both apps from `main`. It builds the Medusa backend and the storefront from `apps/medusa/Dockerfile` and `apps/storefront/Dockerfile`. GitHub Actions only runs PR checks; it doesn't deploy anything.
 
 ## Enabling Express Checkout
 
