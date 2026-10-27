@@ -39,7 +39,7 @@ export default function ProductCategoryRoute() {
 
   if (!data) return null;
 
-  const { products, count, limit, offset, categories } = data;
+  const { products, count, limit, offset, category, categories } = data;
 
   return (
     <Container className="pb-16">
@@ -76,7 +76,7 @@ export default function ProductCategoryRoute() {
           <ProductListWithPagination
             products={products}
             paginationConfig={{ count, offset, limit }}
-            context="products"
+            context={`categories/${category.handle}`}
           />
         </div>
       </div>

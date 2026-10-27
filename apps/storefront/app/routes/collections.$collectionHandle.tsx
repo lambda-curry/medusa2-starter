@@ -66,7 +66,7 @@ export default function ProductCollectionRoute() {
           <ProductListWithPagination
             products={products}
             paginationConfig={{ count, offset, limit }}
-            context="products"
+            context={`collections/${collection.handle}`}
           />
         </div>
       </div>
