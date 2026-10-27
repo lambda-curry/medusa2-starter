@@ -12,13 +12,7 @@ export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string[];
 }
 
-export const Source = ({
-  src,
-  media,
-}: {
-  src: string;
-  media?: string;
-}) => {
+export const Source = ({ src, media }: { src: string; media?: string }) => {
   return <source media={media} src={src} />;
 };
 

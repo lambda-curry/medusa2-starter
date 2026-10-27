@@ -2,13 +2,7 @@ import { sdk } from '@libs/util/server/client.server';
 import { HttpTypes } from '@medusajs/types';
 import { retrieveRegion } from './regions.server';
 
-export const getProductsById = ({
-  ids,
-  regionId,
-}: {
-  ids: string[];
-  regionId: string;
-}) => {
+export const getProductsById = ({ ids, regionId }: { ids: string[]; regionId: string }) => {
   return sdk.store.product
     .list({
       id: ids,

@@ -5,8 +5,7 @@ import { getMergedProductMeta } from '@libs/util/products';
 import { fetchProductReviewStats, fetchProductReviews } from '@libs/util/server/data/product-reviews.server';
 import { fetchProducts } from '@libs/util/server/products.server';
 import { withPaginationParams } from '@libs/util/withPaginationParams';
-import { type LoaderFunctionArgs, type MetaFunction, redirect } from 'react-router';
-import { useLoaderData } from 'react-router';
+import { type LoaderFunctionArgs, type MetaFunction, redirect, useLoaderData } from 'react-router';
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const { limit: reviewsLimit, offset: reviewsOffset } = withPaginationParams({

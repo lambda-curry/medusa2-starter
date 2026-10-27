@@ -1,4 +1,4 @@
-import { SitemapUrl, buildSitemapUrlSetXML } from '@libs/util/xml/sitemap-builder';
+import { buildSitemapUrlSetXML, SitemapUrl } from '@libs/util/xml/sitemap-builder';
 import { LoaderFunctionArgs } from 'react-router';
 
 const pages = ['/', '/products'];

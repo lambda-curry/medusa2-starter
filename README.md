@@ -20,6 +20,8 @@ https://github.com/user-attachments/assets/3c10d2f5-91b8-405c-a47c-c8ae8a4be575
 - [Getting Started](#getting-started)
 - [Local Development Setup](#local-development-setup)
 - [Resetting the Database](#resetting-the-database)
+- [Linting](#linting)
+- [Deployment](#deployment)
 - [Enabling Express Checkout](#enabling-express-checkout)
 - [Useful Links](#useful-links)
 - [Contributors](#contributors)
@@ -105,6 +107,21 @@ You can view a live demo of the project [here](https://barrio.lambdacurry.dev/).
 
 ## Resetting the Database
 In order to reset the database, follow the steps from 3 to 7 in the Local Development Setup section.
+
+## Linting
+
+The Medusa backend uses [`@medusajs/eslint-plugin`](https://docs.medusajs.com/resources/lint) with the type-aware `strict` preset (`apps/medusa/eslint.config.ts`). It catches Medusa-specific mistakes like loops in workflow constructors or non-serializable step results.
+
+- `yarn lint` runs `medusa lint` (add `--fix` with `yarn workspace medusa lint --fix`).
+- `medusa develop` lints on startup and won't start with lint errors. `medusa build` reports lint problems without failing.
+- CI runs the linter on every pull request.
+- In VS Code, install the recommended ESLint extension to see the rules inline.
+
+Formatting is handled separately by Biome (`yarn format`).
+
+## Deployment
+
+The Railway project **Barrio** auto-deploys both apps from `main`. It builds the Medusa backend and the storefront from `apps/medusa/Dockerfile` and `apps/storefront/Dockerfile`. GitHub Actions only runs PR checks; it doesn't deploy anything.
 
 ## Enabling Express Checkout
 

@@ -1,9 +1,9 @@
-import { PassThrough } from 'stream';
 import { createReadableStreamFromReadable } from '@react-router/node';
-import * as Sentry from '@sentry/remix';
+import * as Sentry from '@sentry/react-router';
 import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
 import { EntryContext, ServerRouter } from 'react-router';
+import { PassThrough } from 'stream';
 
 if (process.env.SENTRY_DSN)
   Sentry.init({
@@ -12,7 +12,7 @@ if (process.env.SENTRY_DSN)
     tracesSampleRate: 0,
   });
 
-export const handleError = Sentry.sentryHandleError;
+export const handleError = Sentry.createSentryHandleError({ logErrors: true });
 
 const ABORT_DELAY = 5000;
 

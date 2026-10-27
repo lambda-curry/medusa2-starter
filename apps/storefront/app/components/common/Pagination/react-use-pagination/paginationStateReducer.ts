@@ -1,4 +1,4 @@
-import { PaginationState, limitPageBounds } from './getPaginationMeta';
+import { limitPageBounds, PaginationState } from './getPaginationMeta';
 
 type CurrentPageActions = { type: 'NEXT_PAGE' } | { type: 'PREVIOUS_PAGE' } | { type: 'SET_PAGE'; page: number };
 

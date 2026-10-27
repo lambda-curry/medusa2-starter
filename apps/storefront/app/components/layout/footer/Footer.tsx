@@ -1,7 +1,7 @@
-import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
 import { Container } from '@app/components/common/container/Container';
 import { Select } from '@app/components/common/forms/inputs/Select';
 import { URLAwareNavLink } from '@app/components/common/link/URLAwareNavLink';
+import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
 import { NewsletterSubscription } from '@app/components/newsletter/Newsletter';
 import { useRegion } from '@app/hooks/useRegion';
 import { useRegions } from '@app/hooks/useRegions';

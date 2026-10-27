@@ -3,7 +3,7 @@ import { checkAccountDetailsComplete, checkContactInfoComplete } from '@libs/uti
 import { createReducer } from '@libs/util/createReducer';
 import { StoreCart, StoreCartShippingOption, StorePaymentProvider } from '@medusajs/types';
 import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
-import { FC, PropsWithChildren, createContext, useMemo, useReducer } from 'react';
+import { createContext, FC, PropsWithChildren, useMemo, useReducer } from 'react';
 import { ContextValue } from '../../types';
 
 export enum CheckoutStep {

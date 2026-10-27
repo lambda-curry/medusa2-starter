@@ -1,7 +1,7 @@
 import { CheckoutFlow } from '@app/components/checkout/CheckoutFlow';
 import { CheckoutSidebar } from '@app/components/checkout/CheckoutSidebar';
-import { Empty } from '@app/components/common/Empty/Empty';
 import { Button } from '@app/components/common/buttons/Button';
+import { Empty } from '@app/components/common/Empty/Empty';
 import { CheckoutProvider } from '@app/providers/checkout-provider';
 import ShoppingCartIcon from '@heroicons/react/24/outline/ShoppingCartIcon';
 import { sdk } from '@libs/util/server/client.server';
@@ -10,8 +10,7 @@ import { initiatePaymentSession, retrieveCart, setShippingMethod } from '@libs/u
 import { listCartPaymentProviders } from '@libs/util/server/data/payment.server';
 import { CartDTO, StoreCart, StoreCartShippingOption, StorePaymentProvider } from '@medusajs/types';
 import { BasePaymentSession } from '@medusajs/types/dist/http/payment/common';
-import { LoaderFunctionArgs, redirect } from 'react-router';
-import { Link, useLoaderData } from 'react-router';
+import { Link, LoaderFunctionArgs, redirect, useLoaderData } from 'react-router';
 
 const SYSTEM_PROVIDER_ID = 'pp_system_default';
 

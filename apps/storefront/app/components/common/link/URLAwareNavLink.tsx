@@ -1,6 +1,5 @@
 import { FC, HTMLAttributes, PropsWithChildren } from 'react';
-import { NavLink } from 'react-router';
-import { NavLinkProps } from 'react-router';
+import { NavLink, NavLinkProps } from 'react-router';
 
 export interface AwareNavLinkProps {
   url: string;

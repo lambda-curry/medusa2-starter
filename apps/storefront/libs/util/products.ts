@@ -270,10 +270,10 @@ export function getVariantFromSelectedOptions(
   });
 }
 
-export const getProductMeta: MetaFunction = ({ data, matches }) => {
+export const getProductMeta: MetaFunction = ({ loaderData, matches }) => {
   const rootMatch = matches[0] as UIMatch<RootLoaderResponse>;
-  const region = rootMatch.data?.region;
-  const product = (data as any).product as StoreProduct;
+  const region = rootMatch.loaderData?.region;
+  const product = (loaderData as any)?.product as StoreProduct;
   const defaultVariant = getCheapestProductVariant(product);
 
   if (!product) return [];

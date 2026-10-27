@@ -85,12 +85,12 @@ return data(
 ### 6. Response Handling
 
 - **Before**: Used `json` from `@remix-run/node`
-- **After**: Using `data` from `@remix-run/node` for all responses
+- **After**: Using `data` from `react-router` for all responses
 
 Example of new response handling:
 
 ```typescript
-import { data } from '@remix-run/node';
+import { data } from 'react-router';
 
 // Success response
 return data({ success: true }, { headers: responseHeaders });
@@ -169,5 +169,5 @@ Error handling has been updated to use:
 2. The new form system provides more modern React form handling capabilities through React Hook Form.
 3. The `@lambdacurry/forms` package provides pre-built components that integrate well with the new system.
 4. Form submission and validation are now handled through the React Hook Form ecosystem rather than the Remix Validated Form system.
-5. All responses should use the `data` function from `@remix-run/node` instead of `json`.
+5. All responses should use the `data` function from `react-router` instead of `json`.
 6. Error handling should follow react-hook-form's structure with root-level errors for form-wide messages.

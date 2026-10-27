@@ -19,11 +19,11 @@ import { useFetcher } from 'react-router';
 import { RemixFormProvider, useRemixForm } from 'remix-hook-form';
 import { SubmitButton } from '../common/remix-hook-form/buttons/SubmitButton';
 import { FormError } from '../common/remix-hook-form/forms/FormError';
+import { AddressDisplay } from './address/AddressDisplay';
 import { CheckoutSectionHeader } from './CheckoutSectionHeader';
+import { selectInitialShippingAddress } from './checkout-form-helpers';
 import HiddenAddressGroup from './HiddenAddressGroup';
 import { MedusaStripeAddress, type StripeAddress } from './MedusaStripeAddress/MedusaStripeAddress';
-import { AddressDisplay } from './address/AddressDisplay';
-import { selectInitialShippingAddress } from './checkout-form-helpers';
 
 const NEW_SHIPPING_ADDRESS_ID = 'new';
 

@@ -1,5 +1,5 @@
 import { Cache, CacheEntry, totalTtl } from '@epic-web/cachified';
-import LRUCache from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 
 export const buildNewLRUCache = ({ max }: { max: number }) => {
   const lruInstance = new LRUCache<string, CacheEntry>({ max });

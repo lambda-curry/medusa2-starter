@@ -1,7 +1,5 @@
-import { FC } from 'react';
-
 import clsx from 'clsx';
-import { HTMLAttributes } from 'react';
+import { FC, HTMLAttributes } from 'react';
 import { useRemixFormContext } from 'remix-hook-form';
 import { Alert } from '../../alert';
 

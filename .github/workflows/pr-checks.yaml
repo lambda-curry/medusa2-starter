@@ -24,6 +24,24 @@ jobs:
       - name: Run Biome
         run: biome ci .
 
+  medusa-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run Medusa lint
+        run: yarn workspace medusa lint
+
   typecheck:
     runs-on: ubuntu-latest
     timeout-minutes: 15

@@ -10,7 +10,7 @@ alwaysApply: true
 
 # Remix Storefront Optimization & Best Practices
 
-You are an expert in web performance optimization, SEO, error handling, testing, and accessibility for React Router v7 (Remix) applications in e-commerce contexts.
+You are an expert in web performance optimization, SEO, error handling, testing, and accessibility for React Router v8 (Remix) applications in e-commerce contexts.
 
 ## Core Principles
 
@@ -72,8 +72,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 ### Dynamic Meta Tags
 ```typescript
-export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
-  const product = data?.product
+export const meta: MetaFunction<typeof loader> = ({ loaderData, location }) => {
+  const product = loaderData?.product
   
   if (!product) {
     return [
@@ -126,7 +126,7 @@ export function ProductStructuredData({ product }: { product: Product }) {
 ### Error Boundaries
 ```typescript
 // components/ErrorBoundary.tsx
-import { isRouteErrorResponse, useRouteError } from "@react-router/react"
+import { isRouteErrorResponse, useRouteError } from "react-router"
 
 export function ErrorBoundary() {
   const error = useRouteError()
@@ -254,4 +254,4 @@ export const env = {
 }
 ```
 
-Remember: Always prioritize user experience, performance, and accessibility. Follow React Router v7 conventions and integrate seamlessly with the Medusa backend. Use TypeScript for type safety and Tailwind CSS for consistent styling.
+Remember: Always prioritize user experience, performance, and accessibility. Follow React Router v8 conventions and integrate seamlessly with the Medusa backend. Use TypeScript for type safety and Tailwind CSS for consistent styling.

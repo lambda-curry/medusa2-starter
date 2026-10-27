@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import {
   Links,
   Meta,
+  MetaFunction,
   Outlet,
   Scripts,
   ScrollRestoration,
@@ -11,14 +12,13 @@ import {
   useLoaderData,
   useRouteError,
 } from 'react-router';
-import { MetaFunction } from 'react-router';
 import { Page } from './components/layout/Page';
 import { RootProviders } from './providers/root-providers';
 
 import '@app/styles/global.css';
 import { useRootLoaderData } from './hooks/useRootLoaderData';
 
-export const getRootMeta: MetaFunction = ({ data }) => {
+export const getRootMeta: MetaFunction = () => {
   const title = 'Barrio Store';
   const description = 'Discover our artisan-roasted coffee, crafted with care and delivered to your door.';
   const ogTitle = title;
