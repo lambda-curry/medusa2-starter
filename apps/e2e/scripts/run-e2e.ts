@@ -23,7 +23,8 @@ const medusaEnvPath = path.resolve(repoRoot, 'apps', 'medusa', '.env');
 const serverLogPath = process.env.E2E_SERVER_LOG ?? path.resolve(repoRoot, 'e2e-server.log');
 const medusaUrl = process.env.E2E_MEDUSA_URL ?? 'http://127.0.0.1:9000';
 const storefrontUrl = process.env.E2E_STOREFRONT_URL ?? 'http://127.0.0.1:3000';
-const storefrontPort = new URL(storefrontUrl).port || '3000';
+const storefrontUrlParsed = new URL(storefrontUrl);
+const storefrontPort = storefrontUrlParsed.port || (storefrontUrlParsed.protocol === 'https:' ? '443' : '80');
 const waitTimeoutMs = Number.parseInt(process.env.E2E_WAIT_TIMEOUT_MS ?? '180000', 10);
 const waitIntervalMs = Number.parseInt(process.env.E2E_WAIT_INTERVAL_MS ?? '2000', 10);
 
