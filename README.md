@@ -123,6 +123,8 @@ Formatting is handled separately by Biome (`yarn format`).
 
 The Railway project **Barrio** auto-deploys both apps from `main`. It builds the Medusa backend and the storefront from `apps/medusa/Dockerfile` and `apps/storefront/Dockerfile`. GitHub Actions only runs PR checks; it doesn't deploy anything.
 
+The storefront runs on a small Express server (`apps/storefront/server.js`) instead of `react-router-serve`, so it can trust the proxy's `X-Forwarded-*` headers. Hosts like Railway terminate HTTPS and forward plain HTTP. Without `trust proxy`, React Router's CSRF check sees an `http://` request with an `https://` `Origin` header and rejects every form action.
+
 ## Enabling Express Checkout
 
 > For a more complete guide on how to enable Express Checkout, see the Stripe [documentation](https://docs.stripe.com/elements/express-checkout-element).
