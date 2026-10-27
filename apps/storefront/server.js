@@ -2,10 +2,15 @@
 // X-Forwarded-* headers. Railway terminates TLS and forwards plain HTTP, so without
 // `trust proxy` React Router sees an http:// request URL, the https:// Origin header
 // doesn't match, and its CSRF check rejects every action (add to cart, region, etc.).
-import { createRequestHandler } from '@react-router/express';
 import compression from 'compression';
 import express from 'express';
 import morgan from 'morgan';
+
+// Like react-router-serve, default to production. This has to happen before React loads,
+// so the request handler and the build are imported dynamically below.
+process.env.NODE_ENV = process.env.NODE_ENV ?? 'production';
+
+const { createRequestHandler } = await import('@react-router/express');
 
 const BUILD_PATH = './build/server/index.js';
 const port = Number.parseInt(process.env.PORT || '3000', 10);

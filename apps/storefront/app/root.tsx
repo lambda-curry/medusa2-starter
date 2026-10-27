@@ -114,8 +114,8 @@ export function ErrorBoundary() {
     <html lang="en" className="min-h-screen">
       <head>
         <meta charSet="UTF-8" />
+        {/* No <Meta />: it would add the root route's title next to this one. */}
         <title>{notFound ? 'Page not found' : 'Something went wrong'}</title>
-        <Meta />
         <Links />
       </head>
       <body className="flex min-h-screen items-center justify-center p-6">
