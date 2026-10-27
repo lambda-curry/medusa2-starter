@@ -2,11 +2,11 @@ import { Breadcrumbs } from '@app/components/common/breadcrumbs';
 import { Container } from '@app/components/common/container';
 import { ProductListWithPagination } from '@app/components/product/ProductListWithPagination';
 import HomeIcon from '@heroicons/react/24/solid/HomeIcon';
-import { fetchProducts } from '@libs/util/server/products.server';
+import { fetchProducts, getProductsPaginationParams } from '@libs/util/server/products.server';
 import { LoaderFunctionArgs, useLoaderData } from 'react-router';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { products, count, limit, offset } = await fetchProducts(request, {});
+  const { products, count, limit, offset } = await fetchProducts(request, getProductsPaginationParams(request));
 
   return { products, count, limit, offset };
 };

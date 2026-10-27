@@ -2,7 +2,7 @@ import { Container } from '@app/components/common/container';
 import { ProductListWithPagination } from '@app/components/product/ProductListWithPagination';
 import { PageHeading } from '@app/components/sections/PageHeading';
 import { listCategories } from '@libs/util/server/data/categories.server';
-import { fetchProducts } from '@libs/util/server/products.server';
+import { fetchProducts, getProductsPaginationParams } from '@libs/util/server/products.server';
 import clsx from 'clsx';
 import { LoaderFunctionArgs, NavLink, redirect, useLoaderData } from 'react-router';
 
@@ -18,6 +18,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   }
 
   const { products, count, limit, offset } = await fetchProducts(request, {
+    ...getProductsPaginationParams(request),
     category_id: category.id,
   });
 
@@ -38,7 +39,7 @@ export default function ProductCategoryRoute() {
 
   if (!data) return null;
 
-  const { products, count, limit, offset, categories } = data;
+  const { products, count, limit, offset, category, categories } = data;
 
   return (
     <Container className="pb-16">
@@ -75,7 +76,7 @@ export default function ProductCategoryRoute() {
           <ProductListWithPagination
             products={products}
             paginationConfig={{ count, offset, limit }}
-            context="products"
+            context={`categories/${category.handle}`}
           />
         </div>
       </div>

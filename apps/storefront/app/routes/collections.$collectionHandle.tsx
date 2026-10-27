@@ -2,7 +2,7 @@ import { Container } from '@app/components/common/container';
 import { ProductListWithPagination } from '@app/components/product/ProductListWithPagination';
 import { PageHeading } from '@app/components/sections/PageHeading';
 import { fetchCollections } from '@libs/util/server/data/collections.server';
-import { fetchProducts } from '@libs/util/server/products.server';
+import { fetchProducts, getProductsPaginationParams } from '@libs/util/server/products.server';
 import clsx from 'clsx';
 import { LoaderFunctionArgs, NavLink, redirect, useLoaderData } from 'react-router';
 
@@ -16,6 +16,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!collection) throw redirect('/products');
 
   const { products, count, limit, offset } = await fetchProducts(request, {
+    ...getProductsPaginationParams(request),
     collection_id: collection.id,
   });
 
@@ -65,7 +66,7 @@ export default function ProductCollectionRoute() {
           <ProductListWithPagination
             products={products}
             paginationConfig={{ count, offset, limit }}
-            context="products"
+            context={`collections/${collection.handle}`}
           />
         </div>
       </div>
