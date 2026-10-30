@@ -15,7 +15,7 @@ import { Link, LoaderFunctionArgs, redirect, useLoaderData } from 'react-router'
 // back as "pending" rather than "succeeded", so only a failure skips completion; Medusa checks the
 // payment intent itself and refuses to complete a cart that isn't paid.
 const completeRedirectedCheckout = async (request: Request, redirectStatus: string | null): Promise<never> => {
-  if (!getCartId(request.headers)) throw redirect('/');
+  if (!(await getCartId(request.headers))) throw redirect('/');
   if (redirectStatus === 'failed') throw redirect('/checkout');
 
   const result = await placeOrder(request).catch((error) => {
