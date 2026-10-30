@@ -3,14 +3,42 @@ import { Container } from '@app/components/common/container/Container';
 import { Image } from '@app/components/common/images/Image';
 import { formatPhoneNumber } from '@libs/util/phoneNumber';
 import { formatPrice } from '@libs/util/prices';
+import { getCartId, removeCartId } from '@libs/util/server/cookies.server';
+import { placeOrder } from '@libs/util/server/data/cart.server';
 import { retrieveOrder } from '@libs/util/server/data/orders.server';
 import { StoreOrder, StorePaymentCollection } from '@medusajs/types';
 import { Link, LoaderFunctionArgs, redirect, useLoaderData } from 'react-router';
+
+// Redirect-based payment methods (Klarna, Cash App, Amazon Pay, etc.) leave the site to pay, so
+// the checkout form never gets to complete the cart. Stripe sends the customer back here with the
+// payment intent instead of an order, and we complete the cart now. An authorized payment can come
+// back as "pending" rather than "succeeded", so only a failure skips completion; Medusa checks the
+// payment intent itself and refuses to complete a cart that isn't paid.
+const completeRedirectedCheckout = async (request: Request, redirectStatus: string | null): Promise<never> => {
+  if (!(await getCartId(request.headers))) throw redirect('/');
+  if (redirectStatus === 'failed') throw redirect('/checkout');
+
+  const result = await placeOrder(request).catch((error) => {
+    console.error('Failed to complete cart after payment redirect', error);
+    return null;
+  });
+
+  if (result?.type !== 'order') throw redirect('/checkout');
+
+  const headers = new Headers();
+  await removeCartId(headers);
+
+  throw redirect(`/checkout/success?order_id=${result.order.id}`, { headers });
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs): Promise<{ order: StoreOrder }> => {
   const url = new URL(request.url);
 
   const orderId = url.searchParams.get('order_id') || '';
+
+  if (!orderId && url.searchParams.has('payment_intent')) {
+    return completeRedirectedCheckout(request, url.searchParams.get('redirect_status'));
+  }
 
   if (!orderId) {
     throw redirect('/');

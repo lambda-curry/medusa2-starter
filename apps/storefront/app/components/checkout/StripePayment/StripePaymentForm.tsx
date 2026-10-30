@@ -8,6 +8,7 @@ import { PaymentMethodCreateParams, StripePaymentElement } from '@stripe/stripe-
 import clsx from 'clsx';
 import { FC, FormEvent, PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { SubmitFunction } from 'react-router';
+import { createFormData } from 'remix-hook-form';
 import { CompleteCheckoutForm } from '../CompleteCheckoutForm';
 
 export interface StripePaymentFormProps extends PropsWithChildren {
@@ -78,13 +79,29 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({ isActiveStep, pa
 
     setSubmitting(true);
 
+    // Redirect-based methods leave the site before the form submits, and the success route
+    // completes the cart as-is, so a separate billing address has to be on the cart first.
+    if (!data.sameAsShipping) {
+      const response = await fetch('/api/checkout/billing-address', {
+        method: 'POST',
+        body: createFormData({ cartId: cart.id, billingAddress: address }),
+      }).catch(() => null);
+
+      if (!response?.ok) {
+        setStripeError('We couldn’t save your billing address. Please check it and try again.');
+        setSubmitting(false);
+        return;
+      }
+    }
+
     return stripe
       .confirmPayment({
         //`Elements` instance that was used to create the Payment Element
         elements,
         confirmParams: {
-          // return_url: siteURL(redirectPath),
-          return_url: 'http://localhost:3000/checkout/success',
+          // Only used by redirect-based methods (Klarna, Cash App, etc.). The success route
+          // completes the cart when Stripe sends the customer back.
+          return_url: `${window.location.origin}/checkout/success`,
 
           // We need to add the billing details manually because we are disabling
           // the billing address fields on the `PaymentElement`
