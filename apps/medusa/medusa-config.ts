@@ -40,8 +40,12 @@ const workflowEngineModule = IS_TEST
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: DATABASE_URL,
+    // SSL goes under `connection`: the app's pg connection reads either location, but
+    // `medusa db:migrate` hands these options to knex, which only reads `connection.ssl`.
     databaseDriverOptions: {
-      ssl: DATABASE_USES_SSL ? { rejectUnauthorized: false } : false,
+      connection: {
+        ssl: DATABASE_USES_SSL ? { rejectUnauthorized: false } : false,
+      },
     },
     redisUrl: REDIS_URL,
 
