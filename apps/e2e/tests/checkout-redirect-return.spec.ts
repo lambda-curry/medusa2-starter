@@ -34,7 +34,8 @@ test.describe('checkout redirect return', () => {
   test('an unpaid cart is not completed', async ({ page }) => {
     await addToCart(page);
 
-    // Medusa checks the payment itself, so a forged "pending" return can't complete the cart.
+    // A forged "pending" return on a cart that was never paid can't complete it. (This cart has
+    // no payment session; a paid return needs a real Stripe account.)
     await page.goto('/checkout/success?payment_intent=pi_e2e&redirect_status=pending');
 
     await expect(page).toHaveURL(/\/checkout$/);
