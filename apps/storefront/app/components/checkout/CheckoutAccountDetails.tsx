@@ -107,7 +107,9 @@ export const CheckoutAccountDetails = () => {
 
   useEffect(() => {
     if (isActiveStep && !isSubmitting && !hasErrors && isComplete) {
-      form.reset();
+      // Reset to the address just saved on the cart. A bare `reset()` restores the defaults from
+      // the first render, from before the cart had an address.
+      form.reset(defaultValues);
       goToNextStep();
     }
   }, [isSubmitting, isComplete]);
@@ -125,7 +127,11 @@ export const CheckoutAccountDetails = () => {
       </CheckoutSectionHeader>
 
       {!isActiveStep && isComplete && (
-        <AddressDisplay title="Shipping Address" address={shippingAddress} countryOptions={countryOptions} />
+        <AddressDisplay
+          title="Shipping Address"
+          address={medusaAddressToAddress(cart.shipping_address as MedusaAddress)}
+          countryOptions={countryOptions}
+        />
       )}
 
       {isActiveStep && (
