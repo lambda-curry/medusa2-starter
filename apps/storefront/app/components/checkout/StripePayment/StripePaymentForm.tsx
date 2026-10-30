@@ -83,8 +83,9 @@ export const StripePaymentForm: FC<StripePaymentFormProps> = ({ isActiveStep, pa
         //`Elements` instance that was used to create the Payment Element
         elements,
         confirmParams: {
-          // return_url: siteURL(redirectPath),
-          return_url: 'http://localhost:3000/checkout/success',
+          // Only used by redirect-based methods (Klarna, Cash App, etc.). The success route
+          // completes the cart when Stripe sends the customer back.
+          return_url: `${window.location.origin}/checkout/success`,
 
           // We need to add the billing details manually because we are disabling
           // the billing address fields on the `PaymentElement`
