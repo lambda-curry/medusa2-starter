@@ -5,7 +5,7 @@ import { LogoStoreName } from '@app/components/LogoStoreName/LogoStoreName';
 import { useCart } from '@app/hooks/useCart';
 import { useRootLoaderData } from '@app/hooks/useRootLoaderData';
 import { useSiteDetails } from '@app/hooks/useSiteDetails';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import ShoppingBagIcon from '@heroicons/react/24/outline/ShoppingBagIcon';
 import clsx from 'clsx';
 import { type FC, useState } from 'react';

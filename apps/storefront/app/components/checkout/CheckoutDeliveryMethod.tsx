@@ -6,7 +6,7 @@ import {
   shippingMethodsSchema,
 } from '@app/routes/api.checkout.shipping-methods';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TextField } from '@lambdacurry/forms/remix-hook-form';
+import { TextField } from '@lambdacurry/forms/remix-hook-form/text-field';
 import {
   checkAccountDetailsComplete,
   checkDeliveryMethodComplete,

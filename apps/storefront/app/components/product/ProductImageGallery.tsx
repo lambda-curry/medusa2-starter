@@ -3,7 +3,7 @@ import { Image } from '@app/components/common/images/Image';
 import { LightboxGallery } from '@app/components/common/images/LightboxGallery';
 import { useScrollArrows } from '@app/hooks/useScrollArrows';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { MagnifyingGlassPlusIcon } from '@heroicons/react/24/outline';
+import MagnifyingGlassPlusIcon from '@heroicons/react/24/outline/MagnifyingGlassPlusIcon';
 import { StoreProduct } from '@medusajs/types';
 import clsx from 'clsx';
 import { FC, memo, useState } from 'react';

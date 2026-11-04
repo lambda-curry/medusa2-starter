@@ -1,9 +1,14 @@
 import { reactRouter } from '@react-router/dev/vite';
-import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import { defineConfig } from 'vite';
 // import { remixDevTools } from 'remix-development-tools';
 
 export default defineConfig({
+  // Sentry tree-shaking flags. Valid only while entry.client.tsx initializes Sentry with
+  // integrations: [] and no tracing. Remove these defines if tracing is turned on.
+  define: {
+    __SENTRY_DEBUG__: 'false',
+    __SENTRY_TRACING__: 'false',
+  },
   server: {
     port: 3000,
     warmup: {
@@ -16,6 +21,6 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  plugins: [reactRouter(), vanillaExtractPlugin()],
+  plugins: [reactRouter()],
   build: {},
 });

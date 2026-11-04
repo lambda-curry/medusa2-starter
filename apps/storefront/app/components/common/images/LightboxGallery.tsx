@@ -1,64 +1,23 @@
-import { FC } from 'react';
-import Lightbox from 'yet-another-react-lightbox';
-import Captions from 'yet-another-react-lightbox/plugins/captions';
-import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
-import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import { ImageBase } from './ImageBase';
-import 'yet-another-react-lightbox/plugins/captions.css';
-import 'yet-another-react-lightbox/plugins/thumbnails.css';
-import 'yet-another-react-lightbox/styles.css';
+import { type FC, lazy, Suspense, useState } from 'react';
+import type { LightboxGalleryProps } from './LightboxGalleryImpl';
 
-interface Image {
-  src: string;
-  alt?: string;
-  width?: number;
-  height?: number;
-}
+// yet-another-react-lightbox and its CSS only render after a click, so load them on first open
+// instead of in every product page's route chunk.
+const LazyLightboxGallery = lazy(() =>
+  import('./LightboxGalleryImpl').then((module) => ({ default: module.LightboxGalleryImpl })),
+);
 
-interface LightboxProps {
-  images: Image[];
-  lightBoxIndex: number;
-  setLightBoxIndex: (index: number) => void;
-}
+export const LightboxGallery: FC<LightboxGalleryProps> = (props) => {
+  const isOpen = props.lightBoxIndex >= 0;
+  // Stay mounted after the first open so the lightbox can run its close animation.
+  const [hasOpened, setHasOpened] = useState(isOpen);
+  if (isOpen && !hasOpened) setHasOpened(true);
 
-export const LightboxGallery: FC<LightboxProps> = ({ images, lightBoxIndex, setLightBoxIndex }) => {
-  const photos = images.map((image) => ({
-    src: image.src,
-    alt: image.alt || '',
-    description: image.alt,
-    width: image.width || 500,
-    height: image.height || 500,
-  }));
-
-  const lightboxPlugins = [Fullscreen, Zoom, Thumbnails, Captions];
+  if (!hasOpened) return null;
 
   return (
-    <Lightbox
-      slides={photos}
-      open={lightBoxIndex >= 0}
-      index={lightBoxIndex}
-      close={() => setLightBoxIndex(-1)}
-      plugins={lightboxPlugins}
-      zoom={{
-        maxZoomPixelRatio: 4,
-      }}
-      captions={{
-        descriptionTextAlign: 'center',
-      }}
-      render={{
-        slide: ({ slide }) => (
-          <ImageBase
-            src={slide.src}
-            alt={slide.alt}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '100%',
-            }}
-          />
-        ),
-        thumbnail: ({ slide }) => <ImageBase src={slide.src} alt={slide.alt} />,
-      }}
-    />
+    <Suspense fallback={null}>
+      <LazyLightboxGallery {...props} />
+    </Suspense>
   );
 };

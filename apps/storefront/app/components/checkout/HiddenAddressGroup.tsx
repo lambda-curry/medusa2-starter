@@ -1,4 +1,4 @@
-import { TextField } from '@lambdacurry/forms/remix-hook-form';
+import { TextField } from '@lambdacurry/forms/remix-hook-form/text-field';
 import { Address } from '@libs/types';
 
 interface HiddenAddressGroupProps {

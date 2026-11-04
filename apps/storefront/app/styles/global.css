@@ -48,31 +48,6 @@
     --mkt-header-height-desktop: 72px;
   }
 
-  @font-face {
-    font-family: 'Sen', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap)
-      format('truetype');
-  }
-  @font-face {
-    font-family: 'Italiana', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(https://fonts.googleapis.com/css2?family=Italiana&display=swap)
-      format('truetype');
-  }
-  @font-face {
-    font-family: 'Ballet', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url(https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&display=swap)
-      format('truetype');
-  }
-
   h1,
   h2,
   h3,

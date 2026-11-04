@@ -1,5 +1,5 @@
 import { Label, Radio, RadioGroup } from '@headlessui/react';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
 import { formatPrice } from '@libs/util/prices';
 import clsx from 'clsx';
 import type { FC } from 'react';
