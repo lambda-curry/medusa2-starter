@@ -1,5 +1,7 @@
 import { DOMAttributes, useCallback, useState } from 'react';
-import { brokenImgSrc } from './brokenImgSrc';
+// Imported as a URL so the fallback is fetched (and cached) only when an image fails,
+// instead of shipping as a 32 KB base64 string in the root JS chunk and in SSR HTML.
+import brokenImgSrc from './broken-image.png';
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string[];

@@ -7,7 +7,7 @@ import { useRegions } from '@app/hooks/useRegions';
 import { CheckoutStep } from '@app/providers/checkout-provider';
 import { type AccountDetailsFormData, accountDetailsSchema } from '@app/routes/api.checkout.account-details';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TextField } from '@lambdacurry/forms/remix-hook-form';
+import { TextField } from '@lambdacurry/forms/remix-hook-form/text-field';
 import type { MedusaAddress } from '@libs/types';
 import { medusaAddressToAddress } from '@libs/util';
 import { checkAccountDetailsComplete } from '@libs/util/checkout';

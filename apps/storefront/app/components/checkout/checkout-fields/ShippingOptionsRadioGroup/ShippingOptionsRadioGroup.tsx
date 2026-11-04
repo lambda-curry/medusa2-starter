@@ -1,4 +1,4 @@
-import { RadioGroup } from '@lambdacurry/forms/ui';
+import { RadioGroup } from '@lambdacurry/forms/ui/radio-group';
 import { StoreCartShippingOption, StoreRegion } from '@medusajs/types';
 import { clsx } from 'clsx';
 import { FC } from 'react';

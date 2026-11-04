@@ -1,5 +1,5 @@
 import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
-import { RadioGroupItem } from '@lambdacurry/forms/ui';
+import { RadioGroupItem } from '@lambdacurry/forms/ui/radio-group';
 import { formatPrice } from '@libs/util/prices';
 import { StoreCartShippingOption, StoreRegion } from '@medusajs/types';
 import clsx from 'clsx';

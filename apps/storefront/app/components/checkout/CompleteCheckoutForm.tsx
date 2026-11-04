@@ -2,7 +2,8 @@ import { SubmitButton } from '@app/components/common/remix-hook-form/buttons/Sub
 import { useCheckout } from '@app/hooks/useCheckout';
 import { CompleteCheckoutFormData, completeCheckoutSchema } from '@app/routes/api.checkout.complete';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Checkbox, TextField } from '@lambdacurry/forms/remix-hook-form';
+import { Checkbox } from '@lambdacurry/forms/remix-hook-form/checkbox';
+import { TextField } from '@lambdacurry/forms/remix-hook-form/text-field';
 import { type CustomPaymentSession, type MedusaAddress } from '@libs/types';
 import { emptyAddress, medusaAddressToAddress } from '@libs/util';
 import { FetcherKeys } from '@libs/util/fetcher-keys';
