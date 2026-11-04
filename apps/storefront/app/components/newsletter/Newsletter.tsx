@@ -42,15 +42,26 @@ export const NewsletterSubscription: FC<{ className?: string }> = ({ className }
                 required
                 aria-label="Email address"
                 aria-invalid={emailError ? true : undefined}
+                aria-describedby={emailError ? 'newsletter-email-error' : undefined}
                 placeholder="Enter your email"
                 className="min-w-[220px] w-full text-white border-none rounded-none mt-2 pl-0 bg-transparent placeholder:text-white"
               />
-              <Button type="submit" variant="ghost" className="pr-0 pl-0" disabled={fetcher.state !== 'idle'}>
-                <ArrowRightIcon className="w-5 h-5" />
+              <Button
+                type="submit"
+                variant="ghost"
+                className="pr-0 pl-0"
+                aria-label="Subscribe to newsletter"
+                disabled={fetcher.state !== 'idle'}
+              >
+                <ArrowRightIcon className="w-5 h-5" aria-hidden="true" />
               </Button>
             </div>
           </div>
-          {emailError && <p className="mt-2 text-sm">{emailError}</p>}
+          {emailError && (
+            <p id="newsletter-email-error" className="mt-2 text-sm">
+              {emailError}
+            </p>
+          )}
         </fetcher.Form>
       )}
     </div>
