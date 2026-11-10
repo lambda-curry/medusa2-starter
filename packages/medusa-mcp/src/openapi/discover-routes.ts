@@ -6,7 +6,7 @@ const ROUTE_FILE = /^route\.(ts|js)$/;
 const CONTRACT_FILES = ['openapi.ts', 'openapi.js'];
 const SKIPPED_DIRECTORIES = new Set(['node_modules', '__tests__']);
 
-export type DiscoveredRoute = {
+export interface DiscoveredRoute {
   /** OpenAPI path, for example `/admin/products/{id}`. */
   path: string;
   /** Methods the route module exports, which are the methods Medusa serves for it. */
@@ -14,7 +14,7 @@ export type DiscoveredRoute = {
   routeFile: string;
   contractFile?: string;
   contract?: OpenApiRouteContract;
-};
+}
 
 export class OpenApiContractError extends Error {
   constructor(readonly problems: string[]) {

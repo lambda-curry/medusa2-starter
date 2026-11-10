@@ -8,22 +8,22 @@ import { API_AREAS, type ApiArea, HTTP_METHODS, type OpenApiDocument, type SpecG
 
 const OWN_PACKAGE = '@lambdacurry/medusa-mcp';
 
-export type ApiSpec = {
+export interface ApiSpec {
   medusaVersion: string;
   /** Content hash of the published documents. Equal specs always produce the same revision. */
   revision: string;
   documents: Record<ApiArea, OpenApiDocument>;
   gaps: SpecGap[];
-};
+}
 
-export type BuildApiSpecOptions = {
+export interface BuildApiSpecOptions {
   /** The Medusa project directory, the one containing `src/api`. */
   projectRoot: string;
   /** Plugin package names registered in `medusa-config`. Their routes are reported as gaps. */
   plugins?: string[];
   /** Operation keys such as `post /admin/promotions/{id}` that custom routes may knowingly replace. */
   overrides?: string[];
-};
+}
 
 function canonicalJson(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;

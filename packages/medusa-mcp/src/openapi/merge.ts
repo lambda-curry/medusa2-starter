@@ -2,7 +2,10 @@ import type { OpenApiDocument } from './types';
 
 const OPERATION_KEYS = new Set(['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace']);
 
-export type MergeResult = { document: OpenApiDocument; problems: string[] };
+export interface MergeResult {
+  document: OpenApiDocument;
+  problems: string[];
+}
 
 /**
  * Adds custom path items to a core Medusa document. A custom operation on a path and method Medusa already

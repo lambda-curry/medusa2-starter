@@ -9,9 +9,9 @@ export type ToJsonSchema = (schema: unknown, io: 'input' | 'output') => JsonSche
 /** Matches the security Medusa's own admin operations declare. */
 const ADMIN_SECURITY = [{ api_token: [] }, { cookie_auth: [] }, { jwt_token: [] }];
 
-type ZodWithJsonSchema = {
+interface ZodWithJsonSchema {
   toJSONSchema: (schema: unknown, params: Record<string, unknown>) => JsonSchema;
-};
+}
 
 /**
  * Converts contract schemas with the Zod the indexed project itself resolves through
@@ -33,11 +33,11 @@ export function areaOf(openApiPath: string): ApiArea | undefined {
   return undefined;
 }
 
-export type CustomPaths = {
+export interface CustomPaths {
   paths: Record<ApiArea, Record<string, Record<string, unknown>>>;
   gaps: SpecGap[];
   problems: string[];
-};
+}
 
 function buildOperation(
   route: DiscoveredRoute,

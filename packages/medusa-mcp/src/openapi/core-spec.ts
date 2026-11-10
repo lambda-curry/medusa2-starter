@@ -4,10 +4,10 @@ import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { API_AREAS, type ApiArea, type OpenApiDocument } from './types';
 
-type SpecManifest = {
+interface SpecManifest {
   medusaVersion: string;
   specs: Record<ApiArea, { file: string; sha256: string }>;
-};
+}
 
 const PACKAGE_NAME = '@lambdacurry/medusa-mcp';
 
