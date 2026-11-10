@@ -105,6 +105,17 @@ medusaIntegrationTestRunner({
       });
     });
 
+    describe('deleted identities', () => {
+      it('revokes tokens whose auth identity was deleted outright', async () => {
+        await getContainer().resolve(Modules.AUTH).deleteAuthIdentities([admin.authIdentityId]);
+        const { status, headers } = await rpc(api, 'tools/list', {}, readToken);
+        expect(status).toBe(401);
+        expect(headers['www-authenticate']).toContain('no longer exists');
+        const oauth = getContainer().resolve<McpOAuthService>('mcp_oauth');
+        expect(await oauth.verifyAccessToken(readToken, RESOURCE)).toBeUndefined();
+      });
+    });
+
     describe('tools', () => {
       it('lists the read tools with read-only annotations and their OAuth scope', async () => {
         const { message } = await rpc(api, 'tools/list', {}, readToken);

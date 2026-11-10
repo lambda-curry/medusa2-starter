@@ -46,16 +46,20 @@ function layout(title: string, body: string): string {
 </html>`;
 }
 
-/** Sends an authorize page that cannot be framed or cached. */
-export function sendPage(res: MedusaResponse, status: number, html: string): void {
+/**
+ * Sends an authorize page that cannot be framed or cached. `formTargets` lists origins a form on the page may end
+ * up at: Chrome and Safari apply `form-action` to the redirect that follows a submission, so the consent page must
+ * allow the client's (already verified) redirect URI origin.
+ */
+export function sendPage(res: MedusaResponse, status: number, html: string, formTargets: string[] = []): void {
+  const formAction = ["'self'", ...formTargets.map((uri) => new URL(uri).origin)].join(' ');
   res
     .status(status)
     .set({
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'no-store',
       'X-Frame-Options': 'DENY',
-      'Content-Security-Policy':
-        "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'",
+      'Content-Security-Policy': `default-src 'none'; style-src 'unsafe-inline'; form-action ${formAction}; frame-ancestors 'none'`,
       'Referrer-Policy': 'no-referrer',
     })
     .send(html);
