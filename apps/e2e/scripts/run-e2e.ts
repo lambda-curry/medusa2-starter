@@ -271,6 +271,15 @@ async function main() {
   process.on('SIGTERM', () => onSignal(143));
 
   try {
+    process.stdout.write('Building workspace Medusa plugins...\n');
+    await runCommand({
+      command: 'yarn',
+      args: ['workspace', '@lambdacurry/medusa-mcp', 'build'],
+      cwd: repoRoot,
+      env: baseEnv,
+      logLabel: 'yarn workspace @lambdacurry/medusa-mcp build',
+    });
+
     process.stdout.write('Preparing Medusa database for E2E...\n');
     createdMedusaEnvFile = ensureMedusaEnvFile();
     await seedMedusa();

@@ -2170,6 +2170,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hono/node-server@npm:^1.19.9 || ^2.1.3":
+  version: 2.1.6
+  resolution: "@hono/node-server@npm:2.1.6"
+  peerDependencies:
+    hono: ^4 || ^5.0.0-0
+  checksum: 10c0/bb57a4e00f193b37f1e7c8a4b8206914ab3f6073d8e7da7ca4b005f0205d89ef9cd0bdb783a4b59869a4c9211f1567f3e0717f31e92704ed7b1801a33d3252d3
+  languageName: node
+  linkType: hard
+
 "@hookform/error-message@npm:^2.0.1":
   version: 2.0.1
   resolution: "@hookform/error-message@npm:2.0.1"
@@ -2955,6 +2964,25 @@ __metadata:
   checksum: 10c0/3ec5d21fb0c9c7a130edb3ce9ae86c09c5e968c9e33e28bbc6750b032f70b29f9e8c122b667cb48ed8759ddae1fe0d00ba4b6ef131dbba9e9a7dd25f59c2bc40
   languageName: node
   linkType: hard
+
+"@lambdacurry/medusa-mcp@workspace:*, @lambdacurry/medusa-mcp@workspace:packages/medusa-mcp":
+  version: 0.0.0-use.local
+  resolution: "@lambdacurry/medusa-mcp@workspace:packages/medusa-mcp"
+  dependencies:
+    "@medusajs/cli": "npm:2.22.1"
+    "@medusajs/framework": "npm:2.22.1"
+    "@medusajs/medusa": "npm:2.22.1"
+    "@modelcontextprotocol/node": "npm:2.1.2"
+    "@modelcontextprotocol/server": "npm:2.4.0"
+    "@swc/core": "npm:^1.16.20"
+    "@types/node": "npm:26.6.5"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^6.0.3"
+  peerDependencies:
+    "@medusajs/framework": ^2.22.1
+    "@medusajs/medusa": ^2.22.1
+  languageName: unknown
+  linkType: soft
 
 "@lambdacurry/medusa-plugins-sdk@npm:0.0.5":
   version: 0.0.5
@@ -4188,6 +4216,37 @@ __metadata:
   dependencies:
     "@mjackson/headers": "npm:^0.11.1"
   checksum: 10c0/cf693915c85a565c14dbf06e70102ee016b4efb726856d558df7664f27591e4a8de72e443ee8f2cda2977e2de3b48b080be8a907def777ab5692dd2cee9812f2
+  languageName: node
+  linkType: hard
+
+"@modelcontextprotocol/core@npm:2.4.0":
+  version: 2.4.0
+  resolution: "@modelcontextprotocol/core@npm:2.4.0"
+  dependencies:
+    zod: "npm:^4.2.0"
+  checksum: 10c0/4dd07f18c7eee3f3cf7bcea9a7dd11799f13ce2255fda9ae77aff9978a21d16ee4026f63e5a3e13d5d91209acc3e7d6b97d459c1ff1b78f3b872eb0597b3dd53
+  languageName: node
+  linkType: hard
+
+"@modelcontextprotocol/node@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@modelcontextprotocol/node@npm:2.1.2"
+  dependencies:
+    "@hono/node-server": "npm:^1.19.9 || ^2.1.3"
+    hono: "npm:^4.11.4"
+  peerDependencies:
+    "@modelcontextprotocol/server": ^2.4.0
+  checksum: 10c0/0aebe06454b9e583658f702fd1c8af4eddb91f91a7b5dd7b7ffdbe19d0b8503400e2cbcf8b6511c14767fde5ffcfc73154921c52644269b5e4eb41d600be2594
+  languageName: node
+  linkType: hard
+
+"@modelcontextprotocol/server@npm:2.4.0":
+  version: 2.4.0
+  resolution: "@modelcontextprotocol/server@npm:2.4.0"
+  dependencies:
+    "@modelcontextprotocol/core": "npm:2.4.0"
+    zod: "npm:^4.2.0"
+  checksum: 10c0/e52966e6f115296c6dbfd08550e81773f5f71fb4809c7411b11fcc619b3bd621b07f296a5571de777ea2351eca7003e6b3f4d172fe8c21563be1205b1ee4f0ec
   languageName: node
   linkType: hard
 
@@ -14763,6 +14822,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hono@npm:^4.11.4":
+  version: 4.13.17
+  resolution: "hono@npm:4.13.17"
+  checksum: 10c0/63a2d834f0cf1b3858d5872883589ea48522567251bc4eb62c5f17e47cc6f793b2201150bca4822374165e92dbdcc8d3573443c7cdb8a340a933dce39e6df34d
+  languageName: node
+  linkType: hard
+
 "hosted-git-info@npm:^4.0.2":
   version: 4.1.0
   resolution: "hosted-git-info@npm:4.1.0"
@@ -16632,6 +16698,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "medusa@workspace:apps/medusa"
   dependencies:
+    "@lambdacurry/medusa-mcp": "workspace:*"
     "@lambdacurry/medusa-product-reviews": "npm:1.4.0"
     "@medusajs/admin-sdk": "npm:2.22.1"
     "@medusajs/cli": "npm:2.22.1"
@@ -21302,7 +21369,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:4.6.7":
+"zod@npm:4.6.7, zod@npm:^4.2.0":
   version: 4.6.7
   resolution: "zod@npm:4.6.7"
   checksum: 10c0/4ce2eb14034317b7254e347ca37b5ad591cf8333147030cf05b9b5d31692d45073f7f2747aa50cf8c6b29012194d2b22978cecc89969cf34a0d18e89d0ee7d7b

@@ -33,6 +33,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@lambdacurry/medusa-mcp": "workspace:*",
     "@lambdacurry/medusa-product-reviews": "1.4.0",
     "@medusajs/admin-sdk": "2.22.1",
     "@medusajs/cli": "2.22.1",
