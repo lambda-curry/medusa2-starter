@@ -4,12 +4,17 @@ const MAX_RESPONSE_BYTES = 64 * 1024;
 
 export interface AuditEntry {
   operation: string;
-  outcome: 'executed' | 'dry_run' | 'rejected' | 'refused';
+  path_params?: Record<string, unknown>;
+  /** executed: sent to Medusa. failed: sending threw, so the change may or may not have happened. */
+  outcome: 'executed' | 'failed' | 'dry_run' | 'rejected' | 'refused';
   status?: number;
   problems?: string[];
+  reason?: string;
 }
 
 export interface ExecutionTarget {
+  /** The OAuth scopes the access token was granted. */
+  scopes: readonly string[];
   /** The access token record id, for per-token rate limits. */
   tokenId: string;
   /** Records a write or delete attempt with who made it and against which spec revision. */

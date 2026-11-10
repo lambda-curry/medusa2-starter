@@ -230,35 +230,33 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     async (input) => {
       const args = input as ToolArgs;
       const operation = resolveFor('write_api', args);
-      if ('content' in operation) return operation;
+      if ('content' in operation) return refused(args, operation);
 
       const requestBody = operation.raw.requestBody as { content?: Record<string, { schema?: object }> } | undefined;
       const contentTypes = Object.keys(requestBody?.content ?? {});
       if (contentTypes.length && !contentTypes.some((type) => type.includes('json'))) {
-        return fail(`${operation.operation} takes ${contentTypes.join(' or ')}, which write_api cannot send.`);
+        return refused(
+          args,
+          fail(`${operation.operation} takes ${contentTypes.join(' or ')}, which write_api cannot send.`),
+        );
       }
       const schema = requestBody?.content?.['application/json']?.schema;
       if (schema && args.body !== undefined) {
         const problems = validateBody(catalog.spec, operation.area, schema, args.body);
         if (problems.length) {
-          await target.audit({ operation: operation.operation, outcome: 'rejected', problems });
+          await target.audit({ ...auditBase(args), outcome: 'rejected', problems });
           return fail(`The body does not match ${operation.operation}:\n- ${problems.join('\n- ')}`);
         }
       }
 
-      if (args.dry_run) {
-        const preview = await dryRun(operation, args);
-        await target.audit({ operation: operation.operation, outcome: 'dry_run' });
-        return preview;
-      }
-
-      const result = await run(operation, args);
-      await target.audit({
-        operation: operation.operation,
-        outcome: 'content' in result ? 'refused' : 'executed',
-        status: 'content' in result ? undefined : result.status,
+      return audited(args, async () => {
+        if (args.dry_run) {
+          const preview = await dryRun(operation, args);
+          await target.audit({ ...auditBase(args), outcome: 'dry_run' });
+          return preview;
+        }
+        return executeAudited(operation, args);
       });
-      return resultOf(operation, result);
     },
   );
 
@@ -280,24 +278,55 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     async (input) => {
       const args = input as ToolArgs;
       const operation = resolveFor('delete_api', args);
-      if ('content' in operation) return operation;
-      const result = await run(operation, args);
-      await target.audit({
-        operation: operation.operation,
-        outcome: 'content' in result ? 'refused' : 'executed',
-        status: 'content' in result ? undefined : result.status,
-      });
-      return resultOf(operation, result);
+      if ('content' in operation) return refused(args, operation);
+      return audited(args, () => executeAudited(operation, args));
     },
   );
 
+  function auditBase(args: ToolArgs) {
+    return { operation: String(args.operation), ...(args.path_params ? { path_params: args.path_params } : {}) };
+  }
+
+  /** Logs a refused write or delete attempt, with the reason the agent was given, and returns the refusal. */
+  async function refused(args: ToolArgs, result: ToolResult): Promise<ToolResult> {
+    await target.audit({ ...auditBase(args), outcome: 'refused', reason: result.content[0]?.text });
+    return result;
+  }
+
+  /** Logs an attempt that threw before it finished. The request may have reached Medusa, so it must be recorded. */
+  async function audited(args: ToolArgs, attempt: () => Promise<ToolResult>): Promise<ToolResult> {
+    try {
+      return await attempt();
+    } catch (error) {
+      await target.audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message });
+      throw error;
+    }
+  }
+
+  async function executeAudited(operation: CatalogOperation, args: ToolArgs): Promise<ToolResult> {
+    const result = await run(operation, args);
+    if ('content' in result) return refused(args, result);
+    await target.audit({ ...auditBase(args), outcome: 'executed', status: result.status });
+    return resultOf(operation, result);
+  }
+
   /**
    * Shows the current value of each top-level body field next to the proposed one, by reading the same path with
-   * GET when that operation exists. Nothing is written.
+   * GET when that operation exists. Nothing is written. Without mcp:read the current values stay hidden, since a
+   * dry run must not become a way to read data the token cannot read.
    */
   async function dryRun(operation: CatalogOperation, args: ToolArgs): Promise<ToolResult> {
     const fields = Object.keys((args.body as Record<string, unknown> | undefined) ?? {});
     const read = catalog.byKey.get(`GET ${operation.path}`);
+    if (!target.scopes.includes('mcp:read')) {
+      return ok({
+        operation: operation.operation,
+        dry_run: true,
+        proposed: args.body ?? null,
+        current: null,
+        note: 'Current values need the mcp:read scope.',
+      });
+    }
     if (!read || read.blocked_by) {
       return ok({ operation: operation.operation, dry_run: true, proposed: args.body ?? null, current: null });
     }

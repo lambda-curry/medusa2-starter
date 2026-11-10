@@ -30,6 +30,7 @@ function executionTarget(
   const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER);
   return {
     tokenId: verified.token_id,
+    scopes: verified.scopes,
     audit: async (entry) => {
       logger.info(
         `[medusa-mcp] ${JSON.stringify({ ...entry, user_id: verified.user_id, client_id: verified.client_id, spec_revision: revision.slice(0, 12) })}`,
