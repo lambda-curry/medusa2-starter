@@ -139,7 +139,8 @@ describe('request URLs', () => {
 
 describe('executeOperation', () => {
   it('caps responses at 64 KB by bytes, without leaving a broken multi-byte character', async () => {
-    const body = 'é'.repeat(75_000); // 150,000 bytes as UTF-8
+    // One ASCII byte first, so the 64 KiB cut lands inside a two-byte character.
+    const body = `a${'é'.repeat(75_000)}`;
     const server = createServer((_req, res) => res.writeHead(200, { 'content-type': 'text/plain' }).end(body));
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
     try {
@@ -150,7 +151,7 @@ describe('executeOperation', () => {
       };
       const products = operation('GET /admin/products');
       const result = await executeOperation(target as never, products, declaredParameters(products), {});
-      expect(result.truncated?.bytes).toBe(150_000);
+      expect(result.truncated?.bytes).toBe(150_001);
       const text = String(result.body);
       expect(Buffer.byteLength(text)).toBeLessThanOrEqual(64 * 1024 + Buffer.byteLength('…'));
       expect(text).not.toContain('\uFFFD');
