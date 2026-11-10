@@ -1,6 +1,7 @@
 import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { buildApiSpec, countOperations } from '../build-spec';
+import { compareCodeUnits } from '../compare';
 import { loadCoreSpecs, specsDirectory } from '../core-spec';
 import { OpenApiContractError } from '../discover-routes';
 
@@ -47,12 +48,19 @@ describe('buildApiSpec', () => {
       { name: 'q', in: 'query', required: false, schema: { type: 'string' } },
     ]);
 
-    const widget = (list.responses as Record<string, any>)['200'].content['application/json'].schema.properties.widgets
-      .items;
-    expect(widget.properties.retired_at).toEqual({ type: 'string', nullable: true });
+    expect(list.responses).toMatchObject({
+      200: {
+        content: {
+          'application/json': {
+            schema: {
+              properties: { widgets: { items: { properties: { retired_at: { type: 'string', nullable: true } } } } },
+            },
+          },
+        },
+      },
+    });
 
-    const create = admin.paths['/admin/widgets'].post as Record<string, any>;
-    expect(create.requestBody).toEqual({
+    expect(admin.paths['/admin/widgets'].post).toHaveProperty('requestBody', {
       required: true,
       content: {
         'application/json': {
@@ -72,6 +80,22 @@ describe('buildApiSpec', () => {
       { method: 'GET', path: '/admin/internal-sql', source: 'app', reason: 'hidden' },
       { method: 'POST', path: '/hooks/ping', source: 'app', reason: 'outside-admin-and-store' },
     ]);
+  });
+
+  it('reports plugins it cannot resolve or scan instead of failing the build', () => {
+    const withPlugins = buildApiSpec({
+      projectRoot: fixture('valid'),
+      plugins: ['@lambdacurry/medusa-mcp', './plugins/bad-segments', 'not-an-installed-plugin'],
+    });
+    expect(withPlugins.documents).toEqual(spec.documents);
+    expect(withPlugins.unscannedPlugins).toEqual([
+      { name: './plugins/bad-segments', reason: expect.stringMatching(/Unsupported route segment "\[\.\.\.path\]"/) },
+      { name: 'not-an-installed-plugin', reason: expect.stringMatching(/Cannot (find|resolve) module/) },
+    ]);
+  });
+
+  it('orders by code unit, independent of locale', () => {
+    expect(['b', 'Z', 'a', 'É'].sort(compareCodeUnits)).toEqual(['Z', 'a', 'b', 'É']);
   });
 
   it('produces the same revision for the same content and a new one when a contract changes', () => {

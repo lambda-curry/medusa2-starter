@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { compareCodeUnits } from './compare';
 import { loadCoreSpecs, projectMedusaVersion } from './core-spec';
 import { discoverDocumentedRoutes, discoverRoutes, OpenApiContractError } from './discover-routes';
 import { buildCustomPaths, projectZodJsonSchema } from './generate';
@@ -14,6 +15,13 @@ export interface ApiSpec {
   revision: string;
   documents: Record<ApiArea, OpenApiDocument>;
   gaps: SpecGap[];
+  /** Registered plugins whose routes could not be listed, so their gaps are unknown. */
+  unscannedPlugins: UnscannedPlugin[];
+}
+
+export interface UnscannedPlugin {
+  name: string;
+  reason: string;
 }
 
 export interface BuildApiSpecOptions {
@@ -40,17 +48,39 @@ function isDocumented(documents: Record<ApiArea, OpenApiDocument>, method: strin
   return API_AREAS.some((area) => Boolean(documents[area].paths[routePath]?.[method.toLowerCase()]));
 }
 
-function pluginGaps(projectRoot: string, plugins: string[], documents: Record<ApiArea, OpenApiDocument>): SpecGap[] {
-  return plugins
-    .filter((name) => name !== OWN_PACKAGE)
-    .flatMap((name) => {
+/**
+ * Lists the operations other plugins serve that the documents do not describe. A plugin that cannot be resolved or
+ * scanned is reported in `unscanned` rather than failing the build, since the project cannot fix it.
+ */
+function pluginGaps(
+  projectRoot: string,
+  plugins: string[],
+  documents: Record<ApiArea, OpenApiDocument>,
+): { gaps: SpecGap[]; unscanned: UnscannedPlugin[] } {
+  const gaps: SpecGap[] = [];
+  const unscanned: UnscannedPlugin[] = [];
+
+  for (const name of plugins.filter((plugin) => plugin !== OWN_PACKAGE)) {
+    try {
       const pluginRoot = path.dirname(require.resolve(`${name}/package.json`, { paths: [projectRoot] }));
-      return discoverRoutes(path.join(pluginRoot, '.medusa/server/src/api')).flatMap((route) =>
-        route.methods
-          .filter((method) => !isDocumented(documents, method, route.path))
-          .map((method): SpecGap => ({ method, path: route.path, source: name, reason: 'undocumented-plugin-route' })),
-      );
-    });
+      for (const route of discoverRoutes(path.join(pluginRoot, '.medusa/server/src/api'))) {
+        for (const method of route.methods) {
+          if (isDocumented(documents, method, route.path)) continue;
+          gaps.push({ method, path: route.path, source: name, reason: 'undocumented-plugin-route' });
+        }
+      }
+    } catch (error) {
+      const reason =
+        error instanceof OpenApiContractError
+          ? error.problems.join('; ')
+          : error instanceof Error
+            ? error.message.split('\n')[0]
+            : String(error);
+      unscanned.push({ name, reason });
+    }
+  }
+
+  return { gaps, unscanned };
 }
 
 /**
@@ -77,12 +107,13 @@ export function buildApiSpec({ projectRoot, plugins = [], overrides = [] }: Buil
 
   if (problems.length) throw new OpenApiContractError(problems);
 
-  const gaps = [...custom.gaps, ...pluginGaps(projectRoot, plugins, documents)].sort((left, right) =>
-    `${left.path} ${left.method}`.localeCompare(`${right.path} ${right.method}`),
+  const plugin = pluginGaps(projectRoot, plugins, documents);
+  const gaps = [...custom.gaps, ...plugin.gaps].sort((left, right) =>
+    compareCodeUnits(`${left.path} ${left.method}`, `${right.path} ${right.method}`),
   );
   const revision = createHash('sha256').update(canonicalJson({ medusaVersion, documents })).digest('hex');
 
-  return { medusaVersion, revision, documents, gaps };
+  return { medusaVersion, revision, documents, gaps, unscannedPlugins: plugin.unscanned };
 }
 
 const OPERATION_KEYS = new Set(HTTP_METHODS.map((method) => method.toLowerCase()));

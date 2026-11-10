@@ -11,7 +11,7 @@ someone decides to take it live.
 ## Commands
 
 - `yarn dev`: builds workspace plugins, then starts Medusa and the storefront.
-- `yarn test:unit`: unit tests for every workspace.
+- `yarn test:unit`: unit tests for the Medusa app and the MCP plugin, the two workspaces that have them.
 - `yarn workspace @lambdacurry/medusa-mcp build`: rebuild the plugin. Restart Medusa afterwards, because the running
   app does not reload plugin build output.
 - `yarn e2e`: boots everything and runs Playwright. It runs `medusa:init`, which wipes the local database
