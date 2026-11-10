@@ -42,6 +42,31 @@ client, operation, and spec revision, and each token is limited to 120 calls and
 }
 ```
 
+## Recording the demo locally
+
+The demo: an agent in ChatGPT connects to a local Barrio, finds the product update operation, previews and applies a
+new description for Barrio Decaf, and the storefront shows it. `apps/e2e/tests/mcp-demo.spec.ts` runs the same
+script without ChatGPT.
+
+1. **Pick a hostname** on a domain in your Cloudflare account, for example `mcp.example.com`. Below it is `$HOST`.
+2. **Configure the environment.** In `apps/medusa/.env`: `MCP_ISSUER=https://$HOST`,
+   `STOREFRONT_URL=http://localhost:3000`, and a random `STOREFRONT_REVALIDATE_SECRET`. Put the same secret in
+   `apps/storefront/.env`. Then run `yarn dev`.
+3. **Open the tunnel** to Medusa:
+   ```sh
+   cloudflared tunnel create barrio-mcp
+   cloudflared tunnel route dns barrio-mcp $HOST
+   cloudflared tunnel run --url http://localhost:9000 barrio-mcp
+   ```
+4. **Check it from outside.** `curl https://$HOST/.well-known/oauth-authorization-server` should show
+   `"issuer":"https://$HOST"`, and `curl -i -X POST https://$HOST/mcp` should answer `401` with a
+   `resource_metadata` challenge.
+5. **Connect ChatGPT.** At chatgpt.com/plugins, add a custom MCP server with URL `https://$HOST/mcp` and OAuth.
+   Connecting opens the Medusa sign-in page. Sign in with an admin account and approve.
+6. **Between takes**, run `yarn workspace medusa demo:reset` to restore the seeded titles and descriptions.
+
+The tunnel exposes the local Medusa admin API to the internet while it runs. Stop it when you finish recording.
+
 ## Local development
 
 The plugin is a Yarn workspace linked into `apps/medusa`, not installed through yalc, so
