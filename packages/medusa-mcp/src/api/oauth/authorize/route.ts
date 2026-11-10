@@ -22,6 +22,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
   const auth = req.auth_context;
   if (auth?.actor_type === 'user' && auth.actor_id && auth.auth_identity_id) {
     const grant = signPayload(
+      'consent',
       { request, user_id: auth.actor_id, auth_identity_id: auth.auth_identity_id },
       secret,
       AUTHORIZE_FORM_TTL_SECONDS,
@@ -35,6 +36,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
         scopes: request.scopes,
         grant,
       }),
+      [request.redirect_uri],
     );
     return;
   }
@@ -45,7 +47,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
     loginPage({
       clientName: request.client_name,
       redirectUri: request.redirect_uri,
-      request: signPayload({ request }, secret, AUTHORIZE_FORM_TTL_SECONDS),
+      request: signPayload('login', { request }, secret, AUTHORIZE_FORM_TTL_SECONDS),
     }),
   );
 };

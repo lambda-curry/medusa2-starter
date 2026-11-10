@@ -25,20 +25,28 @@ describe('signed form payloads', () => {
   const secret = 'test-secret';
 
   it('round-trips a payload', () => {
-    expect(verifyPayload(signPayload({ user_id: 'user_1' }, secret, 60), secret)).toMatchObject({ user_id: 'user_1' });
+    expect(verifyPayload('consent', signPayload('consent', { user_id: 'user_1' }, secret, 60), secret)).toMatchObject({
+      user_id: 'user_1',
+    });
+  });
+
+  it('refuses a token signed for a different form', () => {
+    const login = signPayload('login', { request: {} }, secret, 60);
+    expect(verifyPayload('login', login, secret)).toBeDefined();
+    expect(verifyPayload('consent', login, secret)).toBeUndefined();
   });
 
   it('rejects a changed payload, a different secret, and an expired token', () => {
-    const token = signPayload({ user_id: 'user_1' }, secret, 60);
+    const token = signPayload('consent', { user_id: 'user_1' }, secret, 60);
     const [body, signature] = token.split('.');
     const changed = Buffer.from(Buffer.from(body, 'base64url').toString().replace('user_1', 'user_2')).toString(
       'base64url',
     );
-    expect(verifyPayload(`${changed}.${signature}`, secret)).toBeUndefined();
-    expect(verifyPayload(token, 'other-secret')).toBeUndefined();
-    expect(verifyPayload(signPayload({ user_id: 'user_1' }, secret, -1), secret)).toBeUndefined();
-    expect(verifyPayload('not.a.token', secret)).toBeUndefined();
-    expect(verifyPayload(undefined, secret)).toBeUndefined();
+    expect(verifyPayload('consent', `${changed}.${signature}`, secret)).toBeUndefined();
+    expect(verifyPayload('consent', token, 'other-secret')).toBeUndefined();
+    expect(verifyPayload('consent', signPayload('consent', { user_id: 'user_1' }, secret, -1), secret)).toBeUndefined();
+    expect(verifyPayload('consent', 'not.a.token', secret)).toBeUndefined();
+    expect(verifyPayload('consent', undefined, secret)).toBeUndefined();
   });
 });
 

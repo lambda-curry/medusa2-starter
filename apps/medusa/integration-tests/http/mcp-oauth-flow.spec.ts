@@ -292,6 +292,89 @@ medusaIntegrationTestRunner({
         expect(response.status).toBe(400);
         expect(response.data.error).toBe('unsupported_grant_type');
       });
+
+      it('lets exactly one of two concurrent exchanges of a code win, then revokes what it issued', async () => {
+        const clientId = await registerClient(api);
+        const { verifier, challenge } = pkce();
+        const code = (await authorize(api, clientId, challenge)).searchParams.get('code') as string;
+        const exchange = {
+          grant_type: 'authorization_code',
+          code,
+          client_id: clientId,
+          redirect_uri: REDIRECT_URI,
+          code_verifier: verifier,
+        };
+
+        const results = await Promise.all([token(api, exchange), token(api, exchange)]);
+        const winners = results.filter((response) => response.status === 200);
+        expect(winners).toHaveLength(1);
+        expect(results.find((response) => response.status !== 200)?.data.error).toBe('invalid_grant');
+        expect(await oauth().verifyAccessToken(winners[0].data.access_token, RESOURCE)).toBeUndefined();
+      });
+
+      it('lets exactly one of two concurrent refreshes win, then revokes the family', async () => {
+        const clientId = await registerClient(api);
+        const { verifier, challenge } = pkce();
+        const code = (await authorize(api, clientId, challenge)).searchParams.get('code') as string;
+        const first = await token(api, {
+          grant_type: 'authorization_code',
+          code,
+          client_id: clientId,
+          redirect_uri: REDIRECT_URI,
+          code_verifier: verifier,
+        });
+        const refresh = { grant_type: 'refresh_token', refresh_token: first.data.refresh_token, client_id: clientId };
+
+        const results = await Promise.all([token(api, refresh), token(api, refresh)]);
+        const winners = results.filter((response) => response.status === 200);
+        expect(winners).toHaveLength(1);
+        expect(results.find((response) => response.status !== 200)?.data.error).toBe('invalid_grant');
+        expect(await oauth().verifyAccessToken(winners[0].data.access_token, RESOURCE)).toBeUndefined();
+      });
+    });
+
+    describe('form state and browsers', () => {
+      it('refuses a sign-in form token submitted as the approval form', async () => {
+        const clientId = await registerClient(api);
+        const login = await api.get(authorizeUrl(clientId, pkce().challenge), noFollow);
+        const forged = await post(api, '/oauth/authorize/consent', {
+          grant: hiddenField(login.data, 'request'),
+          decision: 'approve',
+          scope: 'mcp:read',
+        });
+        expect(forged.status).toBe(400);
+        expect(forged.data).toContain('expired or was changed');
+      });
+
+      it('allows the consent page to redirect to the verified client origin', async () => {
+        const clientId = await registerClient(api);
+        const login = await api.get(authorizeUrl(clientId, pkce().challenge), noFollow);
+        const consent = await post(api, '/oauth/authorize/login', {
+          request: hiddenField(login.data, 'request'),
+          ...ADMIN,
+        });
+        expect(consent.headers['content-security-policy']).toContain("form-action 'self' http://localhost:6274;");
+        expect(login.headers['content-security-policy']).toContain("form-action 'self';");
+      });
+
+      it('answers CORS preflight and sets CORS headers on token, registration, metadata, and MCP responses', async () => {
+        const preflight = await api.options('/oauth/token', {
+          validateStatus: () => true,
+          headers: { origin: 'https://inspector.example', 'access-control-request-method': 'POST' },
+        });
+        expect(preflight.status).toBe(204);
+        expect(preflight.headers['access-control-allow-origin']).toBe('*');
+        expect(preflight.headers['access-control-allow-headers']).toContain('authorization');
+
+        for (const response of [
+          await token(api, { grant_type: 'password' }),
+          await api.get('/.well-known/oauth-authorization-server'),
+          await api.get('/.well-known/oauth-protected-resource/mcp'),
+          await api.post('/oauth/register', {}, { validateStatus: () => true }),
+        ]) {
+          expect(response.headers['access-control-allow-origin']).toBe('*');
+        }
+      });
     });
   },
 });

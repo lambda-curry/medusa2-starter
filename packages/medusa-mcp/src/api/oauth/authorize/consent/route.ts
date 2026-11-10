@@ -8,8 +8,12 @@ import type { AuthorizationRequest, AuthorizingUser } from '../../../../modules/
 /** Records the admin's decision. Approving issues a single-use code for the scopes they left checked. */
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
-  const grant = verifyPayload<{ request: AuthorizationRequest } & AuthorizingUser>(body.grant, formSecret(req));
-  if (!grant) {
+  const grant = verifyPayload<{ request: AuthorizationRequest } & AuthorizingUser>(
+    'consent',
+    body.grant,
+    formSecret(req),
+  );
+  if (!grant || typeof grant.user_id !== 'string' || typeof grant.auth_identity_id !== 'string') {
     sendPage(
       res,
       400,
