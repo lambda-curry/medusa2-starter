@@ -20,6 +20,7 @@ describe('OpenAPI contracts', () => {
   });
 
   it('reports the product-reviews plugin routes as gaps until the plugin ships contracts', () => {
+    expect(spec.unscannedPlugins).toEqual([]);
     expect(spec.gaps.filter((gap) => gap.source === 'app')).toEqual([]);
     expect(spec.gaps.map((gap) => `${gap.method} ${gap.path}`)).toEqual([
       'GET /admin/product-review-stats',

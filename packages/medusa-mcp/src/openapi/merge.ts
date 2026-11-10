@@ -1,3 +1,4 @@
+import { compareCodeUnits } from './compare';
 import type { OpenApiDocument } from './types';
 
 const OPERATION_KEYS = new Set(['get', 'post', 'put', 'patch', 'delete', 'options', 'head', 'trace']);
@@ -28,7 +29,9 @@ export function mergeDocuments(
         problems.push(`${key.toUpperCase()} ${routePath} is already defined by Medusa's core spec`);
         continue;
       }
-      item[key] = isOverride ? { ...(value as object), 'x-medusa-overridden-by-custom-route': true } : value;
+      item[key] = isOverride
+        ? { ...(value as Record<string, unknown>), 'x-medusa-overridden-by-custom-route': true }
+        : value;
     }
   }
 
@@ -56,7 +59,7 @@ export function mergeDocuments(
       }
     }
   }
-  tags.sort((left, right) => left.name.localeCompare(right.name));
+  tags.sort((left, right) => compareCodeUnits(left.name, right.name));
 
   return { document: { ...core, paths, tags }, problems };
 }
