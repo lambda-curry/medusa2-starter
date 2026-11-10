@@ -159,6 +159,67 @@ medusaIntegrationTestRunner({
       expect(wrongTool.content[0].text).toContain('Use delete_api');
     });
 
+    it('audits refused, executed, and previewed write attempts with their path parameters', async () => {
+      const logger = getContainer().resolve('logger') as { info: (message: string) => void };
+      const info = jest.spyOn(logger, 'info');
+      try {
+        await callTool(api, fullToken, 'write_api', {
+          operation: 'POST /admin/api-keys',
+          body: { title: 'x', type: 'secret' },
+        });
+        await callTool(api, fullToken, 'write_api', { operation: 'POST /admin/nothing', body: {} });
+        await callTool(api, fullToken, 'write_api', {
+          operation: 'POST /admin/products/{id}',
+          path_params: { id: productId },
+          body: { description: 'Audited.' },
+        });
+
+        const entries = info.mock.calls
+          .map(([message]) => String(message))
+          .filter((message) => message.startsWith('[medusa-mcp] '))
+          .map((message) => JSON.parse(message.slice('[medusa-mcp] '.length)));
+        expect(entries).toEqual([
+          expect.objectContaining({
+            operation: 'POST /admin/api-keys',
+            outcome: 'refused',
+            reason: expect.stringContaining('blocked for agents'),
+          }),
+          expect.objectContaining({
+            operation: 'POST /admin/nothing',
+            outcome: 'refused',
+            reason: expect.stringContaining('Unknown operation'),
+          }),
+          expect.objectContaining({
+            operation: 'POST /admin/products/{id}',
+            path_params: { id: productId },
+            outcome: 'executed',
+            status: 200,
+            spec_revision: expect.any(String),
+          }),
+        ]);
+      } finally {
+        info.mockRestore();
+      }
+    });
+
+    it('does not show current values in a dry run for a token without mcp:read', async () => {
+      const writeOnly = (await issueAccessToken(api, ['mcp:write'])).access_token;
+      const preview = await callTool(api, writeOnly, 'write_api', {
+        operation: 'POST /admin/products/{id}',
+        path_params: { id: productId },
+        body: { description: 'Proposed.' },
+        dry_run: true,
+      });
+      expect(preview.structuredContent).toEqual({
+        operation: 'POST /admin/products/{id}',
+        dry_run: true,
+        proposed: { description: 'Proposed.' },
+        current: null,
+        note: 'Current values need the mcp:read scope.',
+      });
+      expect(JSON.stringify(preview)).not.toContain('Smooth and sweet.');
+    });
+
     it('limits writes per token per minute', async () => {
       const limiter = (await issueAccessToken(api, ['mcp:read', 'mcp:write'])).access_token;
       const preview = {

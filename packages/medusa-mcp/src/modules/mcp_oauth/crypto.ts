@@ -16,17 +16,28 @@ export function verifyPkceS256(verifier: string, challenge: string): boolean {
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
 
-/** Signs a JSON payload with an expiry, for state the authorize pages round-trip through a form. */
-export function signPayload(payload: Record<string, unknown>, secret: string, ttlSeconds: number): string {
-  const body = Buffer.from(JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + ttlSeconds })).toString(
-    'base64url',
-  );
+/** Which form a signed payload belongs to, so a token signed for one form is refused by another. */
+export type FormPurpose = 'login' | 'consent';
+
+/** Signs a JSON payload with an expiry and a purpose, for state the authorize pages round-trip through a form. */
+export function signPayload(
+  purpose: FormPurpose,
+  payload: Record<string, unknown>,
+  secret: string,
+  ttlSeconds: number,
+): string {
+  const body = Buffer.from(
+    JSON.stringify({ ...payload, purpose, exp: Math.floor(Date.now() / 1000) + ttlSeconds }),
+  ).toString('base64url');
   const signature = createHmac('sha256', secret).update(body).digest('base64url');
   return `${body}.${signature}`;
 }
 
-/** Returns the payload of a token from {@link signPayload}, or undefined if it is forged, malformed, or expired. */
-export function verifyPayload<T extends object>(token: unknown, secret: string): T | undefined {
+/**
+ * Returns the payload of a token from {@link signPayload}, or undefined if it is forged, malformed, expired, or was
+ * signed for a different purpose.
+ */
+export function verifyPayload<T extends object>(purpose: FormPurpose, token: unknown, secret: string): T | undefined {
   if (typeof token !== 'string') return undefined;
   const [body, signature, ...rest] = token.split('.');
   if (!body || !signature || rest.length) return undefined;
@@ -36,7 +47,11 @@ export function verifyPayload<T extends object>(token: unknown, secret: string):
   if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return undefined;
 
   try {
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as T & { exp?: number };
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as T & {
+      exp?: number;
+      purpose?: string;
+    };
+    if (payload.purpose !== purpose) return undefined;
     if (typeof payload.exp !== 'number' || payload.exp < Math.floor(Date.now() / 1000)) return undefined;
     return payload;
   } catch {

@@ -4,12 +4,17 @@ const MAX_RESPONSE_BYTES = 64 * 1024;
 
 export interface AuditEntry {
   operation: string;
-  outcome: 'executed' | 'dry_run' | 'rejected' | 'refused';
+  path_params?: Record<string, unknown>;
+  /** executed: sent to Medusa. failed: sending threw, so the change may or may not have happened. */
+  outcome: 'executed' | 'failed' | 'dry_run' | 'rejected' | 'refused';
   status?: number;
   problems?: string[];
+  reason?: string;
 }
 
 export interface ExecutionTarget {
+  /** The OAuth scopes the access token was granted. */
+  scopes: readonly string[];
   /** The access token record id, for per-token rate limits. */
   tokenId: string;
   /** Records a write or delete attempt with who made it and against which spec revision. */
@@ -82,6 +87,10 @@ export function buildRequestUrl(
     if (value === undefined || value === null || value === '') {
       throw new ExecutionError(`Missing path parameter "${name}" for ${operation.operation}`);
     }
+    // encodeURIComponent leaves dots alone, and URL resolution would turn ".." into a different, unchecked path.
+    if (value === '.' || value === '..') {
+      throw new ExecutionError(`Path parameter "${name}" cannot be "${value}"`);
+    }
     return encodeURIComponent(String(value));
   });
 
@@ -96,6 +105,9 @@ export function buildRequestUrl(
   for (const [key, value] of Object.entries(query)) appendQuery(params, key, value);
 
   const url = new URL(path, baseUrl);
+  if (url.pathname !== path) {
+    throw new ExecutionError(`Refusing ${operation.operation}: the request path would resolve to ${url.pathname}`);
+  }
   url.search = params.toString();
   return url.toString();
 }
@@ -123,13 +135,19 @@ export async function executeOperation(
     body: hasBody ? JSON.stringify(args.body) : undefined,
     signal: AbortSignal.timeout(30_000),
   });
-  const text = await response.text();
-  if (Buffer.byteLength(text) > MAX_RESPONSE_BYTES) {
+  const bytes = Buffer.from(await response.arrayBuffer());
+  const text = bytes.toString('utf8');
+  if (bytes.length > MAX_RESPONSE_BYTES) {
+    // Cut by bytes, then drop a multi-byte character the cut split, which decodes as U+FFFD.
+    const prefix = bytes
+      .subarray(0, MAX_RESPONSE_BYTES)
+      .toString('utf8')
+      .replace(/\uFFFD+$/, '');
     return {
       status: response.status,
-      body: `${text.slice(0, MAX_RESPONSE_BYTES)}…`,
+      body: `${prefix}…`,
       truncated: {
-        bytes: Buffer.byteLength(text),
+        bytes: bytes.length,
         note: 'The response was cut off. Request fewer records with `limit`, or fewer fields with `fields`.',
       },
     };
