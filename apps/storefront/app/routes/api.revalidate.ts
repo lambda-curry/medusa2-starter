@@ -8,9 +8,11 @@ import type { ActionFunctionArgs } from 'react-router';
  */
 export const action = async ({ request }: ActionFunctionArgs) => {
   const secret = process.env.STOREFRONT_REVALIDATE_SECRET;
-  const sent = request.headers.get('x-revalidate-secret') ?? '';
   if (request.method !== 'POST') return Response.json({ error: 'Method not allowed' }, { status: 405 });
-  if (!secret || sent.length !== secret.length || !timingSafeEqual(Buffer.from(sent), Buffer.from(secret))) {
+  // Compare byte lengths, not string lengths: timingSafeEqual throws on buffers of different sizes.
+  const sent = Buffer.from(request.headers.get('x-revalidate-secret') ?? '');
+  const expected = Buffer.from(secret ?? '');
+  if (!secret || sent.length !== expected.length || !timingSafeEqual(sent, expected)) {
     return Response.json({ error: 'Not found' }, { status: 404 });
   }
 

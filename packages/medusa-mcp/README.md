@@ -48,22 +48,34 @@ The demo: an agent in ChatGPT connects to a local Barrio, finds the product upda
 new description for Barrio Decaf, and the storefront shows it. `apps/e2e/tests/mcp-demo.spec.ts` runs the same
 script without ChatGPT.
 
-1. **Pick a hostname** on a domain in your Cloudflare account, for example `mcp.example.com`. Below it is `$HOST`.
-2. **Configure the environment.** In `apps/medusa/.env`: `MCP_ISSUER=https://$HOST`,
-   `STOREFRONT_URL=http://localhost:3000`, and a random `STOREFRONT_REVALIDATE_SECRET`. Put the same secret in
+1. **Pick a hostname** on a domain in your Cloudflare account and set it for the shell commands below:
+   ```sh
+   export HOST=mcp.example.com
+   ```
+2. **Replace the seeded admins. This step is required before opening the tunnel.** `yarn medusa:init` creates
+   `admin@medusa-test.com` and `admin@lambdacurry.dev` with the passwords in `apps/medusa/package.json`, which is
+   public. The tunnel puts the Medusa admin and this plugin's sign-in page on the internet, so anyone could use those
+   accounts. Create your own admin with a long random password:
+   ```sh
+   yarn workspace medusa medusa user -e you@example.com -p '<long random password>'
+   ```
+   Then sign in as that admin at http://localhost:9000/app, open Settings → Users, and delete both seeded accounts.
+3. **Configure the environment.** In `apps/medusa/.env`, set `MCP_ISSUER` to your hostname written out, for
+   example `MCP_ISSUER=https://mcp.example.com`. `.env` files do not expand `$HOST`. Also set
+   `STOREFRONT_URL=http://localhost:3000` and a random `STOREFRONT_REVALIDATE_SECRET`, and put the same secret in
    `apps/storefront/.env`. Then run `yarn dev`.
-3. **Open the tunnel** to Medusa:
+4. **Open the tunnel** to Medusa:
    ```sh
    cloudflared tunnel create barrio-mcp
    cloudflared tunnel route dns barrio-mcp $HOST
    cloudflared tunnel run --url http://localhost:9000 barrio-mcp
    ```
-4. **Check it from outside.** `curl https://$HOST/.well-known/oauth-authorization-server` should show
+5. **Check it from outside.** `curl https://$HOST/.well-known/oauth-authorization-server` should show
    `"issuer":"https://$HOST"`, and `curl -i -X POST https://$HOST/mcp` should answer `401` with a
    `resource_metadata` challenge.
-5. **Connect ChatGPT.** At chatgpt.com/plugins, add a custom MCP server with URL `https://$HOST/mcp` and OAuth.
-   Connecting opens the Medusa sign-in page. Sign in with an admin account and approve.
-6. **Between takes**, run `yarn workspace medusa demo:reset` to restore the seeded titles and descriptions.
+6. **Connect ChatGPT.** At chatgpt.com/plugins, add a custom MCP server with URL `https://$HOST/mcp` and OAuth.
+   Connecting opens the Medusa sign-in page. Sign in with the admin you created in step 2 and approve.
+7. **Between takes**, run `yarn workspace medusa demo:reset` to restore the seeded titles and descriptions.
 
 The tunnel exposes the local Medusa admin API to the internet while it runs. Stop it when you finish recording.
 

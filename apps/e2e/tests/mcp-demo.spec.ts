@@ -15,6 +15,14 @@ const hidden = (html: string, name: string) => {
   return value.replaceAll('&quot;', '"').replaceAll('&amp;', '&');
 };
 
+/** Fails with the step name, status, and a body excerpt when a response is not one of the expected statuses. */
+async function checked(step: string, response: Response, expected: number[] = [200]): Promise<Response> {
+  if (!expected.includes(response.status)) {
+    throw new Error(`${step} returned HTTP ${response.status}: ${(await response.text()).slice(0, 300)}`);
+  }
+  return response;
+}
+
 async function connect(): Promise<string> {
   const scopes = ['mcp:read', 'mcp:write'];
   const registration = await fetch(`${medusaUrl}/oauth/register`, {
@@ -22,7 +30,9 @@ async function connect(): Promise<string> {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ client_name: 'Demo agent', redirect_uris: [redirectUri] }),
   });
-  const { client_id } = (await registration.json()) as { client_id: string };
+  const { client_id } = (await (await checked('Client registration', registration, [201])).json()) as {
+    client_id: string;
+  };
   const verifier = randomBytes(32).toString('base64url');
   const challenge = createHash('sha256').update(verifier).digest('base64url');
 
@@ -31,17 +41,18 @@ async function connect(): Promise<string> {
   );
   const consent = await fetch(`${medusaUrl}/oauth/authorize/login`, {
     method: 'POST',
-    body: form({ request: hidden(await login.text(), 'request'), ...admin }),
+    body: form({ request: hidden(await (await checked('Authorize', login)).text(), 'request'), ...admin }),
   });
   const approved = await fetch(`${medusaUrl}/oauth/authorize/consent`, {
     method: 'POST',
     redirect: 'manual',
     body: form([
-      ['grant', hidden(await consent.text(), 'grant')],
+      ['grant', hidden(await (await checked('Sign-in', consent)).text(), 'grant')],
       ['decision', 'approve'],
       ...scopes.map((scope): [string, string] => ['scope', scope]),
     ]),
   });
+  await checked('Consent', approved, [302]);
   const code = new URL(approved.headers.get('location') as string).searchParams.get('code') as string;
   const tokens = await fetch(`${medusaUrl}/oauth/token`, {
     method: 'POST',
@@ -53,7 +64,7 @@ async function connect(): Promise<string> {
       code_verifier: verifier,
     }),
   });
-  return ((await tokens.json()) as { access_token: string }).access_token;
+  return ((await (await checked('Token exchange', tokens)).json()) as { access_token: string }).access_token;
 }
 
 async function tool(token: string, name: string, args: Record<string, unknown>) {
@@ -110,6 +121,11 @@ test('an agent updates a product description through MCP and the storefront show
       await expect(page.getByText(updated)).toBeVisible({ timeout: 500 });
     }).toPass({ timeout: 5000 });
   } finally {
-    await tool(token, 'write_api', { ...change, body: { description: original } });
+    // A failed restore must not replace the failure that got us here.
+    await tool(token, 'write_api', { ...change, body: { description: original } }).catch((error: Error) => {
+      console.error(
+        `Could not restore the Barrio Decaf description (${error.message}). Run: yarn workspace medusa demo:reset`,
+      );
+    });
   }
 });
