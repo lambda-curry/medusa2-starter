@@ -8,7 +8,7 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "declaration": false,
+    "declaration": true,
     "sourceMap": false,
     "inlineSourceMap": true,
     "outDir": "./.medusa/server",
@@ -20,8 +20,18 @@
     "strict": true,
     "incremental": true,
     "isolatedModules": true,
-    "types": ["node"]
+    "types": [
+      "node",
+      "jest"
+    ]
   },
-  "include": ["src/**/*", "src/api/.well-known/**/*"],
-  "exclude": ["node_modules", ".medusa"]
+  "include": [
+    "src/**/*",
+    "src/api/.well-known/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    ".medusa",
+    "**/__tests__/**"
+  ]
 }

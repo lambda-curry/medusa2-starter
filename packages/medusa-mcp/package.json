@@ -5,10 +5,12 @@
   "author": "Lambda Curry (https://lambdacurry.dev)",
   "license": "MIT",
   "files": [
-    ".medusa/server"
+    ".medusa/server",
+    "specs"
   ],
   "exports": {
     "./package.json": "./package.json",
+    "./openapi": "./.medusa/server/src/openapi/index.js",
     "./.medusa/server/src/modules/*": "./.medusa/server/src/modules/*/index.js",
     "./*": "./.medusa/server/src/*.js",
     "./admin": {
@@ -25,7 +27,9 @@
   ],
   "scripts": {
     "build": "medusa plugin:build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:unit": "TEST_TYPE=unit jest --runInBand",
+    "fetch-core-specs": "node scripts/fetch-core-specs.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/node": "2.1.2",
@@ -36,7 +40,10 @@
     "@medusajs/framework": "2.22.1",
     "@medusajs/medusa": "2.22.1",
     "@swc/core": "^1.16.20",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
     "@types/node": "26.6.5",
+    "jest": "^30.5.2",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },

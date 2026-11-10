@@ -2975,7 +2975,10 @@ __metadata:
     "@modelcontextprotocol/node": "npm:2.1.2"
     "@modelcontextprotocol/server": "npm:2.4.0"
     "@swc/core": "npm:^1.16.20"
+    "@swc/jest": "npm:^0.2.39"
+    "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:26.6.5"
+    jest: "npm:^30.5.2"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
