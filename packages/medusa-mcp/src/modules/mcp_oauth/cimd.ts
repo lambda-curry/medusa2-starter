@@ -59,6 +59,8 @@ export function cimdClientIdProblem(clientId: string): string | undefined {
   if (url.protocol !== 'https:') return 'a URL client_id must use https';
   if (url.pathname === '/' || !url.pathname) return 'a URL client_id must have a path';
   if (url.username || url.password || url.hash) return 'a URL client_id must not contain credentials or a fragment';
+  // Node connects to an IP literal without calling the lookup hook, so publicOnlyLookup cannot guard it.
+  if (isIP(url.hostname.replace(/^\[|\]$/g, ''))) return 'a URL client_id must use a domain name, not an IP address';
   return undefined;
 }
 
@@ -104,6 +106,11 @@ export type FetchJson = (url: string) => Promise<unknown>;
 /** Fetches a JSON document over HTTPS from public addresses only, with no redirects, a timeout, and a size cap. */
 export const fetchPublicJson: FetchJson = (url) =>
   new Promise((resolve, reject) => {
+    const host = new URL(url).hostname.replace(/^\[|\]$/g, '');
+    if (isIP(host)) {
+      reject(new Error(`GET ${url} refused: IP-literal hosts bypass the public-address check`));
+      return;
+    }
     const req = request(
       url,
       { method: 'GET', headers: { accept: 'application/json' }, lookup: publicOnlyLookup, timeout: FETCH_TIMEOUT_MS },
@@ -131,6 +138,12 @@ export const fetchPublicJson: FetchJson = (url) =>
         });
       },
     );
+    // `timeout` only bounds idle time between chunks; this bounds the whole request.
+    const deadline = setTimeout(
+      () => req.destroy(new Error(`GET ${url} took longer than ${FETCH_TIMEOUT_MS} ms`)),
+      FETCH_TIMEOUT_MS,
+    );
+    req.on('close', () => clearTimeout(deadline));
     req.on('timeout', () => req.destroy(new Error(`GET ${url} timed out`)));
     req.on('error', reject);
     req.end();

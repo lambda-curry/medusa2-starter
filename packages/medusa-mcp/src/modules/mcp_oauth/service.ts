@@ -42,7 +42,7 @@ export default class McpOAuthService extends MedusaService({
   }
 
   /** Test seam for Client ID Metadata Document fetches. */
-  setFetchJson(fetchJson: FetchJson): void {
+  async setFetchJson(fetchJson: FetchJson): Promise<void> {
     this.fetchJson = fetchJson;
   }
 
@@ -83,10 +83,15 @@ export default class McpOAuthService extends MedusaService({
       metadata: document,
       metadata_fetched_at: new Date(),
     };
-    const saved = existing
-      ? await this.updateMcpOAuthClients({ id: existing.id, ...data })
-      : await this.createMcpOAuthClients(data);
-    return saved as ResolvedClient;
+    if (existing) return (await this.updateMcpOAuthClients({ id: existing.id, ...data })) as ResolvedClient;
+    try {
+      return (await this.createMcpOAuthClients(data)) as ResolvedClient;
+    } catch (error) {
+      // Another request created this client first; the unique client_id index rejected the duplicate.
+      const [created] = await this.listMcpOAuthClients({ client_id: clientId });
+      if (created) return created as ResolvedClient;
+      throw error;
+    }
   }
 
   /** RFC 7591 Dynamic Client Registration for public clients. */

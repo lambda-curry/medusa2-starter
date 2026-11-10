@@ -3,10 +3,12 @@
 // share a process. Pass file name filters as arguments to run a subset.
 import { spawnSync } from 'node:child_process';
 import { readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const httpDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'http');
+const jestBin = createRequire(import.meta.url).resolve('jest/bin/jest');
 const filters = process.argv.slice(2);
 const files = readdirSync(httpDir)
   .filter((file) => file.endsWith('.spec.ts'))
@@ -19,7 +21,7 @@ if (!files.length) {
 }
 
 for (const file of files) {
-  const result = spawnSync('jest', ['--silent=false', '--runInBand', '--forceExit', path.join(httpDir, file)], {
+  const result = spawnSync(process.execPath, [jestBin, '--silent=false', '--runInBand', '--forceExit', path.join(httpDir, file)], {
     stdio: 'inherit',
     env: { ...process.env, TEST_TYPE: 'integration:http', NODE_OPTIONS: '--experimental-vm-modules' },
   });

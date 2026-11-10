@@ -2,6 +2,9 @@ name: Lint and Type Check
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -119,8 +122,12 @@ jobs:
       DB_HOST: localhost
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
+      # The Stripe payment provider refuses to load without a key; these tests never call Stripe.
+      STRIPE_API_KEY: sk_test_placeholder_for_integration_tests
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4
