@@ -1,10 +1,54 @@
 import type { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
+import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 import { MCP_OAUTH_MODULE } from '../modules/mcp_oauth';
-import { OAuthError } from '../modules/mcp_oauth/errors';
+import { OAuthError, RedirectableOAuthError } from '../modules/mcp_oauth/errors';
 import type McpOAuthService from '../modules/mcp_oauth/service';
+import { errorPage, sendPage } from './oauth-pages';
+
+/** How long a login or consent form stays valid. */
+export const AUTHORIZE_FORM_TTL_SECONDS = 10 * 60;
 
 export function oauthService(req: MedusaRequest): McpOAuthService {
   return req.scope.resolve<McpOAuthService>(MCP_OAUTH_MODULE);
+}
+
+/** The secret that signs authorize form state: Medusa's cookie secret, or its JWT secret. */
+export function formSecret(req: MedusaRequest): string {
+  const { http } = req.scope.resolve(ContainerRegistrationKeys.CONFIG_MODULE).projectConfig;
+  const secret = http.cookieSecret || http.jwtSecret;
+  if (!secret) throw new Error('medusa-mcp needs projectConfig.http.cookieSecret or jwtSecret to sign OAuth forms');
+  return String(secret);
+}
+
+/** Redirects back to the client with an authorization response, always naming the issuer (RFC 9207). */
+export function redirectToClient(
+  res: MedusaResponse,
+  issuer: string,
+  redirectUri: string,
+  params: Record<string, string | undefined>,
+): void {
+  const url = new URL(redirectUri);
+  for (const [key, value] of Object.entries({ ...params, iss: issuer })) {
+    if (value !== undefined) url.searchParams.set(key, value);
+  }
+  res.set('Cache-Control', 'no-store').redirect(302, url.toString());
+}
+
+/** Reports an authorize-endpoint error: by redirect once the redirect URI is trusted, otherwise on a page. */
+export function sendAuthorizeError(res: MedusaResponse, issuer: string, error: unknown): void {
+  if (error instanceof RedirectableOAuthError) {
+    redirectToClient(res, issuer, error.redirectUri, {
+      error: error.code,
+      error_description: error.message,
+      state: error.state,
+    });
+    return;
+  }
+  if (error instanceof OAuthError) {
+    sendPage(res, error.status, errorPage(error.message));
+    return;
+  }
+  throw error;
 }
 
 /** Sends an OAuthError as `{ error, error_description }`; rethrows anything else for Medusa's error handler. */

@@ -24,3 +24,16 @@ export class OAuthError extends Error {
     return { error: this.code, error_description: this.message };
   }
 }
+
+/** An authorization error raised after the redirect URI is verified, so it goes back to the client by redirect. */
+export class RedirectableOAuthError extends OAuthError {
+  constructor(
+    code: OAuthError['code'],
+    message: string,
+    readonly redirectUri: string,
+    readonly state?: string,
+  ) {
+    super(code, message);
+    this.name = 'RedirectableOAuthError';
+  }
+}
