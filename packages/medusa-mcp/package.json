@@ -33,7 +33,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/node": "2.1.2",
-    "@modelcontextprotocol/server": "2.4.0"
+    "@modelcontextprotocol/server": "2.4.0",
+    "ajv": "^8.13.0",
+    "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
     "@medusajs/cli": "2.22.1",

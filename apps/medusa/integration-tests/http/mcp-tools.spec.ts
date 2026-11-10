@@ -120,8 +120,9 @@ medusaIntegrationTestRunner({
       it('lists the read tools with read-only annotations and their OAuth scope', async () => {
         const { message } = await rpc(api, 'tools/list', {}, readToken);
         const tools = message.result.tools as { name: string; annotations: Record<string, boolean>; _meta: unknown }[];
-        expect(tools.map((tool) => tool.name)).toEqual(['search_api', 'describe_api', 'read_api']);
-        for (const tool of tools) {
+        const readTools = tools.filter((tool) => ['search_api', 'describe_api', 'read_api'].includes(tool.name));
+        expect(readTools.map((tool) => tool.name)).toEqual(['search_api', 'describe_api', 'read_api']);
+        for (const tool of readTools) {
           expect(tool.annotations).toMatchObject({ readOnlyHint: true, destructiveHint: false });
           expect(tool._meta).toEqual({ securitySchemes: [{ type: 'oauth2', scopes: ['mcp:read'] }] });
         }

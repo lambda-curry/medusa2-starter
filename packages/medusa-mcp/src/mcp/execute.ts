@@ -2,7 +2,23 @@ import type { CatalogOperation } from './catalog';
 
 const MAX_RESPONSE_BYTES = 64 * 1024;
 
+export interface AuditEntry {
+  operation: string;
+  path_params?: Record<string, unknown>;
+  /** executed: sent to Medusa. failed: sending threw, so the change may or may not have happened. */
+  outcome: 'executed' | 'failed' | 'dry_run' | 'rejected' | 'refused';
+  status?: number;
+  problems?: string[];
+  reason?: string;
+}
+
 export interface ExecutionTarget {
+  /** The OAuth scopes the access token was granted. */
+  scopes: readonly string[];
+  /** The access token record id, for per-token rate limits. */
+  tokenId: string;
+  /** Records a write or delete attempt with who made it and against which spec revision. */
+  audit: (entry: AuditEntry) => Promise<void>;
   /** Origin of this Medusa server as seen from inside the process, for example http://127.0.0.1:9000. */
   baseUrl: string;
   /** A short-lived Medusa admin JWT for the signed-in admin. Never the MCP client's own token. */
