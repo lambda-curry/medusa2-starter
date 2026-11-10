@@ -84,10 +84,12 @@ export default class McpOAuthService extends MedusaService({
   McpOAuthToken,
 }) {
   readonly config: McpOAuthConfig;
+  readonly options: MedusaMcpPluginOptions;
   protected fetchJson: FetchJson = fetchPublicJson;
 
   constructor(container: Record<string, unknown>, options?: MedusaMcpPluginOptions) {
     super(container, options);
+    this.options = options ?? {};
     this.config = resolveOAuthConfig(options);
   }
 
