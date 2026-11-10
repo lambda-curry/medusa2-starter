@@ -1,4 +1,10 @@
-import { cimdClientIdProblem, isPublicAddress, publicOnlyLookup, validateClientMetadataDocument } from '../cimd';
+import {
+  cimdClientIdProblem,
+  fetchPublicJson,
+  isPublicAddress,
+  publicOnlyLookup,
+  validateClientMetadataDocument,
+} from '../cimd';
 import { resolveOAuthConfig } from '../config';
 import { redirectUriProblem, redirectUrisProblems } from '../redirect-uri';
 
@@ -66,6 +72,17 @@ describe('Client ID Metadata Document fetch guard', () => {
     expect(cimdClientIdProblem('http://chatgpt.com/oauth/client.json')).toMatch(/must use https/);
     expect(cimdClientIdProblem('https://chatgpt.com/')).toMatch(/must have a path/);
     expect(cimdClientIdProblem('https://chatgpt.com/client.json#x')).toMatch(/credentials or a fragment/);
+  });
+
+  // Node connects to an IP literal without calling the lookup hook, so these must be refused up front.
+  it.each([
+    'https://10.0.0.5/client.json',
+    'https://127.0.0.1/x.json',
+    'https://[::1]/x.json',
+    'https://8.8.8.8/c.json',
+  ])('refuses the IP-literal client_id %s', async (clientId) => {
+    expect(cimdClientIdProblem(clientId)).toMatch(/domain name, not an IP address/);
+    await expect(fetchPublicJson(clientId)).rejects.toThrow(/IP-literal hosts/);
   });
 });
 

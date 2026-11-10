@@ -99,7 +99,7 @@ medusaIntegrationTestRunner({
     describe('Client ID Metadata Documents', () => {
       it('fetches, stores, and caches a valid document', async () => {
         const fetched: string[] = [];
-        oauth().setFetchJson(async (url) => {
+        await oauth().setFetchJson(async (url) => {
           fetched.push(url);
           return chatgptDocument;
         });
@@ -115,8 +115,16 @@ medusaIntegrationTestRunner({
         expect(fetched).toEqual([CHATGPT_CLIENT_ID]);
       });
 
+      it('resolves concurrent first requests for a new client to one stored client', async () => {
+        const clientId = 'https://agent.example/oauth/client.json';
+        await oauth().setFetchJson(async () => ({ ...chatgptDocument, client_id: clientId }));
+        const resolved = await Promise.all(Array.from({ length: 5 }, () => oauth().resolveClient(clientId)));
+        expect(new Set(resolved.map((client) => client.client_id))).toEqual(new Set([clientId]));
+        expect(await oauth().listMcpOAuthClients({ client_id: clientId })).toHaveLength(1);
+      });
+
       it('rejects a document that names a different client_id', async () => {
-        oauth().setFetchJson(async () => ({ ...chatgptDocument, client_id: 'https://evil.example/client.json' }));
+        await oauth().setFetchJson(async () => ({ ...chatgptDocument, client_id: 'https://evil.example/client.json' }));
         await expect(oauth().resolveClient('https://evil.example/other.json')).rejects.toMatchObject({
           code: 'invalid_client',
           message: expect.stringMatching(/does not match the URL/),
@@ -125,7 +133,7 @@ medusaIntegrationTestRunner({
 
       it('never fetches http client ids', async () => {
         const fetched: string[] = [];
-        oauth().setFetchJson(async (url) => {
+        await oauth().setFetchJson(async (url) => {
           fetched.push(url);
           return chatgptDocument;
         });
