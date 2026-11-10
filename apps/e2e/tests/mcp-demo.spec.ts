@@ -107,6 +107,7 @@ test('an agent updates a product description through MCP and the storefront show
 
   const updated = `Updated by an AI agent through MCP at ${new Date().toISOString()}.`;
   const change = { operation: 'POST /admin/products/{id}', path_params: { id }, body: { description: updated } };
+  let testFailed = false;
   try {
     const preview = await tool(token, 'write_api', { ...change, dry_run: true });
     expect(preview.changes).toEqual([{ field: 'description', current: original, proposed: updated }]);
@@ -120,12 +121,16 @@ test('an agent updates a product description through MCP and the storefront show
       await page.reload();
       await expect(page.getByText(updated)).toBeVisible({ timeout: 500 });
     }).toPass({ timeout: 5000 });
+  } catch (error) {
+    testFailed = true;
+    throw error;
   } finally {
-    // A failed restore must not replace the failure that got us here.
+    // A failed restore fails a passing test, since the next run would read the test text as the original. After a
+    // test failure it is only logged, so the original failure stays the one reported.
     await tool(token, 'write_api', { ...change, body: { description: original } }).catch((error: Error) => {
-      console.error(
-        `Could not restore the Barrio Decaf description (${error.message}). Run: yarn workspace medusa demo:reset`,
-      );
+      const message = `Could not restore the Barrio Decaf description (${error.message}). Run: yarn workspace medusa demo:reset`;
+      if (testFailed) console.error(message);
+      else throw new Error(message);
     });
   }
 });
