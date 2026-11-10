@@ -1,8 +1,10 @@
+import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import path from 'node:path';
 import { buildApiSpec } from '../../openapi/build-spec';
 import { buildCatalog } from '../catalog';
 import { describeOperation } from '../describe';
-import { appendQuery, buildRequestUrl, declaredParameters, ExecutionError } from '../execute';
+import { appendQuery, buildRequestUrl, declaredParameters, ExecutionError, executeOperation } from '../execute';
 import { BUILT_IN_BLOCKLIST, createPolicy } from '../policy';
 import { buildSearchIndex, queryIntent, tokenize } from '../search';
 
@@ -107,6 +109,23 @@ describe('request URLs', () => {
     expect(decodeURIComponent(params.toString())).toBe('id[]=a&id[]=b&created_at[$gte]=2026-01-01');
   });
 
+  it('refuses dot-segment path parameters that would resolve to a different, unchecked path', () => {
+    const nested = operation('GET /admin/workflows-executions/{workflow_id}/{transaction_id}');
+    const nestedDeclared = declaredParameters(nested);
+    expect(() =>
+      buildRequestUrl('http://x', nested, nestedDeclared, {
+        path_params: { workflow_id: '..', transaction_id: 'api-keys' },
+      }),
+    ).toThrow(/cannot be "\.\."/);
+    expect(() => buildRequestUrl('http://x', products, declared, { path_params: { id: '.' } })).toThrow(ExecutionError);
+    expect(() => buildRequestUrl('http://x', products, declared, { path_params: { id: '..' } })).toThrow(
+      ExecutionError,
+    );
+    expect(buildRequestUrl('http://x', products, declared, { path_params: { id: '%2e%2e' } })).toBe(
+      'http://x/admin/products/%252e%252e',
+    );
+  });
+
   it('refuses missing or unknown parameters instead of guessing', () => {
     expect(() => buildRequestUrl('http://x', products, declared, {})).toThrow(ExecutionError);
     expect(() => buildRequestUrl('http://x', products, declared, { path_params: { id: 'p', other: 'x' } })).toThrow(
@@ -115,6 +134,30 @@ describe('request URLs', () => {
     expect(() =>
       buildRequestUrl('http://x', products, declared, { path_params: { id: 'p' }, query: { nope: 1 } }),
     ).toThrow(/Unknown query parameter/);
+  });
+});
+
+describe('executeOperation', () => {
+  it('caps responses at 64 KB by bytes, without leaving a broken multi-byte character', async () => {
+    const body = 'é'.repeat(75_000); // 150,000 bytes as UTF-8
+    const server = createServer((_req, res) => res.writeHead(200, { 'content-type': 'text/plain' }).end(body));
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const target = {
+        baseUrl: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
+        adminToken: async () => 'jwt',
+        publishableKey: async () => undefined,
+      };
+      const products = operation('GET /admin/products');
+      const result = await executeOperation(target as never, products, declaredParameters(products), {});
+      expect(result.truncated?.bytes).toBe(150_000);
+      const text = String(result.body);
+      expect(Buffer.byteLength(text)).toBeLessThanOrEqual(64 * 1024 + Buffer.byteLength('…'));
+      expect(text).not.toContain('\uFFFD');
+      expect(text.endsWith('é…')).toBe(true);
+    } finally {
+      server.close();
+    }
   });
 });
 

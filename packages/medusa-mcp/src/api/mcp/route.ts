@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
 import type { IApiKeyModuleService, IAuthModuleService } from '@medusajs/framework/types';
-import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
+import { ContainerRegistrationKeys, MedusaError, Modules } from '@medusajs/framework/utils';
 import { toNodeHandler } from '@modelcontextprotocol/node';
 import { type AuthInfo, createMcpHandler } from '@modelcontextprotocol/server';
 import { oauthService } from '../../lib/oauth-http';
@@ -78,7 +78,12 @@ async function serve(req: MedusaRequest, res: MedusaResponse) {
   const authIdentity = await req.scope
     .resolve<IAuthModuleService>(Modules.AUTH)
     .retrieveAuthIdentity(verified.auth_identity_id, { relations: ['provider_identities'] })
-    .catch(() => undefined);
+    .catch((error: { type?: string }) => {
+      // Only a missing identity means the admin is gone. Anything else, such as a database timeout, must not
+      // revoke a valid grant.
+      if (error?.type === MedusaError.Types.NOT_FOUND) return undefined;
+      throw error;
+    });
   if (authIdentity?.app_metadata?.user_id !== verified.user_id) {
     const [token] = await service.listMcpOAuthTokens({ id: verified.token_id });
     if (token) await service.revokeFamily(token.family_id);
