@@ -6,6 +6,42 @@ Medusa admin.
 
 Status: in development on `feat/medusa-mcp`. Design and plan: Arbor thread DEM-17.
 
+## What it serves
+
+| Route | Purpose |
+| --- | --- |
+| `/mcp` | The MCP endpoint (Streamable HTTP). Requires a bearer token this server issued. |
+| `/.well-known/oauth-authorization-server` | OAuth 2.1 metadata (PKCE S256, CIMD, DCR, `iss`). |
+| `/.well-known/oauth-protected-resource/mcp` | Protected resource metadata for `/mcp`. |
+| `/oauth/authorize`, `/oauth/token`, `/oauth/register` | Sign-in with a Medusa admin account, consent, tokens, and client registration. |
+
+## Tools
+
+| Tool | Scope | Does |
+| --- | --- | --- |
+| `search_api` | `mcp:read` | Ranked operations for a task, keyed `METHOD /path`. |
+| `describe_api` | `mcp:read` | Parameters, request body, and response shape for one operation. |
+| `read_api` | `mcp:read` | Calls a GET as the signed-in admin. |
+| `write_api` | `mcp:write` | Calls a POST, PUT, or PATCH after validating the body. `dry_run` previews current vs proposed values. |
+| `delete_api` | `mcp:delete` | Calls a DELETE. Marked destructive. |
+
+Calls run against Medusa's own API as the admin who connected, with a short-lived admin JWT, so Medusa's
+permissions and validators apply. A built-in blocklist (`src/mcp/policy.ts`) keeps agents away from auth,
+API keys, invites, admin user changes, and arbitrary workflow runs. Writes and deletes are logged with the admin,
+client, operation, and spec revision, and each token is limited to 120 calls and 30 changes per minute.
+
+## Options
+
+```ts
+{
+  resolve: '@lambdacurry/medusa-mcp',
+  options: {
+    issuer: process.env.MCP_ISSUER, // public origin, for example a tunnel URL; defaults to http://localhost:9000
+    blockedOperations: ['DELETE /admin/products/{id}', '* /admin/gift-cards/**'], // added to the built-in list
+  },
+}
+```
+
 ## Local development
 
 The plugin is a Yarn workspace linked into `apps/medusa`, not installed through yalc, so

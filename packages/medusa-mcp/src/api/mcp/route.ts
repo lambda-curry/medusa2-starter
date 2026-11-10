@@ -19,10 +19,22 @@ function localBaseUrl(req: MedusaRequest): string {
   return `http://${host}:${req.socket.localPort}`;
 }
 
-function executionTarget(req: MedusaRequest, authIdentity: Parameters<typeof generateAdminJwt>[1]): ExecutionTarget {
+function executionTarget(
+  req: MedusaRequest,
+  authIdentity: Parameters<typeof generateAdminJwt>[1],
+  verified: VerifiedAccessToken,
+  revision: string,
+): ExecutionTarget {
   let adminToken: Promise<string> | undefined;
   let publishableKey: Promise<string | undefined> | undefined;
+  const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER);
   return {
+    tokenId: verified.token_id,
+    audit: async (entry) => {
+      logger.info(
+        `[medusa-mcp] ${JSON.stringify({ ...entry, user_id: verified.user_id, client_id: verified.client_id, spec_revision: revision.slice(0, 12) })}`,
+      );
+    },
     baseUrl: localBaseUrl(req),
     adminToken: () => (adminToken ??= generateAdminJwt(req, authIdentity)),
     publishableKey: () =>
@@ -105,7 +117,11 @@ async function serve(req: MedusaRequest, res: MedusaResponse) {
   };
   (req as MedusaRequest & { auth: AuthInfo }).auth = auth;
 
-  const handler = toNodeHandler(createMcpHandler(() => buildMcpServer(registry, executionTarget(req, authIdentity))));
+  const handler = toNodeHandler(
+    createMcpHandler(() =>
+      buildMcpServer(registry, executionTarget(req, authIdentity, verified, registry.catalog.spec.revision)),
+    ),
+  );
   await handler(req, res, req.body);
 }
 
