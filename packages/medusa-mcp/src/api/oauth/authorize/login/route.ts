@@ -12,7 +12,7 @@ const EXPIRED = 'This sign-in form expired or was changed. Start the connection 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const body = (req.body ?? {}) as Record<string, unknown>;
   const secret = formSecret(req);
-  const signed = verifyPayload<{ request: AuthorizationRequest }>(body.request, secret);
+  const signed = verifyPayload<{ request: AuthorizationRequest }>('login', body.request, secret);
   if (!signed) {
     sendPage(res, 400, errorPage(EXPIRED));
     return;
@@ -58,6 +58,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   }
 
   const grant = signPayload(
+    'consent',
     { request, user_id: userId, auth_identity_id: authIdentity.id },
     secret,
     AUTHORIZE_FORM_TTL_SECONDS,
@@ -66,5 +67,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     res,
     200,
     consentPage({ clientName: request.client_name, redirectUri: request.redirect_uri, scopes: request.scopes, grant }),
+    [request.redirect_uri],
   );
 };
