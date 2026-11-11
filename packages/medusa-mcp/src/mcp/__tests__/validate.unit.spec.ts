@@ -2,7 +2,7 @@ import path from 'node:path';
 import { buildApiSpec } from '../../openapi/build-spec';
 import { buildCatalog } from '../catalog';
 import { createPolicy } from '../policy';
-import { RATE_LIMITS, takeRateLimit } from '../rate-limit';
+import { RATE_LIMITS, takeRateLimit, trackedRateLimitKeys } from '../rate-limit';
 import { validateBody, withoutNulls } from '../validate';
 
 const spec = buildApiSpec({ projectRoot: path.join(__dirname, '../../openapi/__tests__/fixtures/valid') });
@@ -66,5 +66,13 @@ describe('takeRateLimit', () => {
     expect(takeRateLimit(token, 'change', start + 100)).toMatch(/at most 30 writes and deletes per minute/);
     expect(takeRateLimit(token, 'change', start + 61_000)).toBeUndefined();
     expect(takeRateLimit(`other-${token}`, 'change', start + 100)).toBeUndefined();
+  });
+
+  it('forgets tokens that have gone a full window without a call', () => {
+    const start = 10_000_000;
+    for (let index = 0; index < 50; index++) takeRateLimit(`idle-${index}`, 'call', start);
+    expect(trackedRateLimitKeys()).toBeGreaterThanOrEqual(50);
+    takeRateLimit('active', 'call', start + 61_000);
+    expect(trackedRateLimitKeys()).toBe(1);
   });
 });

@@ -6,7 +6,7 @@ import {
   validateClientMetadataDocument,
 } from '../cimd';
 import { resolveOAuthConfig } from '../config';
-import { redirectUriProblem, redirectUrisProblems } from '../redirect-uri';
+import { redirectUriMatches, redirectUriProblem, redirectUrisProblems } from '../redirect-uri';
 
 describe('redirect URIs', () => {
   it.each([
@@ -35,6 +35,26 @@ describe('redirect URIs', () => {
     expect(redirectUrisProblems(Array(11).fill('https://a.example/cb'))).toEqual([
       'redirect_uris may list at most 10 URIs',
     ]);
+  });
+});
+
+describe('redirectUriMatches', () => {
+  it('accepts any port on a registered HTTP loopback callback, per RFC 8252', () => {
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/callback')).toBe(true);
+    expect(redirectUriMatches('http://127.0.0.1:3000/callback', 'http://127.0.0.1:49152/callback')).toBe(true);
+    expect(redirectUriMatches('http://[::1]/cb', 'http://[::1]:8080/cb')).toBe(true);
+  });
+
+  it('keeps every other part exact', () => {
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/other')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/callback?x=1')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://localhost:49152/callback')).toBe(false);
+    expect(redirectUriMatches('https://a.example/cb', 'https://a.example:8443/cb')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'https://127.0.0.1:49152/callback')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/a/../callback')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/call\nback')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/CALLBACK')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://user@127.0.0.1:49152/callback')).toBe(false);
   });
 });
 

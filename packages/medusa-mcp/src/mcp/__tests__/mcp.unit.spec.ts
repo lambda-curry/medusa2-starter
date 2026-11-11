@@ -141,7 +141,9 @@ describe('executeOperation', () => {
   it('caps responses at 64 KB by bytes, without leaving a broken multi-byte character', async () => {
     // One ASCII byte first, so the 64 KiB cut lands inside a two-byte character.
     const body = `a${'é'.repeat(75_000)}`;
-    const server = createServer((_req, res) => res.writeHead(200, { 'content-type': 'text/plain' }).end(body));
+    const server = createServer((_req, res) =>
+      res.writeHead(200, { 'content-type': 'text/plain', 'content-length': Buffer.byteLength(body) }).end(body),
+    );
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
     try {
       const target = {
@@ -157,6 +159,37 @@ describe('executeOperation', () => {
       expect(text).not.toContain('\uFFFD');
       expect(text.endsWith('é…')).toBe(true);
     } finally {
+      server.close();
+    }
+  });
+
+  it('stops reading an oversized response instead of buffering all of it', async () => {
+    // A body that never ends: the call only returns if the client stops reading at the cap.
+    let sent = 0;
+    const server = createServer((_req, res) => {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      const chunk = Buffer.alloc(16 * 1024, 'a');
+      const pump = () => {
+        while (!res.destroyed && res.write(chunk)) sent += chunk.length;
+        if (!res.destroyed) res.once('drain', pump);
+      };
+      pump();
+    });
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const target = {
+        baseUrl: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
+        adminToken: async () => 'jwt',
+        publishableKey: async () => undefined,
+      };
+      const products = operation('GET /admin/products');
+      const result = await executeOperation(target as never, products, declaredParameters(products), {});
+      expect(result.truncated).toBeDefined();
+      expect(result.truncated?.bytes).toBeUndefined();
+      expect(Buffer.byteLength(String(result.body))).toBeLessThanOrEqual(64 * 1024 + Buffer.byteLength('…'));
+      expect(sent).toBeLessThan(16 * 1024 * 1024);
+    } finally {
+      server.closeAllConnections();
       server.close();
     }
   });

@@ -1,9 +1,10 @@
 import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { buildApiSpec, countOperations } from '../build-spec';
 import { compareCodeUnits } from '../compare';
 import { loadCoreSpecs, specsDirectory } from '../core-spec';
-import { OpenApiContractError } from '../discover-routes';
+import { findRouteFiles, OpenApiContractError } from '../discover-routes';
 
 const fixture = (name: string) => path.join(__dirname, 'fixtures', name);
 
@@ -168,6 +169,21 @@ describe('loadCoreSpecs', () => {
       manifest.specs.store.sha256 = '0'.repeat(64);
       writeFileSync(manifestFile, JSON.stringify(manifest));
       expect(() => loadCoreSpecs('2.22.1', root)).toThrow('Core store spec for Medusa 2.22.1 fails its checksum');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('findRouteFiles', () => {
+  it('treats a missing API directory as no routes, and fails on one it cannot read', () => {
+    const root = mkdtempSync(path.join(tmpdir(), 'medusa-mcp-routes-'));
+    try {
+      expect(findRouteFiles(path.join(root, 'missing'))).toEqual([]);
+      // A file where the directory should be fails with ENOTDIR, whatever the process's permissions.
+      const notADirectory = path.join(root, 'api');
+      writeFileSync(notADirectory, '');
+      expect(() => findRouteFiles(notADirectory)).toThrow(/ENOTDIR/);
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

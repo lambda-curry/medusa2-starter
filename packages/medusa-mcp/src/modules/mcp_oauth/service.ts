@@ -8,7 +8,7 @@ import { OAuthError, RedirectableOAuthError } from './errors';
 import { McpOAuthAuthorization } from './models/authorization';
 import { McpOAuthClient } from './models/client';
 import { McpOAuthToken } from './models/token';
-import { redirectUrisProblems } from './redirect-uri';
+import { redirectUriMatches, redirectUrisProblems } from './redirect-uri';
 
 const CIMD_CACHE_MS = 60 * 60 * 1000;
 const SUPPORTED_GRANT_TYPES = ['authorization_code', 'refresh_token'];
@@ -203,7 +203,7 @@ export default class McpOAuthService extends MedusaService({
     const client = await this.resolveClient(params.client_id);
     const redirectUri = optionalString(params.redirect_uri);
     if (!redirectUri) throw new OAuthError('invalid_request', 'redirect_uri is required');
-    if (!client.redirect_uris.includes(redirectUri)) {
+    if (!client.redirect_uris.some((registered) => redirectUriMatches(registered, redirectUri))) {
       throw new OAuthError('invalid_request', 'redirect_uri is not registered for this client');
     }
 
