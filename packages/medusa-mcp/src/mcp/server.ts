@@ -389,9 +389,16 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     const proposalOnly = (note: string) => ok({ ...preview, proposed: args.body ?? null, current: null, note });
 
     const read = catalog.byKey.get(`GET ${operation.path}`);
-    if (!/\{[^}]+\}$/.test(operation.path) || !read || read.blocked_by) {
-      return proposalOnly('This operation creates or acts on a resource, so there are no current values to compare.');
+    if (!/\{[^}]+\}$/.test(operation.path)) {
+      // The spec does not say whether a POST creates, updates, or acts, so the note names the operation and states what
+      // the preview does rather than guessing what the call will do.
+      const name = operation.summary ? `"${operation.summary}"` : 'This operation';
+      return proposalOnly(
+        `${name}: current values are shown only for a write to a path that ends in a resource id, so only the proposal is shown.`,
+      );
     }
+    if (!read || read.blocked_by)
+      return proposalOnly('This resource cannot be read here, so current values are not shown.');
     if (!target.scopes.includes('mcp:read')) return proposalOnly('Current values need the mcp:read scope.');
 
     const query = declaredFor(read).query.has('fields') && fields.length ? { fields: fields.join(',') } : undefined;

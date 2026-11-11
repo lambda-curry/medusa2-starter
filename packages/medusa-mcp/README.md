@@ -28,8 +28,17 @@ Status: in development on `feat/medusa-mcp`. Design and plan: Arbor thread DEM-1
 A dry run checks the body against the published spec only. Medusa enforces business rules in its workflows, which no
 spec describes: creating a product without `options` passes the schema and fails in Medusa's create workflow. So every
 preview says it was not executed and whether the body was checked (`schema_check`), and a failed call returns an `error` object with the phase (`schema` or `medusa`),
-Medusa's `type`, `code`, and `message`, a hint for the status, and the spec revision, so an agent can correct the body
-and call again.
+Medusa's `type`, `code`, and `message` when Medusa sends them (`code` is often absent), and a hint for the status, so
+an agent can correct the body and call again. `spec_revision` sits beside `error`, at the top of the result.
+
+A failed call is an MCP tool result with `isError: true`, as the MCP spec asks for execution errors, not a JSON-RPC
+error. ChatGPT presents such a result as a tool exception carrying the text. The result takes one of three shapes:
+
+| Failure | Text content | `structuredContent` |
+| --- | --- | --- |
+| Medusa rejected the call | The same JSON as `structuredContent` | `operation`, `status`, `body`, `error` (`phase: 'medusa'`), `spec_revision` |
+| The body failed the schema | A readable list of problems | `operation`, `error` (`phase: 'schema'`, `problems`, `hint`), `spec_revision` |
+| Refused before any call: unknown operation, wrong tool, blocked by policy, missing scope, rate limit, a body that is not JSON, bad path parameters | A readable message | None |
 
 Calls run against Medusa's own API as the admin who connected, with a short-lived admin JWT, so Medusa's
 permissions and validators apply. A built-in blocklist (`src/mcp/policy.ts`) keeps agents away from auth,
