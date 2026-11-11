@@ -7,6 +7,7 @@ import { describeOperation } from '../describe';
 import { appendQuery, buildRequestUrl, declaredParameters, ExecutionError, executeOperation } from '../execute';
 import { BUILT_IN_BLOCKLIST, createPolicy } from '../policy';
 import { buildSearchIndex, pathResource, queryIntent, queryTerms, tokenize } from '../search';
+import { resourceIn } from '../server';
 
 const spec = buildApiSpec({ projectRoot: path.join(__dirname, '../../openapi/__tests__/fixtures/valid') });
 const catalog = buildCatalog(spec, createPolicy());
@@ -322,5 +323,15 @@ describe('search', () => {
     ]) {
       expect({ query, rank: ranks.find((entry) => entry.query === query)?.rank }).toEqual({ query, rank: 1 });
     }
+  });
+});
+
+describe('resourceIn', () => {
+  it('finds the resource nested under its key, or returned directly, and nothing in an empty body', () => {
+    expect(resourceIn({ product: { id: 'prod_1' } })).toEqual({ id: 'prod_1' });
+    expect(resourceIn({ id: 'custom_1', title: 'Direct' })).toEqual({ id: 'custom_1', title: 'Direct' });
+    expect(resourceIn({})).toBeUndefined();
+    expect(resourceIn('{"product":')).toBeUndefined();
+    expect(resourceIn(undefined)).toBeUndefined();
   });
 });

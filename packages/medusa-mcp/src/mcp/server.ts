@@ -49,6 +49,21 @@ function dryRunLimits(check: SchemaCheck): string {
   );
 }
 
+/** The resource object in a GET response: `product` in Medusa's `{ product: {...} }`, or the body itself when a route
+ * returns the resource directly with an `id`. Medusa answers some missing resources with 200 and an empty body
+ * (`GET /admin/collections/{id}` returns `{}`), so callers must check for it. */
+export function resourceIn(body: unknown): Record<string, unknown> | undefined {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return undefined;
+  const record = body as Record<string, unknown>;
+  if (typeof record.id === 'string') return record;
+  return Object.values(record).find((value) => value && typeof value === 'object' && !Array.isArray(value)) as
+    | Record<string, unknown>
+    | undefined;
+}
+
+/** A path that ends in a path parameter names one resource, which a GET on the same path can read. */
+const ONE_RESOURCE = /\{[^}]+\}$/;
+
 /** Advice for an agent on a failed call, by status. Medusa's own message says what to change. */
 function errorHint(status: number): string {
   if (status === 400) {
@@ -106,16 +121,26 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     },
   );
 
+  const specRevision = catalog.spec.revision.slice(0, 12);
+
+  /** A call stopped before anything reached Medusa: the reason as text, plus the same `error` shape as other failures. */
+  const refusal = (message: string, operation?: string): ToolResult =>
+    fail(message, {
+      ...(operation ? { operation } : {}),
+      error: { phase: 'refused', message, hint: 'Nothing was sent to Medusa.' },
+      spec_revision: specRevision,
+    });
+
   const lookup = (key: unknown): CatalogOperation | ToolResult => {
     const operation = typeof key === 'string' ? catalog.byKey.get(key.trim()) : undefined;
     return (
-      operation ?? fail(`Unknown operation "${String(key)}". Use search_api to find the exact "METHOD /path" key.`)
+      operation ?? refusal(`Unknown operation "${String(key)}". Use search_api to find the exact "METHOD /path" key.`)
     );
   };
 
   const limited = (kind: 'call' | 'change') => {
     const message = takeRateLimit(target.tokenId, kind);
-    return message ? fail(message) : undefined;
+    return message ? refusal(message) : undefined;
   };
 
   const declaredFor = (operation: CatalogOperation) => {
@@ -127,7 +152,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     try {
       return await executeOperation(target, operation, declaredFor(operation), args);
     } catch (error) {
-      if (error instanceof ExecutionError) return fail(error.message);
+      if (error instanceof ExecutionError) return refusal(error.message, operation.operation);
       throw error;
     }
   };
@@ -139,19 +164,23 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     const operation = lookup(args.operation);
     if ('content' in operation) return operation;
     if (operation.blocked_by) {
-      return fail(`${operation.operation} is blocked for agents by the "${operation.blocked_by}" rule.`);
+      return refusal(
+        `${operation.operation} is blocked for agents by the "${operation.blocked_by}" rule.`,
+        operation.operation,
+      );
     }
     if (operation.tool !== tool) {
-      return fail(`${operation.operation} is not handled by ${tool}. Use ${operation.tool ?? 'another tool'} instead.`);
+      return refusal(
+        `${operation.operation} is not handled by ${tool}. Use ${operation.tool ?? 'another tool'} instead.`,
+        operation.operation,
+      );
     }
     return operation;
   };
 
-  const specRevision = catalog.spec.revision.slice(0, 12);
-
   const resultOf = (operation: CatalogOperation, result: ExecutionResult | ToolResult): ToolResult => {
     if ('content' in result) return result;
-    if (result.status < 400) return ok({ operation: operation.operation, ...result });
+    if (result.status < 400) return ok({ operation: operation.operation, ...result, spec_revision: specRevision });
     const error = {
       phase: 'medusa',
       status: result.status,
@@ -289,11 +318,14 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       if (contentTypes.length && !contentTypes.some((type) => type.includes('json'))) {
         return refused(
           args,
-          fail(`${operation.operation} takes ${contentTypes.join(' or ')}, which write_api cannot send.`),
+          refusal(
+            `${operation.operation} takes ${contentTypes.join(' or ')}, which write_api cannot send.`,
+            operation.operation,
+          ),
         );
       }
       const schema = requestBody?.content?.['application/json']?.schema;
-      const schemaCheck: SchemaCheck = !schema ? 'no_schema' : args.body === undefined ? 'no_body' : 'passed';
+      const schemaCheck: SchemaCheck = args.body === undefined ? 'no_body' : !schema ? 'no_schema' : 'passed';
       if (schema && args.body !== undefined) {
         const problems = validateBody(catalog.spec, operation.area, schema, args.body);
         if (problems.length) {
@@ -340,7 +372,14 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       const args = input as ToolArgs;
       const operation = resolveFor('delete_api', args);
       if ('content' in operation) return refused(args, operation);
-      return audited(args, () => executeAudited(operation, args));
+      return audited(args, async () => {
+        const precheck = await findBeforeDelete(operation, args);
+        if (precheck && 'content' in precheck) return refused(args, precheck);
+        const result = await executeAudited(operation, args);
+        return result.isError || !result.structuredContent
+          ? result
+          : ok({ ...result.structuredContent, precheck: precheck ?? null });
+      });
     },
   );
 
@@ -372,6 +411,49 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
   }
 
   /**
+   * Medusa's DELETE routes answer `deleted: true` whether or not the resource existed, so a delete cannot show that
+   * anything was removed. When the same path has a GET, read it first: a missing resource stops the DELETE and returns
+   * why. Only existence is reported, never the body, so a token without mcp:read learns nothing a DELETE would not.
+   */
+  async function findBeforeDelete(
+    operation: CatalogOperation,
+    args: ToolArgs,
+  ): Promise<{ operation: string; found: true } | ToolResult | undefined> {
+    const read = catalog.byKey.get(`GET ${operation.path}`);
+    if (!ONE_RESOURCE.test(operation.path) || !read || read.blocked_by) return undefined;
+    let current: Awaited<ReturnType<typeof run>>;
+    try {
+      current = await run(read, { path_params: args.path_params });
+    } catch {
+      // A timeout or a dropped connection says nothing about existence; the DELETE decides.
+      return undefined;
+    }
+    if ('content' in current) return current;
+    // A 404 says the resource is missing whatever its body. Otherwise a truncated body cannot show whether the resource
+    // is in it, so the check is inconclusive.
+    const missing = current.status === 404 || (!current.truncated && current.status < 400 && !resourceIn(current.body));
+    if (current.truncated && !missing) return undefined;
+    if (missing) {
+      const message =
+        medusaError(current.body).message ?? `${read.operation} returned no resource for these path parameters.`;
+      return fail(`${message} The DELETE was not sent.`, {
+        operation: operation.operation,
+        executed: false,
+        error: {
+          phase: 'precheck',
+          check: read.operation,
+          status: current.status,
+          message,
+          hint: 'Nothing was deleted, because the resource does not exist. Check the path parameters.',
+        },
+        spec_revision: specRevision,
+      });
+    }
+    // Any other failure says nothing about existence, so the DELETE goes ahead without claiming a check passed.
+    return current.status < 400 ? { operation: read.operation, found: true } : undefined;
+  }
+
+  /**
    * Previews a write without sending it. For an operation on one resource (its path ends in a path parameter), shows
    * the current value of each top-level body field next to the proposed one, by reading the same path with GET. A
    * create or action has no current values, so only the proposal is shown. Without mcp:read the current values stay
@@ -385,11 +467,12 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       executed: false,
       schema_check: schemaCheck,
       limits: dryRunLimits(schemaCheck),
+      spec_revision: specRevision,
     };
     const proposalOnly = (note: string) => ok({ ...preview, proposed: args.body ?? null, current: null, note });
 
     const read = catalog.byKey.get(`GET ${operation.path}`);
-    if (!/\{[^}]+\}$/.test(operation.path)) {
+    if (!ONE_RESOURCE.test(operation.path)) {
       // The spec does not say whether a POST creates, updates, or acts, so the note names the operation and states what
       // the preview does rather than guessing what the call will do.
       const name = operation.summary ? `"${operation.summary}"` : 'This operation';
@@ -406,9 +489,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     if ('content' in current) return current;
     if (current.status >= 400) return resultOf(read, current);
 
-    const resource = Object.values((current.body as Record<string, unknown>) ?? {}).find(
-      (value) => value && typeof value === 'object' && !Array.isArray(value),
-    ) as Record<string, unknown> | undefined;
+    const resource = resourceIn(current.body);
     const changes = fields.map((field) => ({
       field,
       current: resource?.[field] ?? null,

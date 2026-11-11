@@ -90,6 +90,7 @@ medusaIntegrationTestRunner({
         executed: false,
         schema_check: 'passed',
         limits: expect.stringContaining('Nothing was sent to Medusa'),
+        spec_revision: expect.any(String),
         changes: [
           { field: 'description', current: 'Smooth and sweet.', proposed: 'Rich, chocolatey, and caffeine-free.' },
         ],
@@ -149,7 +150,61 @@ medusaIntegrationTestRunner({
         operation: 'DELETE /admin/products/{id}',
         path_params: { id: productId },
       });
-      expect(deleted.structuredContent).toMatchObject({ status: 200, body: { id: productId, deleted: true } });
+      expect(deleted.structuredContent).toMatchObject({
+        status: 200,
+        body: { id: productId, deleted: true },
+        precheck: { operation: 'GET /admin/products/{id}', found: true },
+        spec_revision: expect.any(String),
+      });
+      await expect(product()).rejects.toThrow();
+    });
+
+    it('does not send a DELETE for a resource that does not exist, since Medusa would answer deleted: true', async () => {
+      // Medusa's DELETE route reports success for any id, and GET /admin/collections/{id} answers 200 {} for a missing
+      // collection, so both a 404 and an empty body must stop the delete.
+      const missingProduct = await callTool(api, fullToken, 'delete_api', {
+        operation: 'DELETE /admin/products/{id}',
+        path_params: { id: 'prod_does_not_exist' },
+      });
+      expect(missingProduct.isError).toBe(true);
+      expect(missingProduct.structuredContent).toMatchObject({
+        operation: 'DELETE /admin/products/{id}',
+        executed: false,
+        error: {
+          phase: 'precheck',
+          check: 'GET /admin/products/{id}',
+          status: 404,
+          hint: expect.stringContaining('Nothing was deleted'),
+        },
+      });
+      expect(missingProduct.content[0].text).toContain('The DELETE was not sent.');
+
+      const [collection] = await getContainer()
+        .resolve(Modules.PRODUCT)
+        .createProductCollections([{ title: 'MCP check collection', handle: 'mcp-check-collection' }]);
+      const first = await callTool(api, fullToken, 'delete_api', {
+        operation: 'DELETE /admin/collections/{id}',
+        path_params: { id: collection.id },
+      });
+      expect(first.structuredContent).toMatchObject({ status: 200, precheck: { found: true } });
+      const again = await callTool(api, fullToken, 'delete_api', {
+        operation: 'DELETE /admin/collections/{id}',
+        path_params: { id: collection.id },
+      });
+      expect(again.structuredContent).toMatchObject({
+        executed: false,
+        error: { phase: 'precheck', check: 'GET /admin/collections/{id}', status: 200 },
+      });
+
+      // A GET too large to read whole cannot show whether the resource exists, so the DELETE goes ahead unchecked.
+      await getContainer()
+        .resolve(Modules.PRODUCT)
+        .updateProducts(productId, { description: 'x'.repeat(80 * 1024) });
+      const unchecked = await callTool(api, fullToken, 'delete_api', {
+        operation: 'DELETE /admin/products/{id}',
+        path_params: { id: productId },
+      });
+      expect(unchecked.structuredContent).toMatchObject({ status: 200, body: { deleted: true }, precheck: null });
       await expect(product()).rejects.toThrow();
     });
 
@@ -159,12 +214,22 @@ medusaIntegrationTestRunner({
         body: { title: 'agent key', type: 'secret' },
       });
       expect(blocked.content[0].text).toContain('blocked for agents');
+      expect(blocked.structuredContent).toMatchObject({
+        operation: 'POST /admin/api-keys',
+        error: {
+          phase: 'refused',
+          message: expect.stringContaining('blocked for agents'),
+          hint: 'Nothing was sent to Medusa.',
+        },
+        spec_revision: expect.any(String),
+      });
 
       const wrongTool = await callTool(api, fullToken, 'write_api', {
         operation: 'DELETE /admin/products/{id}',
         path_params: { id: productId },
       });
       expect(wrongTool.content[0].text).toContain('Use delete_api');
+      expect(wrongTool.structuredContent?.error).toMatchObject({ phase: 'refused' });
     });
 
     it('audits refused, executed, and previewed write attempts with their path parameters', async () => {
@@ -230,6 +295,7 @@ medusaIntegrationTestRunner({
         executed: false,
         schema_check: 'passed',
         limits: expect.stringContaining('the real call can still be rejected'),
+        spec_revision: expect.any(String),
         proposed: draft,
         current: null,
         note: '"Create Product": current values are shown only for a write to a path that ends in a resource id, so only the proposal is shown.',
@@ -285,6 +351,7 @@ medusaIntegrationTestRunner({
         operation: 'POST /admin/products/export',
         dry_run: true,
       });
+      expect(action.structuredContent?.schema_check).toBe('no_body');
       expect(action.structuredContent?.note).toBe(
         '"Export Products": current values are shown only for a write to a path that ends in a resource id, so only the proposal is shown.',
       );
@@ -304,6 +371,7 @@ medusaIntegrationTestRunner({
         executed: false,
         schema_check: 'passed',
         limits: expect.stringContaining('Nothing was sent to Medusa'),
+        spec_revision: expect.any(String),
         proposed: { description: 'Proposed.' },
         current: null,
         note: 'Current values need the mcp:read scope.',
