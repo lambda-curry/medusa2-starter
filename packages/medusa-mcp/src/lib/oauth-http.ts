@@ -1,5 +1,5 @@
+import { randomBytes } from 'node:crypto';
 import type { MedusaRequest, MedusaResponse } from '@medusajs/framework/http';
-import { ContainerRegistrationKeys } from '@medusajs/framework/utils';
 import { MCP_OAUTH_MODULE } from '../modules/mcp_oauth';
 import { OAuthError, RedirectableOAuthError } from '../modules/mcp_oauth/errors';
 import type McpOAuthService from '../modules/mcp_oauth/service';
@@ -12,12 +12,16 @@ export function oauthService(req: MedusaRequest): McpOAuthService {
   return req.scope.resolve<McpOAuthService>(MCP_OAUTH_MODULE);
 }
 
-/** The secret that signs authorize form state: Medusa's cookie secret, or its JWT secret. */
-export function formSecret(req: MedusaRequest): string {
-  const { http } = req.scope.resolve(ContainerRegistrationKeys.CONFIG_MODULE).projectConfig;
-  const secret = http.cookieSecret || http.jwtSecret;
-  if (!secret) throw new Error('medusa-mcp needs projectConfig.http.cookieSecret or jwtSecret to sign OAuth forms');
-  return String(secret);
+/**
+ * Signs authorize form state with a random key made when this process starts. Form state only has to survive the
+ * few minutes between showing a page and its submission, so it needs no shared secret. Keying it to Medusa's cookie
+ * or JWT secret instead would let anyone who knows a default secret forge a consent grant. A Medusa restart expires
+ * open sign-in and consent pages; the user starts the connection again.
+ */
+const FORM_SIGNING_KEY = randomBytes(32).toString('base64url');
+
+export function formSecret(_req: MedusaRequest): string {
+  return FORM_SIGNING_KEY;
 }
 
 /** Redirects back to the client with an authorization response, always naming the issuer (RFC 9207). */
