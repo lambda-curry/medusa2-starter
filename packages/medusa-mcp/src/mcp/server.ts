@@ -429,9 +429,11 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       return undefined;
     }
     if ('content' in current) return current;
-    // A truncated body cannot show whether the resource is in it.
-    if (current.truncated) return undefined;
-    if (current.status === 404 || (current.status < 400 && !resourceIn(current.body))) {
+    // A 404 says the resource is missing whatever its body. Otherwise a truncated body cannot show whether the resource
+    // is in it, so the check is inconclusive.
+    const missing = current.status === 404 || (!current.truncated && current.status < 400 && !resourceIn(current.body));
+    if (current.truncated && !missing) return undefined;
+    if (missing) {
       const message =
         medusaError(current.body).message ?? `${read.operation} returned no resource for these path parameters.`;
       return fail(`${message} The DELETE was not sent.`, {
