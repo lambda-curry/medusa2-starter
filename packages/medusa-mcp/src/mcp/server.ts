@@ -31,10 +31,23 @@ function fail(message: string, data?: Record<string, unknown>): ToolResult {
   return { content: [{ type: 'text', text: message }], ...(data ? { structuredContent: data } : {}), isError: true };
 }
 
+/** Whether a write's body was checked against the published schema: it passed, there was no body, or the operation
+ * publishes no JSON body schema. A failed check never reaches a dry run. */
+type SchemaCheck = 'passed' | 'no_body' | 'no_schema';
+
+const SCHEMA_CHECKED: Record<SchemaCheck, string> = {
+  passed: 'The body matches the published schema',
+  no_body: 'No body was given, so nothing was checked against the schema',
+  no_schema: 'This operation publishes no body schema, so the body was not checked',
+};
+
 /** What a dry run proves and what it cannot, sent with every preview so an agent never reads one as acceptance. */
-const DRY_RUN_LIMITS =
-  'Nothing was sent to Medusa. The body matches the published schema, but Medusa checks its business rules only when ' +
-  'the call runs, so the real call can still be rejected.';
+function dryRunLimits(check: SchemaCheck): string {
+  return (
+    `Nothing was sent to Medusa. ${SCHEMA_CHECKED[check]}, but Medusa checks its business rules only when the call ` +
+    'runs, so the real call can still be rejected.'
+  );
+}
 
 /** Advice for an agent on a failed call, by status. Medusa's own message says what to change. */
 function errorHint(status: number): string {
@@ -280,6 +293,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
         );
       }
       const schema = requestBody?.content?.['application/json']?.schema;
+      const schemaCheck: SchemaCheck = !schema ? 'no_schema' : args.body === undefined ? 'no_body' : 'passed';
       if (schema && args.body !== undefined) {
         const problems = validateBody(catalog.spec, operation.area, schema, args.body);
         if (problems.length) {
@@ -298,7 +312,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
 
       return audited(args, async () => {
         if (args.dry_run) {
-          const preview = await dryRun(operation, args);
+          const preview = await dryRun(operation, args, schemaCheck);
           await target.audit({ ...auditBase(args), outcome: 'dry_run' });
           return preview;
         }
@@ -363,9 +377,15 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
    * create or action has no current values, so only the proposal is shown. Without mcp:read the current values stay
    * hidden, since a dry run must not become a way to read data the token cannot read.
    */
-  async function dryRun(operation: CatalogOperation, args: ToolArgs): Promise<ToolResult> {
+  async function dryRun(operation: CatalogOperation, args: ToolArgs, schemaCheck: SchemaCheck): Promise<ToolResult> {
     const fields = Object.keys((args.body as Record<string, unknown> | undefined) ?? {});
-    const preview = { operation: operation.operation, dry_run: true, executed: false, limits: DRY_RUN_LIMITS };
+    const preview = {
+      operation: operation.operation,
+      dry_run: true,
+      executed: false,
+      schema_check: schemaCheck,
+      limits: dryRunLimits(schemaCheck),
+    };
     const proposalOnly = (note: string) => ok({ ...preview, proposed: args.body ?? null, current: null, note });
 
     const read = catalog.byKey.get(`GET ${operation.path}`);

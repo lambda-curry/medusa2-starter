@@ -88,6 +88,7 @@ medusaIntegrationTestRunner({
         operation: 'POST /admin/products/{id}',
         dry_run: true,
         executed: false,
+        schema_check: 'passed',
         limits: expect.stringContaining('Nothing was sent to Medusa'),
         changes: [
           { field: 'description', current: 'Smooth and sweet.', proposed: 'Rich, chocolatey, and caffeine-free.' },
@@ -227,6 +228,7 @@ medusaIntegrationTestRunner({
         operation: 'POST /admin/products',
         dry_run: true,
         executed: false,
+        schema_check: 'passed',
         limits: expect.stringContaining('the real call can still be rejected'),
         proposed: draft,
         current: null,
@@ -268,6 +270,18 @@ medusaIntegrationTestRunner({
       expect(await products.listProducts({}, { select: ['id'] })).toHaveLength(before.length);
     });
 
+    it('says when a dry run checked nothing against the schema', async () => {
+      const preview = await callTool(api, fullToken, 'write_api', { operation: 'POST /admin/products', dry_run: true });
+      expect(preview.isError).toBeFalsy();
+      expect(preview.structuredContent).toMatchObject({
+        executed: false,
+        schema_check: 'no_body',
+        limits: expect.stringContaining('No body was given, so nothing was checked'),
+        proposed: null,
+      });
+      expect(preview.structuredContent?.limits).not.toContain('matches the published schema');
+    });
+
     it('does not show current values in a dry run for a token without mcp:read', async () => {
       const writeOnly = (await issueAccessToken(api, ['mcp:write'])).access_token;
       const preview = await callTool(api, writeOnly, 'write_api', {
@@ -280,6 +294,7 @@ medusaIntegrationTestRunner({
         operation: 'POST /admin/products/{id}',
         dry_run: true,
         executed: false,
+        schema_check: 'passed',
         limits: expect.stringContaining('Nothing was sent to Medusa'),
         proposed: { description: 'Proposed.' },
         current: null,

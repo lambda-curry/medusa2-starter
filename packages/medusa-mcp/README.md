@@ -27,7 +27,7 @@ Status: in development on `feat/medusa-mcp`. Design and plan: Arbor thread DEM-1
 
 A dry run checks the body against the published spec only. Medusa enforces business rules in its workflows, which no
 spec describes: creating a product without `options` passes the schema and fails in Medusa's create workflow. So every
-preview says it was not executed, and a failed call returns an `error` object with the phase (`schema` or `medusa`),
+preview says it was not executed and whether the body was checked (`schema_check`), and a failed call returns an `error` object with the phase (`schema` or `medusa`),
 Medusa's `type`, `code`, and `message`, a hint for the status, and the spec revision, so an agent can correct the body
 and call again.
 
