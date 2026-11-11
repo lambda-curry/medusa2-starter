@@ -6,7 +6,7 @@ import { buildCatalog } from '../catalog';
 import { describeOperation } from '../describe';
 import { appendQuery, buildRequestUrl, declaredParameters, ExecutionError, executeOperation } from '../execute';
 import { BUILT_IN_BLOCKLIST, createPolicy } from '../policy';
-import { buildSearchIndex, queryIntent, tokenize } from '../search';
+import { buildSearchIndex, pathResource, queryIntent, queryTerms, tokenize } from '../search';
 
 const spec = buildApiSpec({ projectRoot: path.join(__dirname, '../../openapi/__tests__/fixtures/valid') });
 const catalog = buildCatalog(spec, createPolicy());
@@ -208,6 +208,24 @@ describe('search', () => {
       'category',
     ]);
     expect(tokenize('shipped shipping orders')).toEqual(['ship', 'ship', 'order']);
+    expect(tokenize("an existing product's new description")).toEqual(['product', 'description']);
+  });
+
+  it('weights terms in a detail clause at half, unless they also name the target', () => {
+    expect(queryTerms('create a product with variants and options')).toEqual([
+      { term: 'variant', weight: 0.5 },
+      { term: 'option', weight: 0.5 },
+      { term: 'create', weight: 1 },
+      { term: 'product', weight: 1 },
+    ]);
+    expect(queryTerms('create a collection to group products')).toContainEqual({ term: 'group', weight: 0.5 });
+    expect(queryTerms('add a product to a product list')).toContainEqual({ term: 'product', weight: 1 });
+  });
+
+  it('reads the resource an operation acts on from the end of its path', () => {
+    expect(pathResource('/admin/products/{id}/variants')).toBe('variant');
+    expect(pathResource('/admin/payment-collections')).toBe('collection');
+    expect(pathResource('/admin/products/{id}')).toBe('product');
   });
 
   it('reads one method intent from the query verbs', () => {
@@ -222,7 +240,9 @@ describe('search', () => {
     expect(ranking()).toEqual(ranking());
   });
 
-  // Baseline measured on the pinned 2.22.1 spec: hit@1 11/15, hit@3 14/15. This guards against regressions.
+  // Measured on the pinned 2.22.1 spec. The first 15 phrasings sit close to Medusa's summaries; the rest are written the
+  // way agents ask, with qualifiers and detail clauses, and include the three that misranked live in ChatGPT. Before
+  // modifier weighting and the path-resource boost: hit@1 18/34, hit@3 25/34. Now: hit@1 25/34, hit@3 29/34.
   it('finds the expected operation for common agent tasks', () => {
     const cases: [string, string, { area?: 'admin' | 'store' }?][] = [
       ['update a product description', 'POST /admin/products/{id}'],
@@ -243,17 +263,46 @@ describe('search', () => {
       ['change a product variant price', 'POST /admin/products/{id}/variants/{variant_id}'],
       ['mark an order fulfillment as shipped', 'POST /admin/orders/{id}/fulfillments/{fulfillment_id}/shipments'],
       ['find a product by handle in the storefront', 'GET /store/products', { area: 'store' }],
+      ['create a new customer with an email address', 'POST /admin/customers'],
+      ['add a product to a sales channel', 'POST /admin/sales-channels/{id}/products'],
+      ['change the title of an existing collection', 'POST /admin/collections/{id}'],
+      ['remove a product from a collection', 'POST /admin/collections/{id}/products'],
+      ['create a discount code for 10% off', 'POST /admin/promotions'],
+      ['look up an order by its display id', 'GET /admin/orders'],
+      ['archive a product by setting its status', 'POST /admin/products/{id}'],
+      ['create a price list for wholesale customers', 'POST /admin/price-lists'],
+      ['add a tag to a product', 'POST /admin/products/{id}'],
+      ['create a product category under a parent category', 'POST /admin/product-categories'],
+      ['delete a customer group', 'DELETE /admin/customer-groups/{id}'],
+      ['list the variants of a product', 'GET /admin/products/{id}/variants'],
+      ['create a shipping option for a region', 'POST /admin/shipping-options'],
+      [
+        'update the inventory quantity of a variant at a stock location',
+        'POST /admin/inventory-items/{id}/location-levels/{location_id}',
+      ],
+      ['create a stock location for a warehouse', 'POST /admin/stock-locations'],
+      ['get a customer by id', 'GET /admin/customers/{id}'],
+      ['create a product as draft with variants and options', 'POST /admin/products'],
+      ["update an existing product's description", 'POST /admin/products/{id}'],
+      ['create a product collection to group products', 'POST /admin/collections'],
     ];
     const ranks = cases.map(([query, expected, filters]) => ({
       query,
-      rank: index.search(query, filters ?? {}, 5).findIndex((result) => result.operation.operation === expected) + 1,
+      rank: index.search(query, filters ?? {}, 10).findIndex((result) => result.operation.operation === expected) + 1,
     }));
     const report = ranks.map(({ query, rank }) => `${rank || 'miss'}: ${query}`).join('\n');
 
     const hitAt1 = ranks.filter(({ rank }) => rank === 1).length;
     const hitAt3 = ranks.filter(({ rank }) => rank > 0 && rank <= 3).length;
-    if (hitAt1 < 11 || hitAt3 < 14)
-      throw new Error(`Search regressed: hit@1 ${hitAt1}/15, hit@3 ${hitAt3}/15\n${report}`);
-    expect(ranks.find(({ query }) => query === 'update a product description')?.rank).toBe(1);
+    if (hitAt1 < 25 || hitAt3 < 29)
+      throw new Error(`Search regressed: hit@1 ${hitAt1}/${cases.length}, hit@3 ${hitAt3}/${cases.length}\n${report}`);
+    for (const query of [
+      'update a product description',
+      'create a product as draft with variants and options',
+      "update an existing product's description",
+      'create a product collection to group products',
+    ]) {
+      expect({ query, rank: ranks.find((entry) => entry.query === query)?.rank }).toEqual({ query, rank: 1 });
+    }
   });
 });

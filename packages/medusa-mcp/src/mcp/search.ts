@@ -21,7 +21,40 @@ const STOP_WORDS = new Set([
   'my',
   'me',
   'i',
+  'as',
+  'it',
+  'its',
+  // Words that qualify a resource without naming one. "existing" alone matched every "Update Existing ..." summary.
+  'existing',
+  'new',
+  'current',
+  'single',
+  'specific',
+  'given',
 ]);
+
+/** Words that start a clause describing details or purpose, as in "create a product with variants" or "a collection
+ * to group products". Agents name the target first, so terms after one of these count for less. */
+const MODIFIER_MARKERS = new Set([
+  'with',
+  'to',
+  'for',
+  'at',
+  'in',
+  'on',
+  'by',
+  'from',
+  'so',
+  'that',
+  'using',
+  'including',
+  'which',
+  'where',
+]);
+const MODIFIER_WEIGHT = 0.5;
+/** Boost for an operation whose path ends in the resource the query names, so "create a product with variants" finds
+ * product creation before variant creation. */
+const RESOURCE_BOOST = 1.5;
 
 /** Verbs that say which HTTP method the user wants. Matching operations rank higher. */
 const INTENT_VERBS: Record<string, string> = {
@@ -65,6 +98,7 @@ function stem(token: string): string {
 /** Lowercase word tokens, splitting camelCase and path punctuation, with light stemming. */
 export function tokenize(text: string): string[] {
   return text
+    .replace(/['’]s\b/g, '')
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
     .toLowerCase()
     .split(/[^a-z0-9]+/)
@@ -82,6 +116,44 @@ export function queryIntent(query: string): string | undefined {
       .filter(Boolean),
   );
   return methods.size === 1 ? [...methods][0] : undefined;
+}
+
+/** The resource an operation acts on: the last word of its last literal path segment, so `variant` for
+ * `/admin/products/{id}/variants` and `collection` for `/admin/payment-collections`. */
+export function pathResource(path: string): string | undefined {
+  const literal = path
+    .split('/')
+    .filter((segment) => segment && !segment.startsWith('{'))
+    .at(-1);
+  return literal ? tokenize(literal).at(-1) : undefined;
+}
+
+/** The query's distinct terms, each weighted by whether it comes before the first modifier clause. A term in both
+ * parts keeps its full weight. */
+export function queryTerms(query: string): { term: string; weight: number }[] {
+  const words = query.split(/\s+/);
+  const marker = words.findIndex((word, position) => position > 0 && MODIFIER_MARKERS.has(word.toLowerCase()));
+  const head = tokenize((marker < 0 ? words : words.slice(0, marker)).join(' '));
+  const tail = marker < 0 ? [] : tokenize(words.slice(marker).join(' '));
+  const weights = new Map<string, number>();
+  for (const term of tail) weights.set(term, MODIFIER_WEIGHT);
+  for (const term of head) weights.set(term, 1);
+  return [...weights].map(([term, weight]) => ({ term, weight }));
+}
+
+/** The resource a query targets: the last term before any modifier clause that names a resource in the catalog. In
+ * English the last noun of a phrase is its head, so "product collection" targets collections. The verb that states
+ * the method is skipped, so "set stock quantity" does not target fulfillment sets, while "create a price list" still
+ * targets price lists. */
+function targetResource(query: string, resources: Set<string>): string | undefined {
+  const words = query.split(/\s+/);
+  const marker = words.findIndex((word, position) => position > 0 && MODIFIER_MARKERS.has(word.toLowerCase()));
+  const head = tokenize((marker < 0 ? words : words.slice(0, marker)).join(' '));
+  const verb = head.findIndex((term) => INTENT_VERBS[term]);
+  return head
+    .slice(verb + 1)
+    .filter((term) => resources.has(term))
+    .at(-1);
 }
 
 function weightedTerms(operation: CatalogOperation): Map<string, number> {
@@ -113,6 +185,7 @@ export function buildSearchIndex(operations: CatalogOperation[]): SearchIndex {
     const terms = weightedTerms(operation);
     return { operation, terms, length: [...terms.values()].reduce((sum, weight) => sum + weight, 0) };
   });
+  const resources = new Set(operations.map((operation) => pathResource(operation.path)).filter(Boolean) as string[]);
   const averageLength = documents.reduce((sum, doc) => sum + doc.length, 0) / Math.max(documents.length, 1);
   const documentFrequency = new Map<string, number>();
   for (const doc of documents) {
@@ -137,8 +210,9 @@ export function buildSearchIndex(operations: CatalogOperation[]): SearchIndex {
 
   return {
     search(query, filters = {}, limit = 5) {
-      const terms = [...new Set(tokenize(query))].map((term) => ({ term, partials: partials(term) }));
+      const terms = queryTerms(query).map(({ term, weight }) => ({ term, weight, partials: partials(term) }));
       const intent = queryIntent(query);
+      const target = targetResource(query, resources);
       const bm25 = (doc: (typeof documents)[number], term: string, weight: number) => {
         const frequency = doc.terms.get(term) ?? 0;
         if (!frequency) return 0;
@@ -154,15 +228,15 @@ export function buildSearchIndex(operations: CatalogOperation[]): SearchIndex {
         .filter(({ operation }) => !tag || operation.tags.some((candidate) => candidate.toLowerCase() === tag))
         .map((doc) => {
           const relevance = terms.reduce(
-            (score, { term, partials: related }) =>
+            (score, { term, weight, partials: related }) =>
               score +
-              Math.max(bm25(doc, term, 1), ...related.map((candidate) => bm25(doc, candidate, PARTIAL_MATCH_WEIGHT))),
+              weight *
+                Math.max(bm25(doc, term, 1), ...related.map((candidate) => bm25(doc, candidate, PARTIAL_MATCH_WEIGHT))),
             0,
           );
-          return {
-            operation: doc.operation,
-            score: intent === doc.operation.method ? relevance * INTENT_BOOST : relevance,
-          };
+          const intentBoost = intent === doc.operation.method ? INTENT_BOOST : 1;
+          const resourceBoost = target && pathResource(doc.operation.path) === target ? RESOURCE_BOOST : 1;
+          return { operation: doc.operation, score: relevance * intentBoost * resourceBoost };
         })
         .filter((result) => result.score > 0)
         .sort(
