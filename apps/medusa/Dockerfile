@@ -22,7 +22,10 @@ RUN yarn install
 
 COPY --from=builder /app/out/full/ .
 
+COPY --from=builder /app/scripts/docker-workspace-packages.mjs scripts/docker-workspace-packages.mjs
+
 RUN yarn turbo build --filter=medusa && \
+    node scripts/docker-workspace-packages.mjs pack /app/packs && \
     rm -rf node_modules/.cache .yarn/cache
 
 
@@ -34,7 +37,12 @@ COPY --chown=node:node --from=installer /app/.yarn .yarn
 COPY --chown=node:node --from=installer /app/apps/medusa/.medusa/server /app/server
 COPY --chown=node:node --from=installer /app/yarn.lock /app/server/yarn.lock
 
-RUN cd /app/server && yarn workspaces focus --production
+COPY --from=installer /app/packs /app/packs
+COPY --from=installer /app/scripts/docker-workspace-packages.mjs /app/scripts/docker-workspace-packages.mjs
+
+# The app's workspace dependencies install from the tarballs packed above; see the script for why.
+RUN node /app/scripts/docker-workspace-packages.mjs use /app/packs /app/server/package.json && \
+    cd /app/server && YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn workspaces focus --production
 
 USER 1000
 

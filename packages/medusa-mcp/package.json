@@ -5,7 +5,7 @@
   "author": "Lambda Curry (https://lambdacurry.dev)",
   "license": "MIT",
   "files": [
-    ".medusa/server",
+    ".medusa/server/**",
     "specs"
   ],
   "exports": {

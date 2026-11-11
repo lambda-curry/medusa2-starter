@@ -104,6 +104,9 @@ The plugin is a Yarn workspace linked into `apps/medusa`, not installed through 
 
 - `tsconfig.json` lists `src/api/.well-known/**/*` explicitly. TypeScript's `src/**/*` skips dot
   directories, and OAuth discovery needs routes under `/.well-known/`.
+- `files` lists `.medusa/server/**`, not `.medusa/server`. Yarn's pack drops the plain form without an error, and
+  the production image installs the plugin from a packed tarball (`scripts/docker-workspace-packages.mjs`), so the
+  image would build and then fail at boot. The script refuses a tarball that lacks the files `exports` names.
 - `src/admin/` must exist even before the plugin has admin extensions. Without it, the app's admin build
   cannot resolve `@lambdacurry/medusa-mcp/admin`.
 - The plugin resolves its own copy of `@medusajs/framework` from the root `node_modules`, while the app
