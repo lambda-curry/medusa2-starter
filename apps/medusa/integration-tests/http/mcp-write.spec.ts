@@ -232,7 +232,7 @@ medusaIntegrationTestRunner({
         limits: expect.stringContaining('the real call can still be rejected'),
         proposed: draft,
         current: null,
-        note: expect.stringContaining('no current values'),
+        note: 'This creates a new resource, so no current values exist.',
       });
 
       const rejected = await callTool(api, fullToken, 'write_api', { operation: 'POST /admin/products', body: draft });
@@ -280,6 +280,14 @@ medusaIntegrationTestRunner({
         proposed: null,
       });
       expect(preview.structuredContent?.limits).not.toContain('matches the published schema');
+
+      const action = await callTool(api, fullToken, 'write_api', {
+        operation: 'POST /admin/products/export',
+        dry_run: true,
+      });
+      expect(action.structuredContent?.note).toBe(
+        'This runs an action rather than editing fields of a resource, so there are no current values to compare.',
+      );
     });
 
     it('does not show current values in a dry run for a token without mcp:read', async () => {

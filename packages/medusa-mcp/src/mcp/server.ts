@@ -389,9 +389,16 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     const proposalOnly = (note: string) => ok({ ...preview, proposed: args.body ?? null, current: null, note });
 
     const read = catalog.byKey.get(`GET ${operation.path}`);
-    if (!/\{[^}]+\}$/.test(operation.path) || !read || read.blocked_by) {
-      return proposalOnly('This operation creates or acts on a resource, so there are no current values to compare.');
+    if (!/\{[^}]+\}$/.test(operation.path)) {
+      // A path that does not end in an id is a collection, where a write creates a new resource, or an action.
+      return proposalOnly(
+        read
+          ? 'This creates a new resource, so no current values exist.'
+          : 'This runs an action rather than editing fields of a resource, so there are no current values to compare.',
+      );
     }
+    if (!read || read.blocked_by)
+      return proposalOnly('This resource cannot be read here, so current values are not shown.');
     if (!target.scopes.includes('mcp:read')) return proposalOnly('Current values need the mcp:read scope.');
 
     const query = declaredFor(read).query.has('fields') && fields.length ? { fields: fields.join(',') } : undefined;
