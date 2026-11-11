@@ -49,12 +49,16 @@ function dryRunLimits(check: SchemaCheck): string {
   );
 }
 
-/** The resource object in a GET response, such as `product` in `{ product: {...} }`. Medusa answers some missing
- * resources with 200 and an empty body (`GET /admin/collections/{id}` returns `{}`), so callers must check for it. */
-function resourceIn(body: unknown): Record<string, unknown> | undefined {
-  return Object.values((body as Record<string, unknown>) ?? {}).find(
-    (value) => value && typeof value === 'object' && !Array.isArray(value),
-  ) as Record<string, unknown> | undefined;
+/** The resource object in a GET response: `product` in Medusa's `{ product: {...} }`, or the body itself when a route
+ * returns the resource directly with an `id`. Medusa answers some missing resources with 200 and an empty body
+ * (`GET /admin/collections/{id}` returns `{}`), so callers must check for it. */
+export function resourceIn(body: unknown): Record<string, unknown> | undefined {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return undefined;
+  const record = body as Record<string, unknown>;
+  if (typeof record.id === 'string') return record;
+  return Object.values(record).find((value) => value && typeof value === 'object' && !Array.isArray(value)) as
+    | Record<string, unknown>
+    | undefined;
 }
 
 /** A path that ends in a path parameter names one resource, which a GET on the same path can read. */
@@ -417,8 +421,16 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
   ): Promise<{ operation: string; found: true } | ToolResult | undefined> {
     const read = catalog.byKey.get(`GET ${operation.path}`);
     if (!ONE_RESOURCE.test(operation.path) || !read || read.blocked_by) return undefined;
-    const current = await run(read, { path_params: args.path_params });
+    let current: Awaited<ReturnType<typeof run>>;
+    try {
+      current = await run(read, { path_params: args.path_params });
+    } catch {
+      // A timeout or a dropped connection says nothing about existence; the DELETE decides.
+      return undefined;
+    }
     if ('content' in current) return current;
+    // A truncated body cannot show whether the resource is in it.
+    if (current.truncated) return undefined;
     if (current.status === 404 || (current.status < 400 && !resourceIn(current.body))) {
       const message =
         medusaError(current.body).message ?? `${read.operation} returned no resource for these path parameters.`;

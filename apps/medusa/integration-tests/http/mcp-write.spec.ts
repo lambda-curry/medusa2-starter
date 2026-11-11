@@ -195,6 +195,17 @@ medusaIntegrationTestRunner({
         executed: false,
         error: { phase: 'precheck', check: 'GET /admin/collections/{id}', status: 200 },
       });
+
+      // A GET too large to read whole cannot show whether the resource exists, so the DELETE goes ahead unchecked.
+      await getContainer()
+        .resolve(Modules.PRODUCT)
+        .updateProducts(productId, { description: 'x'.repeat(80 * 1024) });
+      const unchecked = await callTool(api, fullToken, 'delete_api', {
+        operation: 'DELETE /admin/products/{id}',
+        path_params: { id: productId },
+      });
+      expect(unchecked.structuredContent).toMatchObject({ status: 200, body: { deleted: true }, precheck: null });
+      await expect(product()).rejects.toThrow();
     });
 
     it('refuses blocked writes and the wrong tool for an operation', async () => {
