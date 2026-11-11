@@ -232,7 +232,7 @@ medusaIntegrationTestRunner({
         limits: expect.stringContaining('the real call can still be rejected'),
         proposed: draft,
         current: null,
-        note: '"Create Product" does not target one existing resource by its path, so there are no current values to compare.',
+        note: '"Create Product": current values are shown only for a write to a path that ends in a resource id, so only the proposal is shown.',
       });
 
       const rejected = await callTool(api, fullToken, 'write_api', { operation: 'POST /admin/products', body: draft });
@@ -286,7 +286,7 @@ medusaIntegrationTestRunner({
         dry_run: true,
       });
       expect(action.structuredContent?.note).toBe(
-        '"Export Products" does not target one existing resource by its path, so there are no current values to compare.',
+        '"Export Products": current values are shown only for a write to a path that ends in a resource id, so only the proposal is shown.',
       );
     });
 
