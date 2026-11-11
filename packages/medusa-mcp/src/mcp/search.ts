@@ -128,31 +128,38 @@ export function pathResource(path: string): string | undefined {
   return literal ? tokenize(literal).at(-1) : undefined;
 }
 
-/** The query's distinct terms, each weighted by whether it comes before the first modifier clause. A term in both
- * parts keeps its full weight. */
-export function queryTerms(query: string): { term: string; weight: number }[] {
-  const words = query.split(/\s+/);
-  const marker = words.findIndex((word, position) => position > 0 && MODIFIER_MARKERS.has(word.toLowerCase()));
+/** A query split at its first detail-clause marker after the operation verb, so "how to create a product with
+ * variants" splits at "with", not at "to". `subject` is the head after the verb: the words naming the target. */
+function splitQuery(query: string): { head: string[]; subject: string[]; tail: string[] } {
+  const words = query.split(/\s+/).filter(Boolean);
+  const verb = words.findIndex((word) => INTENT_VERBS[word.toLowerCase()]);
+  const marker = words.findIndex(
+    (word, position) => position > Math.max(verb, 0) && MODIFIER_MARKERS.has(word.toLowerCase()),
+  );
   const head = tokenize((marker < 0 ? words : words.slice(0, marker)).join(' '));
   const tail = marker < 0 ? [] : tokenize(words.slice(marker).join(' '));
+  return { head, subject: head.slice(head.findIndex((term) => INTENT_VERBS[term]) + 1), tail };
+}
+
+/** The query's distinct terms, each weighted by whether it comes before the first detail clause. A term in both parts
+ * keeps its full weight. When the head names no resource in `resources`, as in "set stock quantity for an inventory
+ * item", the clause holds the target, so it keeps full weight too. */
+export function queryTerms(query: string, resources?: Set<string>): { term: string; weight: number }[] {
+  const { head, subject, tail } = splitQuery(query);
+  const detailWeight = resources && !subject.some((term) => resources.has(term)) ? 1 : MODIFIER_WEIGHT;
   const weights = new Map<string, number>();
-  for (const term of tail) weights.set(term, MODIFIER_WEIGHT);
+  for (const term of tail) weights.set(term, detailWeight);
   for (const term of head) weights.set(term, 1);
   return [...weights].map(([term, weight]) => ({ term, weight }));
 }
 
-/** The resource a query targets: the last term before any modifier clause that names a resource in the catalog. In
- * English the last noun of a phrase is its head, so "product collection" targets collections. The verb that states
- * the method is skipped, so "set stock quantity" does not target fulfillment sets, while "create a price list" still
- * targets price lists. */
+/** The resource a query targets: the last term of its subject that names a resource in the catalog. In English the
+ * last noun of a phrase is its head, so "product collection" targets collections. The subject starts after the
+ * method verb, so "set stock quantity" does not target fulfillment sets, while "create a price list" still targets
+ * price lists. */
 function targetResource(query: string, resources: Set<string>): string | undefined {
-  const words = query.split(/\s+/);
-  const marker = words.findIndex((word, position) => position > 0 && MODIFIER_MARKERS.has(word.toLowerCase()));
-  const head = tokenize((marker < 0 ? words : words.slice(0, marker)).join(' '));
-  const verb = head.findIndex((term) => INTENT_VERBS[term]);
-  return head
-    .slice(verb + 1)
-    .filter((term) => resources.has(term))
+  return splitQuery(query)
+    .subject.filter((term) => resources.has(term))
     .at(-1);
 }
 
@@ -210,7 +217,11 @@ export function buildSearchIndex(operations: CatalogOperation[]): SearchIndex {
 
   return {
     search(query, filters = {}, limit = 5) {
-      const terms = queryTerms(query).map(({ term, weight }) => ({ term, weight, partials: partials(term) }));
+      const terms = queryTerms(query, resources).map(({ term, weight }) => ({
+        term,
+        weight,
+        partials: partials(term),
+      }));
       const intent = queryIntent(query);
       const target = targetResource(query, resources);
       const bm25 = (doc: (typeof documents)[number], term: string, weight: number) => {

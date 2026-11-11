@@ -220,6 +220,21 @@ describe('search', () => {
     ]);
     expect(queryTerms('create a collection to group products')).toContainEqual({ term: 'group', weight: 0.5 });
     expect(queryTerms('add a product to a product list')).toContainEqual({ term: 'product', weight: 1 });
+    // A marker before the verb does not start a clause.
+    expect(queryTerms('how to create a product with variants')).toContainEqual({ term: 'product', weight: 1 });
+    // When the head names no resource, the clause holds the target and keeps its weight.
+    const resources = new Set(['item', 'location', 'product']);
+    expect(queryTerms('set stock quantity for an inventory item', resources)).toContainEqual({
+      term: 'item',
+      weight: 1,
+    });
+  });
+
+  it('keeps the inventory level update within the default five results', () => {
+    const results = index.search('set stock quantity for an inventory item at a location');
+    expect(results.map((result) => result.operation.operation)).toContain(
+      'POST /admin/inventory-items/{id}/location-levels/{location_id}',
+    );
   });
 
   it('reads the resource an operation acts on from the end of its path', () => {
@@ -242,7 +257,8 @@ describe('search', () => {
 
   // Measured on the pinned 2.22.1 spec. The first 15 phrasings sit close to Medusa's summaries; the rest are written the
   // way agents ask, with qualifiers and detail clauses, and include the three that misranked live in ChatGPT. Before
-  // modifier weighting and the path-resource boost: hit@1 18/34, hit@3 25/34. Now: hit@1 25/34, hit@3 29/34.
+  // modifier weighting and the path-resource boost: hit@1 18/34, hit@3 25/34 (without the last case). Now: hit@1
+  // 26/35, hit@3 31/35.
   it('finds the expected operation for common agent tasks', () => {
     const cases: [string, string, { area?: 'admin' | 'store' }?][] = [
       ['update a product description', 'POST /admin/products/{id}'],
@@ -285,6 +301,7 @@ describe('search', () => {
       ['create a product as draft with variants and options', 'POST /admin/products'],
       ["update an existing product's description", 'POST /admin/products/{id}'],
       ['create a product collection to group products', 'POST /admin/collections'],
+      ['how to create a product with variants', 'POST /admin/products'],
     ];
     const ranks = cases.map(([query, expected, filters]) => ({
       query,
@@ -294,13 +311,14 @@ describe('search', () => {
 
     const hitAt1 = ranks.filter(({ rank }) => rank === 1).length;
     const hitAt3 = ranks.filter(({ rank }) => rank > 0 && rank <= 3).length;
-    if (hitAt1 < 25 || hitAt3 < 29)
+    if (hitAt1 < 26 || hitAt3 < 31)
       throw new Error(`Search regressed: hit@1 ${hitAt1}/${cases.length}, hit@3 ${hitAt3}/${cases.length}\n${report}`);
     for (const query of [
       'update a product description',
       'create a product as draft with variants and options',
       "update an existing product's description",
       'create a product collection to group products',
+      'how to create a product with variants',
     ]) {
       expect({ query, rank: ranks.find((entry) => entry.query === query)?.rank }).toEqual({ query, rank: 1 });
     }
