@@ -51,6 +51,10 @@ describe('redirectUriMatches', () => {
     expect(redirectUriMatches('http://127.0.0.1/callback', 'http://localhost:49152/callback')).toBe(false);
     expect(redirectUriMatches('https://a.example/cb', 'https://a.example:8443/cb')).toBe(false);
     expect(redirectUriMatches('http://127.0.0.1/callback', 'https://127.0.0.1:49152/callback')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/a/../callback')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/call\nback')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://127.0.0.1:49152/CALLBACK')).toBe(false);
+    expect(redirectUriMatches('http://127.0.0.1/callback', 'http://user@127.0.0.1:49152/callback')).toBe(false);
   });
 });
 

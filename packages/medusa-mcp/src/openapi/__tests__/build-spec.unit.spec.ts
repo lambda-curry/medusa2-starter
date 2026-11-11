@@ -1,4 +1,4 @@
-import { chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { buildApiSpec, countOperations } from '../build-spec';
@@ -180,12 +180,11 @@ describe('findRouteFiles', () => {
     const root = mkdtempSync(path.join(tmpdir(), 'medusa-mcp-routes-'));
     try {
       expect(findRouteFiles(path.join(root, 'missing'))).toEqual([]);
-      const unreadable = path.join(root, 'api');
-      mkdirSync(unreadable);
-      chmodSync(unreadable, 0o000);
-      expect(() => findRouteFiles(unreadable)).toThrow(/EACCES/);
+      // A file where the directory should be fails with ENOTDIR, whatever the process's permissions.
+      const notADirectory = path.join(root, 'api');
+      writeFileSync(notADirectory, '');
+      expect(() => findRouteFiles(notADirectory)).toThrow(/ENOTDIR/);
     } finally {
-      chmodSync(path.join(root, 'api'), 0o700);
       rmSync(root, { recursive: true, force: true });
     }
   });

@@ -34,17 +34,20 @@ export function redirectUrisProblems(value: unknown): string[] {
  */
 export function redirectUriMatches(registered: string, requested: string): boolean {
   if (registered === requested) return true;
-  let registeredUrl: URL;
-  let requestedUrl: URL;
+  let registeredHost: string;
   try {
-    registeredUrl = new URL(registered);
-    requestedUrl = new URL(requested);
+    const url = new URL(registered);
+    if (url.protocol !== 'http:' || !isLoopbackHost(url.hostname)) return false;
+    registeredHost = url.hostname;
   } catch {
     return false;
   }
-  if (registeredUrl.protocol !== 'http:' || requestedUrl.protocol !== 'http:') return false;
-  if (!isLoopbackHost(registeredUrl.hostname)) return false;
-  registeredUrl.port = '';
-  requestedUrl.port = '';
-  return registeredUrl.href === requestedUrl.href;
+  // Compare the URIs as written, not as parsed: parsing would normalize dot segments and strip characters.
+  const withoutPort = (uri: string) => {
+    const match = /^http:\/\/(\[[^\]]+\]|[^/?#:[\]]+)(?::\d+)?([/?#].*)?$/s.exec(uri);
+    return match && { host: match[1], rest: match[2] ?? '' };
+  };
+  const a = withoutPort(registered);
+  const b = withoutPort(requested);
+  return Boolean(a && b && a.host === b.host && a.host === registeredHost && a.rest === b.rest);
 }
