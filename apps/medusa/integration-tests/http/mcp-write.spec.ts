@@ -87,6 +87,9 @@ medusaIntegrationTestRunner({
       expect(preview.structuredContent).toEqual({
         operation: 'POST /admin/products/{id}',
         dry_run: true,
+        executed: false,
+        schema_check: 'passed',
+        limits: expect.stringContaining('Nothing was sent to Medusa'),
         changes: [
           { field: 'description', current: 'Smooth and sweet.', proposed: 'Rich, chocolatey, and caffeine-free.' },
         ],
@@ -110,6 +113,11 @@ medusaIntegrationTestRunner({
       });
       expect(rejected.isError).toBe(true);
       expect(rejected.content[0].text).toContain('/description must be string');
+      expect(rejected.structuredContent).toMatchObject({
+        operation: 'POST /admin/products/{id}',
+        error: { phase: 'schema', problems: [expect.stringContaining('/description must be string')] },
+        spec_revision: expect.any(String),
+      });
       expect((await product()).description).toBe('Smooth and sweet.');
     });
 
@@ -202,6 +210,78 @@ medusaIntegrationTestRunner({
       }
     });
 
+    it("says a dry run cannot predict business rules, and returns Medusa's rejection in a form an agent can act on", async () => {
+      // From the live ChatGPT smoke test: the published schema makes `options` optional, but Medusa's create workflow
+      // rejects a product without options. No schema can see that rule, so the dry run must not imply acceptance and
+      // the real rejection must say what to fix.
+      const products = getContainer().resolve(Modules.PRODUCT);
+      const before = await products.listProducts({}, { select: ['id'] });
+      const draft = { title: 'MCP smoke test', handle: 'mcp-smoke-test', status: 'draft' };
+
+      const preview = await callTool(api, fullToken, 'write_api', {
+        operation: 'POST /admin/products',
+        body: draft,
+        dry_run: true,
+      });
+      expect(preview.isError).toBeFalsy();
+      expect(preview.structuredContent).toEqual({
+        operation: 'POST /admin/products',
+        dry_run: true,
+        executed: false,
+        schema_check: 'passed',
+        limits: expect.stringContaining('the real call can still be rejected'),
+        proposed: draft,
+        current: null,
+        note: expect.stringContaining('no current values'),
+      });
+
+      const rejected = await callTool(api, fullToken, 'write_api', { operation: 'POST /admin/products', body: draft });
+      expect(rejected.isError).toBe(true);
+      expect(rejected.structuredContent).toMatchObject({
+        operation: 'POST /admin/products',
+        status: 400,
+        error: {
+          phase: 'medusa',
+          status: 400,
+          type: 'invalid_data',
+          message: expect.stringContaining('Product options are not provided'),
+          hint: expect.stringContaining('business rules'),
+        },
+        spec_revision: expect.any(String),
+      });
+
+      const created = await callTool(api, fullToken, 'write_api', {
+        operation: 'POST /admin/products',
+        body: {
+          ...draft,
+          options: [{ title: 'Format', values: ['Test'] }],
+          variants: [{ title: 'Test', sku: 'MCP-SMOKE', options: { Format: 'Test' }, prices: [] }],
+        },
+      });
+      expect(created.isError).toBeFalsy();
+      const createdId = created.structuredContent?.body.product.id as string;
+
+      const deleted = await callTool(api, fullToken, 'delete_api', {
+        operation: 'DELETE /admin/products/{id}',
+        path_params: { id: createdId },
+      });
+      expect(deleted.structuredContent).toMatchObject({ status: 200, body: { id: createdId, deleted: true } });
+      expect(await products.listProducts({ handle: 'mcp-smoke-test' })).toHaveLength(0);
+      expect(await products.listProducts({}, { select: ['id'] })).toHaveLength(before.length);
+    });
+
+    it('says when a dry run checked nothing against the schema', async () => {
+      const preview = await callTool(api, fullToken, 'write_api', { operation: 'POST /admin/products', dry_run: true });
+      expect(preview.isError).toBeFalsy();
+      expect(preview.structuredContent).toMatchObject({
+        executed: false,
+        schema_check: 'no_body',
+        limits: expect.stringContaining('No body was given, so nothing was checked'),
+        proposed: null,
+      });
+      expect(preview.structuredContent?.limits).not.toContain('matches the published schema');
+    });
+
     it('does not show current values in a dry run for a token without mcp:read', async () => {
       const writeOnly = (await issueAccessToken(api, ['mcp:write'])).access_token;
       const preview = await callTool(api, writeOnly, 'write_api', {
@@ -213,6 +293,9 @@ medusaIntegrationTestRunner({
       expect(preview.structuredContent).toEqual({
         operation: 'POST /admin/products/{id}',
         dry_run: true,
+        executed: false,
+        schema_check: 'passed',
+        limits: expect.stringContaining('Nothing was sent to Medusa'),
         proposed: { description: 'Proposed.' },
         current: null,
         note: 'Current values need the mcp:read scope.',
