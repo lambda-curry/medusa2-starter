@@ -98,6 +98,10 @@ The plugin is a Yarn workspace linked into `apps/medusa`, not installed through 
 
 ## Notes
 
+- Sign-in and consent pages are signed with a random key made when Medusa starts, not with Medusa's secrets, so
+  they cannot be forged from a known default secret. A restart, or a request reaching a different Medusa instance,
+  expires an open page; the user starts the connection again.
+
 - `tsconfig.json` lists `src/api/.well-known/**/*` explicitly. TypeScript's `src/**/*` skips dot
   directories, and OAuth discovery needs routes under `/.well-known/`.
 - `src/admin/` must exist even before the plugin has admin extensions. Without it, the app's admin build

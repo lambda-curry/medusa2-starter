@@ -1,3 +1,4 @@
+import { signPayload } from '@lambdacurry/medusa-mcp/modules/mcp_oauth/crypto';
 import type McpOAuthService from '@lambdacurry/medusa-mcp/modules/mcp_oauth/service';
 import { medusaIntegrationTestRunner } from '@medusajs/test-utils';
 import {
@@ -276,6 +277,33 @@ medusaIntegrationTestRunner({
     });
 
     describe('form state and browsers', () => {
+      it("refuses an approval form forged with Medusa's cookie or JWT secret", async () => {
+        const clientId = await registerClient(api);
+        const request = await oauth().parseAuthorizationRequest({
+          response_type: 'code',
+          client_id: clientId,
+          redirect_uri: REDIRECT_URI,
+          code_challenge: pkce().challenge,
+          code_challenge_method: 'S256',
+        });
+        const { http } = getContainer().resolve('configModule').projectConfig;
+        for (const secret of [http.cookieSecret, http.jwtSecret, 'supersecret']) {
+          const forged = signPayload(
+            'consent',
+            { request, user_id: admin.userId, auth_identity_id: admin.authIdentityId },
+            String(secret),
+            600,
+          );
+          const response = await post(api, '/oauth/authorize/consent', {
+            grant: forged,
+            decision: 'approve',
+            scope: 'mcp:read',
+          });
+          expect(response.status).toBe(400);
+          expect(response.headers.location).toBeUndefined();
+        }
+      });
+
       it('refuses a sign-in form token submitted as the approval form', async () => {
         const clientId = await registerClient(api);
         const login = await api.get(authorizeUrl(clientId, pkce().challenge), noFollow);
