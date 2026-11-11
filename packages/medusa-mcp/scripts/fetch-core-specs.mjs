@@ -14,6 +14,8 @@ if (!/^\d+\.\d+\.\d+$/.test(version ?? '')) {
 const specsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../specs', version);
 const manifest = { medusaVersion: version, source: 'https://docs.medusajs.com/api/versions', specs: {} };
 
+// Download and check both areas before writing anything, so a failed fetch leaves the existing pin intact.
+const downloads = [];
 for (const area of ['admin', 'store']) {
   const url = `https://assets.docs.medusajs.com/api-reference/specs/versions/${version}/${area}/openapi.full.json`;
   const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
@@ -24,12 +26,15 @@ for (const area of ['admin', 'store']) {
   if (document.info?.version !== version) {
     throw new Error(`${url} describes version ${document.info?.version}, expected ${version}`);
   }
+  downloads.push({ area, url, text, paths: Object.keys(document.paths).length });
+}
 
+await mkdir(specsDir, { recursive: true });
+for (const { area, url, text, paths } of downloads) {
   const file = `${area}.openapi.json.gz`;
-  await mkdir(specsDir, { recursive: true });
   await writeFile(path.join(specsDir, file), gzipSync(text, { level: 9 }));
   manifest.specs[area] = { file, url, sha256: createHash('sha256').update(text).digest('hex') };
-  console.log(`${area}: ${Object.keys(document.paths).length} paths, sha256 ${manifest.specs[area].sha256}`);
+  console.log(`${area}: ${paths} paths, sha256 ${manifest.specs[area].sha256}`);
 }
 
 await writeFile(path.join(specsDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);

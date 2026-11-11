@@ -36,10 +36,29 @@ export interface ExecutionArgs {
 export interface ExecutionResult {
   status: number;
   body: unknown;
-  truncated?: { bytes: number; note: string };
+  /** `bytes` is the full response size, when the server declared it. */
+  truncated?: { bytes?: number; note: string };
 }
 
 export class ExecutionError extends Error {}
+
+/** Reads at most `limit` bytes of a response body, then cancels the rest instead of buffering it. */
+async function readBounded(response: Response, limit: number): Promise<{ bytes: Buffer; overflow: boolean }> {
+  if (!response.body) return { bytes: Buffer.alloc(0), overflow: false };
+  const reader = response.body.getReader();
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) return { bytes: Buffer.concat(chunks), overflow: false };
+    chunks.push(Buffer.from(value));
+    size += value.byteLength;
+    if (size > limit) {
+      await reader.cancel();
+      return { bytes: Buffer.concat(chunks).subarray(0, limit), overflow: true };
+    }
+  }
+}
 
 /** Declared path and query parameter names for an operation, including path-level parameters. */
 export function declaredParameters(
@@ -135,23 +154,23 @@ export async function executeOperation(
     body: hasBody ? JSON.stringify(args.body) : undefined,
     signal: AbortSignal.timeout(30_000),
   });
-  const bytes = Buffer.from(await response.arrayBuffer());
-  const text = bytes.toString('utf8');
-  if (bytes.length > MAX_RESPONSE_BYTES) {
+  const { bytes, overflow } = await readBounded(response, MAX_RESPONSE_BYTES);
+  if (overflow) {
     // Cut by bytes, then drop a multi-byte character the cut split, which decodes as U+FFFD.
-    const prefix = bytes
-      .subarray(0, MAX_RESPONSE_BYTES)
-      .toString('utf8')
-      .replace(/\uFFFD+$/, '');
+    const prefix = bytes.toString('utf8').replace(/\uFFFD+$/, '');
+    // Content-Length counts encoded bytes, so it is only the body size when the body is not compressed.
+    const encoded = (response.headers.get('content-encoding') ?? 'identity') !== 'identity';
+    const declaredLength = encoded ? Number.NaN : Number(response.headers.get('content-length'));
     return {
       status: response.status,
       body: `${prefix}…`,
       truncated: {
-        bytes: bytes.length,
+        ...(Number.isSafeInteger(declaredLength) && declaredLength > 0 ? { bytes: declaredLength } : {}),
         note: 'The response was cut off. Request fewer records with `limit`, or fewer fields with `fields`.',
       },
     };
   }
+  const text = bytes.toString('utf8');
   let body: unknown = text;
   try {
     body = text ? JSON.parse(text) : null;

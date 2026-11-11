@@ -119,6 +119,11 @@ export const fetchPublicJson: FetchJson = (url) =>
           res.resume();
           return reject(new Error(`GET ${url} returned HTTP ${res.statusCode}`));
         }
+        // A server that closes mid-body reports it on the response, not the request, and never emits `end`.
+        res.on('error', reject);
+        res.on('close', () => {
+          if (!res.complete) reject(new Error(`GET ${url} closed before the body finished`));
+        });
         const chunks: Buffer[] = [];
         let size = 0;
         res.on('data', (chunk: Buffer) => {

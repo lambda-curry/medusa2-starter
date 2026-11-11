@@ -27,3 +27,24 @@ export function redirectUrisProblems(value: unknown): string[] {
   if (value.length > MAX_REDIRECT_URIS) return [`redirect_uris may list at most ${MAX_REDIRECT_URIS} URIs`];
   return value.map(redirectUriProblem).filter((problem): problem is string => Boolean(problem));
 }
+
+/**
+ * Whether a requested redirect URI matches a registered one: exactly, or for an HTTP loopback callback, exactly except
+ * for the port. Native clients listen on whatever port is free, so RFC 8252 section 7.3 requires accepting any port.
+ */
+export function redirectUriMatches(registered: string, requested: string): boolean {
+  if (registered === requested) return true;
+  let registeredUrl: URL;
+  let requestedUrl: URL;
+  try {
+    registeredUrl = new URL(registered);
+    requestedUrl = new URL(requested);
+  } catch {
+    return false;
+  }
+  if (registeredUrl.protocol !== 'http:' || requestedUrl.protocol !== 'http:') return false;
+  if (!isLoopbackHost(registeredUrl.hostname)) return false;
+  registeredUrl.port = '';
+  requestedUrl.port = '';
+  return registeredUrl.href === requestedUrl.href;
+}

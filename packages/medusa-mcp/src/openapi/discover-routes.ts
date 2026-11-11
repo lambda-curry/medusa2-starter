@@ -27,8 +27,11 @@ export function findRouteFiles(directory: string): string[] {
   let entries: string[];
   try {
     entries = readdirSync(directory);
-  } catch {
-    return [];
+  } catch (error) {
+    // No API directory means no custom routes, as in a compiled app without any. Any other failure would publish an
+    // incomplete catalog, so it surfaces.
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    throw error;
   }
 
   return entries
