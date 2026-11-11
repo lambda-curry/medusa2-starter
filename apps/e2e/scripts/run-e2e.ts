@@ -50,6 +50,7 @@ const baseEnv: NodeJS.ProcessEnv = {
   PUBLIC_MEDUSA_API_URL: process.env.PUBLIC_MEDUSA_API_URL ?? medusaUrl,
   INTERNAL_MEDUSA_API_URL: process.env.INTERNAL_MEDUSA_API_URL ?? medusaUrl,
   STOREFRONT_URL: process.env.STOREFRONT_URL ?? storefrontUrl,
+  STOREFRONT_REVALIDATE_SECRET: process.env.STOREFRONT_REVALIDATE_SECRET ?? 'e2e-revalidate-secret',
   STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY ?? 'pk_test_e2e',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ?? 'sk_test_e2e',
 };
@@ -271,6 +272,15 @@ async function main() {
   process.on('SIGTERM', () => onSignal(143));
 
   try {
+    process.stdout.write('Building workspace Medusa plugins...\n');
+    await runCommand({
+      command: 'yarn',
+      args: ['workspace', '@lambdacurry/medusa-mcp', 'build'],
+      cwd: repoRoot,
+      env: baseEnv,
+      logLabel: 'yarn workspace @lambdacurry/medusa-mcp build',
+    });
+
     process.stdout.write('Preparing Medusa database for E2E...\n');
     createdMedusaEnvFile = ensureMedusaEnvFile();
     await seedMedusa();

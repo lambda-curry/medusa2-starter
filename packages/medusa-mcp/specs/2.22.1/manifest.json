@@ -1,0 +1,16 @@
+{
+  "medusaVersion": "2.22.1",
+  "source": "https://docs.medusajs.com/api/versions",
+  "specs": {
+    "admin": {
+      "file": "admin.openapi.json.gz",
+      "url": "https://assets.docs.medusajs.com/api-reference/specs/versions/2.22.1/admin/openapi.full.json",
+      "sha256": "ee624f60aa5b7a95ef69343f74bea19df9e849d1d1a1da0cd9ad1891d0e1e7a0"
+    },
+    "store": {
+      "file": "store.openapi.json.gz",
+      "url": "https://assets.docs.medusajs.com/api-reference/specs/versions/2.22.1/store/openapi.full.json",
+      "sha256": "463b5acb0b322e82086d4701e4588badb6095d8d3f40263948f07b827588723b"
+    }
+  }
+}

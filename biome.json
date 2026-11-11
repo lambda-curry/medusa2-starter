@@ -16,6 +16,7 @@
       "!**/yarn.lock",
       "!**/node_modules",
       "!**/apps/medusa/.medusa",
+      "!**/packages/*/.medusa",
       "!**/apps/storefront/.react-router",
       "!**/build",
       "!**/dist",

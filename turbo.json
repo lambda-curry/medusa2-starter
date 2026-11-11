@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["build", "dist"]
+      "outputs": ["build", "dist", ".medusa/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -18,12 +18,18 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"]
     },
     "medusa:init": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["^build"]
     },
     "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "test:unit": {
+      "dependsOn": ["^build"]
     }
   }
 }

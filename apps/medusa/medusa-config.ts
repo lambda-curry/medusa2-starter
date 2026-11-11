@@ -60,6 +60,12 @@ module.exports = defineConfig({
   },
   plugins: [
     {
+      resolve: '@lambdacurry/medusa-mcp',
+      options: {
+        issuer: process.env.MCP_ISSUER,
+      },
+    },
+    {
       resolve: '@lambdacurry/medusa-product-reviews',
       options: {},
     },

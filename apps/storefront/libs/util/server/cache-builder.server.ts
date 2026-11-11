@@ -3,7 +3,10 @@ import { LRUCache } from 'lru-cache';
 
 export const buildNewLRUCache = ({ max }: { max: number }) => {
   const lruInstance = new LRUCache<string, CacheEntry>({ max });
-  const lru: Cache = {
+  const lru: Cache & { clear: () => void } = {
+    clear() {
+      lruInstance.clear();
+    },
     set(key, value) {
       const ttl = totalTtl(value?.metadata);
       return lruInstance.set(key, value, {
