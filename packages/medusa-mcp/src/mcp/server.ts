@@ -390,11 +390,10 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
 
     const read = catalog.byKey.get(`GET ${operation.path}`);
     if (!/\{[^}]+\}$/.test(operation.path)) {
-      // A path that does not end in an id is a collection, where a write creates a new resource, or an action.
+      // The spec does not say whether a POST creates, updates, or acts, so name the operation instead of guessing.
+      const name = operation.summary ? `"${operation.summary}"` : 'This operation';
       return proposalOnly(
-        read
-          ? 'This creates a new resource, so no current values exist.'
-          : 'This runs an action rather than editing fields of a resource, so there are no current values to compare.',
+        `${name} does not target one existing resource by its path, so there are no current values to compare.`,
       );
     }
     if (!read || read.blocked_by)

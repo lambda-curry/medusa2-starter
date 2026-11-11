@@ -32,8 +32,13 @@ Medusa's `type`, `code`, and `message` when Medusa sends them (`code` is often a
 an agent can correct the body and call again. `spec_revision` sits beside `error`, at the top of the result.
 
 A failed call is an MCP tool result with `isError: true`, as the MCP spec asks for execution errors, not a JSON-RPC
-error. The same JSON is in `structuredContent` and in the text content, because clients differ in which one they show
-the model: ChatGPT presents the result as a tool exception carrying the text.
+error. ChatGPT presents such a result as a tool exception carrying the text. The result takes one of three shapes:
+
+| Failure | Text content | `structuredContent` |
+| --- | --- | --- |
+| Medusa rejected the call | The same JSON as `structuredContent` | `operation`, `status`, `body`, `error` (`phase: 'medusa'`), `spec_revision` |
+| The body failed the schema | A readable list of problems | `operation`, `error` (`phase: 'schema'`, `problems`, `hint`), `spec_revision` |
+| Refused before any call: unknown operation, wrong tool, blocked by policy, missing scope, rate limit, a body that is not JSON, bad path parameters | A readable message | None |
 
 Calls run against Medusa's own API as the admin who connected, with a short-lived admin JWT, so Medusa's
 permissions and validators apply. A built-in blocklist (`src/mcp/policy.ts`) keeps agents away from auth,
