@@ -23,22 +23,31 @@ Status: in development on `feat/medusa-mcp`. Design and plan: Arbor thread DEM-1
 | `describe_api` | `mcp:read` | Parameters, request body, and response shape for one operation. |
 | `read_api` | `mcp:read` | Calls a GET as the signed-in admin. |
 | `write_api` | `mcp:write` | Calls a POST, PUT, or PATCH after validating the body. `dry_run` previews current vs proposed values without sending anything. |
-| `delete_api` | `mcp:delete` | Calls a DELETE. Marked destructive. |
+| `delete_api` | `mcp:delete` | Calls a DELETE. Marked destructive. When the same path has a GET, checks the resource exists first, because Medusa answers `deleted: true` for any id. |
 
 A dry run checks the body against the published spec only. Medusa enforces business rules in its workflows, which no
 spec describes: creating a product without `options` passes the schema and fails in Medusa's create workflow. So every
 preview says it was not executed and whether the body was checked (`schema_check`), and a failed call returns an `error` object with the phase (`schema` or `medusa`),
 Medusa's `type`, `code`, and `message` when Medusa sends them (`code` is often absent), and a hint for the status, so
-an agent can correct the body and call again. `spec_revision` sits beside `error`, at the top of the result.
+an agent can correct the body and call again. Every result carries `spec_revision`, the catalog it was resolved
+against, at the top level beside `error`.
 
 A failed call is an MCP tool result with `isError: true`, as the MCP spec asks for execution errors, not a JSON-RPC
-error. ChatGPT presents such a result as a tool exception carrying the text. The result takes one of three shapes:
+error. ChatGPT presents such a result as a tool exception carrying the text. Each failure has an `error.phase`:
 
-| Failure | Text content | `structuredContent` |
-| --- | --- | --- |
-| Medusa rejected the call | The same JSON as `structuredContent` | `operation`, `status`, `body`, `error` (`phase: 'medusa'`), `spec_revision` |
-| The body failed the schema | A readable list of problems | `operation`, `error` (`phase: 'schema'`, `problems`, `hint`), `spec_revision` |
-| Refused before any call: unknown operation, wrong tool, blocked by policy, missing scope, rate limit, a body that is not JSON, bad path parameters | A readable message | None |
+| `error.phase` | When | Text content | Reached Medusa |
+| --- | --- | --- | --- |
+| `medusa` | Medusa rejected the call. `structuredContent` adds `status` and `body`. | The same JSON as `structuredContent` | Yes |
+| `schema` | The body failed the published schema. `error.problems` lists why. | A readable list of problems | No |
+| `precheck` | `delete_api` found no such resource: a 404, or Medusa's 200 with an empty body. `error.check` names the GET. | A readable message | Only the GET |
+| `refused` | Unknown operation, wrong tool, blocked by policy, rate limit, a body that is not JSON, or bad path parameters. | A readable message | No |
+
+A token without the tool's scope gets no tool result at all: the server answers HTTP 403 with a `WWW-Authenticate`
+challenge naming the scope, so the client can ask the user for more access.
+
+A successful delete reports `precheck`: the GET that found the resource, or `null` when the path has no GET to check
+with. The check reports only that the resource exists, never its fields, so it shows a token without `mcp:read`
+nothing that the DELETE would not.
 
 Calls run against Medusa's own API as the admin who connected, with a short-lived admin JWT, so Medusa's
 permissions and validators apply. A built-in blocklist (`src/mcp/policy.ts`) keeps agents away from auth,
