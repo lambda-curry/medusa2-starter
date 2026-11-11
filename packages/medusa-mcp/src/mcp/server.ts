@@ -27,8 +27,38 @@ function ok(data: Record<string, unknown>): ToolResult {
   return { content: [{ type: 'text', text: JSON.stringify(data) }], structuredContent: data };
 }
 
-function fail(message: string): ToolResult {
-  return { content: [{ type: 'text', text: message }], isError: true };
+function fail(message: string, data?: Record<string, unknown>): ToolResult {
+  return { content: [{ type: 'text', text: message }], ...(data ? { structuredContent: data } : {}), isError: true };
+}
+
+/** What a dry run proves and what it cannot, sent with every preview so an agent never reads one as acceptance. */
+const DRY_RUN_LIMITS =
+  'Nothing was sent to Medusa. The body matches the published schema, but Medusa checks its business rules only when ' +
+  'the call runs, so the real call can still be rejected.';
+
+/** Advice for an agent on a failed call, by status. Medusa's own message says what to change. */
+function errorHint(status: number): string {
+  if (status === 400) {
+    return 'Medusa rejected the request. Its business rules can require more than the published schema does, so correct the body using the message, then call again.';
+  }
+  if (status === 401 || status === 403) return 'The signed-in admin is not allowed to do this.';
+  if (status === 404) return 'Medusa found no such resource. Check the path parameters.';
+  if (status === 409) return 'The request conflicts with current data, for example a duplicate handle.';
+  if (status >= 500) {
+    return 'Medusa failed while handling the request. A write may have partly applied, so read the resource before retrying.';
+  }
+  return 'Medusa did not accept the request.';
+}
+
+/** Medusa's error fields (`type`, `code`, `message`), when the body has them. */
+function medusaError(body: unknown): Record<string, string> {
+  if (!body || typeof body !== 'object') return {};
+  const fields: Record<string, string> = {};
+  for (const key of ['type', 'code', 'message'] as const) {
+    const value = (body as Record<string, unknown>)[key];
+    if (typeof value === 'string') fields[key] = value;
+  }
+  return fields;
 }
 
 function oauth(scope: 'mcp:read' | 'mcp:write' | 'mcp:delete') {
@@ -104,10 +134,19 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     return operation;
   };
 
-  const resultOf = (operation: CatalogOperation, result: ExecutionResult | ToolResult): ToolResult =>
-    'content' in result
-      ? result
-      : { ...ok({ operation: operation.operation, ...result }), isError: result.status >= 400 };
+  const specRevision = catalog.spec.revision.slice(0, 12);
+
+  const resultOf = (operation: CatalogOperation, result: ExecutionResult | ToolResult): ToolResult => {
+    if ('content' in result) return result;
+    if (result.status < 400) return ok({ operation: operation.operation, ...result });
+    const error = {
+      phase: 'medusa',
+      status: result.status,
+      ...medusaError(result.body),
+      hint: errorHint(result.status),
+    };
+    return { ...ok({ operation: operation.operation, ...result, error, spec_revision: specRevision }), isError: true };
+  };
 
   server.registerTool(
     'search_api',
@@ -207,7 +246,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     {
       title: 'Write to the Medusa API',
       description:
-        'Call a POST, PUT, or PATCH operation as the signed-in admin with a JSON body matching describe_api. Set dry_run to true to see the current and proposed values without changing anything.',
+        "Call a POST, PUT, or PATCH operation as the signed-in admin with a JSON body matching describe_api. Set dry_run to true to check the body against the schema and see current and proposed values without changing anything. A dry run does not run Medusa's business rules, so the real call can still be rejected; a rejection comes back with Medusa's message to correct the body.",
       inputSchema: fromJsonSchema({
         type: 'object',
         properties: {
@@ -217,7 +256,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
           body: { type: 'object', description: 'The JSON request body.' },
           dry_run: {
             type: 'boolean',
-            description: 'Validate and preview the change without making it.',
+            description: 'Check the body against the schema and preview the change without sending it to Medusa.',
             default: false,
           },
         },
@@ -245,7 +284,15 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
         const problems = validateBody(catalog.spec, operation.area, schema, args.body);
         if (problems.length) {
           await target.audit({ ...auditBase(args), outcome: 'rejected', problems });
-          return fail(`The body does not match ${operation.operation}:\n- ${problems.join('\n- ')}`);
+          return fail(`The body does not match ${operation.operation}:\n- ${problems.join('\n- ')}`, {
+            operation: operation.operation,
+            error: {
+              phase: 'schema',
+              problems,
+              hint: 'Nothing was sent to Medusa. Fix the body to match describe_api, then call again.',
+            },
+            spec_revision: specRevision,
+          });
         }
       }
 
@@ -311,35 +358,26 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
   }
 
   /**
-   * Shows the current value of each top-level body field next to the proposed one, by reading the same path with
-   * GET when that operation exists. Nothing is written. Without mcp:read the current values stay hidden, since a
-   * dry run must not become a way to read data the token cannot read.
+   * Previews a write without sending it. For an operation on one resource (its path ends in a path parameter), shows
+   * the current value of each top-level body field next to the proposed one, by reading the same path with GET. A
+   * create or action has no current values, so only the proposal is shown. Without mcp:read the current values stay
+   * hidden, since a dry run must not become a way to read data the token cannot read.
    */
   async function dryRun(operation: CatalogOperation, args: ToolArgs): Promise<ToolResult> {
     const fields = Object.keys((args.body as Record<string, unknown> | undefined) ?? {});
+    const preview = { operation: operation.operation, dry_run: true, executed: false, limits: DRY_RUN_LIMITS };
+    const proposalOnly = (note: string) => ok({ ...preview, proposed: args.body ?? null, current: null, note });
+
     const read = catalog.byKey.get(`GET ${operation.path}`);
-    if (!target.scopes.includes('mcp:read')) {
-      return ok({
-        operation: operation.operation,
-        dry_run: true,
-        proposed: args.body ?? null,
-        current: null,
-        note: 'Current values need the mcp:read scope.',
-      });
+    if (!/\{[^}]+\}$/.test(operation.path) || !read || read.blocked_by) {
+      return proposalOnly('This operation creates or acts on a resource, so there are no current values to compare.');
     }
-    if (!read || read.blocked_by) {
-      return ok({ operation: operation.operation, dry_run: true, proposed: args.body ?? null, current: null });
-    }
+    if (!target.scopes.includes('mcp:read')) return proposalOnly('Current values need the mcp:read scope.');
 
     const query = declaredFor(read).query.has('fields') && fields.length ? { fields: fields.join(',') } : undefined;
     const current = await run(read, { path_params: args.path_params, query });
     if ('content' in current) return current;
-    if (current.status >= 400) {
-      return {
-        ...ok({ operation: operation.operation, dry_run: true, current_status: current.status, current: current.body }),
-        isError: true,
-      };
-    }
+    if (current.status >= 400) return resultOf(read, current);
 
     const resource = Object.values((current.body as Record<string, unknown>) ?? {}).find(
       (value) => value && typeof value === 'object' && !Array.isArray(value),
@@ -349,7 +387,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       current: resource?.[field] ?? null,
       proposed: (args.body as Record<string, unknown>)[field],
     }));
-    return ok({ operation: operation.operation, dry_run: true, changes });
+    return ok({ ...preview, changes });
   }
 
   return server;
