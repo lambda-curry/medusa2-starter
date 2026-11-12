@@ -231,7 +231,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     {
       title: 'Search the Medusa API',
       description:
-        "Search this store's Admin and Store API operations by what you want to do. Returns the best matches with the operation key to pass to describe_api and the execution tools.",
+        'Search this store\'s Admin and Store API operations by what you want to do. Returns the best matches with the operation key to pass to describe_api and the execution tools. Matches rank best when the query uses Medusa\'s own words, a verb (list, get, create, update, delete) and the resource, as in "update product" or "list orders". If the right operation is not among the results, raise limit or search again in those words.',
       inputSchema: fromJsonSchema({
         type: 'object',
         properties: {
