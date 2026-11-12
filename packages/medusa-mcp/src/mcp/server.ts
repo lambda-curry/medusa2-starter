@@ -2,6 +2,7 @@ import { fromJsonSchema, McpServer, requireScopes } from '@modelcontextprotocol/
 import type { CatalogOperation, ExecutionTool } from './catalog';
 import { describeOperation } from './describe';
 import {
+  type AuditEntry,
   declaredParameters,
   type ExecutionArgs,
   ExecutionError,
@@ -27,8 +28,16 @@ function ok(data: Record<string, unknown>): ToolResult {
   return { content: [{ type: 'text', text: JSON.stringify(data) }], structuredContent: data };
 }
 
+/** The message, then the same JSON as `structuredContent`, as the MCP spec asks of structured results. Clients that
+ * show only the text, as ChatGPT does for errors, would otherwise lose `error.phase`. */
 function fail(message: string, data?: Record<string, unknown>): ToolResult {
-  return { content: [{ type: 'text', text: message }], ...(data ? { structuredContent: data } : {}), isError: true };
+  return data
+    ? {
+        content: [{ type: 'text', text: `${message}\n\n${JSON.stringify(data)}` }],
+        structuredContent: data,
+        isError: true,
+      }
+    : { content: [{ type: 'text', text: message }], isError: true };
 }
 
 /** Whether a write's body was checked against the published schema: it passed, there was no body, or the operation
@@ -123,6 +132,16 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
 
   const specRevision = catalog.spec.revision.slice(0, 12);
 
+  /** Records an attempt. A failing audit never changes the result the agent gets: that result is the only place it
+   * learns whether its call reached Medusa. */
+  const audit = async (entry: AuditEntry) => {
+    try {
+      await target.audit(entry);
+    } catch {
+      // Thrown or rejected, it is ignored.
+    }
+  };
+
   /** A call stopped before anything reached Medusa: the reason as text, plus the same `error` shape as other failures. */
   const refusal = (message: string, operation?: string): ToolResult =>
     fail(message, {
@@ -155,6 +174,23 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       if (error instanceof ExecutionError) return refusal(error.message, operation.operation);
       throw error;
     }
+  };
+
+  /** A call that threw before it finished, usually a dropped connection or the 30-second timeout. The SDK would turn
+   * the exception into bare text, so an agent could not tell a lost write from a refused one. */
+  const interrupted = (args: ToolArgs, error: unknown, mayHaveChanged: boolean): ToolResult => {
+    const message = error instanceof Error ? error.message : String(error);
+    return fail(`The call did not finish: ${message}`, {
+      operation: String(args.operation),
+      error: {
+        phase: 'interrupted',
+        message,
+        hint: mayHaveChanged
+          ? 'Medusa may have applied this call before it was cut off. Read the resource to check before calling again.'
+          : 'Nothing was changed. Call again.',
+      },
+      spec_revision: specRevision,
+    });
   };
 
   /** Shared checks for read_api, write_api, and delete_api: limits, the right tool, and the policy. */
@@ -279,7 +315,11 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       const args = input as ToolArgs;
       const operation = resolveFor('read_api', args);
       if ('content' in operation) return operation;
-      return resultOf(operation, await run(operation, args));
+      try {
+        return resultOf(operation, await run(operation, args));
+      } catch (error) {
+        return interrupted(args, error, false);
+      }
     },
   );
 
@@ -329,7 +369,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       if (schema && args.body !== undefined) {
         const problems = validateBody(catalog.spec, operation.area, schema, args.body);
         if (problems.length) {
-          await target.audit({ ...auditBase(args), outcome: 'rejected', problems });
+          await audit({ ...auditBase(args), outcome: 'rejected', problems });
           return fail(`The body does not match ${operation.operation}:\n- ${problems.join('\n- ')}`, {
             operation: operation.operation,
             error: {
@@ -345,7 +385,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       return audited(args, async () => {
         if (args.dry_run) {
           const preview = await dryRun(operation, args, schemaCheck);
-          await target.audit({ ...auditBase(args), outcome: 'dry_run' });
+          await audit({ ...auditBase(args), outcome: 'dry_run' });
           return preview;
         }
         return executeAudited(operation, args);
@@ -389,7 +429,8 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
 
   /** Logs a refused write or delete attempt, with the reason the agent was given, and returns the refusal. */
   async function refused(args: ToolArgs, result: ToolResult): Promise<ToolResult> {
-    await target.audit({ ...auditBase(args), outcome: 'refused', reason: result.content[0]?.text });
+    const error = result.structuredContent?.error as { message?: string } | undefined;
+    await audit({ ...auditBase(args), outcome: 'refused', reason: error?.message ?? result.content[0]?.text });
     return result;
   }
 
@@ -398,15 +439,15 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     try {
       return await attempt();
     } catch (error) {
-      await target.audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message });
-      throw error;
+      await audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message });
+      return interrupted(args, error, !args.dry_run);
     }
   }
 
   async function executeAudited(operation: CatalogOperation, args: ToolArgs): Promise<ToolResult> {
     const result = await run(operation, args);
     if ('content' in result) return refused(args, result);
-    await target.audit({ ...auditBase(args), outcome: 'executed', status: result.status });
+    await audit({ ...auditBase(args), outcome: 'executed', status: result.status });
     return resultOf(operation, result);
   }
 

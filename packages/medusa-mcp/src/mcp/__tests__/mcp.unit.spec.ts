@@ -4,10 +4,17 @@ import path from 'node:path';
 import { buildApiSpec } from '../../openapi/build-spec';
 import { buildCatalog } from '../catalog';
 import { describeOperation } from '../describe';
-import { appendQuery, buildRequestUrl, declaredParameters, ExecutionError, executeOperation } from '../execute';
+import {
+  type AuditEntry,
+  appendQuery,
+  buildRequestUrl,
+  declaredParameters,
+  ExecutionError,
+  executeOperation,
+} from '../execute';
 import { BUILT_IN_BLOCKLIST, createPolicy } from '../policy';
 import { buildSearchIndex, pathResource, queryIntent, queryTerms, tokenize } from '../search';
-import { resourceIn } from '../server';
+import { buildMcpServer, resourceIn } from '../server';
 
 const spec = buildApiSpec({ projectRoot: path.join(__dirname, '../../openapi/__tests__/fixtures/valid') });
 const catalog = buildCatalog(spec, createPolicy());
@@ -333,5 +340,107 @@ describe('resourceIn', () => {
     expect(resourceIn({})).toBeUndefined();
     expect(resourceIn('{"product":')).toBeUndefined();
     expect(resourceIn(undefined)).toBeUndefined();
+  });
+});
+
+describe('a call that cannot reach Medusa', () => {
+  it('returns a structured interrupted failure, and says whether a write may have landed', async () => {
+    const closed = createServer();
+    await new Promise<void>((resolve) => closed.listen(0, '127.0.0.1', resolve));
+    const { port } = closed.address() as AddressInfo;
+    await new Promise((resolve) => closed.close(resolve));
+    const audit: AuditEntry[] = [];
+    const toolsFor = (record: (entry: AuditEntry) => Promise<void>) => {
+      const server = buildMcpServer(
+        { catalog, search: buildSearchIndex(catalog.operations), builtAt: new Date() },
+        {
+          scopes: ['mcp:read', 'mcp:write', 'mcp:delete'],
+          tokenId: 'token',
+          audit: record,
+          baseUrl: `http://127.0.0.1:${port}`,
+          adminToken: async () => 'admin',
+          publishableKey: async () => undefined,
+        },
+      );
+      return (
+        server as unknown as {
+          _registeredTools: Record<string, { executor: (args: unknown) => Promise<Record<string, any>> }>;
+        }
+      )._registeredTools;
+    };
+    const tools = toolsFor(async (entry) => {
+      audit.push(entry);
+    });
+    const call = (name: string, args: Record<string, unknown>) => tools[name].executor(args);
+    const product = { operation: 'POST /admin/products/{id}', path_params: { id: 'prod_1' } };
+
+    const read = await call('read_api', { operation: 'GET /admin/products' });
+    const write = await call('write_api', { ...product, body: { description: 'x' } });
+    const preview = await call('write_api', { ...product, body: { description: 'x' }, dry_run: true });
+    const remove = await call('delete_api', {
+      operation: 'DELETE /admin/products/{id}',
+      path_params: { id: 'prod_1' },
+    });
+
+    for (const result of [read, write, preview, remove]) {
+      expect(result.isError).toBe(true);
+      expect(result.structuredContent).toMatchObject({
+        error: { phase: 'interrupted' },
+        spec_revision: expect.any(String),
+      });
+      expect(result.content[0].text).toContain(JSON.stringify(result.structuredContent));
+    }
+    expect(read.structuredContent?.error.hint).toBe('Nothing was changed. Call again.');
+    expect(preview.structuredContent?.error.hint).toBe('Nothing was changed. Call again.');
+    expect(write.structuredContent?.error.hint).toContain('may have applied');
+    expect(remove.structuredContent?.error.hint).toContain('may have applied');
+    expect(audit.map(({ operation, outcome }) => `${outcome} ${operation}`)).toEqual([
+      'failed POST /admin/products/{id}',
+      'failed POST /admin/products/{id}',
+      'failed DELETE /admin/products/{id}',
+    ]);
+  });
+
+  it.each([
+    [
+      'rejects',
+      async () => {
+        throw new Error('audit store down');
+      },
+    ],
+    [
+      'throws',
+      (): Promise<void> => {
+        throw new Error('audit store down');
+      },
+    ],
+  ])('returns the same structured result when the audit %s', async (_, failingAudit) => {
+    const tools = (
+      buildMcpServer(
+        { catalog, search: buildSearchIndex(catalog.operations), builtAt: new Date() },
+        {
+          scopes: ['mcp:read', 'mcp:write', 'mcp:delete'],
+          tokenId: 'token',
+          audit: failingAudit,
+          baseUrl: 'http://127.0.0.1:1',
+          adminToken: async () => 'admin',
+          publishableKey: async () => undefined,
+        },
+      ) as unknown as {
+        _registeredTools: Record<string, { executor: (args: unknown) => Promise<Record<string, any>> }>;
+      }
+    )._registeredTools;
+    const write = (args: Record<string, unknown>) => tools.write_api.executor(args);
+    const product = { operation: 'POST /admin/products/{id}', path_params: { id: 'prod_1' } };
+
+    const sent = await write({ ...product, body: { description: 'x' } });
+    const blocked = await write({ operation: 'POST /admin/api-keys', body: { title: 'key', type: 'secret' } });
+    const invalid = await write({ ...product, body: { description: 42 } });
+    const preview = await write({ operation: 'POST /admin/products', body: { title: 'x' }, dry_run: true });
+
+    expect(sent.structuredContent?.error).toMatchObject({ phase: 'interrupted', hint: expect.stringContaining('may') });
+    expect(blocked.structuredContent?.error).toMatchObject({ phase: 'refused' });
+    expect(invalid.structuredContent?.error).toMatchObject({ phase: 'schema' });
+    expect(preview.structuredContent).toMatchObject({ dry_run: true, executed: false });
   });
 });

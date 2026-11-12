@@ -17,7 +17,7 @@ export interface ExecutionTarget {
   scopes: readonly string[];
   /** The access token record id, for per-token rate limits. */
   tokenId: string;
-  /** Records a write or delete attempt with who made it and against which spec revision. */
+  /** Records a write or delete attempt with who made it and against which spec revision. A rejection is ignored. */
   audit: (entry: AuditEntry) => Promise<void>;
   /** Origin of this Medusa server as seen from inside the process, for example http://127.0.0.1:9000. */
   baseUrl: string;
