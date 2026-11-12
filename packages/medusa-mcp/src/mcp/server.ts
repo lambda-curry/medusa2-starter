@@ -165,6 +165,23 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     }
   };
 
+  /** A call that threw before it finished, usually a dropped connection or the 30-second timeout. The SDK would turn
+   * the exception into bare text, so an agent could not tell a lost write from a refused one. */
+  const interrupted = (args: ToolArgs, error: unknown, mayHaveChanged: boolean): ToolResult => {
+    const message = error instanceof Error ? error.message : String(error);
+    return fail(`The call did not finish: ${message}`, {
+      operation: String(args.operation),
+      error: {
+        phase: 'interrupted',
+        message,
+        hint: mayHaveChanged
+          ? 'Medusa may have applied this call before it was cut off. Read the resource to check before calling again.'
+          : 'Nothing was changed. Call again.',
+      },
+      spec_revision: specRevision,
+    });
+  };
+
   /** Shared checks for read_api, write_api, and delete_api: limits, the right tool, and the policy. */
   const resolveFor = (tool: ExecutionTool, args: ToolArgs): CatalogOperation | ToolResult => {
     const overLimit = limited('call') ?? (tool === 'read_api' ? undefined : limited('change'));
@@ -287,7 +304,11 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       const args = input as ToolArgs;
       const operation = resolveFor('read_api', args);
       if ('content' in operation) return operation;
-      return resultOf(operation, await run(operation, args));
+      try {
+        return resultOf(operation, await run(operation, args));
+      } catch (error) {
+        return interrupted(args, error, false);
+      }
     },
   );
 
@@ -408,7 +429,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       return await attempt();
     } catch (error) {
       await target.audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message });
-      throw error;
+      return interrupted(args, error, !args.dry_run);
     }
   }
 

@@ -33,9 +33,9 @@ an agent can correct the body and call again. Every result carries `spec_revisio
 against, at the top level beside `error`.
 
 A failed call is an MCP tool result with `isError: true`, as the MCP spec asks for execution errors, not a JSON-RPC
-error. ChatGPT presents such a result as a tool exception carrying only the text, so the text always holds the same
-JSON as `structuredContent`. When the server stopped the call itself, a readable message comes first, then a blank
-line, then the JSON. Each failure has an `error.phase`:
+error. ChatGPT presents such a result as a tool exception carrying only the text, so the text holds the same JSON as
+`structuredContent`. When the server stopped the call itself, a readable message comes first, then a blank line, then
+the JSON. Each failure has an `error.phase`:
 
 | `error.phase` | When | Reached Medusa |
 | --- | --- | --- |
@@ -43,6 +43,11 @@ line, then the JSON. Each failure has an `error.phase`:
 | `schema` | The body failed the published schema. `error.problems` lists why. | No |
 | `precheck` | `delete_api` found no such resource: a 404, or Medusa's 200 with an empty body. `error.check` names the GET. | Only the GET |
 | `refused` | Unknown operation, wrong tool, blocked by policy, rate limit, a body that is not JSON, or bad path parameters. | No |
+| `interrupted` | The call threw before it finished, usually a dropped connection or the 30-second timeout. `error.hint` says whether a write or delete may have landed. | Maybe |
+
+One failure has no `error.phase`: arguments that do not match the tool's input schema, such as `write_api` without
+`operation`. The MCP SDK rejects those before this server sees them, with text that starts `Input validation error`.
+Nothing reaches Medusa.
 
 A token without the tool's scope gets no tool result at all: the server answers HTTP 403 with a `WWW-Authenticate`
 challenge naming the scope, so the client can ask the user for more access.
