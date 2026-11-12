@@ -34,6 +34,12 @@ async function callTool(api: Api, token: string, name: string, args: Record<stri
   return message.result as { isError?: boolean; structuredContent?: Record<string, any>; content: { text: string }[] };
 }
 
+/** The JSON an error result's text carries after its message. */
+function errorJson(result: { content: { text: string }[] }) {
+  const text = result.content[0].text;
+  return JSON.parse(text.slice(text.indexOf('\n\n{') + 2));
+}
+
 medusaIntegrationTestRunner({
   env: {},
   testSuite: ({ api, getContainer }) => {
@@ -114,6 +120,7 @@ medusaIntegrationTestRunner({
       });
       expect(rejected.isError).toBe(true);
       expect(rejected.content[0].text).toContain('/description must be string');
+      expect(errorJson(rejected)).toEqual(rejected.structuredContent);
       expect(rejected.structuredContent).toMatchObject({
         operation: 'POST /admin/products/{id}',
         error: { phase: 'schema', problems: [expect.stringContaining('/description must be string')] },
@@ -178,6 +185,7 @@ medusaIntegrationTestRunner({
         },
       });
       expect(missingProduct.content[0].text).toContain('The DELETE was not sent.');
+      expect(errorJson(missingProduct)).toEqual(missingProduct.structuredContent);
 
       const [collection] = await getContainer()
         .resolve(Modules.PRODUCT)
@@ -230,6 +238,8 @@ medusaIntegrationTestRunner({
       });
       expect(wrongTool.content[0].text).toContain('Use delete_api');
       expect(wrongTool.structuredContent?.error).toMatchObject({ phase: 'refused' });
+      // Clients that show an error only as text, as ChatGPT does, still get the error phase.
+      for (const result of [blocked, wrongTool]) expect(errorJson(result)).toEqual(result.structuredContent);
     });
 
     it('audits refused, executed, and previewed write attempts with their path parameters', async () => {

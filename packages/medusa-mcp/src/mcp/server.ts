@@ -27,8 +27,16 @@ function ok(data: Record<string, unknown>): ToolResult {
   return { content: [{ type: 'text', text: JSON.stringify(data) }], structuredContent: data };
 }
 
+/** The message, then the same JSON as `structuredContent`, as the MCP spec asks of structured results. Clients that
+ * show only the text, as ChatGPT does for errors, would otherwise lose `error.phase`. */
 function fail(message: string, data?: Record<string, unknown>): ToolResult {
-  return { content: [{ type: 'text', text: message }], ...(data ? { structuredContent: data } : {}), isError: true };
+  return data
+    ? {
+        content: [{ type: 'text', text: `${message}\n\n${JSON.stringify(data)}` }],
+        structuredContent: data,
+        isError: true,
+      }
+    : { content: [{ type: 'text', text: message }], isError: true };
 }
 
 /** Whether a write's body was checked against the published schema: it passed, there was no body, or the operation
@@ -389,7 +397,8 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
 
   /** Logs a refused write or delete attempt, with the reason the agent was given, and returns the refusal. */
   async function refused(args: ToolArgs, result: ToolResult): Promise<ToolResult> {
-    await target.audit({ ...auditBase(args), outcome: 'refused', reason: result.content[0]?.text });
+    const error = result.structuredContent?.error as { message?: string } | undefined;
+    await target.audit({ ...auditBase(args), outcome: 'refused', reason: error?.message ?? result.content[0]?.text });
     return result;
   }
 
