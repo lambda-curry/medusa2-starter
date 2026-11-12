@@ -45,9 +45,9 @@ the JSON. Each failure has an `error.phase`:
 | `refused` | Unknown operation, wrong tool, blocked by policy, rate limit, a body that is not JSON, or bad path parameters. | No |
 | `interrupted` | The call threw before it finished, usually a dropped connection or the 30-second timeout. `error.hint` says whether a write or delete may have landed. | Maybe |
 
-One failure has no `error.phase`: arguments that do not match the tool's input schema, such as `write_api` without
-`operation`. The MCP SDK rejects those before this server sees them, with text that starts `Input validation error`.
-Nothing reaches Medusa.
+One failure is text only, with no `structuredContent`, JSON, or `error.phase`: arguments that do not match the tool's
+input schema, such as `write_api` without `operation`. The MCP SDK rejects those before this server sees them, with
+text that starts `Input validation error`. Nothing reaches Medusa.
 
 A token without the tool's scope gets no tool result at all: the server answers HTTP 403 with a `WWW-Authenticate`
 challenge naming the scope, so the client can ask the user for more access.

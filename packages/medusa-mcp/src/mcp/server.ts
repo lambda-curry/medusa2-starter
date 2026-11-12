@@ -428,7 +428,10 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     try {
       return await attempt();
     } catch (error) {
-      await target.audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message });
+      // A failed audit must not hide that the write may have landed.
+      await target
+        .audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message })
+        .catch(() => undefined);
       return interrupted(args, error, !args.dry_run);
     }
   }

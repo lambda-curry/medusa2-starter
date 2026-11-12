@@ -350,24 +350,27 @@ describe('a call that cannot reach Medusa', () => {
     const { port } = closed.address() as AddressInfo;
     await new Promise((resolve) => closed.close(resolve));
     const audit: AuditEntry[] = [];
-    const server = buildMcpServer(
-      { catalog, search: buildSearchIndex(catalog.operations), builtAt: new Date() },
-      {
-        scopes: ['mcp:read', 'mcp:write', 'mcp:delete'],
-        tokenId: 'token',
-        audit: async (entry) => {
-          audit.push(entry);
+    const toolsFor = (record: (entry: AuditEntry) => Promise<void>) => {
+      const server = buildMcpServer(
+        { catalog, search: buildSearchIndex(catalog.operations), builtAt: new Date() },
+        {
+          scopes: ['mcp:read', 'mcp:write', 'mcp:delete'],
+          tokenId: 'token',
+          audit: record,
+          baseUrl: `http://127.0.0.1:${port}`,
+          adminToken: async () => 'admin',
+          publishableKey: async () => undefined,
         },
-        baseUrl: `http://127.0.0.1:${port}`,
-        adminToken: async () => 'admin',
-        publishableKey: async () => undefined,
-      },
-    );
-    const tools = (
-      server as unknown as {
-        _registeredTools: Record<string, { executor: (args: unknown) => Promise<Record<string, any>> }>;
-      }
-    )._registeredTools;
+      );
+      return (
+        server as unknown as {
+          _registeredTools: Record<string, { executor: (args: unknown) => Promise<Record<string, any>> }>;
+        }
+      )._registeredTools;
+    };
+    const tools = toolsFor(async (entry) => {
+      audit.push(entry);
+    });
     const call = (name: string, args: Record<string, unknown>) => tools[name].executor(args);
     const product = { operation: 'POST /admin/products/{id}', path_params: { id: 'prod_1' } };
 
@@ -396,5 +399,14 @@ describe('a call that cannot reach Medusa', () => {
       'failed POST /admin/products/{id}',
       'failed DELETE /admin/products/{id}',
     ]);
+
+    // An audit that fails too must not hide that the write may have landed.
+    const unaudited = await toolsFor(async () => {
+      throw new Error('audit store down');
+    }).write_api.executor({ ...product, body: { description: 'x' } });
+    expect(unaudited.structuredContent?.error).toMatchObject({
+      phase: 'interrupted',
+      hint: expect.stringContaining('may have applied'),
+    });
   });
 });
