@@ -74,6 +74,7 @@ const INTENT_VERBS: Record<string, string> = {
   change: 'POST',
   set: 'POST',
   modify: 'POST',
+  alter: 'POST',
   rename: 'POST',
   delete: 'DELETE',
   remove: 'DELETE',
@@ -139,15 +140,16 @@ export function pathResource(path: string): string | undefined {
 }
 
 /** A query split at its first detail-clause marker after the operation verb, so "how to create a product with
- * variants" splits at "with", not at "to". The verb becomes Medusa's word for it. `subject` is the head after the
- * verb: the words naming the target. */
-function splitQuery(query: string): { head: string[]; subject: string[]; tail: string[] } {
+ * variants" splits at "with", not at "to". The verb becomes Medusa's word for it, unless a resource comes before it:
+ * in "order change" the word is a noun. `subject` is the head after the verb: the words naming the target. */
+function splitQuery(query: string, resources?: Set<string>): { head: string[]; subject: string[]; tail: string[] } {
   const words = query.split(/\s+/).filter(Boolean);
   const verb = words.findIndex((word) => INTENT_VERBS[word.toLowerCase()]);
   const marker = words.findIndex(
     (word, position) => position > Math.max(verb, 0) && MODIFIER_MARKERS.has(word.toLowerCase()),
   );
-  if (verb >= 0) words[verb] = CANONICAL_VERBS[words[verb].toLowerCase()] ?? words[verb];
+  const nounUse = tokenize(words.slice(0, Math.max(verb, 0)).join(' ')).some((term) => resources?.has(term));
+  if (verb >= 0 && !nounUse) words[verb] = CANONICAL_VERBS[words[verb].toLowerCase()] ?? words[verb];
   const head = tokenize((marker < 0 ? words : words.slice(0, marker)).join(' '));
   const tail = marker < 0 ? [] : tokenize(words.slice(marker).join(' '));
   return { head, subject: head.slice(head.findIndex((term) => INTENT_VERBS[term]) + 1), tail };
@@ -157,7 +159,7 @@ function splitQuery(query: string): { head: string[]; subject: string[]; tail: s
  * keeps its full weight. When the head names no resource in `resources`, as in "set stock quantity for an inventory
  * item", the clause holds the target, so it keeps full weight too. */
 export function queryTerms(query: string, resources?: Set<string>): { term: string; weight: number }[] {
-  const { head, subject, tail } = splitQuery(query);
+  const { head, subject, tail } = splitQuery(query, resources);
   const detailWeight = resources && !subject.some((term) => resources.has(term)) ? 1 : MODIFIER_WEIGHT;
   const weights = new Map<string, number>();
   for (const term of tail) weights.set(term, detailWeight);
@@ -170,7 +172,7 @@ export function queryTerms(query: string, resources?: Set<string>): { term: stri
  * method verb, so "set stock quantity" does not target fulfillment sets, while "create a price list" still targets
  * price lists. */
 function targetResource(query: string, resources: Set<string>): string | undefined {
-  return splitQuery(query)
+  return splitQuery(query, resources)
     .subject.filter((term) => resources.has(term))
     .at(-1);
 }

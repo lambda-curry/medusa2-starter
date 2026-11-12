@@ -248,6 +248,11 @@ describe('search', () => {
     expect(queryTerms("change a product's title")).toContainEqual({ term: 'update', weight: 1 });
     expect(queryTerms("change a product's title").map(({ term }) => term)).not.toContain('change');
     expect(queryTerms('list order changes').map(({ term }) => term)).toContain('change');
+    const resources = new Set(['order', 'product']);
+    expect(queryTerms('order change', resources).map(({ term }) => term)).toEqual(['order', 'change']);
+    expect(queryTerms('how to rename a product', resources).map(({ term }) => term)).toContain('update');
+    expect(queryTerms('alter a product')).toContainEqual({ term: 'update', weight: 1 });
+    expect(queryIntent('alter a product')).toBe('POST');
   });
 
   it('reads one method intent from the query verbs', () => {
