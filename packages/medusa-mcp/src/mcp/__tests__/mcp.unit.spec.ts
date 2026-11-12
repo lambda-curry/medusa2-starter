@@ -399,14 +399,37 @@ describe('a call that cannot reach Medusa', () => {
       'failed POST /admin/products/{id}',
       'failed DELETE /admin/products/{id}',
     ]);
+  });
 
-    // An audit that fails too must not hide that the write may have landed.
-    const unaudited = await toolsFor(async () => {
-      throw new Error('audit store down');
-    }).write_api.executor({ ...product, body: { description: 'x' } });
-    expect(unaudited.structuredContent?.error).toMatchObject({
-      phase: 'interrupted',
-      hint: expect.stringContaining('may have applied'),
-    });
+  it('returns the same structured result when the audit itself fails', async () => {
+    const tools = (
+      buildMcpServer(
+        { catalog, search: buildSearchIndex(catalog.operations), builtAt: new Date() },
+        {
+          scopes: ['mcp:read', 'mcp:write', 'mcp:delete'],
+          tokenId: 'token',
+          audit: async () => {
+            throw new Error('audit store down');
+          },
+          baseUrl: 'http://127.0.0.1:1',
+          adminToken: async () => 'admin',
+          publishableKey: async () => undefined,
+        },
+      ) as unknown as {
+        _registeredTools: Record<string, { executor: (args: unknown) => Promise<Record<string, any>> }>;
+      }
+    )._registeredTools;
+    const write = (args: Record<string, unknown>) => tools.write_api.executor(args);
+    const product = { operation: 'POST /admin/products/{id}', path_params: { id: 'prod_1' } };
+
+    const sent = await write({ ...product, body: { description: 'x' } });
+    const blocked = await write({ operation: 'POST /admin/api-keys', body: { title: 'key', type: 'secret' } });
+    const invalid = await write({ ...product, body: { description: 42 } });
+    const preview = await write({ operation: 'POST /admin/products', body: { title: 'x' }, dry_run: true });
+
+    expect(sent.structuredContent?.error).toMatchObject({ phase: 'interrupted', hint: expect.stringContaining('may') });
+    expect(blocked.structuredContent?.error).toMatchObject({ phase: 'refused' });
+    expect(invalid.structuredContent?.error).toMatchObject({ phase: 'schema' });
+    expect(preview.structuredContent).toMatchObject({ dry_run: true, executed: false });
   });
 });

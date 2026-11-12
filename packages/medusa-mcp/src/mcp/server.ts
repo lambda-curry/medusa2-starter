@@ -2,6 +2,7 @@ import { fromJsonSchema, McpServer, requireScopes } from '@modelcontextprotocol/
 import type { CatalogOperation, ExecutionTool } from './catalog';
 import { describeOperation } from './describe';
 import {
+  type AuditEntry,
   declaredParameters,
   type ExecutionArgs,
   ExecutionError,
@@ -130,6 +131,10 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
   );
 
   const specRevision = catalog.spec.revision.slice(0, 12);
+
+  /** Records an attempt. A failing audit never changes the result the agent gets: that result is the only place it
+   * learns whether its call reached Medusa. */
+  const audit = (entry: AuditEntry) => target.audit(entry).catch(() => undefined);
 
   /** A call stopped before anything reached Medusa: the reason as text, plus the same `error` shape as other failures. */
   const refusal = (message: string, operation?: string): ToolResult =>
@@ -358,7 +363,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       if (schema && args.body !== undefined) {
         const problems = validateBody(catalog.spec, operation.area, schema, args.body);
         if (problems.length) {
-          await target.audit({ ...auditBase(args), outcome: 'rejected', problems });
+          await audit({ ...auditBase(args), outcome: 'rejected', problems });
           return fail(`The body does not match ${operation.operation}:\n- ${problems.join('\n- ')}`, {
             operation: operation.operation,
             error: {
@@ -374,7 +379,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
       return audited(args, async () => {
         if (args.dry_run) {
           const preview = await dryRun(operation, args, schemaCheck);
-          await target.audit({ ...auditBase(args), outcome: 'dry_run' });
+          await audit({ ...auditBase(args), outcome: 'dry_run' });
           return preview;
         }
         return executeAudited(operation, args);
@@ -419,7 +424,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
   /** Logs a refused write or delete attempt, with the reason the agent was given, and returns the refusal. */
   async function refused(args: ToolArgs, result: ToolResult): Promise<ToolResult> {
     const error = result.structuredContent?.error as { message?: string } | undefined;
-    await target.audit({ ...auditBase(args), outcome: 'refused', reason: error?.message ?? result.content[0]?.text });
+    await audit({ ...auditBase(args), outcome: 'refused', reason: error?.message ?? result.content[0]?.text });
     return result;
   }
 
@@ -428,10 +433,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
     try {
       return await attempt();
     } catch (error) {
-      // A failed audit must not hide that the write may have landed.
-      await target
-        .audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message })
-        .catch(() => undefined);
+      await audit({ ...auditBase(args), outcome: 'failed', reason: (error as Error).message });
       return interrupted(args, error, !args.dry_run);
     }
   }
@@ -439,7 +441,7 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
   async function executeAudited(operation: CatalogOperation, args: ToolArgs): Promise<ToolResult> {
     const result = await run(operation, args);
     if ('content' in result) return refused(args, result);
-    await target.audit({ ...auditBase(args), outcome: 'executed', status: result.status });
+    await audit({ ...auditBase(args), outcome: 'executed', status: result.status });
     return resultOf(operation, result);
   }
 
