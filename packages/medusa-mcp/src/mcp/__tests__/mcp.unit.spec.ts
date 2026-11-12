@@ -401,16 +401,27 @@ describe('a call that cannot reach Medusa', () => {
     ]);
   });
 
-  it('returns the same structured result when the audit itself fails', async () => {
+  it.each([
+    [
+      'rejects',
+      async () => {
+        throw new Error('audit store down');
+      },
+    ],
+    [
+      'throws',
+      (): Promise<void> => {
+        throw new Error('audit store down');
+      },
+    ],
+  ])('returns the same structured result when the audit %s', async (_, failingAudit) => {
     const tools = (
       buildMcpServer(
         { catalog, search: buildSearchIndex(catalog.operations), builtAt: new Date() },
         {
           scopes: ['mcp:read', 'mcp:write', 'mcp:delete'],
           tokenId: 'token',
-          audit: async () => {
-            throw new Error('audit store down');
-          },
+          audit: failingAudit,
           baseUrl: 'http://127.0.0.1:1',
           adminToken: async () => 'admin',
           publishableKey: async () => undefined,

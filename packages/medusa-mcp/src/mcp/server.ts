@@ -134,7 +134,13 @@ export function buildMcpServer(registry: ApiRegistry, target: ExecutionTarget): 
 
   /** Records an attempt. A failing audit never changes the result the agent gets: that result is the only place it
    * learns whether its call reached Medusa. */
-  const audit = (entry: AuditEntry) => target.audit(entry).catch(() => undefined);
+  const audit = async (entry: AuditEntry) => {
+    try {
+      await target.audit(entry);
+    } catch {
+      // Thrown or rejected, it is ignored.
+    }
+  };
 
   /** A call stopped before anything reached Medusa: the reason as text, plus the same `error` shape as other failures. */
   const refusal = (message: string, operation?: string): ToolResult =>
