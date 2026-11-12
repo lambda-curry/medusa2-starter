@@ -244,6 +244,12 @@ describe('search', () => {
     expect(pathResource('/admin/products/{id}')).toBe('product');
   });
 
+  it('reads an update verb as "update", the word Medusa summaries use, but leaves the same word as a noun', () => {
+    expect(queryTerms("change a product's title")).toContainEqual({ term: 'update', weight: 1 });
+    expect(queryTerms("change a product's title").map(({ term }) => term)).not.toContain('change');
+    expect(queryTerms('list order changes').map(({ term }) => term)).toContain('change');
+  });
+
   it('reads one method intent from the query verbs', () => {
     expect(queryIntent('update a product')).toBe('POST');
     expect(queryIntent('list customers')).toBe('GET');
@@ -258,8 +264,9 @@ describe('search', () => {
 
   // Measured on the pinned 2.22.1 spec. The first 15 phrasings sit close to Medusa's summaries; the rest are written the
   // way agents ask, with qualifiers and detail clauses, and include the three that misranked live in ChatGPT. Before
-  // modifier weighting and the path-resource boost: hit@1 18/34, hit@3 25/34 (without the last case). Now: hit@1
-  // 26/35, hit@3 31/35.
+  // modifier weighting and the path-resource boost: hit@1 18/34, hit@3 25/34. With them: 26/35 and 31/35. The last four,
+  // update verbs Medusa's summaries never use, ranked 3rd to 8th before those verbs read as "update". Now: hit@1 31/39,
+  // hit@3 35/39.
   it('finds the expected operation for common agent tasks', () => {
     const cases: [string, string, { area?: 'admin' | 'store' }?][] = [
       ['update a product description', 'POST /admin/products/{id}'],
@@ -303,6 +310,10 @@ describe('search', () => {
       ["update an existing product's description", 'POST /admin/products/{id}'],
       ['create a product collection to group products', 'POST /admin/collections'],
       ['how to create a product with variants', 'POST /admin/products'],
+      ["change a product's title", 'POST /admin/products/{id}'],
+      ['rename a product', 'POST /admin/products/{id}'],
+      ['edit a product description', 'POST /admin/products/{id}'],
+      ['modify a customer email', 'POST /admin/customers/{id}'],
     ];
     const ranks = cases.map(([query, expected, filters]) => ({
       query,
@@ -312,7 +323,7 @@ describe('search', () => {
 
     const hitAt1 = ranks.filter(({ rank }) => rank === 1).length;
     const hitAt3 = ranks.filter(({ rank }) => rank > 0 && rank <= 3).length;
-    if (hitAt1 < 26 || hitAt3 < 31)
+    if (hitAt1 < 31 || hitAt3 < 35)
       throw new Error(`Search regressed: hit@1 ${hitAt1}/${cases.length}, hit@3 ${hitAt3}/${cases.length}\n${report}`);
     for (const query of [
       'update a product description',
@@ -320,6 +331,7 @@ describe('search', () => {
       "update an existing product's description",
       'create a product collection to group products',
       'how to create a product with variants',
+      "change a product's title",
     ]) {
       expect({ query, rank: ranks.find((entry) => entry.query === query)?.rank }).toEqual({ query, rank: 1 });
     }

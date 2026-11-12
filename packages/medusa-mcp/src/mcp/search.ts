@@ -79,6 +79,16 @@ const INTENT_VERBS: Record<string, string> = {
   remove: 'DELETE',
 };
 const INTENT_BOOST = 1.5;
+/** Medusa's word for an update verb. Its summaries say "Update a Product", so "change a product's title" matched
+ * nothing on its verb, and matched "Order Change" instead. Read verbs stay as written: "get" would send "view orders"
+ * to "Get an Order" instead of "List Orders". */
+const CANONICAL_VERBS: Record<string, string> = {
+  change: 'update',
+  edit: 'update',
+  modify: 'update',
+  rename: 'update',
+  alter: 'update',
+};
 const PARTIAL_MATCH_WEIGHT = 0.5;
 const MIN_PARTIAL_LENGTH = 4;
 
@@ -129,13 +139,15 @@ export function pathResource(path: string): string | undefined {
 }
 
 /** A query split at its first detail-clause marker after the operation verb, so "how to create a product with
- * variants" splits at "with", not at "to". `subject` is the head after the verb: the words naming the target. */
+ * variants" splits at "with", not at "to". The verb becomes Medusa's word for it. `subject` is the head after the
+ * verb: the words naming the target. */
 function splitQuery(query: string): { head: string[]; subject: string[]; tail: string[] } {
   const words = query.split(/\s+/).filter(Boolean);
   const verb = words.findIndex((word) => INTENT_VERBS[word.toLowerCase()]);
   const marker = words.findIndex(
     (word, position) => position > Math.max(verb, 0) && MODIFIER_MARKERS.has(word.toLowerCase()),
   );
+  if (verb >= 0) words[verb] = CANONICAL_VERBS[words[verb].toLowerCase()] ?? words[verb];
   const head = tokenize((marker < 0 ? words : words.slice(0, marker)).join(' '));
   const tail = marker < 0 ? [] : tokenize(words.slice(marker).join(' '));
   return { head, subject: head.slice(head.findIndex((term) => INTENT_VERBS[term]) + 1), tail };
