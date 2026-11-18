@@ -1,9 +1,14 @@
 import { AbstractNotificationProviderService, MedusaError } from '@medusajs/framework/utils';
 import { Logger, ProviderSendNotificationDTO, ProviderSendNotificationResultsDTO } from '@medusajs/framework/types';
 import { Resend, CreateEmailOptions } from 'resend';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { render } from '@react-email/components';
 
 type ResendOptions = {
   api_key: string;
+  capture_dir?: string;
   from: string;
   html_templates?: Record<
     string,
@@ -49,19 +54,22 @@ const templates: { [key in Templates]?: (props: any) => React.ReactNode } = {
 
 class ResendNotificationProviderService extends AbstractNotificationProviderService {
   static identifier = 'notification-resend';
-  private resendClient: Resend;
+  private resendClient: Resend | undefined;
   private options: ResendOptions;
   private logger: Logger;
 
   constructor({ logger }: InjectedDependencies, options: ResendOptions) {
     super();
-    this.resendClient = new Resend(options.api_key);
+    this.resendClient = options.capture_dir ? undefined : new Resend(options.api_key);
     this.options = options;
     this.logger = logger;
   }
 
   static validateOptions(options: Record<any, any>) {
-    if (!options.api_key) {
+    if (options.capture_dir && process.env.PREVIEW_MODE !== "true") {
+      throw new Error("Email capture requires PREVIEW_MODE=true");
+    }
+    if (!options.capture_dir && !options.api_key) {
       throw new MedusaError(MedusaError.Types.INVALID_DATA, "Option `api_key` is required in the provider's options.");
     }
     if (!options.from) {
@@ -138,7 +146,16 @@ class ResendNotificationProviderService extends AbstractNotificationProviderServ
       } as CreateEmailOptions;
     }
 
-    const { data, error } = await this.resendClient.emails.send(emailOptions);
+    if (this.options.capture_dir) {
+      const id = randomUUID();
+      const html = typeof template === 'string' ? template : await render(template(notification.data));
+      await mkdir(this.options.capture_dir, { recursive: true, mode: 0o700 });
+      await writeFile(join(this.options.capture_dir, `${id}.json`), JSON.stringify({
+        id, ...commonOptions, html, created_at: new Date().toISOString(),
+      }), { mode: 0o600, flag: 'wx' });
+      return { id };
+    }
+    const { data, error } = await this.resendClient!.emails.send(emailOptions);
 
     if (error || !data) {
       if (error) {

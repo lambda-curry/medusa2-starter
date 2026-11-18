@@ -112,6 +112,7 @@ const notificationModule = {
         id: 'resend',
         options: {
           channels: ['email'],
+          capture_dir: process.env.PREVIEW_MODE === 'true' ? process.env.PREVIEW_EMAIL_DIR : undefined,
           api_key: process.env.RESEND_API_KEY,
           from: process.env.RESEND_FROM_EMAIL,
         },
@@ -132,7 +133,7 @@ const fileModule =
             {
               resolve: '@medusajs/medusa/file-local',
               id: 'local',
-              options: {},
+              options: { backend_url: process.env.FILE_LOCAL_BACKEND_URL },
             },
           ],
         },

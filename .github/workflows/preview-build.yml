@@ -1,0 +1,46 @@
+name: Managed preview images
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: preview-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.draft == false)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [medusa, storefront]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Build exact checked-out source without deployment credentials
+        env:
+          APP: ${{ matrix.app }}
+        run: |
+          set -euo pipefail
+          sha=$(git rev-parse HEAD)
+          docker build --label "org.opencontainers.image.revision=$sha" \
+            -f "apps/$APP/Dockerfile.preview" -t "chef-preview-chefv-$APP:$sha" .
+          mkdir -p artifact
+          docker save "chef-preview-chefv-$APP:$sha" | gzip -1 > "artifact/$APP.tar.gz"
+          printf '%s\n' "$sha" > artifact/source-sha.txt
+          cd artifact
+          sha256sum "$APP.tar.gz" > "$APP.sha256"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: preview-${{ matrix.app }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: artifact/
+          retention-days: 2
+          compression-level: 0
