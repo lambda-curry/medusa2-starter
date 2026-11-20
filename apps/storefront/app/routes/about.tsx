@@ -1,13 +1,25 @@
 import { Container } from '@app/components/common/container';
 import Hero from '@app/components/sections/Hero';
-import { getMergedPageMeta } from '@libs/util/page';
+import { getCommonMeta, mergeMeta } from '@libs/util/meta';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 
 export const loader = async (_args: LoaderFunctionArgs) => {
   return {};
 };
 
-export const meta: MetaFunction<typeof loader> = getMergedPageMeta;
+export const meta: MetaFunction<typeof loader> = mergeMeta(getCommonMeta, () => [
+  { title: 'About Chef Luis Velez | Park City & Salt Lake City Private Chef' },
+  {
+    name: 'description',
+    content:
+      'Meet Chef Luis Velez, offering private dinners, vacation-rental meals, cooking classes, and buffet-style events in Park City, Salt Lake City, and surrounding areas.',
+  },
+  { property: 'og:title', content: 'About Chef Luis Velez | Park City & Salt Lake City' },
+  {
+    property: 'og:description',
+    content: 'Personalized private chef experiences in Park City, Salt Lake City, and surrounding areas.',
+  },
+]);
 
 export default function AboutChefRoute() {
   return (
@@ -23,7 +35,7 @@ export default function AboutChefRoute() {
               </h1>
               <p className="mx-auto text-md md:text-2xl !leading-normal">
                 Chef Velez is a private chef specializing in premium at-home culinary experiences—cooking classes,
-                plated dinners, and buffet-style events. Based in Carson City and serving the Lake Tahoe area, Chef
+                plated dinners, and buffet-style events. Serving Park City, Salt Lake City, and surrounding areas, Chef
                 Velez crafts unforgettable menus using fresh, seasonal ingredients and provides a seamless,
                 restaurant-quality experience in your home or vacation rental.
               </p>
@@ -43,8 +55,8 @@ export default function AboutChefRoute() {
             <h2 className="font-italiana text-3xl text-gray-900">Philosophy</h2>
             <p>
               Every event is a chance to create connection through food. From intimate dinners to interactive classes, I
-              design experiences that are warm, professional, and tailored to your tastes throughout Carson City, Reno,
-              and the Lake Tahoe area.
+              design experiences that are warm, professional, and tailored to your tastes throughout Park City, Salt
+              Lake City, and surrounding areas.
             </p>
           </div>
           <div className="space-y-4 text-lg text-gray-700">

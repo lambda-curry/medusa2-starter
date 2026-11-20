@@ -15,7 +15,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     {
       name: 'description',
       content:
-        'Learn how our culinary experience booking process works. From browsing menus to enjoying your event, we make it simple and transparent.',
+        'Book a private chef in Park City, Salt Lake City, and surrounding areas. Explore menus, request your event, and plan a personalized dining experience.',
     },
     { property: 'og:title', content: 'How It Works - Chef Luis Velez' },
     {
@@ -134,7 +134,7 @@ const faqItems: FAQItem[] = [
   {
     question: 'What is your service area?',
     answer:
-      "I'm based in Carson City, Nevada, and serve private events across Carson City, Reno, and the Lake Tahoe area. For vacation rentals, cabins, retreats, and events outside the immediate area, I'm happy to discuss travel arrangements.",
+      "I serve Park City, Salt Lake City, and surrounding areas with private dinners, vacation-rental meals, cooking classes, and buffet-style events. Include your event location when you send a request.",
   },
   {
     question: 'Do you accommodate dietary restrictions?',

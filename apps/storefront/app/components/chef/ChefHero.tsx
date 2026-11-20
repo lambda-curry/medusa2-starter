@@ -9,6 +9,7 @@ export interface ChefHeroProps {
   backgroundClassName?: string;
   actionsClassName?: string;
   chefName?: string;
+  heading?: string;
   tagline?: string;
   description?: string;
   image?: ImageField;
@@ -20,6 +21,7 @@ export const ChefHero: FC<ChefHeroProps> = ({
   backgroundClassName, 
   actionsClassName,
   chefName = "Chef Luis Velez",
+  heading,
   tagline = "CULINARY EXPERIENCES & PRIVATE DINING",
   description = "Transform your special occasions into unforgettable culinary experiences. From intimate cooking classes to elegant plated dinners, I bring restaurant-quality cuisine directly to your home.",
   image = {
@@ -54,7 +56,7 @@ export const ChefHero: FC<ChefHeroProps> = ({
         <div className="overflow-hidden z-10 w-full text-white">
           <div className="inline-grid gap-6 w-full text-center">
             <h4 className="font-italiana text-xl md:text-2xl tracking-wider text-white">{tagline}</h4>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-italiana text-white drop-shadow-lg">{chefName}</h1>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-italiana text-white drop-shadow-lg">{heading ?? chefName}</h1>
             <p className="max-w-2xl mx-auto text-base md:text-lg leading-relaxed text-white drop-shadow-md">
               {description}
             </p>

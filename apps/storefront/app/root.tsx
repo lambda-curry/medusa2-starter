@@ -9,6 +9,7 @@ import {
   ScrollRestoration,
   ShouldRevalidateFunction,
   useLoaderData,
+  useLocation,
   useRouteError,
 } from 'react-router';
 import { MetaFunction } from 'react-router';
@@ -21,7 +22,7 @@ import { useRootLoaderData } from './hooks/useRootLoaderData';
 export const getRootMeta: MetaFunction = ({ data }) => {
   const title = 'Chef Velez';
   const description =
-    'Private chef experiences in Carson City, Reno, and the Lake Tahoe area: cooking classes, plated dinners, and buffet-style events.';
+    'Private chef experiences in Park City, Salt Lake City, and surrounding areas: cooking classes, plated dinners, and buffet-style events.';
   const ogTitle = title;
   const ogDescription = description;
   const ogImage = '';
@@ -62,6 +63,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 function App() {
   const headRef = useRef<HTMLHeadElement>(null);
   const data = useRootLoaderData();
+  const { pathname } = useLocation();
 
   const { env = {}, siteDetails } = data || {};
 
@@ -72,6 +74,7 @@ function App() {
           <meta charSet="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
           <Meta />
+          <link rel="canonical" href={`https://chefvelez.com${pathname}`} />
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -84,7 +87,6 @@ function App() {
 
           <link href="https://fonts.googleapis.com/css2?family=Aboreto&display=swap" rel="stylesheet" />
           <Links />
-          {siteDetails?.settings?.description && <meta name="description" content={siteDetails.settings.description} />}
         </head>
         <body className="min-h-screen">
           <Page>

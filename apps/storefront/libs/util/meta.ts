@@ -64,7 +64,7 @@ export const getCommonMeta: MetaFunction = ({ matches }) => {
 
   if (!siteDetails) return [];
 
-  const canonicalUrl = `${siteDetails.settings.storefront_url}${currentMatch.pathname}`;
+  const canonicalUrl = `https://chefvelez.com${currentMatch.pathname}`;
 
   return [
     { charset: 'utf-8' },

@@ -23,7 +23,7 @@ export const Hero: FC<{
             backgroundClassName,
           )}
           style={{
-            backgroundImage: `url(${image?.url})`,
+            backgroundImage: image?.url ? `url(${image.url})` : undefined,
           }}
         />
         <div className="overflow-hidden z-10 w-full text-white">

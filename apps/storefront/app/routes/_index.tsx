@@ -109,23 +109,23 @@ export const loader = async (_args: LoaderFunctionArgs) => {
 
 export const meta: MetaFunction<typeof loader> = () => {
   return [
-    { title: 'Chef Luis Velez - Private Chef in Carson City and Lake Tahoe' },
+    { title: 'Chef Luis Velez - Private Chef in Park City and Salt Lake City' },
     {
       name: 'description',
       content:
-        "Transform your special occasions with Chef Luis's premium private chef experiences in Carson City, Reno, and the Lake Tahoe area.",
+        "Transform your special occasions with Chef Luis's premium private chef experiences in Park City, Salt Lake City, and surrounding areas.",
     },
-    { property: 'og:title', content: 'Chef Luis Velez - Private Chef in Carson City and Lake Tahoe' },
+    { property: 'og:title', content: 'Chef Luis Velez - Private Chef in Park City and Salt Lake City' },
     {
       property: 'og:description',
       content:
-        'Professional chef services for cooking classes, plated dinners, and buffet-style events across Carson City, Reno, and Lake Tahoe.',
+        'Professional chef services for cooking classes, plated dinners, and buffet-style events across Park City, Salt Lake City, and surrounding areas.',
     },
     { property: 'og:type', content: 'website' },
     {
       name: 'keywords',
       content:
-        'private chef Carson City, private chef Lake Tahoe, cooking classes, plated dinner, culinary experiences, chef services, private dining',
+        'private chef Park City, private chef Salt Lake City, cooking classes, plated dinner, culinary experiences, chef services, private dining',
     },
   ];
 };
@@ -146,9 +146,21 @@ export default function IndexRoute() {
       />
 
       <ChefHero
+        heading="Private Chef in Park City & Salt Lake City"
+        tagline="CHEF LUIS VELEZ"
         className="h-[800px] !max-w-full -mt-[calc(var(--mkt-header-height)+3rem)] md:-mt-[calc(var(--mkt-header-height-desktop)+2rem)] pt-[var(--mkt-header-height)] md:pt-[var(--mkt-header-height-desktop)]"
-        description="Based in Carson City and serving the Lake Tahoe area, I craft private dinners, cooking classes, and special event menus that will wow your guests."
+        description="Serving Park City, Salt Lake City, and surrounding areas, I craft private dinners, cooking classes, and special event menus that will wow your guests."
       />
+
+      <Container className="py-8 text-center">
+        <p className="text-lg text-primary-700">
+          Personalized private dinners, vacation-rental meals, cooking classes, and buffet-style events for
+          ski vacations, retreats, celebrations, and gatherings at home.
+        </p>
+        <a href="/service-areas" className="inline-block mt-4 underline text-primary-900">
+          Explore our Park City and Salt Lake City service areas
+        </a>
+      </Container>
 
       <FeaturedMenusSection menus={menus} />
 
@@ -196,7 +208,7 @@ export default function IndexRoute() {
               <p className="text-base leading-relaxed">
                 I’m ready to showcase my culinary expertise—not just a chef, but a leader in the kitchen, eager to share
                 my love and knowledge of all things food. Plan your next culinary experience with me and indulge in a
-                journey of flavors across Carson City, Reno, and the Lake Tahoe area.
+                journey of flavors across Park City, Salt Lake City, and surrounding areas.
               </p>
             </div>
 
